@@ -67,6 +67,42 @@ async function jsonApi(path, options = {}, onHeaders) {
   return data;
 }
 
+async function loadSavedCases() {
+  const result = await jsonApi("/api/cases");
+  const container = $("#saved-case-list");
+  const panel = $("#saved-cases");
+  if (!container || !panel) return;
+  const cases = Array.isArray(result.cases) ? result.cases : [];
+  panel.hidden = result.mode !== "PERSISTENT_SINGLE_OWNER";
+  if (panel.hidden) return;
+  if (!cases.length) {
+    container.textContent = "目前沒有已保存案件。";
+    return;
+  }
+  const list = document.createElement("ul");
+  list.className = "saved-case-items";
+  for (const item of cases) {
+    const row = document.createElement("li");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "secondary";
+    const updated = item.updated_at ? new Date(item.updated_at).toLocaleString("zh-TW") : "時間未知";
+    button.textContent = `${String(item.case_id || "").slice(0, 8)} · ${item.state || "UNKNOWN"} · ${updated}`;
+    button.addEventListener("click", async () => {
+      try {
+        const selected = await jsonApi(`/api/cases/${item.case_id}`);
+        renderCase(selected);
+        announce("已載入保存的案件。 ");
+      } catch (error) {
+        announce(error.message, true);
+      }
+    });
+    row.appendChild(button);
+    list.appendChild(row);
+  }
+  container.replaceChildren(list);
+}
+
 function formObject(form) {
   return Object.fromEntries(new FormData(form).entries());
 }
@@ -892,6 +928,8 @@ $("#intake-form").addEventListener("submit", async (event) => {
     } else {
       announce("案件已建立。摘要不足以自動建立問句，請核對 Gate 1 後補充。 ");
     }
+    try { await loadSavedCases(); }
+    catch (_) { announce("案件已建立，但案件清單暫時無法更新。", true); }
   } catch (error) { announce(error.message, true); }
 });
 
@@ -1116,11 +1154,19 @@ async function initialize() {
     if (auth.auth_required) {
       $("#logout").hidden = false;
       $("#runtime-mode").textContent = "PRIVATE · SINGLE USER";
-      document.querySelector(".security-state").textContent = "● 帳號登入 · 案件不持久保存";
+      document.querySelector(".security-state").textContent = auth.case_storage === "supabase"
+        ? "● 單一帳號 + MFA · 案件加密保存"
+        : "● 帳號登入 · 案件不持久保存";
     }
     state.bank = await jsonApi("/api/question-bank");
     refreshAiConsent();
-    announce("準備就緒。案件採無保存模式；建立新案件或重啟服務後即不再保留。 ");
+    await loadSavedCases();
+    if (auth.case_storage === "supabase") {
+      $("#storage-notice").textContent = "案件以應用層密文保存；下載的 DOCX 是未加密明文，請依機關規定保管。";
+      announce("準備就緒。只有核准帳號可調用加密保存的案件。 ");
+    } else {
+      announce("準備就緒。案件採無保存模式；建立新案件或重啟服務後即不再保留。 ");
+    }
   } catch (error) { announce(error.message, true); }
 }
 

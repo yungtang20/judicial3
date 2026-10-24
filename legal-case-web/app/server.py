@@ -5,6 +5,7 @@ import re
 import secrets
 import time
 from copy import deepcopy
+from dataclasses import dataclass
 from http import HTTPStatus
 from http.cookies import SimpleCookie
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -15,8 +16,10 @@ from urllib.parse import urlparse
 
 from .config import (
     APP_ORIGIN,
+    AUTH_PROVIDER,
     AUTH_DATABASE_PATH,
     AUTH_REQUIRED,
+    CASE_STORAGE_PROVIDER,
     DATABASE_PATH,
     HOST,
     MAX_BODY_BYTES,
@@ -25,13 +28,18 @@ from .config import (
     REGISTRATION_INVITE_CODE,
     RENDER_HOSTNAME,
     STATIC_DIR,
+    SUPABASE_OWNER_USER_ID,
+    SUPABASE_PUBLISHABLE_KEY,
+    SUPABASE_URL,
 )
 from .accounts import AccountStore
 from .documents import DocumentError, brief_docx, brief_text, checked_interview_docx
 from .ai import ai_configured, external_ai_enabled
 from .law_reference import get_cached_law_article
 from .rules import RuleError, classify_candidates, load_bank
-from .storage import CaseNotFound, EphemeralCaseStore, RevisionConflict
+from .security import validate_persistent_encryption_key
+from .storage import CaseNotFound, CaseStore, EphemeralCaseStore, RevisionConflict, SupabaseCaseStore
+from .supabase_gateway import MfaStart, SupabaseError, SupabaseGateway
 from .workflow import WorkflowError, apply_action, create_case, public_case, validate_case_id
 
 
@@ -51,12 +59,37 @@ RUNTIME_SOURCE_MTIME = _runtime_source_mtime()
 
 SESSION_TOKEN = secrets.token_urlsafe(32)
 BANK = load_bank(QUESTION_BANK_PATH)
-STORE = EphemeralCaseStore()
-ACCOUNT_STORE = AccountStore(AUTH_DATABASE_PATH) if AUTH_REQUIRED else None
-AUTH_SESSIONS: dict[str, float] = {}
+SUPABASE_GATEWAY = (
+    SupabaseGateway(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, SUPABASE_OWNER_USER_ID)
+    if AUTH_PROVIDER == "supabase" or CASE_STORAGE_PROVIDER == "supabase"
+    else None
+)
+if CASE_STORAGE_PROVIDER == "supabase":
+    if SUPABASE_GATEWAY is None:  # pragma: no cover - defensive configuration guard
+        raise RuntimeError("Supabase 案件儲存缺少連線設定")
+    STORE = SupabaseCaseStore(SUPABASE_GATEWAY)
+elif CASE_STORAGE_PROVIDER == "sqlite":
+    STORE = CaseStore(DATABASE_PATH)
+else:
+    STORE = EphemeralCaseStore()
+ACCOUNT_STORE = AccountStore(AUTH_DATABASE_PATH) if AUTH_REQUIRED and AUTH_PROVIDER == "local" else None
+
+
+@dataclass
+class AuthSession:
+    expires_at: float
+    authenticated: bool = True
+    access_token: str = ""
+    refresh_token: str = ""
+    token_expires_at: float = 0
+    mfa_start: MfaStart | None = None
+
+
+AUTH_SESSIONS: dict[str, AuthSession] = {}
 AUTH_LOCK = RLock()
 LOGIN_FAILURES: dict[str, list[float]] = {}
 SESSION_TTL_SECONDS = 12 * 60 * 60
+MFA_PENDING_TTL_SECONDS = 10 * 60
 LOGIN_FAILURE_LIMIT = 5
 LOGIN_LOCKOUT_SECONDS = 15 * 60
 CASE_ROUTE = re.compile(r"^/api/cases/([0-9a-f-]{36})$")
@@ -164,50 +197,93 @@ def _local_analysis_payload(summary: str) -> dict[str, Any]:
         },
         "mode": "rules-fallback",
     }
-def _session_token(headers: Any) -> str:
+def _raw_session_token(headers: Any) -> str:
     cookie = SimpleCookie()
     try:
         cookie.load(headers.get("Cookie", ""))
     except Exception:
         return ""
-    morsel = cookie.get("case_session")
+    morsel = cookie.get(_session_cookie_name())
     token = morsel.value if morsel else ""
     if not token:
-        return ""
-    expires = AUTH_SESSIONS.get(token, 0)
-    if expires <= time.time():
-        AUTH_SESSIONS.pop(token, None)
         return ""
     return token
 
 
-def _new_session() -> str:
+def _session_record(headers: Any, *, allow_pending: bool = False) -> AuthSession | None:
+    token = _raw_session_token(headers)
+    with AUTH_LOCK:
+        record = AUTH_SESSIONS.get(token)
+        if record is None:
+            return None
+        if record.expires_at <= time.time():
+            AUTH_SESSIONS.pop(token, None)
+            return None
+        if not allow_pending and not record.authenticated:
+            return None
+        if (
+            record.authenticated
+            and SUPABASE_GATEWAY is not None
+            and record.refresh_token
+            and record.token_expires_at <= time.time() + 60
+        ):
+            try:
+                refreshed = SUPABASE_GATEWAY.refresh(record.refresh_token)
+            except SupabaseError:
+                AUTH_SESSIONS.pop(token, None)
+                return None
+            record.access_token = str(refreshed.get("access_token", ""))
+            record.refresh_token = str(refreshed.get("refresh_token", ""))
+            record.token_expires_at = float(refreshed.get("expires_at") or time.time() + 3600)
+        return record
+
+
+def _session_token(headers: Any) -> str:
+    token = _raw_session_token(headers)
+    return token if token and _session_record(headers) is not None else ""
+
+
+def _new_session(record: AuthSession | None = None) -> str:
     token = secrets.token_urlsafe(32)
     with AUTH_LOCK:
         now = time.time()
-        for existing, expiry in list(AUTH_SESSIONS.items()):
-            if expiry <= now:
+        for existing, current in list(AUTH_SESSIONS.items()):
+            if current.expires_at <= now:
                 AUTH_SESSIONS.pop(existing, None)
-        AUTH_SESSIONS[token] = now + SESSION_TTL_SECONDS
+        AUTH_SESSIONS[token] = record or AuthSession(now + SESSION_TTL_SECONDS)
     return token
 
 
 def _session_cookie(token: str, *, clear: bool = False) -> str:
     max_age = 0 if clear else SESSION_TTL_SECONDS
-    secure = "; Secure" if AUTH_REQUIRED else ""
-    return f"case_session={token}; Path=/; Max-Age={max_age}; HttpOnly; SameSite=Strict{secure}"
+    secure = "; Secure" if AUTH_REQUIRED or _session_cookie_name().startswith("__Host-") else ""
+    return (
+        f"{_session_cookie_name()}={token}; Path=/; Max-Age={max_age}; "
+        f"HttpOnly; SameSite=Strict{secure}"
+    )
+
+
+def _session_cookie_name() -> str:
+    """Use the host-only cookie prefix whenever the configured origin is HTTPS."""
+    return "__Host-case_session" if urlparse(APP_ORIGIN).scheme == "https" else "case_session"
 
 
 def _login_is_locked(username: str) -> bool:
     now = time.time()
-    failures = LOGIN_FAILURES.get(username.casefold(), [])
-    recent = [stamp for stamp in failures if now - stamp < LOGIN_LOCKOUT_SECONDS]
-    LOGIN_FAILURES[username.casefold()] = recent
-    return len(recent) >= LOGIN_FAILURE_LIMIT
+    key = username.casefold()
+    with AUTH_LOCK:
+        failures = LOGIN_FAILURES.get(key, [])
+        recent = [stamp for stamp in failures if now - stamp < LOGIN_LOCKOUT_SECONDS]
+        if recent:
+            LOGIN_FAILURES[key] = recent
+        else:
+            LOGIN_FAILURES.pop(key, None)
+        return len(recent) >= LOGIN_FAILURE_LIMIT
 
 
 def _record_login_failure(username: str) -> None:
-    LOGIN_FAILURES.setdefault(username.casefold(), []).append(time.time())
+    with AUTH_LOCK:
+        LOGIN_FAILURES.setdefault(username.casefold(), []).append(time.time())
 
 
 def _request_authenticated(handler: BaseHTTPRequestHandler) -> bool:
@@ -218,6 +294,11 @@ def _request_authenticated(handler: BaseHTTPRequestHandler) -> bool:
 
 def _account_store_ready() -> bool:
     return ACCOUNT_STORE is not None and len(REGISTRATION_INVITE_CODE) >= 32
+
+
+def _store_access_token(handler: BaseHTTPRequestHandler) -> str:
+    record = _session_record(handler.headers)
+    return record.access_token if record else ""
 
 
 def _serve_static(handler: BaseHTTPRequestHandler, path: str) -> bool:
@@ -343,18 +424,27 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/health":
             self._json(HTTPStatus.OK, {
                 "status": "ok",
-                "mode": "SINGLE_USER_AUTH" if AUTH_REQUIRED else "LOCAL_ONLY",
+                "mode": (
+                    "SINGLE_OWNER_SUPABASE"
+                    if AUTH_PROVIDER == "supabase"
+                    else "SINGLE_USER_AUTH" if AUTH_REQUIRED else "LOCAL_ONLY"
+                ),
+                "case_storage": CASE_STORAGE_PROVIDER,
                 "external_ai": ai_configured(),
                 "external_ai_enabled": external_ai_enabled(),
                 "source_mtime": RUNTIME_SOURCE_MTIME,
             })
             return
         if path == "/api/auth/status":
+            pending = _session_record(self.headers, allow_pending=True)
             self._json(HTTPStatus.OK, {
                 "auth_required": AUTH_REQUIRED,
                 "authenticated": authenticated,
+                "auth_provider": AUTH_PROVIDER,
+                "case_storage": CASE_STORAGE_PROVIDER,
+                "mfa_pending": bool(pending and not pending.authenticated),
                 "registration_available": bool(
-                    AUTH_REQUIRED and _account_store_ready()
+                    AUTH_PROVIDER == "local" and AUTH_REQUIRED and _account_store_ready()
                     and ACCOUNT_STORE is not None and not ACCOUNT_STORE.has_account()
                 ),
             })
@@ -376,7 +466,15 @@ class Handler(BaseHTTPRequestHandler):
             if not self._guard(token=not AUTH_REQUIRED, session=AUTH_REQUIRED):
                 return
         if path == "/api/cases":
-            self._json(HTTPStatus.OK, {"cases": [], "mode": "EPHEMERAL_SINGLE_CASE"})
+            try:
+                self._json(HTTPStatus.OK, {
+                    "cases": STORE.list_cases_meta(_store_access_token(self)),
+                    "mode": "PERSISTENT_SINGLE_OWNER" if CASE_STORAGE_PROVIDER != "memory" else "EPHEMERAL_SINGLE_CASE",
+                })
+            except (SupabaseError, PermissionError):
+                self._error(HTTPStatus.SERVICE_UNAVAILABLE, "CASE_DATABASE_UNAVAILABLE", "案件資料庫暫時無法使用")
+            except Exception:
+                self._error(HTTPStatus.INTERNAL_SERVER_ERROR, "CASE_DATA_ERROR", "案件清單無法讀取")
             return
         if path == "/api/question-bank":
             def public_source(item: dict[str, Any]) -> dict[str, Any]:
@@ -406,9 +504,15 @@ class Handler(BaseHTTPRequestHandler):
         match = CASE_ROUTE.fullmatch(path)
         if match:
             try:
-                self._json(HTTPStatus.OK, public_case(STORE.get(validate_case_id(match.group(1)))))
+                self._json(HTTPStatus.OK, public_case(STORE.get(
+                    validate_case_id(match.group(1)), _store_access_token(self)
+                )))
             except CaseNotFound:
                 self._error(HTTPStatus.NOT_FOUND, "NOT_FOUND", "找不到案件")
+            except (SupabaseError, PermissionError):
+                self._error(HTTPStatus.SERVICE_UNAVAILABLE, "CASE_DATABASE_UNAVAILABLE", "案件資料庫暫時無法使用")
+            except Exception:
+                self._error(HTTPStatus.INTERNAL_SERVER_ERROR, "CASE_DATA_ERROR", "案件資料無法解密或格式不正確")
             return
         match = DOC_ROUTE.fullmatch(path)
         if match:
@@ -417,7 +521,7 @@ class Handler(BaseHTTPRequestHandler):
         match = BRIEF_ROUTE.fullmatch(path)
         if match:
             try:
-                case = STORE.get(validate_case_id(match.group(1)))
+                case = STORE.get(validate_case_id(match.group(1)), _store_access_token(self))
                 if case["state"] != "OUTPUT_READY":
                     raise DocumentError("案件尚未完成必要 Gate")
                 self._json(HTTPStatus.OK, {"text": brief_text(case, match.group(2))})
@@ -425,6 +529,10 @@ class Handler(BaseHTTPRequestHandler):
                 self._error(HTTPStatus.NOT_FOUND, "NOT_FOUND", "找不到案件")
             except DocumentError as exc:
                 self._error(HTTPStatus.UNPROCESSABLE_ENTITY, "DOCUMENT_BLOCKED", str(exc))
+            except SupabaseError:
+                self._error(HTTPStatus.SERVICE_UNAVAILABLE, "CASE_DATABASE_UNAVAILABLE", "案件資料庫暫時無法使用")
+            except Exception:
+                self._error(HTTPStatus.INTERNAL_SERVER_ERROR, "CASE_DATA_ERROR", "案件資料無法解密或格式不正確")
             return
         if _serve_static(self, path):
             return
@@ -437,8 +545,114 @@ class Handler(BaseHTTPRequestHandler):
             return
         try:
             payload = self._read_json()
-            if path in {"/api/auth/register", "/api/auth/login", "/api/auth/logout"}:
-                if not AUTH_REQUIRED or ACCOUNT_STORE is None:
+            if path in {
+                "/api/auth/register", "/api/auth/login", "/api/auth/mfa/verify", "/api/auth/logout"
+            }:
+                if not AUTH_REQUIRED:
+                    self._error(HTTPStatus.NOT_FOUND, "NOT_FOUND", "找不到資源")
+                    return
+                if AUTH_PROVIDER == "supabase":
+                    if SUPABASE_GATEWAY is None:
+                        self._error(HTTPStatus.SERVICE_UNAVAILABLE, "AUTH_UNAVAILABLE", "登入服務尚未設定")
+                        return
+                    if path == "/api/auth/register":
+                        self._error(HTTPStatus.CONFLICT, "REGISTRATION_CLOSED", "本系統不開放註冊")
+                        return
+                    if path == "/api/auth/login":
+                        email = payload.get("email", "")
+                        password = payload.get("password", "")
+                        if (
+                            not isinstance(email, str)
+                            or not isinstance(password, str)
+                            or len(email) > 320
+                            or "@" not in email
+                            or len(password) > 256
+                        ):
+                            self._error(HTTPStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "帳號或密碼錯誤")
+                            return
+                        if _login_is_locked(email):
+                            self._error(HTTPStatus.TOO_MANY_REQUESTS, "LOGIN_THROTTLED", "登入暫時鎖定，請稍後再試")
+                            return
+                        try:
+                            tokens = SUPABASE_GATEWAY.sign_in(email.strip(), password)
+                        except SupabaseError:
+                            _record_login_failure(email)
+                            self._error(HTTPStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "帳號、密碼或授權不正確")
+                            return
+                        LOGIN_FAILURES.pop(email.casefold(), None)
+                        try:
+                            mfa_start = SUPABASE_GATEWAY.begin_mfa(tokens)
+                        except SupabaseError:
+                            self._error(HTTPStatus.SERVICE_UNAVAILABLE, "MFA_UNAVAILABLE", "MFA 服務暫時無法使用")
+                            return
+                        now = time.time()
+                        record = AuthSession(
+                            expires_at=now + MFA_PENDING_TTL_SECONDS,
+                            authenticated=False,
+                            access_token=str(tokens.get("access_token", "")),
+                            refresh_token=str(tokens.get("refresh_token", "")),
+                            token_expires_at=float(tokens.get("expires_at") or now + 3600),
+                            mfa_start=mfa_start,
+                        )
+                        token = _new_session(record)
+                        self._json(
+                            HTTPStatus.OK,
+                            {
+                                "ok": True,
+                                "mfa_required": True,
+                                "mfa_setup": bool(mfa_start.enrollment_qr),
+                                "qr_code": mfa_start.enrollment_qr,
+                            },
+                            Set_Cookie=_session_cookie(token),
+                        )
+                        return
+                    if path == "/api/auth/mfa/verify":
+                        record = _session_record(self.headers, allow_pending=True)
+                        code = payload.get("code", "")
+                        if (
+                            record is None
+                            or record.authenticated
+                            or record.mfa_start is None
+                            or not isinstance(code, str)
+                            or not re.fullmatch(r"\d{6,10}", code.strip())
+                        ):
+                            self._error(HTTPStatus.UNAUTHORIZED, "MFA_REQUIRED", "MFA 驗證資料不正確")
+                            return
+                        try:
+                            verified = SUPABASE_GATEWAY.verify_mfa(record.mfa_start, code.strip())
+                        except SupabaseError:
+                            self._error(HTTPStatus.UNAUTHORIZED, "MFA_VERIFICATION_FAILED", "MFA 驗證碼不正確或已失效")
+                            return
+                        with AUTH_LOCK:
+                            old_token = _raw_session_token(self.headers)
+                            if old_token:
+                                AUTH_SESSIONS.pop(old_token, None)
+                            record.authenticated = True
+                            record.expires_at = time.time() + SESSION_TTL_SECONDS
+                            record.access_token = str(verified.get("access_token", ""))
+                            record.refresh_token = str(verified.get("refresh_token", ""))
+                            record.token_expires_at = float(verified.get("expires_at") or time.time() + 3600)
+                            record.mfa_start = None
+                            rotated_token = _new_session(record)
+                        self._json(
+                            HTTPStatus.OK,
+                            {"ok": True},
+                            Set_Cookie=_session_cookie(rotated_token),
+                        )
+                        return
+                    token = _raw_session_token(self.headers)
+                    with AUTH_LOCK:
+                        record = AUTH_SESSIONS.pop(token, None) if token else None
+                    if record and record.access_token:
+                        SUPABASE_GATEWAY.logout(record.access_token)
+                    self._json(
+                        HTTPStatus.OK, {"ok": True}, Set_Cookie=_session_cookie("", clear=True)
+                    )
+                    return
+                if ACCOUNT_STORE is None:
+                    self._error(HTTPStatus.NOT_FOUND, "NOT_FOUND", "找不到資源")
+                    return
+                if path == "/api/auth/mfa/verify":
                     self._error(HTTPStatus.NOT_FOUND, "NOT_FOUND", "找不到資源")
                     return
                 if path == "/api/auth/register":
@@ -484,9 +698,10 @@ class Handler(BaseHTTPRequestHandler):
                         Set_Cookie=_session_cookie(token),
                     )
                     return
-                token = _session_token(self.headers)
-                if token:
-                    AUTH_SESSIONS.pop(token, None)
+                token = _raw_session_token(self.headers)
+                with AUTH_LOCK:
+                    if token:
+                        AUTH_SESSIONS.pop(token, None)
                 self._json(
                     HTTPStatus.OK, {"ok": True},
                     Set_Cookie=_session_cookie("", clear=True),
@@ -503,7 +718,7 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(HTTPStatus.OK, _local_analysis_payload(summary.strip()))
                 return
             if path == "/api/cases":
-                case = STORE.create(create_case(payload, BANK))
+                case = STORE.create(create_case(payload, BANK), _store_access_token(self))
                 self._json(HTTPStatus.CREATED, public_case(case))
                 return
             match = ACTION_ROUTE.fullmatch(path)
@@ -512,7 +727,7 @@ class Handler(BaseHTTPRequestHandler):
                 expected_revision = payload.get("revision")
                 if not isinstance(expected_revision, int):
                     raise WorkflowError("缺少案件 revision")
-                case = STORE.get(case_id)
+                case = STORE.get(case_id, _store_access_token(self))
                 if case["revision"] != expected_revision:
                     raise RevisionConflict("案件版本衝突")
                 updated = apply_action(
@@ -521,7 +736,7 @@ class Handler(BaseHTTPRequestHandler):
                     payload.get("payload") if isinstance(payload.get("payload"), dict) else {},
                     BANK,
                 )
-                updated = STORE.save(updated, expected_revision)
+                updated = STORE.save(updated, expected_revision, _store_access_token(self))
                 self._json(HTTPStatus.OK, public_case(updated))
                 return
             self._error(HTTPStatus.NOT_FOUND, "NOT_FOUND", "找不到資源")
@@ -531,13 +746,15 @@ class Handler(BaseHTTPRequestHandler):
             self._error(HTTPStatus.CONFLICT, "REVISION_CONFLICT", str(exc))
         except (WorkflowError, RuleError) as exc:
             self._error(HTTPStatus.UNPROCESSABLE_ENTITY, "VALIDATION_ERROR", str(exc))
+        except (SupabaseError, PermissionError):
+            self._error(HTTPStatus.SERVICE_UNAVAILABLE, "CASE_DATABASE_UNAVAILABLE", "案件資料庫暫時無法使用")
         except Exception:
             self._error(HTTPStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", "本機服務無法完成操作")
 
     def _document(self, case_id: str, role: str, kind: str) -> None:
         try:
             from .document_validation import validate_document_output
-            case = STORE.get(validate_case_id(case_id))
+            case = STORE.get(validate_case_id(case_id), _store_access_token(self))
             if case["state"] != "OUTPUT_READY":
                 raise DocumentError("案件尚未完成必要 Gate")
             # 完整性驗證（spec Phase 7）：有缺失即阻擋下載
@@ -564,6 +781,8 @@ class Handler(BaseHTTPRequestHandler):
             self._error(HTTPStatus.NOT_FOUND, "NOT_FOUND", "找不到案件")
         except DocumentError as exc:
             self._error(HTTPStatus.UNPROCESSABLE_ENTITY, "DOCUMENT_BLOCKED", str(exc))
+        except (SupabaseError, PermissionError):
+            self._error(HTTPStatus.SERVICE_UNAVAILABLE, "CASE_DATABASE_UNAVAILABLE", "案件資料庫暫時無法使用")
         except Exception:
             self._error(HTTPStatus.INTERNAL_SERVER_ERROR, "DOCUMENT_ERROR", "文件產製或頁數驗證失敗")
 
@@ -572,6 +791,16 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def run() -> None:
+    if AUTH_PROVIDER not in {"local", "supabase"}:
+        raise RuntimeError("AUTH_PROVIDER 只允許 local 或 supabase")
+    if CASE_STORAGE_PROVIDER not in {"memory", "sqlite", "supabase"}:
+        raise RuntimeError("CASE_STORAGE_PROVIDER 只允許 memory、sqlite 或 supabase")
+    if AUTH_PROVIDER == "supabase":
+        if not AUTH_REQUIRED or CASE_STORAGE_PROVIDER != "supabase":
+            raise RuntimeError("Supabase 單一所有人模式必須同時啟用登入與持久化案件儲存")
+        if external_ai_enabled():
+            raise RuntimeError("真實案件持久化模式禁止啟用外部 AI")
+        validate_persistent_encryption_key()
     if AUTH_REQUIRED and ACCOUNT_STORE is not None:
         if not ACCOUNT_STORE.has_account() and len(REGISTRATION_INVITE_CODE) < 32:
             raise RuntimeError("首次帳號註冊前必須設定至少 32 字元的 REGISTRATION_INVITE_CODE")

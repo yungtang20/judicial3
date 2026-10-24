@@ -22,8 +22,13 @@ APP_ORIGIN = os.environ.get(
     f"https://{RENDER_HOSTNAME}" if RENDER_HOSTNAME else f"http://{HOST}:{PORT}",
 )
 AUTH_REQUIRED = os.environ.get("AUTH_REQUIRED", "false").strip().lower() == "true"
+AUTH_PROVIDER = os.environ.get("AUTH_PROVIDER", "local").strip().lower()
+CASE_STORAGE_PROVIDER = os.environ.get("CASE_STORAGE_PROVIDER", "memory").strip().lower()
 AUTH_DATABASE_PATH = Path(os.environ.get(
     "AUTH_DATABASE_PATH",
     "/tmp/accounts.sqlite3" if os.environ.get("RENDER") else DATA_DIR / "accounts.sqlite3",
 ))
 REGISTRATION_INVITE_CODE = os.environ.get("REGISTRATION_INVITE_CODE", "")
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "").strip().rstrip("/")
+SUPABASE_PUBLISHABLE_KEY = os.environ.get("SUPABASE_PUBLISHABLE_KEY", "").strip()
+SUPABASE_OWNER_USER_ID = os.environ.get("SUPABASE_OWNER_USER_ID", "").strip().lower()

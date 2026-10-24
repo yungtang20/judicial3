@@ -2,7 +2,7 @@
 
 **獨立、本機優先**的 Gate 1–5 法律案件工作台。不復原父目錄已刪除的舊系統檔案。Gate 1 固定本機處理；Gate 2 外部 AI 預設關閉，需明確啟用且操作人員逐次同意才送出摘要。
 
-`legal-case-web` 支援本機 loopback 與 Render Free 邀請制單人部署。核心目標是整理事實、保留多個候選法律路由、產生角色化問句及輸出筆錄；它不是自動定罪系統。
+`legal-case-web` 支援本機 loopback 與 Render＋Supabase 單一所有人部署。雲端模式固定唯一 Supabase Auth UUID、強制 MFA，案件正文由應用程式加密後持久保存。核心目標是整理事實、保留多個候選法律路由、產生角色化問句及輸出筆錄；它不是自動定罪系統。
 
 ## 快速導覽
 
@@ -12,7 +12,7 @@
 | [核心流程](#核心流程-gate-15) | 12 步驟業務流程與 Mermaid 圖 |
 | [API 端點](#api-端點) | 完整 HTTP 介面規格 |
 | [法律與人工核准邊界](#法律與人工核准邊界) | 系統不做法律判斷的具體界線 |
-| [Render Free 自用部署](#render-free-自用部署) | Docker Blueprint、邀請制登入、免費層與資料限制 |
+| [Render Free 自用部署](#render-free-自用部署) | Docker Blueprint、Supabase 單一所有人登入、免費層與資料限制 |
 | [外部 AI 邊界](#外部-ai-邊界) | 金鑰、同意機制、資料外送範圍 |
 | [問句來源與優先序](#問句來源與優先序) | 6 層題庫載入順序與去重 |
 | [文件規則](#文件規則) | DOCX 規格、頁數檢查、字數限制 |
@@ -44,13 +44,14 @@ py -3 -m pip install -r requirements.txt
 - **登入 / 首次註冊入口**：[https://legal-case-workbench.onrender.com/login](https://legal-case-workbench.onrender.com/login)
 - **健康檢查端點**：[https://legal-case-workbench.onrender.com/api/health](https://legal-case-workbench.onrender.com/api/health)
 
-專案在 Render 以既有 Dockerfile 部署。根目錄 `render.yaml` 定義 Blueprint；推送 `main` 分支會自動建置最新版本。若需手動部署：Render Dashboard → `legal-case-workbench` → **Manual Deploy** → **Deploy latest commit**。首次帳號註冊需設定至少 32 個字元的 `REGISTRATION_INVITE_CODE`。
+專案在 Render 以既有 Dockerfile 部署。根目錄 `render.yaml` 定義 Blueprint；推送 `main` 分支會自動建置最新版本。若需手動部署：Render Dashboard → `legal-case-workbench` → **Manual Deploy** → **Deploy latest commit**。部署前須依 [`docs/SUPABASE_SINGLE_OWNER_DEPLOYMENT.md`](docs/SUPABASE_SINGLE_OWNER_DEPLOYMENT.md) 建立唯一 Supabase Auth 使用者、MFA、RLS 與 Render Secrets；應用程式不提供註冊或分享功能。
 **免費層與資料界線**：
 
 - Free Web Service 閒置 15 分鐘後休眠；下一個請求會喚醒服務，通常需約一分鐘。每個 workspace 每月有 750 小時 Free instance 時數；休眠時數不計入。
-- Free 沒有持久磁碟；本機檔案會在休眠、重新部署或重啟時遺失。帳號 SQLite 位於 `/tmp`，消失後需以保留的邀請碼重新註冊。
-- 案件只存在服務程序記憶體；程序重啟後案件清除。服務有公網網址並由登入保護，不是網路層私有服務。
-- 案件內容會傳送至 Render 並在服務記憶體處理；Render 是案件資料處理邊界的一部分。部署設定關閉外部 AI。
+- Free 沒有持久磁碟；應用程式不得依賴 Render 本機檔案保存帳號或案件。
+- Supabase Auth 保存唯一帳號；Supabase Postgres 保存由 Render 以固定 `JUDICIAL_ENCRYPTION_KEY` 加密的案件密文。Render 重啟後重新登入即可調用案件。
+- 服務有公網網址並由唯一 UUID、密碼、MFA、後端 Session 與 RLS 保護，不是網路層私有服務。
+- Render 與 Supabase 均屬案件資料處理邊界。部署設定強制關閉外部 AI。
 - Free instance 為 512 MB RAM、0.1 CPU；LibreOffice 產製 DOCX 可能受記憶體限制，需在 Render 實際驗證。
 - 官方說明：[Blueprint](https://render.com/docs/blueprint-spec)、[Free Web Service 限制](https://render.com/docs/free)、[Docker 部署](https://render.com/docs/docker)。
 
@@ -98,10 +99,11 @@ flowchart TD
 |------|------|------|------|
 | `GET` | `/api/health` | 服務狀態、模式、外部 AI、source_mtime | 公開（健康檢查） |
 | `GET` | `/api/auth/status` | 登入狀態、首次註冊是否開放 | 公開（不含帳號資料） |
-| `POST` | `/api/auth/register` | 以邀請碼建立唯一帳號 | Origin + 一次性註冊條件 |
-| `POST` | `/api/auth/login` | 登入；錯誤嘗試達 5 次後鎖定 15 分鐘 | Origin |
+| `POST` | `/api/auth/register` | Supabase 模式固定拒絕註冊 | Origin |
+| `POST` | `/api/auth/login` | 唯一 Supabase 帳號密碼驗證；錯誤達 5 次後鎖定 15 分鐘 | Origin |
+| `POST` | `/api/auth/mfa/verify` | TOTP MFA 設定或登入驗證；成功後始建立完整工作階段 | Origin + pending session |
 | `POST` | `/api/auth/logout` | 清除目前登入 session | Origin |
-| `GET` | `/api/cases` | 回傳空陣列（單案件模式） | Token / 登入 session |
+| `GET` | `/api/cases` | 回傳 owner 的案件 metadata 清單，不含案情或姓名 | Token / `aal2` 登入 session |
 | `GET` | `/api/question-bank` | 題庫版本、審核狀態、罪章清單 | Token / 登入 session |
 | `GET` | `/api/cases/:id` | 取得案件公開快照 | Token / 登入 session |
 | `POST` | `/api/cases` | 建立新案件 | Token / 登入 session + Origin |
@@ -200,12 +202,12 @@ flowchart TD
 
 ## 隱私與安全
 
-- 本機模式僅綁定 `127.0.0.1`；Render 使用 HTTPS 公網網址與邀請制登入。未登入者不能進入工作台或案件 API，但服務網址仍可從網際網路連線。
+- 本機模式僅綁定 `127.0.0.1`；Render 使用 HTTPS 公網網址與 Supabase 唯一 UUID＋TOTP MFA。未登入者不能進入工作台或案件 API，但服務網址仍可從網際網路連線。
 - CORS 關閉；所有變更請求驗證同源 `Origin`。
-- 驗證依部署模式：本機 `X-Session-Token`；Render 為 `HttpOnly`、`Secure`、`SameSite=Strict` session cookie；另檢查 Host 與 Body 大小。
+- 驗證依部署模式：本機 `X-Session-Token`；Render 後端持有 Supabase access/refresh token，瀏覽器只取得隨機 `HttpOnly`、`Secure`、`SameSite=Strict` session cookie；另檢查 owner UUID、`aal2`、Host 與 Body 大小。
 - 回應：CSP、no-store、nosniff、frame-deny；登入模式啟用 HSTS。
-- **單案件記憶體工作區**：不顯示已保存案件、不寫入案件 SQLite；重啟不保留案件。
-- Render Free 暫存 SQLite 僅保存帳號名稱、salt 與 PBKDF2 密碼雜湊；休眠、重啟或重新部署後可能需重新註冊，不保存案件資料。
+- **單一所有人持久工作區**：雲端案件正文使用 Fernet 應用層密文保存於 Supabase；清單只顯示 UUID、狀態與更新時間。
+- 固定 `SUPABASE_OWNER_USER_ID` 同時在 Render 與 RLS 檢查；公開註冊、匿名登入、分享及協作均不屬於本系統功能。
 - **稽核不落地**：不存姓名、案號、自由文字、問答內容。
 - `CaseStore`/`DPAPI`/`SQLite` 案件儲存模組僅為相容性模組與安全測試，**非啟用功能**。
 
@@ -214,7 +216,7 @@ flowchart TD
 ## 專案架構與維護界線
 
 - **正式啟動**：`start.ps1` → `app.server` → `app.workflow` 串接規則/問句/文件
-- **Runtime 儲存**：`EphemeralCaseStore`（程序記憶體單案件）；`CaseStore` 為未接線相容模組
+- **Runtime 儲存**：本機預設 `EphemeralCaseStore`；Render 使用 `SupabaseCaseStore`，以使用者 JWT 受 RLS 控制並保存應用層密文
 - **原型隔離**：`web_app/` 為獨立 Next.js 原型，**非**正式啟動路徑
 - **PoC 隔離**：法律檢索/罪章關聯為離線審查用途；未完成 Human Gate **不得**接入 runtime
 - **證據分級**：法源可回查、測試通過、文件產出 = **工程證據** ≠ 法律核准
@@ -310,9 +312,9 @@ py -3 -X utf8 -m pytest -q
 node --check app\static\app.js
 ```
 
-### 最近驗證（2026-10-19）
+### 最近驗證（2026-10-24）
 
-- **364 passed**（pytest）
+- **590 passed**（pytest）
 - `node --check`、`compileall`、`git diff --check` 通過
 - Next.js production build + ESLint 通過
 - Prototype `npm audit --audit-level=moderate`：**0 vulnerabilities**
@@ -394,5 +396,5 @@ cd web_app && npm run dev
 
 ---
 
-> **最後更新**：2026-10-20  
+> **最後更新**：2026-10-24
 > **維護原則**：文件先行、邊界明確、證據可追溯、測試為工程證據而非法律核准

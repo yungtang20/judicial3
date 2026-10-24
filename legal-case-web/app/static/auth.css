@@ -5,5 +5,7 @@
 .auth-panel input { display: block; }
 .auth-panel button { width: 100%; margin-top: 1rem; }
 .auth-warning { padding: .7rem; border-left: 4px solid var(--amber); background: var(--amber-bg); color: #6a3900; font-size: .9rem; }
+#mfa-qr { display: block; width: min(100%, 18rem); margin: 1rem auto; }
+#mfa-qr[hidden] { display: none; }
 #auth-status { min-height: 1.5rem; margin: .75rem 0 0; color: var(--muted); }
 #auth-status.error { color: var(--danger); }

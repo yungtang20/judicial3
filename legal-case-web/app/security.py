@@ -33,8 +33,11 @@ def _get_linux_fernet_key() -> bytes:
         try:
             Fernet(env_key.encode("ascii"))
             return env_key.encode("ascii")
-        except Exception:
-            pass
+        except Exception as exc:
+            if os.environ.get("CASE_STORAGE_PROVIDER", "").strip().lower() == "supabase":
+                raise EncryptionError("JUDICIAL_ENCRYPTION_KEY 格式不正確") from exc
+    if os.environ.get("CASE_STORAGE_PROVIDER", "").strip().lower() == "supabase":
+        raise EncryptionError("Supabase 持久化模式必須設定 JUDICIAL_ENCRYPTION_KEY")
     try:
         if os.path.isfile(_PERSISTENT_KEY_FILE):
             key_data = open(_PERSISTENT_KEY_FILE, "rb").read().strip()
@@ -53,7 +56,17 @@ def _get_linux_fernet_key() -> bytes:
 
 
 def _use_linux_crypto() -> bool:
-    return os.name != "nt"
+    # Cloud persistence must use the same explicit key on every platform.
+    # DPAPI remains the safer default only for Windows-local storage.
+    return (
+        os.name != "nt"
+        or os.environ.get("CASE_STORAGE_PROVIDER", "").strip().lower() == "supabase"
+    )
+
+
+def validate_persistent_encryption_key() -> None:
+    if _use_linux_crypto():
+        _get_linux_fernet_key()
 
 
 def _dpapi(data: bytes, decrypt: bool) -> bytes:
@@ -111,4 +124,3 @@ def test_fernet_unprotect_json(ciphertext: bytes, key: bytes) -> dict[str, Any]:
         return json.loads(Fernet(key).decrypt(ciphertext).decode("utf-8"))
     except (InvalidToken, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise EncryptionError("測試資料無法解密") from exc
-

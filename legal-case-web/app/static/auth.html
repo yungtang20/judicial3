@@ -15,15 +15,23 @@
       <p class="eyebrow">PRIVATE · SINGLE USER</p>
       <h1 id="auth-title">法律案件工作台</h1>
       <p id="auth-description">請登入個人帳號。帳號僅供單一使用者使用。</p>
-      <p class="auth-warning">請勿在公用或共用裝置登入。案件內容於服務記憶體處理，服務重新啟動後不保留。</p>
+      <p class="auth-warning" id="auth-warning">請勿在公用或共用裝置登入。</p>
       <form id="auth-form" autocomplete="on">
-        <label for="username">帳號</label>
+        <div id="credential-fields">
+        <label id="username-label" for="username">帳號</label>
         <input id="username" name="username" autocomplete="username" minlength="3" maxlength="32" pattern="[A-Za-z0-9_.-]{3,32}" required>
         <label for="password">密碼</label>
         <input id="password" name="password" type="password" autocomplete="current-password" minlength="8" maxlength="256" required>
         <div id="invite-wrap" hidden>
           <label for="invite-code">一次性註冊邀請碼</label>
           <input id="invite-code" name="invite_code" type="password" autocomplete="off" minlength="32" maxlength="256">
+        </div>
+        </div>
+        <div id="mfa-wrap" hidden>
+          <p id="mfa-instructions">請輸入驗證器顯示的動態驗證碼。</p>
+          <img id="mfa-qr" alt="MFA 設定 QR Code" hidden>
+          <label for="mfa-code">動態驗證碼</label>
+          <input id="mfa-code" name="mfa_code" inputmode="numeric" autocomplete="one-time-code" minlength="6" maxlength="10" pattern="[0-9]{6,10}">
         </div>
         <button id="submit" class="primary" type="submit">登入</button>
       </form>

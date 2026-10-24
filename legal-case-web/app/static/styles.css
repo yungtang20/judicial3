@@ -41,8 +41,11 @@ main { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1rem, 3vw, 2.5rem) 4r
 .hero-copy { position: sticky; top: 4.5rem; }
 .hero-copy h2 { margin-bottom: .5rem; }
 .hero-copy p:not(.eyebrow) { max-width: 34ch; color: var(--muted); font-size: .95rem; }
+.home-content { display: grid; gap: 1rem; }
 .intake-card, .panel, .case-drawer { background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: var(--radius); }
 .intake-card, .panel { padding: clamp(1rem, 2.5vw, 1.75rem); }
+.saved-case-items { display: grid; gap: .65rem; list-style: none; margin: 0; padding: 0; }
+.saved-case-items button { width: 100%; text-align: left; }
 .field-row { display: grid; grid-template-columns: 9rem 1fr; align-items: center; border-bottom: 1px solid var(--line); }
 .field-row label { font-weight: 700; font-size: .92rem; }
 .field-row input, .field-row select { border: 0; background: transparent; padding: .6rem .2rem; width: 100%; }

@@ -13,9 +13,17 @@ services:
         value: 0.0.0.0
       - key: AUTH_REQUIRED
         value: "true"
-      - key: AUTH_DATABASE_PATH
-        value: /tmp/accounts.sqlite3
+      - key: AUTH_PROVIDER
+        value: supabase
+      - key: CASE_STORAGE_PROVIDER
+        value: supabase
       - key: ALLOW_EXTERNAL_AI
         value: "false"
-      - key: REGISTRATION_INVITE_CODE
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: SUPABASE_OWNER_USER_ID
+        sync: false
+      - key: JUDICIAL_ENCRYPTION_KEY
         sync: false

@@ -8,6 +8,8 @@ const submit = document.querySelector("#submit");
 const status = document.querySelector("#auth-status");
 let registrationAvailable = false;
 let registering = false;
+let authProvider = "local";
+let mfaPending = false;
 
 function showError(message) {
   status.textContent = message;
@@ -25,6 +27,17 @@ async function loadStatus() {
   if (data.authenticated) {
     window.location.replace("/");
     return;
+  }
+  authProvider = data.auth_provider || "local";
+  if (authProvider === "supabase") {
+    const username = document.querySelector("#username");
+    document.querySelector("#username-label").textContent = "電子郵件";
+    username.type = "email";
+    username.name = "email";
+    username.maxLength = 320;
+    username.removeAttribute("pattern");
+    username.setAttribute("autocomplete", "email");
+    document.querySelector("#auth-warning").textContent = "僅限核准的唯一帳號；登入後必須完成 MFA。";
   }
   registrationAvailable = data.registration_available === true;
   toggle.hidden = !registrationAvailable;
@@ -49,22 +62,39 @@ form.addEventListener("submit", async (event) => {
   status.classList.remove("error");
   submit.disabled = true;
   const values = new FormData(form);
-  const payload = {
-    username: String(values.get("username") || ""),
-    password: String(values.get("password") || ""),
-  };
+  const payload = authProvider === "supabase"
+    ? { email: String(values.get("email") || ""), password: String(values.get("password") || "") }
+    : { username: String(values.get("username") || ""), password: String(values.get("password") || "") };
   if (registering) payload.invite_code = String(values.get("invite_code") || "");
   try {
-    const response = await fetch(registering ? "/api/auth/register" : "/api/auth/login", {
+    const endpoint = mfaPending ? "/api/auth/mfa/verify" : registering ? "/api/auth/register" : "/api/auth/login";
+    const requestPayload = mfaPending ? { code: String(values.get("mfa_code") || "") } : payload;
+    const response = await fetch(endpoint, {
       method: "POST",
       credentials: "same-origin",
       cache: "no-store",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(requestPayload),
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.message || "登入或註冊失敗。");
-    window.location.replace("/");
+    if (result.mfa_required) {
+      mfaPending = true;
+      document.querySelector("#credential-fields").hidden = true;
+      document.querySelector("#mfa-wrap").hidden = false;
+      document.querySelector("#mfa-code").required = true;
+      toggle.hidden = true;
+      submit.textContent = "完成 MFA 並登入";
+      const qr = document.querySelector("#mfa-qr");
+      if (result.mfa_setup && typeof result.qr_code === "string" && result.qr_code.startsWith("data:image/")) {
+        qr.src = result.qr_code;
+        qr.hidden = false;
+        document.querySelector("#mfa-instructions").textContent = "請先使用驗證器掃描 QR Code，再輸入動態驗證碼。";
+      }
+      status.textContent = "密碼驗證通過，尚須完成 MFA。";
+    } else {
+      window.location.replace("/");
+    }
   } catch (error) {
     showError(error instanceof Error ? error.message : "登入或註冊失敗。");
   } finally {

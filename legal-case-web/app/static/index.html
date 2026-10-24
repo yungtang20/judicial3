@@ -31,6 +31,12 @@
         <p class="eyebrow">CASE INTAKE</p>
         <h2 id="home-title">先把事實說清楚</h2>
       </div>
+      <div class="home-content">
+      <section id="saved-cases" class="intake-card" aria-labelledby="saved-cases-title" hidden>
+        <h3 id="saved-cases-title">已保存案件</h3>
+        <p>清單只顯示系統識別碼、流程狀態與更新時間，不顯示案情或姓名。</p>
+        <div id="saved-case-list"></div>
+      </section>
       <form id="intake-form" class="intake-card">
         <div class="field-stack">
           <label for="summary">案情摘要</label>
@@ -59,6 +65,7 @@
           <div class="field-stack"><label for="disposition">後續偵辦情形</label><textarea id="disposition" name="disposition" rows="3"></textarea></div>
         </details>
       </form>
+      </div>
     </section>
 
     <section id="workspace" class="workspace" hidden aria-labelledby="case-heading">
@@ -244,7 +251,7 @@
           <button id="start-suspect" class="primary" type="button">下一步：製作涉嫌人筆錄 →</button>
           <button id="reopen-case" class="danger" type="button">重新開啟並修正事實</button>
         </div>
-        <p class="privacy-note">案件只暫存在目前本機服務的記憶體中；建立新案件或重啟服務後即不再保留。下載的 DOCX 是未加密明文。</p>
+        <p class="privacy-note" id="storage-notice">案件只暫存在目前本機服務的記憶體中；建立新案件或重啟服務後即不再保留。下載的 DOCX 是未加密明文。</p>
       </section>
     </section>
   </main>
