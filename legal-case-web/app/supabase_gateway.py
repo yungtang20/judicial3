@@ -189,9 +189,7 @@ class SupabaseGateway:
                 raise SupabaseError("MFA 設定回應格式不正確")
             factor_id = str(enrolled.get("id", ""))
             totp = enrolled.get("totp") if isinstance(enrolled.get("totp"), dict) else {}
-            enrollment_qr = str(totp.get("qr_code", ""))
-            if enrollment_qr and not enrollment_qr.startswith("data:image/"):
-                raise SupabaseError("MFA QR Code 格式不正確")
+            enrollment_qr = self._normalize_mfa_qr(str(totp.get("qr_code", "")))
         if not factor_id:
             raise SupabaseError("找不到可用的 MFA 驗證器")
         challenged = self._request(
@@ -200,6 +198,19 @@ class SupabaseGateway:
         if not isinstance(challenged, dict) or not challenged.get("id"):
             raise SupabaseError("MFA 挑戰回應格式不正確")
         return MfaStart(tokens, factor_id, str(challenged["id"]), enrollment_qr)
+
+    @staticmethod
+    def _normalize_mfa_qr(value: str) -> str:
+        """Normalize Supabase's SVG QR response for a safe ``img`` data URL."""
+        value = value.strip()
+        if not value:
+            return ""
+        if value.startswith("data:image/svg+xml") or value.startswith("data:image/png"):
+            return value
+        if value.startswith("<svg") and value.endswith("</svg>"):
+            encoded = base64.b64encode(value.encode("utf-8")).decode("ascii")
+            return f"data:image/svg+xml;base64,{encoded}"
+        raise SupabaseError("MFA QR Code 格式不正確")
 
     def verify_mfa(self, start: MfaStart, code: str) -> dict[str, Any]:
         access_token = str(start.tokens.get("access_token", ""))

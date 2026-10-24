@@ -170,6 +170,29 @@ def test_gateway_mfa_enrollment_returns_only_safe_qr() -> None:
     assert start.enrollment_qr.startswith("data:image/")
 
 
+def test_gateway_mfa_enrollment_normalizes_raw_svg_qr() -> None:
+    responses = iter([
+        (
+            200,
+            b'{"id":"factor-new","totp":{"qr_code":"<svg xmlns=\\"http://www.w3.org/2000/svg\\"></svg>"}}',
+        ),
+        (200, b'{"id":"challenge-new","type":"totp"}'),
+    ])
+
+    def transport(method, url, headers, body):
+        return next(responses)
+
+    gateway = SupabaseGateway(
+        "https://project.supabase.co", "publishable", OWNER_ID, transport=transport
+    )
+    start = gateway.begin_mfa({
+        "access_token": _token(), "refresh_token": "refresh", "user": {"factors": []}
+    })
+
+    assert start.enrollment_qr.startswith("data:image/svg+xml;base64,")
+    assert base64.b64decode(start.enrollment_qr.split(",", 1)[1]).startswith(b"<svg")
+
+
 class FakeAuthGateway:
     owner_user_id = OWNER_ID
 
