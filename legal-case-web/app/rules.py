@@ -13,6 +13,7 @@ from .markdown_questions import merge_markdown_questions
 from .section_questions import ordered_section_questions
 from .route_questions import has_route_question_pack, route_questions_for
 from .supplemental_questions import supplemental_questions_for
+from .question_hygiene import normalize as normalize_question_text
 from .xlsm_questions import has_company_standard_questions, xlsm_questions_for
 
 # 8 頁防線（spec §7.5）：實測 97 題 = 8 頁（DOCX 上限）；每罪章 core+xls 約 24 題
@@ -2670,7 +2671,15 @@ def build_questions(
     if role not in bank["common"]:
         raise RuleError("不支援的受詢問人身分")
     questions: list[dict[str, Any]] = []
+    # 題庫來源可能使用不同全半形標點或空白。以正規化文字去重，避免
+    # 同一問句因來源格式不同而同時進入正式筆錄。
     seen: set[str] = set()
+
+    def add_seen(text: str) -> None:
+        seen.add(normalize_question_text(text))
+
+    def already_seen(text: str) -> bool:
+        return normalize_question_text(text) in seen
 
     for raw in company_questions(role):
         text = render_company_text(raw["text"], today="　", now_time="　年　月　日　時　分")
@@ -2684,13 +2693,13 @@ def build_questions(
             "status": "PENDING",
             "answer": "",
         })
-        seen.add(raw["text"])
+        add_seen(raw["text"])
 
     for raw in bank["common"][role]:
         item = deepcopy(raw)
         item.update({"kind": "common", "role": role, "status": "PENDING", "answer": ""})
         questions.append(item)
-        seen.add(item["text"])
+        add_seen(item["text"])
 
     from .questions import (
         THEFT_320_1_MOVABLE_EXPECTED_CONCEPT_IDS,
@@ -2712,8 +2721,10 @@ def build_questions(
         materialized_at,
     )
     for question in focused_questions:
+        if already_seen(question["text"]):
+            continue
         questions.append(question)
-        seen.add(question["text"])
+        add_seen(question["text"])
 
     offenses = {item["id"]: item for item in bank["offenses"]}
     for offense_id in offense_ids:
@@ -2725,20 +2736,20 @@ def build_questions(
             questions, role, offense_id, route_ids, gate1,
         )
         for question in company_offense_questions:
-            if question["text"] in seen:
+            if already_seen(question["text"]):
                 continue
             questions.append(question)
-            seen.add(question["text"])
+            add_seen(question["text"])
         # 公司固定題逐字保留；若 child route 有經審查的中性核心缺口題，
         # 只插入該 route pack，不混入整套 md／JSON 題庫。
         if has_company_standard_questions(role, offense_id):
             for question in route_questions_for(
                 role, offense_id, route_ids, offense["source"],
             ):
-                if question["text"] in seen:
+                if already_seen(question["text"]):
                     continue
                 questions.append(question)
-                seen.add(question["text"])
+                add_seen(question["text"])
             continue
         if focused_questions and offense_id in PROPERTY_ROUTE_IDS:
             continue
@@ -2747,10 +2758,10 @@ def build_questions(
         )
         if route_pack_questions:
             for question in route_pack_questions:
-                if question["text"] in seen:
+                if already_seen(question["text"]):
                     continue
                 questions.append(question)
-                seen.add(question["text"])
+                add_seen(question["text"])
             continue
         if has_route_question_pack(route_ids, offense_id):
             raise RuleError(f"QUESTION_PACK_NOT_FOUND：{offense_id}")
@@ -2759,20 +2770,20 @@ def build_questions(
         for question in ordered_section_questions(
             sections, role, offense_id, offense["name"], offense["source"],
         ):
-            if question["text"] in seen:
+            if already_seen(question["text"]):
                 continue
             questions.append(question)
-            seen.add(question["text"])
+            add_seen(question["text"])
         # review 知識庫只作已審查的補充問句，不取代正式題庫。
         for question in supplemental_questions_for(role, offense_id, questions):
-            if question["text"] in seen:
+            if already_seen(question["text"]):
                 continue
             questions.append(question)
-            seen.add(question["text"])
+            add_seen(question["text"])
         # 3) JSON 要件題（僅在 md 未涵蓋同一 element 時補入）— 先全部收集
         for element in offense.get("elements", []):
             text = element["victim" if role == "victim" else "suspect"]
-            if text in seen:
+            if already_seen(text):
                 continue
             questions.append({
                 "id": f"{role[0].upper()}-{offense_id}-{element['id']}",
@@ -2788,7 +2799,7 @@ def build_questions(
                 "status": "PENDING",
                 "answer": "",
             })
-            seen.add(text)
+            add_seen(text)
     # spec §7.5：統一按優先序裁切（core/company/common 保護；區分/加重先被裁）
     # 8 頁防線：offense 題（非 company/common）上限 MAX_OFFENSE_QUESTIONS
     from .questions import (

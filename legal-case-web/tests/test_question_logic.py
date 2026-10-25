@@ -17,6 +17,8 @@ from app.questions import (
     reevaluate_legal_routes_from_answers,
     sort_questions_by_priority,
 )
+from app.question_hygiene import normalize as normalize_question_text
+from app.rules import build_questions
 from app.section_questions import read_section_questions
 
 from tests.helpers import BANK
@@ -277,6 +279,12 @@ def test_deduplicate_and_sort_questions():
     kinds = [q["kind"] for q in sorted_q]
     # company 在最前
     assert kinds[0] == "company"
+
+
+def test_build_questions_has_no_normalized_duplicate_text():
+    questions = build_questions(BANK, "victim", ["sexual", "privacy"])
+    keys = [normalize_question_text(item["text"]) for item in questions]
+    assert len(keys) == len(set(keys))
 
 
 def test_reevaluate_candidates_returns_existing():

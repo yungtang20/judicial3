@@ -687,7 +687,8 @@ function renderCurrentQuestion(caseData) {
   const index = state.questionIndex;
   const question = questions[index];
   const answered = questions.filter((item) => (item.answer || "").trim()).length;
-  progress.textContent = `追加問句第 ${index + 1} / ${count} 題 · 已作答 ${answered} 題`;
+  const knownCount = (caseData.questions || []).filter((item) => item.meta?.known_from_summary).length;
+  progress.textContent = `追加問句第 ${index + 1} / ${count} 題 · 已作答 ${answered} 題 · 全題 ${caseData.questions.length} 題（摘要已知 ${knownCount} 題，筆錄上限 8 頁）`;
 
   const label = document.createElement("label");
   label.htmlFor = "current-answer";
