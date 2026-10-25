@@ -83,21 +83,44 @@ async function loadSavedCases() {
   list.className = "saved-case-items";
   for (const item of cases) {
     const row = document.createElement("li");
+    row.className = "saved-case-row";
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "secondary";
+    button.className = "secondary saved-case-edit";
     const updated = item.updated_at ? new Date(item.updated_at).toLocaleString("zh-TW") : "時間未知";
-    button.textContent = `${String(item.case_id || "").slice(0, 8)} · ${item.state || "UNKNOWN"} · ${updated}`;
+    button.textContent = [item.display_name || "未命名案件", item.state || "UNKNOWN", updated].join(" · ");
     button.addEventListener("click", async () => {
       try {
         const selected = await jsonApi(`/api/cases/${item.case_id}`);
         renderCase(selected);
-        announce("已載入保存的案件。 ");
+        announce("已載入保存的案件，可繼續修改。 ");
       } catch (error) {
         announce(error.message, true);
       }
     });
-    row.appendChild(button);
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "secondary saved-case-delete";
+    remove.textContent = "刪除";
+    remove.addEventListener("click", async () => {
+      if (!window.confirm("確定刪除「" + (item.display_name || "未命名案件") + "」？刪除後無法復原。")) return;
+      try {
+        await jsonApi("/api/cases/" + item.case_id + "/actions", {
+          method: "POST",
+          body: JSON.stringify({ revision: item.revision, action: "delete_case", payload: {} }),
+        });
+        if (state.current?.case_id === item.case_id) {
+          state.current = null;
+          $("#workspace").hidden = true;
+          $("#home").hidden = false;
+        }
+        await loadSavedCases();
+        announce("案件已刪除。 ");
+      } catch (error) {
+        announce(error.message, true);
+      }
+    });
+    row.append(button, remove);
     list.appendChild(row);
   }
   container.replaceChildren(list);
@@ -777,10 +800,15 @@ function stepQuestion(delta) {
 }
 
 function renderNumbers(caseData) {
-  $("#brief-preview").textContent = `500 字內摘要：${caseData.brief_summary}`;
+  $("#brief-preview").textContent = "案件名稱：" + (caseData.display_name || caseData.case_identity?.display_name || "未命名案件")
+    + "\n500 字內摘要：" + caseData.brief_summary;
   $("#proof-number").value = caseData.case_numbers.proof || "";
   $("#women-child-number").value = caseData.case_numbers.women_child || "";
   $("#case165-number").value = caseData.case_numbers.case_165 || "";
+  const template = caseData.brief_template || {};
+  $("#brief-case-reason").value = template.case_reason || "";
+  $("#brief-summary-label").value = template.summary_label || "";
+  $("#brief-followup-label").value = template.followup_label || "";
   const needsWomenChild = caseData.intake.victim_is_code || /^(?:[A-Za-z]{1,8}\d{3,20}|[A-Za-z]{2,8}\d{2,8}-[A-Za-z]\d{3,12})$/.test(caseData.intake.victim_identifier || "");
   const offenseSet = new Set(caseData.selected_offenses);
   Object.values(caseData.interviews).forEach((item) => item.selected_offenses.forEach((id) => offenseSet.add(id)));
@@ -915,7 +943,7 @@ async function download(kind) {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = `case-${state.current.case_id.slice(0, 8)}-${role}-${kind}.docx`;
+  anchor.download = (state.current.display_name || "未命名案件") + "-" + role + "-" + kind + ".docx";
   document.body.append(anchor);
   anchor.click();
   anchor.remove();
@@ -1140,7 +1168,22 @@ $("#approve-gate2").addEventListener("click", async () => {
 
 $("#numbers-form").addEventListener("submit", async (event) => {
   event.preventDefault();
-  try { await action("save_case_numbers", { case_numbers: formObject(event.currentTarget) }); announce("案號已確認，可以輸出文件。 "); }
+  try {
+    const raw = formObject(event.currentTarget);
+    await action("save_case_numbers", {
+      case_numbers: {
+        proof: raw.proof || "",
+        women_child: raw.women_child || "",
+        case_165: raw.case_165 || "",
+      },
+      brief_template: {
+        case_reason: $("#brief-case-reason").value,
+        summary_label: $("#brief-summary-label").value,
+        followup_label: $("#brief-followup-label").value,
+      },
+    });
+    announce("案號與條陳設定已確認，可以輸出文件。 ");
+  }
   catch (error) { announce(error.message, true); }
 });
 

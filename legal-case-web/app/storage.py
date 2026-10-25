@@ -10,6 +10,7 @@ from typing import Any
 
 from .security import protect_json, unprotect_json
 from .supabase_gateway import SupabaseGateway, query
+from .case_identity import case_display_name
 
 
 class RevisionConflict(RuntimeError):
@@ -63,6 +64,15 @@ class EphemeralCaseStore:
             self._cases[updated["case_id"]] = deepcopy(updated)
             return updated
 
+    def delete(self, case_id: str, expected_revision: int, access_token: str = "") -> None:
+        with self._lock:
+            current = self._cases.get(case_id)
+            if current is None:
+                raise CaseNotFound(case_id)
+            if current.get("revision") != expected_revision:
+                raise RevisionConflict("案件已由其他操作更新，請重新載入")
+            self._cases.pop(case_id, None)
+
 
 class CaseStore:
     def __init__(self, path: Path):
@@ -106,8 +116,10 @@ class CaseStore:
         for row in rows:
             damaged = False
             has_offenses = False
+            display_name = "未命名案件"
             try:
                 payload = unprotect_json(row["payload"])
+                display_name = case_display_name(payload)
                 selected = set(payload.get("selected_offenses", []))
                 for interview in payload.get("interviews", {}).values():
                     selected.update(interview.get("selected_offenses", []))
@@ -121,6 +133,7 @@ class CaseStore:
                 "state": row["state"],
                 "updated_at": row["updated_at"],
                 "has_offenses": has_offenses,
+                "display_name": display_name,
                 "damaged": damaged,
             })
         return result
@@ -165,6 +178,20 @@ class CaseStore:
                 raise RevisionConflict("案件已由其他操作更新，請重新載入")
         return case
 
+    def delete(self, case_id: str, expected_revision: int, access_token: str = "") -> None:
+        with self._connect() as connection:
+            cursor = connection.execute(
+                "DELETE FROM cases WHERE case_id = ? AND revision = ?",
+                (case_id, expected_revision),
+            )
+            if cursor.rowcount != 1:
+                exists = connection.execute(
+                    "SELECT 1 FROM cases WHERE case_id = ?", (case_id,)
+                ).fetchone()
+                if exists is None:
+                    raise CaseNotFound(case_id)
+                raise RevisionConflict("案件已由其他操作更新，請重新載入")
+
 
 class SupabaseCaseStore:
     """Encrypted, single-owner case storage over Supabase PostgREST."""
@@ -206,7 +233,7 @@ class SupabaseCaseStore:
 
     def list_cases_meta(self, access_token: str = "") -> list[dict[str, Any]]:
         params = query({
-            "select": "id,revision,state,updated_at,has_offenses",
+            "select": "id,revision,state,updated_at,has_offenses,encrypted_payload",
             "deleted_at": "is.null",
             "order": "updated_at.desc",
         })
@@ -215,14 +242,28 @@ class SupabaseCaseStore:
         )
         if not isinstance(value, list):
             raise ValueError("案件清單格式不正確")
-        return [{
-            "case_id": str(row.get("id", "")),
-            "revision": int(row.get("revision", 0)),
-            "state": str(row.get("state", "")),
-            "updated_at": str(row.get("updated_at", "")),
-            "has_offenses": bool(row.get("has_offenses", False)),
-            "damaged": False,
-        } for row in value if isinstance(row, dict)]
+        result = []
+        for row in value:
+            if not isinstance(row, dict):
+                continue
+            damaged = False
+            display_name = "未命名案件"
+            decoded_case = None
+            try:
+                decoded_case = self._decode(row.get("encrypted_payload"))
+                display_name = case_display_name(decoded_case)
+            except Exception:
+                damaged = True
+            result.append({
+                "case_id": str(row.get("id") or (decoded_case or {}).get("case_id", "")),
+                "revision": int(row.get("revision", 0)),
+                "state": str(row.get("state", "")),
+                "updated_at": str(row.get("updated_at", "")),
+                "has_offenses": bool(row.get("has_offenses", False)),
+                "display_name": display_name,
+                "damaged": damaged,
+            })
+        return result
 
     def get(self, case_id: str, access_token: str = "") -> dict[str, Any]:
         params = query({
@@ -294,3 +335,21 @@ class SupabaseCaseStore:
         if not isinstance(value, list) or len(value) != 1:
             raise RevisionConflict("案件已由其他操作更新，請重新載入")
         return updated
+
+    def delete(self, case_id: str, expected_revision: int, access_token: str = "") -> None:
+        now = datetime.now(UTC).isoformat()
+        params = query({
+            "id": f"eq.{case_id}",
+            "owner_id": f"eq.{self.owner_user_id}",
+            "revision": f"eq.{expected_revision}",
+            "deleted_at": "is.null",
+        })
+        value = self.gateway.rest(
+            "PATCH",
+            f"cases?{params}",
+            access_token=self._require_token(access_token),
+            payload={"deleted_at": now, "updated_at": now},
+            prefer="return=representation",
+        )
+        if not isinstance(value, list) or len(value) != 1:
+            raise RevisionConflict("案件已由其他操作更新，請重新載入")

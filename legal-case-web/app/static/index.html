@@ -34,7 +34,7 @@
       <div class="home-content">
       <section id="saved-cases" class="intake-card" aria-labelledby="saved-cases-title" hidden>
         <h3 id="saved-cases-title">已保存案件</h3>
-        <p>清單只顯示系統識別碼、流程狀態與更新時間，不顯示案情或姓名。</p>
+        <p>案件名稱依案件日期、關係人、案由與處理員警產生；系統識別碼仍只作為內部連結。</p>
         <div id="saved-case-list"></div>
       </section>
       <form id="intake-form" class="intake-card">
@@ -243,6 +243,15 @@
         <div class="gate-panel-body">
         <p>請先在公司系統輸登後，填入對應案號。下方為將寫入條陳的摘要。</p>
         <p id="brief-preview" class="brief-preview"></p>
+        <details class="advanced">
+          <summary>條陳預設內容（留白沿用目前格式）</summary>
+          <p class="muted">可調整案由、案情摘要與後續處置標題。管轄與處理員警固定依案件資料產生。</p>
+          <div class="details-grid">
+            <div class="field-stack wide"><label for="brief-case-reason">案由段落</label><input id="brief-case-reason" name="brief_case_reason" placeholder="留白：依案件名稱自動產生"></div>
+            <div class="field-stack wide"><label for="brief-summary-label">案情摘要標題</label><input id="brief-summary-label" name="brief_summary_label" placeholder="留白：使用「五、案情摘要」等目前格式"></div>
+            <div class="field-stack wide"><label for="brief-followup-label">後續處置標題</label><input id="brief-followup-label" name="brief_followup_label" placeholder="留白：使用「六、後續處置」等目前格式"></div>
+          </div>
+        </details>
         <form id="numbers-form" class="details-grid">
           <div class="field-stack"><label for="proof-number">證明單案號</label><input id="proof-number" name="proof" required></div>
           <div id="women-child-field" class="field-stack"><label for="women-child-number">婦幼案號</label><input id="women-child-number" name="women_child"></div>

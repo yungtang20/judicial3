@@ -12,7 +12,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import RLock
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import quote, urlparse
 
 from .config import (
     APP_ORIGIN,
@@ -43,6 +43,7 @@ from .documents import (
     build_document,
     warm_document_renderer,
 )
+from .case_identity import safe_document_stem
 from .ai import ai_configured, external_ai_enabled
 from .law_reference import get_cached_law_article
 from .rules import RuleError, classify_candidates, load_bank
@@ -806,6 +807,10 @@ class Handler(BaseHTTPRequestHandler):
                 case = STORE.get(case_id, _store_access_token(self))
                 if case["revision"] != expected_revision:
                     raise RevisionConflict("案件版本衝突")
+                if payload.get("action") == "delete_case":
+                    STORE.delete(case_id, expected_revision, _store_access_token(self))
+                    self._json(HTTPStatus.OK, {"deleted": True, "case_id": case_id})
+                    return
                 updated = apply_action(
                     deepcopy(case),
                     str(payload.get("action", "")),
@@ -839,13 +844,17 @@ class Handler(BaseHTTPRequestHandler):
                 raise DocumentError("；".join(problems))
             artifact = build_document(case, role, kind)
             data = artifact.data
-            filename = f"case-{case_id[:8]}-{role}-{kind}.docx"
+            filename = f"{safe_document_stem(case)}-{role}-{kind}.docx"
+            ascii_filename = f"case-{case_id[:8]}-{role}-{kind}.docx"
             pages = str(artifact.page_count) if artifact.page_count is not None else "UNKNOWN"
             self._begin(
                 HTTPStatus.OK,
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 len(data),
-                Content_Disposition=f'attachment; filename="{filename}"',
+                Content_Disposition=(
+                    f'attachment; filename="{ascii_filename}"; '
+                    f"filename*=UTF-8''{quote(filename)}"
+                ),
                 X_Document_Pages=pages,
                 X_Document_Template=artifact.template_version,
             )

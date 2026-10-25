@@ -177,6 +177,36 @@ def test_e2e_incomplete_case_blocks_document(e2e_server):
     assert body_json["error"] == "DOCUMENT_BLOCKED"
 
 
+def test_e2e_saved_case_delete_requires_current_revision(e2e_server):
+    port = e2e_server
+    h = _headers(port)
+    h["Origin"] = f"http://127.0.0.1:{port}"
+    raw = json.dumps(intake(), ensure_ascii=False).encode("utf-8")
+    h["Content-Length"] = str(len(raw))
+    status, _, body = _request(port, "POST", "/api/cases", headers=h, body=raw)
+    assert status == 201
+    case = json.loads(body)
+
+    delete_payload = json.dumps({
+        "revision": case["revision"],
+        "action": "delete_case",
+        "payload": {},
+    }, ensure_ascii=False).encode("utf-8")
+    h["Content-Length"] = str(len(delete_payload))
+    status, _, body = _request(
+        port,
+        "POST",
+        f"/api/cases/{case['case_id']}/actions",
+        headers=h,
+        body=delete_payload,
+    )
+    assert status == 200
+    assert json.loads(body)["deleted"] is True
+
+    status, _, _ = _request(port, "GET", f"/api/cases/{case['case_id']}", headers=_headers(port))
+    assert status == 404
+
+
 def test_e2e_max_selected_offenses_enforced(e2e_server):
     """>3 罪章應被擋下（8 頁防線：97 題容量，core 不可裁，spec §7.5）。"""
     port = e2e_server

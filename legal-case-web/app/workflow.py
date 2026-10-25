@@ -11,6 +11,8 @@ from uuid import uuid4
 from .config import MAX_BODY_BYTES, MAX_SUMMARY_LENGTH, MAX_TEXT_LENGTH
 from .ai import analyze_candidates_v3
 from .acts import competition_relationships, extract_acts, link_acts_to_candidates
+from .brief_template import clean_brief_template
+from .case_identity import case_identity
 from .company_templates import copy_identity
 from .xlsm_questions import xlsm_quarantine
 from .v3_contracts import canonical_sha256
@@ -227,6 +229,12 @@ def create_case(raw: dict[str, Any], bank: dict[str, Any]) -> dict[str, Any]:
         "profiles": {},
         "interview_sessions": {},
         "case_numbers": {},
+        "brief_template": {},
+        "case_identity": case_identity({
+            "intake": intake,
+            "candidates": candidates,
+            "selected_offenses": [],
+        }),
         "brief_summary": truncate_summary(intake["summary"], MAX_SUMMARY_LENGTH),
         "approvals": {},
         "documents": [],
@@ -857,6 +865,7 @@ def apply_action(
         if case["state"] == "OUTPUT_READY":
             _snapshot(case, "before_case_number_correction")
         case["case_numbers"] = cleaned
+        case["brief_template"] = clean_brief_template(payload.get("brief_template"))
         case["approvals"]["case_numbers"] = _approval(case, "case_numbers")
         case["state"] = "OUTPUT_READY"
 
@@ -1010,6 +1019,7 @@ def apply_action(
     else:
         raise WorkflowError("未知操作")
 
+    case["case_identity"] = case_identity(case)
     _audit(
         case,
         action.upper(),
@@ -1025,6 +1035,8 @@ def apply_action(
 
 def public_case(case: dict[str, Any]) -> dict[str, Any]:
     result = deepcopy(case)
+    result["case_identity"] = case_identity(result)
+    result["display_name"] = result["case_identity"]["display_name"]
     if "legal_route_review" not in result:
         result["legal_route_review"] = None
         result["selected_legal_routes"] = None

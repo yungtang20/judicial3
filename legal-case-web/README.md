@@ -107,11 +107,11 @@ flowchart TD
 | `POST` | `/api/auth/login` | 唯一 Supabase 帳號密碼驗證；錯誤達 5 次後鎖定 15 分鐘 | Origin |
 | `POST` | `/api/auth/mfa/verify` | TOTP MFA 設定或登入驗證；成功後始建立完整工作階段 | Origin + pending session |
 | `POST` | `/api/auth/logout` | 清除目前登入 session | Origin |
-| `GET` | `/api/cases` | 回傳 owner 的案件 metadata 清單，不含案情或姓名 | Token / `aal2` 登入 session |
+| `GET` | `/api/cases` | 回傳 owner 的案件 metadata 清單與可讀案件名稱，不含案情摘要與問答 | Token / `aal2` 登入 session |
 | `GET` | `/api/question-bank` | 題庫版本、審核狀態、罪章清單 | Token / 登入 session |
 | `GET` | `/api/cases/:id` | 取得案件公開快照 | Token / 登入 session |
 | `POST` | `/api/cases` | 建立新案件 | Token / 登入 session + Origin |
-| `POST` | `/api/cases/:id/actions` | 執行動作（需 `revision`） | Token / 登入 session + Origin |
+| `POST` | `/api/cases/:id/actions` | 執行動作（需 `revision`），含 `delete_case` 刪除案件 | Token / 登入 session + Origin |
 | `GET` | `/api/cases/:id/documents/:role/:kind` | 下載 DOCX（`role=victim\\|suspect\\|transfer`，`kind=interview\\|brief`） | Token / 登入 session |
 | `GET` | `/api/cases/:id/brief/:role` | 取得條陳純文字 | Token / 登入 session |
 | `GET` | `/` `/login` `/app.js` `/auth.js` `/styles.css` `/auth.css` | 工作台或登入頁與靜態檔案 | 登入頁/資源公開；工作台需登入 |
@@ -202,6 +202,7 @@ flowchart TD
 - **條陳長度**：≤500 Unicode 字元；超過**阻止寫入，不截斷**
 - **無加密**：使用者自行依機關規定保存
 - **單一產製邊界**：HTTP 層只呼叫 `build_document()`；檔案內容、頁數與 `template_version` 由文件模組回傳。未來更換條陳格式時，只調整文件模板與版本，不需修改下載路由。
+- **案件名稱與條陳**：案件名稱依民國日期、關係人、候選案由與處理員警產生。條陳的案由、案情摘要與後續處置標題可個案覆寫。留白時沿用目前格式。管轄與處理員警段落固定由案件資料產生。已保存案件的「修改」會載入同一 `case_id`，刪除則需目前 `revision` 並經二次確認。
 - **雲端驗證**：Docker build 與服務 startup 各做一次真實 LibreOffice 轉檔；任一失敗即 fail closed，不對外提供未驗證的文件服務。
 
 ---

@@ -24,6 +24,8 @@ from .company_templates import (
     notice_lines,
 )
 from .config import MAX_DOCX_PAGES, MAX_SUMMARY_LENGTH
+from .brief_template import brief_value, clean_brief_template
+from .case_identity import case_display_name, safe_document_stem
 from .roc_time import format_roc_date, format_roc_time
 
 
@@ -236,39 +238,41 @@ def brief_text(case: dict[str, Any], role: str) -> str:
         case_number_parts.append(f"165案號：{numbers['case_165']}")
     report = f"依規定陳報（{'、'.join(case_number_parts)}）"
     summary = case["brief_summary"]
+    template = clean_brief_template(case.get("brief_template"))
+    case_name = case_display_name(case)
     if len(summary) > MAX_SUMMARY_LENGTH:
         raise DocumentError(f"條陳案情摘要超過 {MAX_SUMMARY_LENGTH} 字")
     if role == "victim":
         return (
             f"{intake['station']}報告\n"
-            f"一、受理案由：{names}(受理)\n"
+            f"{brief_value(template, 'case_reason', f'一、受理案由：{case_name}(受理)')}\n"
             f"二、發生時間：{_format_tw_time(intake['event_time'])}\n"
             f"三、發生地點：{intake['location']}\n"
             f"四、報案時間：{_format_tw_time(intake.get('report_time')) if intake.get('report_time') else 'UNKNOWN'}\n"
-            f"五、案情摘要：{summary}\n\n"
-            f"六、後續處置：\n（一）{report}\n"
+            f"{brief_value(template, 'summary_label', '五、案情摘要')}：{summary}\n\n"
+            f"{brief_value(template, 'followup_label', '六、後續處置')}：\n（一）{report}\n"
             f"（二）本案管轄：{intake.get('jurisdiction') or 'UNKNOWN'}\n"
             f"（三）處理員警：警員 {intake['officer']}。"
         )
     if role == "suspect":
         return (
             f"{intake['station']}報告\n"
-            f"一、受理案由：{names}(破獲)\n"
+            f"{brief_value(template, 'case_reason', f'一、受理案由：{case_name}(破獲)')}\n"
             f"二、發生時間：{_format_tw_time(intake['event_time'])}\n"
             f"三、發生地點：{intake['location']}\n"
             f"四、報案時間：{_format_tw_time(intake.get('report_time')) if intake.get('report_time') else 'UNKNOWN'}\n"
             f"五、破獲時間：{_format_tw_time(intake.get('arrest_time')) if intake.get('arrest_time') else 'UNKNOWN'}\n"
-            f"六、案情摘要：{summary}\n\n"
-            f"七、後續處置：\n（一）{report}\n"
+            f"{brief_value(template, 'summary_label', '六、案情摘要')}：{summary}\n\n"
+            f"{brief_value(template, 'followup_label', '七、後續處置')}：\n（一）{report}\n"
             f"（二）後續偵辦情形：{intake.get('disposition') or 'UNKNOWN'}\n"
             f"（三）處理員警：警員 {intake['officer']}。"
         )
     return (
         f"{intake['station']}報告\n"
-        f"一、查獲案由：{names}(破獲)\n"
+        f"{brief_value(template, 'case_reason', f'一、查獲案由：{case_name}(破獲)')}\n"
         f"二、查獲時間：{_format_tw_time(intake['event_time'])}\n"
         f"三、查獲地點：{intake['location']}\n"
-        f"四、案情摘要：{summary}\n\n"
+        f"{brief_value(template, 'summary_label', '四、案情摘要')}：{summary}\n\n"
         f"五、處理員警：警員 {intake['officer']}。"
     )
 
