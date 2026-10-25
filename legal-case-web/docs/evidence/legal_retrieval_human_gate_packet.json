@@ -100,7 +100,7 @@
     },
     {
       "path": "app/static/app.js",
-      "sha256": "9517ec3fe187795f485585f01b880865052bcf97daa897b0a799ec95447d229f",
+      "sha256": "238a33d0627c104dd00419bee79193d61e3f2e2689e8bf6764927154fe050445",
       "expected_references": 0
     }
   ],
@@ -142,10 +142,10 @@
       "id": "V04",
       "command": "node tests/test_frontend_api_errors.mjs",
       "status": "PASS",
-      "result": "29 passed",
-      "passed": 29,
+      "result": "30 passed",
+      "passed": 30,
       "verified_on": "2026-10-23",
-      "note": "Frontend error-handling suite re-verified 2026-10-22; supersedes the 20-passed baseline recorded on 2026-10-15.；新增行為時法逐條警示與 HINT_ONLY 標示測試：26 -> 29。"
+      "note": "Frontend error-handling suite re-verified 2026-10-22; supersedes the 20-passed baseline recorded on 2026-10-15.；新增行為時法逐條警示與 HINT_ONLY 標示測試：26 -> 29；新增逐題 Enter 下一題與 Shift+Enter 換行測試：29 -> 30。"
     },
     {
       "id": "V05",

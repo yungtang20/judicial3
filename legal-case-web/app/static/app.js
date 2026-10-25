@@ -694,6 +694,15 @@ function renderCurrentQuestion(caseData) {
     question.status = textarea.value.trim() ? "ANSWERED" : "PENDING";
     refreshOutline();
   });
+  textarea.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" || event.shiftKey || event.isComposing) return;
+    event.preventDefault();
+    if (index < count - 1) {
+      stepQuestion(1);
+    } else {
+      announce("已到最後一題，請按「儲存全部回答」。");
+    }
+  });
   const nodes = [label, meta, method];
   if (question.meta?.answer_map) {
     const codeLabel = document.createElement("label");

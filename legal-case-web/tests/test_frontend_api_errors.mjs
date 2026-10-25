@@ -631,6 +631,44 @@ test("O: 問句畫面顯示中立提問方式與人工確認邊界", () => {
   assert.match(method.textContent, /不得把候選罪章當成已成立/);
 });
 
+test("QA: Enter advances and Shift+Enter keeps a newline", () => {
+  const { context, elements } = createHarness({
+    fetchImpl: async () => ({ ok: true, status: 200, json: async () => ({}), headers: new Headers() }),
+  });
+  const stateRef = vm.runInContext("state", context);
+  const caseData = {
+    questions: [
+      { id: "q1", text: "第一題", answer: "", kind: "core", meta: {} },
+      { id: "q2", text: "第二題", answer: "", kind: "core", meta: {} },
+    ],
+  };
+  stateRef.current = caseData;
+  context.renderCurrentQuestion(caseData);
+  const firstAnswer = elements.get("question-current").children.at(-1);
+  let prevented = false;
+  firstAnswer._handlers.keydown({
+    key: "Enter",
+    shiftKey: false,
+    isComposing: false,
+    preventDefault() { prevented = true; },
+  });
+  assert.equal(prevented, true);
+  assert.equal(stateRef.questionIndex, 1);
+
+  stateRef.questionIndex = 0;
+  context.renderCurrentQuestion(caseData);
+  const firstAnswerAgain = elements.get("question-current").children.at(-1);
+  prevented = false;
+  firstAnswerAgain._handlers.keydown({
+    key: "Enter",
+    shiftKey: true,
+    isComposing: false,
+    preventDefault() { prevented = true; },
+  });
+  assert.equal(prevented, false);
+  assert.equal(stateRef.questionIndex, 0);
+});
+
 test("P: Gate 2 候選分析顯示列入原因、欠缺要件、來源與三層級", () => {
   const { context, elements } = createHarness({
     fetchImpl: async () => ({ ok: true, status: 200, json: async () => ({}), headers: new Headers() }),
