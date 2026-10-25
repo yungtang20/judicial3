@@ -335,6 +335,8 @@ def _resolve_legal_routes(
             "parent_offense_id": parent_id,
             "route_kind": str(route.get("route_kind", "")),
             "name": str(route.get("name", "")),
+            "law_name": str(route.get("law_name", "")),
+            "article_no": str(route.get("article_no", "")),
             "crosswalk_version": bank["legal_route_crosswalk_version"],
             "review_status": str(route.get("review_status", "")),
         })
@@ -376,7 +378,10 @@ def apply_action(
         if not isinstance(incoming, dict):
             raise WorkflowError("缺少 Gate 1 資料")
         gate1 = deepcopy(case.get("gate1", {}))
-        for key in ("people", "events", "times", "places", "objects", "behaviors", "results", "evidence", "unknowns"):
+        for key in (
+            "people", "events", "times", "places", "objects", "behaviors", "results",
+            "evidence", "evidence_leads", "verified_evidence", "consent_states", "unknowns",
+        ):
             if key not in incoming:
                 continue
             values = incoming[key]
@@ -587,6 +592,7 @@ def apply_action(
         from .law_reference import (
             check_constitutional_validity,
             check_event_time_against_law,
+            get_cached_law_article,
             parse_article_spec,
         )
         from . import law_version
@@ -596,16 +602,33 @@ def apply_action(
         articles_by_offense: list[tuple[str, list[tuple[str, str]]]] = []
         event_time = case.get("intake", {}).get("event_time", "")
         offenses = {item["id"]: item for item in bank["offenses"]}
+        selected_routes_by_parent: dict[str, list[dict[str, Any]]] = {}
+        for route in route_snapshots:
+            selected_routes_by_parent.setdefault(route["parent_offense_id"], []).append(route)
         for offense_id in selected:
             source = offenses[offense_id].get("source", {})
-            warning = check_event_time_against_law(event_time, source.get("law_modified_date", ""))
-            if warning:
-                temporal_warnings.append({"offense_id": offense_id, **warning})
-            articles = [(source.get("law_name", ""), source.get("article_no", ""))]
-            articles.extend(
+            selected_route_sources = selected_routes_by_parent.get(offense_id, [])
+            articles = [
                 (item.get("law_name", ""), item.get("article_no", ""))
-                for item in source.get("related_articles", [])
-            )
+                for item in selected_route_sources
+            ] or [(source.get("law_name", ""), source.get("article_no", ""))]
+            if not selected_route_sources:
+                articles.extend(
+                    (item.get("law_name", ""), item.get("article_no", ""))
+                    for item in source.get("related_articles", [])
+                )
+            for law_name, article_no in articles:
+                cached = get_cached_law_article(law_name, article_no)
+                warning = check_event_time_against_law(
+                    event_time, str((cached or source).get("law_modified_date", ""))
+                )
+                if warning:
+                    temporal_warnings.append({
+                        "offense_id": offense_id,
+                        "article_no": article_no,
+                        "event_date_basis": "intake.event_time",
+                        **warning,
+                    })
             articles_by_offense.append((offense_id, articles))
             for law_name, article_no in articles:
                 invalidated = check_constitutional_validity(law_name, article_no)
@@ -786,9 +809,10 @@ def apply_action(
             item["id"] for item in case["questions"]
             if not item.get("answer", "").strip()
             and not item.get("meta", {}).get("known_from_summary")
+            and item.get("meta", {}).get("required_for_completion", True)
         ]
         if unanswered:
-            raise WorkflowError("所有問句均須作答；不清楚時請明確填寫 UNKNOWN")
+            raise WorkflowError("核心十題與程序必問題均須作答；不清楚時請明確填寫 UNKNOWN")
         profile = case.get("profiles", {}).get(f"{role}:default", {})
         if not profile.get("name", "").strip():
             raise WorkflowError("缺少受詢問人姓名")

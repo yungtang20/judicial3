@@ -15,3 +15,9 @@ _tmp_*.py
 新套表_備份*.xlsm
 # 個人瀏覽器截圖（不進版控，避免誤提交個資）
 例子/
+# 已淘汰原型的本機秘密仍保留在原路徑，不隨原始碼封存
+legal-case-web/web_app/.env.local
+legal-case-web/app_prototype/.env
+# 本機驗證探針輸出（正式回歸測試與 tools/ 腳本仍納入版控）
+legal-case-web/_smoke_cands.json
+legal-case-web/_smoke_flow.py

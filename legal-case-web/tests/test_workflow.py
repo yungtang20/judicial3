@@ -95,15 +95,37 @@ def test_candidate_act_linking_is_not_assumed():
 
 
 
-def test_gate2_requires_human_selected_offense_and_all_answers():
+def test_gate2_requires_human_selected_offense_and_required_answers_only():
     case = create_case(intake(summary="無法自動辨識的案件"), BANK)
     case = apply_action(case, "approve_gate1", {"confirmed": True}, BANK)
     assert case["candidates"] == []
     with pytest.raises(WorkflowError):
         apply_action(case, "set_offenses", {"offense_ids": [], "role": "victim"}, BANK)
     case = apply_action(case, "set_offenses", {"offense_ids": ["theft"], "legal_route_ids": [], "route_review_confirmed": True, "role": "victim"}, BANK)
-    with pytest.raises(WorkflowError, match="所有問句"):
+    with pytest.raises(WorkflowError, match="核心十題與程序必問題均須作答"):
         apply_action(case, "approve_gate2", {"confirmed": True}, BANK)
+
+    required = [
+        item for item in case["questions"]
+        if item.get("meta", {}).get("required_for_completion", True)
+        and not item.get("meta", {}).get("known_from_summary")
+    ]
+    optional = [
+        item for item in case["questions"]
+        if not item.get("meta", {}).get("required_for_completion", True)
+    ]
+    assert required
+    assert optional
+    case = apply_action(case, "save_answers", {
+        "answers": {item["id"]: "UNKNOWN" for item in required},
+    }, BANK)
+    case = apply_action(case, "save_profile", {
+        "profile": {"name": "測試被害人"},
+        "session": {"start_time": "2026-10-25T10:00", "end_time": "2026-10-25T10:30"},
+    }, BANK)
+    approved = apply_action(case, "approve_gate2", {"confirmed": True}, BANK)
+    assert approved["state"] != "GATE2_QA"
+    assert all(not item.get("answer", "") for item in optional)
 
 
 def test_backward_edit_invalidates_downstream_approvals():

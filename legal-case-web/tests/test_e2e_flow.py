@@ -34,10 +34,10 @@ def e2e_server(monkeypatch):
         thread.join(timeout=3)
 
 
-def _request(port, method, path, *, headers=None, body=None):
+def _request(port, method, path, *, headers=None, body=None, timeout=10):
     # Windows ThreadingHTTPServer teardown socket race → GET 重試一次
     for attempt in range(2):
-        conn = http.client.HTTPConnection("127.0.0.1", port, timeout=10)
+        conn = http.client.HTTPConnection("127.0.0.1", port, timeout=timeout)
         try:
             conn.request(method, path, body=body, headers=headers or {})
             resp = conn.getresponse()
@@ -137,7 +137,15 @@ def test_e2e_full_gate_flow_with_question_metadata_and_document(e2e_server):
 
     # 7. 文件下載（含完整性驗證，spec Phase 7）
     h = _headers(port)
-    status, headers, data = _request(port, "GET", f"/api/cases/{case_id}/documents/victim/interview", headers=h)
+    # 真實 LibreOffice 冷啟動可能接近產品端 60 秒 fail-closed 上限；
+    # 一般 API 仍維持 10 秒，只為文件轉檔保留完整回應時間。
+    status, headers, data = _request(
+        port,
+        "GET",
+        f"/api/cases/{case_id}/documents/victim/interview",
+        headers=h,
+        timeout=70,
+    )
     assert status == 200
     assert data.startswith(b"PK")
     assert "X-Document-Pages" in headers

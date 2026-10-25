@@ -19,6 +19,8 @@ services:
         value: supabase
       - key: ALLOW_EXTERNAL_AI
         value: "false"
+      - key: DOCUMENT_RENDERER_REQUIRED
+        value: "true"
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_PUBLISHABLE_KEY

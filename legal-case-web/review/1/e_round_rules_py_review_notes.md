@@ -69,7 +69,7 @@
 - node `tests/test_frontend_api_errors.mjs` **22/22**
 - hash 鏈機械刷新：rules.py `9bd6474d` → packet `7cd468e7` → hg01 `3515143a` →
   hg02、review_record target 五節點對等；frozen_files 10/10
-- 18 句探針邊界全表：見 `discovery_quality_comparison.md` §5「探針邊界複驗」
+- 18 句探針邊界全表：見 `../discovery_quality_comparison.md` §5「探針邊界複驗」
 
 ## 已知未決（非本檔範圍）
 - **D1**（財物相關擴展降鄰）：已於 2026-10-20 人工核定「B 修正版（三路區辨）」並實作；原提案檔已移除，記錄見 `docs/evidence/hg_rules_py_e2_correction_record.json` 與 `e2_round_rules_py_review_notes.md`

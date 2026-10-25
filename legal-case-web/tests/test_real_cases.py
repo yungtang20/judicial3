@@ -187,7 +187,8 @@ def test_intoxicated_minor_case_has_complete_gate1_exact_route_and_additional_qu
     assert "受酒精之影響" in gate1["causation"]
     assert "基於乘機性交之犯意" not in gate1["events"]
     assert "性交行為" not in gate1["objects"]
-    assert gate1["unknowns"] == []
+    assert gate1["consent_states"] == []
+    assert gate1["unknowns"] == ["本人意願與同意狀態"]
     assert all(
         fact["source_excerpt"] in summary
         for fact in gate1["facts"]

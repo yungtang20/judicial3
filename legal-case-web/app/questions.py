@@ -636,6 +636,67 @@ def filter_active_questions(
     return active
 
 
+def annotate_interview_layers(questions: list[dict[str, Any]], core_limit: int = 10) -> None:
+    """將問句分為核心十題、程序必問題與選用補問題。
+
+    這個標記不改問句本文，也不把摘要中的陳述當成答案。既有公司／通用程序題
+    維持必答；罪章題依中立提問階段挑出最多十題作為案件核心，其餘保留為選用。
+    舊案件沒有這些欄位時，workflow 仍以原本的「全部必答」規則處理。
+    """
+
+    def interview_label(question: dict[str, Any]) -> str:
+        text = str(question.get("text", ""))
+        phase = str(question.get("meta", {}).get("question_phase", ""))
+        if phase == "narrative" or any(token in text for token in ("完整說明", "自行說明", "事情經過")):
+            return "自由陳述"
+        if any(token in text for token in ("時間", "何時", "日期", "多久", "先後")):
+            return "時間"
+        if phase == "evidence_followup" or any(token in text for token in (
+            "證據", "資料", "影片", "影像", "錄音", "訊息", "監視器", "裝置", "帳號", "保存",
+        )):
+            return "證據"
+        if any(token in text for token in ("結果", "傷勢", "影響", "損害", "就醫")):
+            return "結果"
+        if any(token in text for token in ("告訴", "程序", "保護令", "是否需要", "是否願意")):
+            return "程序"
+        return "行為"
+
+    procedure_kinds = {"company", "common", "company_offense"}
+    offense_questions: list[dict[str, Any]] = []
+    for question in questions:
+        meta = question.setdefault("meta", {})
+        label = interview_label(question)
+        meta["interview_label"] = label
+        if question.get("kind") in procedure_kinds:
+            meta["interview_layer"] = "PROCEDURE_REQUIRED"
+            meta["required_for_completion"] = True
+        else:
+            meta["interview_layer"] = "OPTIONAL_SUPPLEMENT"
+            meta["required_for_completion"] = False
+            offense_questions.append(question)
+
+    selected: list[dict[str, Any]] = []
+    for wanted in ("自由陳述", "時間", "行為", "結果", "證據", "程序"):
+        item = next(
+            (question for question in offense_questions
+             if question not in selected and question["meta"]["interview_label"] == wanted),
+            None,
+        )
+        if item is not None:
+            selected.append(item)
+    for question in offense_questions:
+        if len(selected) >= core_limit:
+            break
+        if question not in selected:
+            selected.append(question)
+
+    for sequence, question in enumerate(selected[:core_limit], start=1):
+        meta = question["meta"]
+        meta["interview_layer"] = "CASE_CORE"
+        meta["required_for_completion"] = True
+        meta["core_sequence"] = sequence
+
+
 # ── 4. 答案驅動候選重評估 ──
 
 

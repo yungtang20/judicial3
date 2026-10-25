@@ -36,6 +36,8 @@ def test_set_offenses_atomically_saves_separate_route_snapshot():
         "parent_offense_id": "theft",
         "route_kind": "offense",
         "name": "竊取他人動產",
+        "law_name": "中華民國刑法",
+        "article_no": "第320條第1項",
         "crosswalk_version": BANK["legal_route_crosswalk_version"],
         "review_status": "HUMAN_REVIEW_REQUIRED",
     }]

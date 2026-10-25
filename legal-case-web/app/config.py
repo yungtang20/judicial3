@@ -17,6 +17,9 @@ MAX_TEXT_LENGTH = 20_000
 MAX_SUMMARY_LENGTH = 500
 MAX_DOCX_PAGES = 8
 RENDER_HOSTNAME = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "")
+DOCUMENT_RENDERER_REQUIRED = (
+    os.environ.get("DOCUMENT_RENDERER_REQUIRED", "true").strip().lower() == "true"
+)
 APP_ORIGIN = os.environ.get(
     "APP_ORIGIN",
     f"https://{RENDER_HOSTNAME}" if RENDER_HOSTNAME else f"http://{HOST}:{PORT}",

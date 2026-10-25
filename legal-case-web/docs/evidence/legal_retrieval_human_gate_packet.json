@@ -1,7 +1,7 @@
 {
   "schema_version": "legal-retrieval-human-gate-packet-v1",
   "packet_id": "LR-HG-20261015-04",
-  "created_on": "2026-10-15",
+  "created_on": "2026-10-24",
   "decision_status": "PENDING_HUMAN_APPROVAL",
   "scope": "OFFLINE_LEGAL_RETRIEVAL_POC_ONLY",
   "execution_mode": "SINGLE_EXECUTOR",
@@ -85,22 +85,22 @@
   "runtime_surfaces": [
     {
       "path": "app/server.py",
-      "sha256": "ff0b05873b20eccdecdbddd2665024e6001ab4a3bcbe22d9d20dc6990300f1af",
+      "sha256": "2d3c356eed8ee2c51b1c0eaa15ea76d98af1c77b45b860200b2edf06102860db",
       "expected_references": 0
     },
     {
       "path": "app/workflow.py",
-      "sha256": "2ddfa5e2911ac8ffec6e34da7e86c32220d46a47b43c7b6324fb01a4d52c5874",
+      "sha256": "46457df0a98f178c210f6c26eae3ef9f5a3150c562ae632ac66db23cc747dbc5",
       "expected_references": 0
     },
     {
       "path": "app/rules.py",
-      "sha256": "ffd22c88640a8d6829ea822aa46cb58bd498c8c27c6173ba564fa18799ce64a7",
+      "sha256": "57382732221eafcb3307e7f090439c8f5fb6fbffd65388549431dceea11ddd0d",
       "expected_references": 0
     },
     {
       "path": "app/static/app.js",
-      "sha256": "b2b962a66ce3c11c7f2d9d373c7c83a67e7bdd6a71c940f8a13f538da62951b6",
+      "sha256": "9517ec3fe187795f485585f01b880865052bcf97daa897b0a799ec95447d229f",
       "expected_references": 0
     }
   ],
@@ -117,10 +117,10 @@
       "id": "V01",
       "command": "py -3 -X utf8 -m pytest -q",
       "status": "PASS",
-      "result": "573 passed",
-      "passed": 573,
-      "verified_on": "2026-10-23",
-      "note": "Single-run baseline re-verified 2026-10-22 after the case-batch and v3-contract suites were added; supersedes the 289-passed baseline recorded on 2026-10-15. Re-verified again the same day after the C091-C120 rule corrections (transcribed-allegation guard, weak keyword guards, negation window) and the fourth case batch: 444 -> 452, after the competition-hypothesis demotion and defamation recall corrections: 452 -> 455, and after extending the negation window to the scenario-hint layer: 455 -> 456. Re-verified on 2026-10-23 after the multi-article law cache coverage fix and backfill: 456 -> 469; after the TLR pack bundle contract: 469 -> 487; after the self-host provider endpoint policy: 487 -> 501; after the behavior-time (amendment history) resolver: 501 -> 541; after two sub-numbered range parser cases: 541 -> 543.；行為時法接入 set_offenses 並於 UI 逐條顯示：543 -> 563。；第五批案例（C126-C155）與 §321Ⅰ① 白天侵入住宅召回修正：563 -> 573。"
+      "result": "603 passed",
+      "passed": 603,
+      "verified_on": "2026-10-25",
+      "note": "Single-run baseline re-verified 2026-10-25 after the document renderer gained Windows soffice.com support, Docker build smoke, startup warmup, health status and a single document-production boundary: 591 -> 603. Legal retrieval remains unreachable. This engineering re-baseline does not approve legal retrieval, legal correctness or production deployment."
     },
     {
       "id": "V02",

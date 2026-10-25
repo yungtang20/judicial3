@@ -21,6 +21,7 @@ from .config import (
     AUTH_REQUIRED,
     CASE_STORAGE_PROVIDER,
     DATABASE_PATH,
+    DOCUMENT_RENDERER_REQUIRED,
     HOST,
     MAX_BODY_BYTES,
     PORT,
@@ -36,7 +37,12 @@ from .config import (
     SUPABASE_URL,
 )
 from .accounts import AccountStore
-from .documents import DocumentError, brief_docx, brief_text, checked_interview_docx
+from .documents import (
+    DocumentError,
+    brief_text,
+    build_document,
+    warm_document_renderer,
+)
 from .ai import ai_configured, external_ai_enabled
 from .law_reference import get_cached_law_article
 from .rules import RuleError, classify_candidates, load_bank
@@ -58,6 +64,7 @@ def _runtime_source_mtime() -> int:
 
 
 RUNTIME_SOURCE_MTIME = _runtime_source_mtime()
+DOCUMENT_RENDERER_STATUS = "NOT_CHECKED"
 
 
 SESSION_TOKEN = secrets.token_urlsafe(32)
@@ -440,6 +447,7 @@ class Handler(BaseHTTPRequestHandler):
                 "case_storage": CASE_STORAGE_PROVIDER,
                 "external_ai": ai_configured(),
                 "external_ai_enabled": external_ai_enabled(),
+                "document_renderer": DOCUMENT_RENDERER_STATUS,
                 "source_mtime": RUNTIME_SOURCE_MTIME,
             })
             return
@@ -498,6 +506,29 @@ class Handler(BaseHTTPRequestHandler):
                 source["article_content_status"] = "VERIFIED_CACHE" if cached else "NOT_FOUND"
                 return source
 
+            def public_route(route: dict[str, Any]) -> dict[str, Any]:
+                result = {
+                    "id": route["id"],
+                    "name": route["name"],
+                    "route_kind": route.get("route_kind", "offense"),
+                    "law_name": route.get("law_name", ""),
+                    "article_no": route.get("article_no", ""),
+                    "review_status": route.get("review_status", "HUMAN_REVIEW_REQUIRED"),
+                }
+                cached = get_cached_law_article(result["law_name"], result["article_no"])
+                result["source"] = {
+                    "law_name": result["law_name"],
+                    "article_no": result["article_no"],
+                    "status": "VERIFIED_CURRENT" if cached else "NOT_FOUND",
+                    "article_content_status": "VERIFIED_CACHE" if cached else "NOT_FOUND",
+                    "article_content": cached.get("article_content", "") if cached else "",
+                    "law_url": cached.get("law_url", "") if cached else "",
+                    "law_modified_date": cached.get("law_modified_date", "") if cached else "",
+                    "dataset_version": cached.get("dataset_version", "") if cached else "",
+                    "verified_at": cached.get("verified_at", "") if cached else "",
+                }
+                return result
+
             self._json(HTTPStatus.OK, {
                 "library_version": BANK["library_version"],
                 "review_status": BANK["review_status"],
@@ -509,7 +540,7 @@ class Handler(BaseHTTPRequestHandler):
                     "source": public_source(item),
                     "route_type": item["route_type"],
                     "selection_policy": item["selection_policy"],
-                    "legal_routes": [{"id": route["id"], "name": route["name"]} for route in item["legal_routes"]],
+                    "legal_routes": [public_route(route) for route in item["legal_routes"]],
                 } for item in BANK["offenses"]],
             })
             return
@@ -806,20 +837,17 @@ class Handler(BaseHTTPRequestHandler):
             problems = validate_document_output(case, role, kind)
             if problems:
                 raise DocumentError("；".join(problems))
-            if kind == "brief":
-                data = brief_docx(case, role)
-                filename = f"case-{case_id[:8]}-{role}-brief.docx"
-                pages = "UNKNOWN"
-            else:
-                data, page_count = checked_interview_docx(case, role)
-                filename = f"case-{case_id[:8]}-{role}-interview.docx"
-                pages = str(page_count)
+            artifact = build_document(case, role, kind)
+            data = artifact.data
+            filename = f"case-{case_id[:8]}-{role}-{kind}.docx"
+            pages = str(artifact.page_count) if artifact.page_count is not None else "UNKNOWN"
             self._begin(
                 HTTPStatus.OK,
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                 len(data),
                 Content_Disposition=f'attachment; filename="{filename}"',
                 X_Document_Pages=pages,
+                X_Document_Template=artifact.template_version,
             )
             self.wfile.write(data)
         except CaseNotFound:
@@ -836,6 +864,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def run() -> None:
+    global DOCUMENT_RENDERER_STATUS
     if AUTH_PROVIDER not in {"local", "supabase"}:
         raise RuntimeError("AUTH_PROVIDER 只允許 local 或 supabase")
     if CASE_STORAGE_PROVIDER not in {"memory", "sqlite", "supabase"}:
@@ -854,6 +883,15 @@ def run() -> None:
     if AUTH_REQUIRED and ACCOUNT_STORE is not None:
         if not ACCOUNT_STORE.has_account() and len(REGISTRATION_INVITE_CODE) < 32:
             raise RuntimeError("首次帳號註冊前必須設定至少 32 字元的 REGISTRATION_INVITE_CODE")
+    if DOCUMENT_RENDERER_REQUIRED:
+        try:
+            warm_document_renderer()
+        except DocumentError as exc:
+            DOCUMENT_RENDERER_STATUS = "UNAVAILABLE"
+            raise RuntimeError("DOCUMENT_RENDERER_UNAVAILABLE") from exc
+        DOCUMENT_RENDERER_STATUS = "READY"
+    else:
+        DOCUMENT_RENDERER_STATUS = "DISABLED"
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     server.daemon_threads = True
     print(f"法律案件工作台：http://{HOST}:{PORT}/")

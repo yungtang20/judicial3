@@ -17,6 +17,7 @@ WORKDIR /srv/legal-case-web
 COPY legal-case-web/requirements.txt ./requirements.txt
 RUN python -m pip install --no-cache-dir -r requirements.txt
 COPY legal-case-web .
+RUN python -m tools.document_renderer_smoke
 
 EXPOSE 10000
 CMD ["python", "-m", "app.server"]

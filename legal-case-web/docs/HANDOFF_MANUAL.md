@@ -55,13 +55,13 @@
 
 `docs/evidence/legal_retrieval_human_gate_packet.json` 的 `runtime_surfaces` 雜湊指向 `app/server.py`、`app/workflow.py`、`app/rules.py`、`app/static/app.js` 的**特定版本**。這四個檔案與 evidence 必須在同一個 commit 內變更，否則乾淨 clone 上的 `tests/test_legal_retrieval_human_gate_packet.py` 會失敗。
 
-不在本專案範圍內的倉庫根目錄項目：`reasoning-flow/`（獨立專案，README 明載與 `legal-case-web` 互不依賴）與 `例子/`（個人截圖）。兩者目前皆未追蹤，**不要**順手 `git add .` 一併提交。
+不在正式 runtime 範圍內的倉庫根目錄項目：`reasoning-flow/`（獨立且已追蹤的研究工作台，README 明載與 `legal-case-web` 互不依賴）、`archive/retired-prototypes/`（已淘汰原型）與 `例子/`（未追蹤個人截圖）。不得以 `git add .` 將未追蹤個人或敏感資料一併提交。
 
 ### 0.6 部署與個資邊界
 
 - 本機：`.\start.ps1` → `http://127.0.0.1:8787/`。
 - 遠端：Render / Koyeb 部署面另有 invite-only 註冊與 `AUTH_REQUIRED`。
-- `web_app/`（Next.js）另有 `llm-proxy`，`app_prototype/`（Streamlit）讀取 `HCNSEC_API_KEY`；兩者都不在本手冊的測試流程內，但同屬本倉庫。
+- 歷史 `web_app/`（Next.js）與 `app_prototype/`（Streamlit）原始碼已移至 `../archive/retired-prototypes/`；兩者不在本手冊的測試流程或正式部署範圍。原路徑的本機 `.env` 檔未隨原始碼移動。
 - 真實個資、完整卷證、未去識別化資料一律不得輸入本機測試環境或任何外部模型端點。
 
 ## 1. 專案定位
@@ -184,7 +184,7 @@
 py -3 -X utf8 -m pytest -q
 ```
 
-目前基準：**456 passed**（2026-10-22 單次實測，`py -3 -X utf8 -m pytest -q`）。`-X utf8` 為必要參數，否則中文輸出會亂碼。
+目前基準：**580 passed**（2026-10-24 固定快照單次實測，`py -3 -X utf8 -m pytest -q`）。`-X utf8` 為必要參數，否則中文輸出會亂碼。
 
 前端與靜態檢查：
 
@@ -323,13 +323,13 @@ py -3 -X utf8 scripts\capture_law_amendment_history.py
 3. 外部法規 MCP 尚未接入此 API 路徑。
 4. Prompt 2 已提供 lawbank 風格結構，但目前主要流程仍以既有分析流程為主。
 5. 真實個資、完整卷證與未去識別化資料不得輸入測試環境。
-6. 本手冊只涵蓋案情分析引擎；罪章問句設計流程、`web_app/`、`app_prototype/`、部署面均不在本手冊範圍，見 §0.1 與 `docs/README.md`。
+6. 本手冊只涵蓋案情分析引擎；罪章問句設計流程、`../archive/retired-prototypes/` 內的已淘汰原型、部署面均不在本手冊範圍，見 §0.1 與 `docs/README.md`。
 7. 測試通過只證明工程行為符合規格，**不代表法律正確**；法律正確性只能由官方來源與人工 Gate 認定（`AI_EXECUTION_PROTOCOL.md` §4）。
 8. `/api/analyze` 目前無模型路徑，恆為規則式輸出。
 
 ## 9. 交接後建議順序
 
-1. 先執行完整 pytest，確認基準仍為 573 passed（單次 session）。
+1. 先執行完整 pytest，確認基準仍為 580 passed（固定快照單次 session）。
 2. 執行 §6.1 證據鏈重算，確認 17 個 surface（13 frozen + 4 runtime）與 2 條 review 連結皆一致。
 3. 以 `lawbank-engine.html` 測試 API 與前端顯示。
 4. 修改規則後先跑對應批次，再跑完整測試。
@@ -340,7 +340,7 @@ py -3 -X utf8 scripts\capture_law_amendment_history.py
 ## 10. 交接狀態
 
 - 功能測試：通過。
-- 完整測試：573 passed（2026-10-23 單次 session 實測）。
+- 完整測試：580 passed（2026-10-24 固定快照單次 session 實測）。
 - 案例批次 C001–C090：通過（已補允許集合反向檢查）。
 - 案例批次 C091–C125：通過（完整事實／缺事實／主體不明／反向安全四類齊備）。
 - 案例批次 C126–C155：通過（10 個方向 × 完整事實／缺事實／主體不明；另含侵入住宅 HINT_ONLY 限制與 §321Ⅰ① 白天侵入的反向鎖定）。
@@ -355,6 +355,7 @@ py -3 -X utf8 scripts\capture_law_amendment_history.py
 - 2026-10-22 規則修正（續）：強盜方向成立時，竊盜／侵占／恐嚇危害安全降為 `HINT_ONLY` 相鄰競爭假設（以「強盜候選是否成立」為準，避免另立判準）；妨害名譽的散布不實內容情境不再以「名譽受損」未出現為由否定整個方向（該項並非題庫對妨害名譽所追的要素），並補上散佈／發布等異體。
 - 2026-10-22 第四批案例標籤更正：C095 由「強盜」更正為「竊盜」（無對人施暴，與既有 C065 鎖定結論一致）、C096 由「加重強盜」更正為「強盜」（刑法無加重強盜此獨立罪名）、C106–C108 由「公然侮辱／誹謗」對應為題庫的妨害名譽。
 - 2026-10-23 缺口補齊（四項；當時皆未接線）：① 法源快取多條號解析（`第100條至第119條` 這類 spec 過去被當成單一條號，導致 14 個條目永遠 `NOT_FOUND`）＋ 88 筆回填，快取 105→193 筆；② `twlegalrag pack` 的 `twlegalrag.bundle/v1` 離線契約（綁定去識別查詢、只輸出 citation metadata 與摘錄 hash、截斷全文不得引用、live 客戶端受證據包 `decision_status` 約束）；③ Taiwan Law MCP 自架端點政策（僅 loopback 可選，hosted 端點記錄為不可選，`runtime_ready()` 恆 false）；④ 行為時法判定（官方沿革頁快照、中文數字與條號範圍解析、分段施行留 `null` 不以推測補值）。測試 456 → 469 → 487 → 501 → 543；證據鏈重新凍結（packet → HG-LR-01 → HG-LR-02），三個新檔案列入 `frozen_files`。
-- 未追蹤且刻意不提交：`reasoning-flow/`（獨立專案）、`例子/`（個人截圖）。
+- 獨立但已追蹤：`reasoning-flow/`（研究工作台，非正式 runtime）。
+- 未追蹤且刻意不提交：`例子/`（個人截圖）。
 - 2026-10-23 行為時法接入（第二輪）：`set_offenses` 逐條寫入 `law_version_audits`／`law_version_summary`，前端警示區逐條顯示並提示人工調閱；沿革資料不可用時寫 `AUDIT_UNAVAILABLE`（不靜默、不中斷分析）；`update_gate1` 清除舊判定。`HINT_ONLY` 罪章在選單改標「待區辨・非認定成立」，候選區改用引擎提供的相鄰競爭假設說明。測試 543 → 563、前端 26 → 29；證據鏈再次重新綁定（packet → HG-LR-01 → HG-LR-02），檢索 runtime 仍不可達、五個 Gate 仍 `PENDING`。
 - 2026-10-23 第五批案例與召回修正（第三輪）：新增 `tests/test_case_batch_c126_c155.py`（原始需求編號 C121–C150，因 C121–C125 已由第四批使用，順延為 C126–C155）。修正刑法 §321Ⅰ①「侵入住宅」漏接：舊情境把侵入與夜間／工具綁在一起，清晨自未上鎖後門侵入行竊只得到 §320；新分支要求「侵入訊號＋進入住宅＋取財」三者同時成立，避免經同意進入後臨時起意行竊被誤升。侵入住宅（§306）因題庫無獨立項目，仍只以 `HINT_ONLY` 呈現並附保留說明。測試 563 → 572；證據鏈第三輪重新綁定，檢索 runtime 仍不可達、五個 Gate 仍 `PENDING`。

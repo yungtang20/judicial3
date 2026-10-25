@@ -5,6 +5,8 @@ import re
 import shutil
 import subprocess
 import tempfile
+import threading
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -29,6 +31,16 @@ class DocumentError(RuntimeError):
     pass
 
 
+@dataclass(frozen=True)
+class DocumentArtifact:
+    data: bytes
+    page_count: int | None
+    template_version: str
+
+
+DOCUMENT_TEMPLATE_VERSION = "company-docx-v1"
+
+
 ROLE_LABELS = {
     "victim": "被害人",
     "suspect": "涉嫌人",
@@ -39,6 +51,13 @@ ROLE_TITLES = {
     "suspect": "偵　　詢　　筆　　錄　　第　1　次",
     "transfer": "偵　　詢　　筆　　錄　　第　1　次",
 }
+
+
+# Reuse one isolated profile per Python process.  A new LibreOffice profile can
+# spend tens of seconds building its first-run cache; sharing it behind a lock
+# keeps later HTTP document checks fast without touching the desktop profile.
+_SOFFICE_PROFILE = tempfile.TemporaryDirectory(prefix="judicial-libreoffice-profile-")
+_SOFFICE_LOCK = threading.Lock()
 
 
 def _set_font(run: Any, size: int = 12, bold: bool = False) -> None:
@@ -264,11 +283,25 @@ def brief_docx(case: dict[str, Any], role: str) -> bytes:
 
 
 def _soffice_path() -> str | None:
-    found = shutil.which("soffice") or shutil.which("libreoffice")
+    # On Windows ``soffice.exe`` returns before the delegated LibreOffice
+    # process finishes. ``soffice.com`` stays attached to the console and gives
+    # subprocess.run() a reliable completion status. Linux packages expose
+    # ``soffice``/``libreoffice`` instead.
+    found = (
+        shutil.which("soffice.com")
+        or shutil.which("soffice")
+        or shutil.which("libreoffice")
+    )
     if found:
         return found
-    candidate = Path(r"C:\Program Files\LibreOffice\program\soffice.exe")
-    return str(candidate) if candidate.exists() else None
+    for candidate in (
+        Path(r"C:\Program Files\LibreOffice\program\soffice.com"),
+        Path(r"C:\Program Files\LibreOffice\program\soffice.exe"),
+        Path(r"C:\Program Files (x86)\LibreOffice\program\soffice.com"),
+    ):
+        if candidate.exists():
+            return str(candidate)
+    return None
 
 
 def verified_page_count(docx_bytes: bytes) -> int:
@@ -279,17 +312,48 @@ def verified_page_count(docx_bytes: bytes) -> int:
         root = Path(directory)
         source = root / "document.docx"
         source.write_bytes(docx_bytes)
-        result = subprocess.run(
-            [executable, "--headless", "--convert-to", "pdf", "--outdir", str(root), str(source)],
-            capture_output=True,
-            text=True,
-            timeout=45,
-            check=False,
-        )
+        # LibreOffice otherwise reuses the interactive user's profile.  An open
+        # desktop instance or a stale profile lock can then make headless export
+        # wait until timeout.  The process-scoped profile is isolated from the
+        # desktop profile and the lock prevents concurrent exports sharing it.
+        profile_uri = Path(_SOFFICE_PROFILE.name).resolve().as_uri()
+        try:
+            with _SOFFICE_LOCK:
+                result = subprocess.run(
+                    [
+                        executable,
+                        f"-env:UserInstallation={profile_uri}",
+                        "--headless",
+                        "--nologo",
+                        "--nodefault",
+                        "--nofirststartwizard",
+                        "--convert-to", "pdf",
+                        "--outdir", str(root),
+                        str(source),
+                    ],
+                    capture_output=True,
+                    text=True,
+                    timeout=60,
+                    check=False,
+                )
+        except subprocess.TimeoutExpired as exc:
+            raise DocumentError("LibreOffice 頁數驗證逾時") from exc
         pdf = root / "document.pdf"
         if result.returncode != 0 or not pdf.exists():
             raise DocumentError("LibreOffice 無法完成頁數驗證")
         return len(PdfReader(str(pdf)).pages)
+
+
+def warm_document_renderer() -> int:
+    """Run one real conversion before the HTTP service becomes ready."""
+    document = _base_document()
+    _paragraph(document, "文件產製服務啟動檢查")
+    stream = io.BytesIO()
+    document.save(stream)
+    pages = verified_page_count(stream.getvalue())
+    if pages != 1:
+        raise DocumentError(f"LibreOffice 啟動檢查頁數異常：{pages}")
+    return pages
 
 
 def checked_interview_docx(case: dict[str, Any], role: str) -> tuple[bytes, int]:
@@ -298,3 +362,21 @@ def checked_interview_docx(case: dict[str, Any], role: str) -> tuple[bytes, int]
     if pages > MAX_DOCX_PAGES:
         raise DocumentError(f"文件實際排版為 {pages} 頁，超過 {MAX_DOCX_PAGES} 頁上限")
     return data, pages
+
+
+def build_document(case: dict[str, Any], role: str, kind: str) -> DocumentArtifact:
+    """Single document-production boundary used by HTTP and future templates."""
+    if kind == "brief":
+        return DocumentArtifact(
+            data=brief_docx(case, role),
+            page_count=None,
+            template_version=DOCUMENT_TEMPLATE_VERSION,
+        )
+    if kind == "interview":
+        data, pages = checked_interview_docx(case, role)
+        return DocumentArtifact(
+            data=data,
+            page_count=pages,
+            template_version=DOCUMENT_TEMPLATE_VERSION,
+        )
+    raise DocumentError("不支援的文件種類")

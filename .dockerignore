@@ -17,3 +17,11 @@ __pycache__
 web_app/node_modules
 web_app/.next
 app_prototype/.env
+archive/
+# Production image excludes review history, tests and local working documents.
+legal-case-web/review/
+legal-case-web/docs/
+legal-case-web/tests/
+legal-case-web/1.md
+legal-case-web/2.md
+條陳.txt

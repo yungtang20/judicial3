@@ -218,6 +218,11 @@ def _route_element_matrix(
     offense: dict[str, Any], summary: str, gate1: dict[str, Any] | None
 ) -> list[dict[str, Any]]:
     facts = (gate1 or {}).get("facts", [])
+    facts_by_id = {
+        str(item.get("fact_id")): item
+        for item in facts
+        if item.get("fact_id")
+    }
     source_segments = _source_segments(summary)
     analyses: list[dict[str, Any]] = []
     for route in offense.get("legal_routes", []):
@@ -275,11 +280,19 @@ def _route_element_matrix(
         analyses.append({
             "route_id": route["id"],
             "route_name": route["name"],
+            "route_kind": route.get("route_kind", "offense"),
+            "law_name": route.get("law_name", ""),
+            "article_no": route.get("article_no", ""),
             "review_status": route.get("review_status", "HUMAN_REVIEW_REQUIRED"),
             "supported_count": supported,
             "not_checkable_count": sum(row["status"] == "NOT_CHECKABLE" for row in rows),
             "total_count": len(rows),
             "supporting_fact_refs": supporting_refs,
+            "event_ids": list(dict.fromkeys(
+                str(facts_by_id[ref].get("event_id", "event:unassigned"))
+                for ref in supporting_refs
+                if ref in facts_by_id
+            )),
             "unknown_elements": [row["element"] for row in rows if row["status"] != "SOURCE_SUPPORTED"],
             "elements": rows,
         })
@@ -473,6 +486,24 @@ def _property_discriminators(summary: str) -> dict[str, bool]:
             r"強暴|脅迫|持(刀|槍|械)|菜刀|兇器|捅|行兇|捆綁|勒住|毆打",
         ], summary) and _patterns_unnegated([_ROBBERY_TAKE_ANCHOR], summary),
     }
+
+
+def _requires_consent_state(summary: str) -> bool:
+    """Return whether the narrative needs an explicit consent-state check.
+
+    Incapacity language can make consent important, but it must not be converted
+    into an inferred consent value.  Keep this predicate narrow so unrelated
+    cases (for example, theft or ordinary street photography) do not acquire a
+    spurious consent unknown.
+    """
+    return bool(re.search(
+        r"(?:"
+        r"性交|猥褻|性行為|性接觸|性侵|"
+        r"胸部|陰部|生殖器|私密部位|裙底|裸照|性影像|私密影像|"
+        r"我不同意|未經[^，。；]{0,12}同意"
+        r")",
+        summary,
+    ))
 
 
 def _narrative_fact_candidates(summary: str) -> list[dict[str, Any]]:
@@ -844,7 +875,7 @@ def _narrative_fact_candidates(summary: str) -> list[dict[str, Any]]:
     for pattern in (r"(取回其遭竊之[^，。；]+)", r"(查獲[^。；]+)"):
         for match in re.finditer(pattern, summary):
             add("result", match.group(1), fields={"result": match.group(1)})
-    for pattern in (r"(內射)", r"(偷拍[^，。；]*影片)", r"(拿[^，。；]*影片[^，。；]*威脅)"):
+    for pattern in (r"(內射)",):
         for match in re.finditer(pattern, summary):
             add("result", match.group(1), fields={"result": match.group(1)})
     for pattern in (
@@ -891,10 +922,27 @@ def _narrative_fact_candidates(summary: str) -> list[dict[str, Any]]:
         match = re.search(pattern, summary)
         if match:
             add("causation", match.group(1))
-    for pattern in (r"(因小孩[^。；]+發生爭執)", r"(我不同意)", r"(睡著時[^。；]+性交)", r"(拿那天偷拍[^。；]+威脅[^。；]+)"):
+    for pattern in (r"(因小孩[^。；]+發生爭執)",):
         match = re.search(pattern, summary)
         if match:
             add("causation", match.group(1))
+    for pattern in (r"(我不同意)", r"(未經[^，。；]{0,12}同意)"):
+        for match in re.finditer(pattern, summary):
+            add(
+                "consent_state", match.group(1),
+                fields={"consent_state": "明示不同意", "subtype": "expressed_nonconsent"},
+                start=match.start(1),
+            )
+    for pattern, subtype in (
+        (r"(睡著時[^。；]{0,50}性交(?:並內射)?)", "reported_intercourse_while_asleep"),
+        (r"(偷拍[^，。；]{0,40}(?:影片|影像))", "reported_recording"),
+        (r"(拿[^，。；]{0,40}(?:影片|影像)[^，。；]{0,40}威脅[^，。；]{0,40})", "reported_threat"),
+    ):
+        for match in re.finditer(pattern, summary):
+            add(
+                "action", match.group(1), fields={"action": match.group(1), "subtype": subtype},
+                start=match.start(1),
+            )
     for pattern in (r"(因趙子興邀約飲用酒類後)", r"(乘A女不能抗拒之際)", r"(始停止)"):
         match = re.search(pattern, summary)
         if match:
@@ -939,7 +987,7 @@ def _narrative_fact_candidates(summary: str) -> list[dict[str, Any]]:
         if object_text in summary:
             add("object", object_text, fields={"object": object_text})
 
-    evidence_terms = ("監視器", "錄影", "照片", "訊息", "證人", "診斷證明", "病歷", "影片", "偷拍", "男友")
+    evidence_terms = ("監視器", "錄影", "照片", "訊息", "證人", "診斷證明", "病歷", "男友")
     explicit_evidence = list(re.finditer(r"證據(?:有|包括|如下)[:：]?([^。；]+)", summary))
     for evidence_group in explicit_evidence:
         for raw_item in re.split(r"、|及(?=[^、，。；]{2,})", evidence_group.group(1)):
@@ -954,7 +1002,10 @@ def _narrative_fact_candidates(summary: str) -> list[dict[str, Any]]:
     if not explicit_evidence:
         evidence_match = re.search(r"([^，。；]{0,20}(?:" + "|".join(evidence_terms) + r")[^，。；]{0,20})", summary)
         if evidence_match:
-            add("evidence", evidence_match.group(1))
+            add(
+                "evidence", evidence_match.group(1),
+                fields={"subtype": "evidence_lead"}, assertion_status="SOURCE_LEAD_TO_VERIFY",
+            )
     wireless_match = re.search(r"([^，。；]{0,20}無線電通報[^，。；]{0,20})", summary)
     if wireless_match:
         add("evidence", wireless_match.group(1))
@@ -1078,6 +1129,7 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
             "knowledge_or_intent": f.get("knowledge_or_intent", ""),
             "result": f.get("result", ""),
             "causal_relation": f.get("causal_relation", ""),
+            "consent_state": f.get("consent_state", ""),
             "event_id": f.get("event_id", "event:unassigned"),
             "role": f.get("role", ""),
             "person_code": f.get("person_code", ""),
@@ -1152,7 +1204,12 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
         }
         if "action" in present or "result" in present:
             present.add("event")
-        for category in ("person", "event", "time", "place", "object", "action", "result", "causation"):
+        required_categories = [
+            "person", "event", "time", "place", "object", "action", "result", "causation",
+        ]
+        if _requires_consent_state(summary):
+            required_categories.append("consent_state")
+        for category in required_categories:
             if category not in present:
                 facts.append(make_fact(
                     category,
@@ -1169,8 +1226,7 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
                 value="UNKNOWN",
                 source_excerpt="",
             ))
-        default_unknowns = [
-            label for category, label in (
+        required_labels = [
                 ("person", "行為人／受害人"),
                 ("event", "事件經過"),
                 ("time", "發生時間"),
@@ -1180,7 +1236,11 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
                 ("result", "結果／傷勢"),
                 ("causation", "結果與行為間關係"),
                 ("evidence", "可供查證的證據"),
-            )
+        ]
+        if _requires_consent_state(summary):
+            required_labels.append(("consent_state", "本人意願與同意狀態"))
+        default_unknowns = [
+            label for category, label in required_labels
             if category not in present
         ]
     elif property_values:
@@ -1287,6 +1347,24 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
         "evidence": unique([
             str(item.get("value", ""))
             for item in facts if item.get("fact_key") == "evidence"
+        ]),
+        "evidence_leads": unique([
+            str(item.get("value", ""))
+            for item in facts
+            if item.get("fact_key") == "evidence"
+            and item.get("assertion_status") != "VERIFIED_EVIDENCE"
+        ]),
+        "verified_evidence": unique([
+            str(item.get("value", ""))
+            for item in facts
+            if item.get("fact_key") == "evidence"
+            and item.get("assertion_status") == "VERIFIED_EVIDENCE"
+        ]),
+        "consent_states": unique([
+            str(item.get("consent_state") or item.get("value", ""))
+            for item in facts
+            if item.get("fact_key") == "consent_state"
+            and item.get("machine_status") != "UNKNOWN"
         ]),
         "behaviors": unique(
             [
@@ -2715,6 +2793,7 @@ def build_questions(
     # 8 頁防線：offense 題（非 company/common）上限 MAX_OFFENSE_QUESTIONS
     from .questions import (
         QuestionBudgetExceeded,
+        annotate_interview_layers,
         apply_question_budget,
         enrich_question_metadata,
         validate_generated_questions,
@@ -2734,6 +2813,7 @@ def build_questions(
     questions = enrich_question_metadata(questions, gate1 or {}, pseudo_candidates)
     _attach_route_elements_to_questions(questions, offenses, route_ids)
     mark_known_questions(questions, gate1 or {})
+    annotate_interview_layers(questions, core_limit=10)
 
     # spec §7.2/§7.3 品質檢核（docs/QUESTION_DESIGN_AND_USE.md §8）：problems 即 fail closed
     validation = validate_generated_questions(questions, role)

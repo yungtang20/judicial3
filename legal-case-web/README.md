@@ -35,7 +35,9 @@ py -3 -m pip install -r requirements.txt
 
 - 服務網址：**`http://127.0.0.1:8787/`**（僅綁定 `127.0.0.1`，不對外）
 - `start.ps1` 會檢查原始碼異動並自動重啟，確保瀏覽器載入最新版本
-- 健康檢查：`GET /api/health` 回傳 `{ "status": "ok", "mode": "LOCAL_ONLY", "external_ai": false, "source_mtime": <unix> }`
+- 健康檢查：`GET /api/health` 回傳 `{ "status": "ok", "mode": "LOCAL_ONLY", "document_renderer": "READY", "external_ai": false, "source_mtime": <unix> }`
+- 啟動服務前會用獨立 LibreOffice profile 做一次真實 DOCX→PDF 預熱。Windows 固定優先使用 `soffice.com`，避免 `soffice.exe` 提前返回造成逾時。
+- 若預熱失敗，服務不會開放連線，錯誤為 `DOCUMENT_RENDERER_UNAVAILABLE`。可先執行 `py -3 -m tools.document_renderer_smoke` 單獨檢查。
 
 ## Render Free 自用部署
 
@@ -45,6 +47,8 @@ py -3 -m pip install -r requirements.txt
 - **健康檢查端點**：[https://legal-case-workbench.onrender.com/api/health](https://legal-case-workbench.onrender.com/api/health)
 
 專案在 Render 以既有 Dockerfile 部署。根目錄 `render.yaml` 定義 Blueprint；推送 `main` 分支會自動建置最新版本。若需手動部署：Render Dashboard → `legal-case-workbench` → **Manual Deploy** → **Deploy latest commit**。部署前須依 [`docs/SUPABASE_SINGLE_OWNER_DEPLOYMENT.md`](docs/SUPABASE_SINGLE_OWNER_DEPLOYMENT.md) 建立唯一 Supabase Auth 使用者、MFA、RLS 與 Render Secrets；應用程式不提供註冊或分享功能。
+
+文件產製不依賴使用者電腦。Docker image 內含 LibreOffice 與中文字型，建置時先執行真實轉檔 smoke test；服務啟動時再預熱一次，成功後才綁定 HTTP port。`/api/health` 只讀取已完成的狀態並回傳 `document_renderer: "READY"`，不會在健康檢查請求內啟動 LibreOffice。Render Free 休眠後第一次開啟仍可能等待冷啟動，但頁面可用時 renderer 已完成驗證。
 **免費層與資料界線**：
 
 - Free Web Service 閒置 15 分鐘後休眠；下一個請求會喚醒服務，通常需約一分鐘。每個 workspace 每月有 750 小時 Free instance 時數；休眠時數不計入。
@@ -197,6 +201,8 @@ flowchart TD
 - **頁數檢查**：LibreOffice 轉 PDF 讀取實際頁數；**>8 頁 / LibreOffice 缺失 / 排版失敗 → 阻止下載**
 - **條陳長度**：≤500 Unicode 字元；超過**阻止寫入，不截斷**
 - **無加密**：使用者自行依機關規定保存
+- **單一產製邊界**：HTTP 層只呼叫 `build_document()`；檔案內容、頁數與 `template_version` 由文件模組回傳。未來更換條陳格式時，只調整文件模板與版本，不需修改下載路由。
+- **雲端驗證**：Docker build 與服務 startup 各做一次真實 LibreOffice 轉檔；任一失敗即 fail closed，不對外提供未驗證的文件服務。
 
 ---
 
@@ -217,7 +223,7 @@ flowchart TD
 
 - **正式啟動**：`start.ps1` → `app.server` → `app.workflow` 串接規則/問句/文件
 - **Runtime 儲存**：本機預設 `EphemeralCaseStore`；Render 使用 `SupabaseCaseStore`，以使用者 JWT 受 RLS 控制並保存應用層密文
-- **原型隔離**：`web_app/` 為獨立 Next.js 原型，**非**正式啟動路徑
+- **原型隔離**：已淘汰的 Next.js 與 Streamlit 原始碼封存於 `../archive/retired-prototypes/`，**非**正式啟動路徑
 - **PoC 隔離**：法律檢索/罪章關聯為離線審查用途；未完成 Human Gate **不得**接入 runtime
 - **證據分級**：法源可回查、測試通過、文件產出 = **工程證據** ≠ 法律核准
 
@@ -238,9 +244,10 @@ legal-case-web/
 ├── data/                   # Runtime JSON
 ├── questions/              # Markdown 題庫
 ├── docs/                   # 架構、設計、審查、證據封包
+├── review/                 # 目前審查來源與 Human Gate 筆記
 ├── tests/                  # pytest + Node 測試
 ├── tools/                  # 輔助工具
-└── web_app/                # Next.js 原型（獨立）
+└── （歷史原型與審查報告見 ../archive/）
 ```
 
 ---
@@ -316,7 +323,7 @@ node --check app\static\app.js
 
 - **590 passed**（pytest）
 - `node --check`、`compileall`、`git diff --check` 通過
-- Next.js production build + ESLint 通過
+- 封存前的 Next.js prototype production build + ESLint 通過（非目前 runtime 驗證）
 - Prototype `npm audit --audit-level=moderate`：**0 vulnerabilities**
 - Edge 實測三分支：
   - 被害人：35 題
@@ -356,8 +363,8 @@ py -3 -X utf8 -m pytest -k "gate2" -q
 # 覆蓋率
 py -3 -X utf8 -m pytest --cov=app --cov-report=term-missing
 
-# 前端開發（獨立）
-cd web_app && npm run dev
+# 查閱封存清單（不得作為正式 runtime 啟動）
+Get-Content ..\archive\README.md
 ```
 
 ### 修改架構前必確認（六大原則）
@@ -393,6 +400,7 @@ cd web_app && npm run dev
 | `docs/LIFECYCLE_RECORD.md` | 版本生命週期記錄 |
 | `docs/REFERENCE_STANDARD_LIBRARY.md` | 參考標準庫清單 |
 | `docs/evidence/*.json` | Human Gate 證據封包（凍結 hash、審查狀態） |
+| `../archive/review-history/README.md` | 歷史審查報告與舊副本封存清單（非正式來源） |
 
 ---
 

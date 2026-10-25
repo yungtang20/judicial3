@@ -409,8 +409,27 @@ def test_gate1_decomposes_detailed_theft_narrative_without_raw_summary_fallback(
     assert gate1["results"]
     assert gate1["evidence"]
     assert gate1["unknowns"] == []
+    assert gate1["consent_states"] == []
     assert not any(item["source_excerpt"] == summary for item in gate1["facts"])
     assert all(item["source_excerpt"] in summary for item in gate1["facts"] if item["source_excerpt"])
+
+
+def test_gate1_consent_state_is_required_only_for_directly_relevant_context():
+    explicit = analyze_gate1({
+        "summary": "我不同意，對方仍與我性交。",
+        "event_time": "UNKNOWN",
+        "location": "UNKNOWN",
+    }, use_ai=False)
+    assert explicit["consent_states"] == ["明示不同意"]
+    assert "本人意願與同意狀態" not in explicit["unknowns"]
+
+    ordinary_recording = analyze_gate1({
+        "summary": "有人在街上偷拍表演影片。",
+        "event_time": "UNKNOWN",
+        "location": "UNKNOWN",
+    }, use_ai=False)
+    assert ordinary_recording["consent_states"] == []
+    assert "本人意願與同意狀態" not in ordinary_recording["unknowns"]
 
 
 def test_gate1_decomposes_robbery_assault_narrative_with_compatibility_characters():

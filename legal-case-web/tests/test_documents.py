@@ -5,9 +5,17 @@ from pathlib import Path
 import io
 import zipfile
 
+import pytest
 from docx import Document
 
-from app.documents import brief_text, checked_interview_docx, interview_docx, _format_tw_time
+from app.documents import (
+    DocumentError,
+    brief_text,
+    build_document,
+    checked_interview_docx,
+    interview_docx,
+    _format_tw_time,
+)
 from tests.helpers import completed_case
 
 
@@ -114,6 +122,18 @@ def test_real_local_renderer_verifies_page_limit():
     data, pages = checked_interview_docx(case, "victim")
     assert data.startswith(b"PK")
     assert 1 <= pages <= 8
+
+
+def test_document_builder_is_the_single_output_boundary(monkeypatch):
+    case = completed_case()
+    monkeypatch.setattr("app.documents.brief_docx", lambda _case, _role: b"PK-brief")
+    artifact = build_document(case, "victim", "brief")
+    assert artifact.data == b"PK-brief"
+    assert artifact.page_count is None
+    assert artifact.template_version
+
+    with pytest.raises(DocumentError, match="不支援"):
+        build_document(case, "victim", "unknown")
 
 
 def test_interview_completeness_validates_case_and_content():
