@@ -82,8 +82,12 @@
         <button id="new-case" class="secondary" type="button">新增案件</button>
       </div>
       <div id="case-warnings" class="case-warnings" role="alert" hidden></div>
-      <section id="gate1-panel" class="panel" aria-labelledby="gate1-title">
-        <p class="gate-label">GATE 1</p><h3 id="gate1-title">人、事、時、地、物、行為、結果、證據</h3>
+      <details id="gate1-panel" class="panel gate-panel" aria-labelledby="gate1-title" open>
+        <summary class="gate-panel-summary">
+          <span class="gate-panel-heading"><span class="gate-label">GATE 1</span><span id="gate1-title" class="gate-panel-title">人、事、時、地、物、行為、結果、證據</span></span>
+          <span class="gate-panel-toggle-hint" aria-hidden="true"><span class="when-open">收合</span><span class="when-closed">展開</span></span>
+        </summary>
+        <div class="gate-panel-body">
         <p>系統會先自動整理。你只需檢視最後結果，必要時直接修正原文對應欄位。</p>
         <div id="structured-facts" class="structured-facts" hidden>
           <p class="fact-label">結構化事實（含溯源；承辦人確認後始得核准）</p>
@@ -106,10 +110,15 @@
             <button id="auto-prepare" class="primary" type="button">重新執行系統分析</button>
           </div>
         </form>
-      </section>
+        </div>
+      </details>
 
-      <section id="gate2-panel" class="panel" aria-labelledby="gate2-title" hidden>
-        <p class="gate-label">GATE 2</p><h3 id="gate2-title">候選罪章與中立問答</h3>
+      <details id="gate2-panel" class="panel gate-panel" aria-labelledby="gate2-title" open hidden>
+        <summary class="gate-panel-summary">
+          <span class="gate-panel-heading"><span class="gate-label">GATE 2</span><span id="gate2-title" class="gate-panel-title">候選罪章與中立問答</span></span>
+          <span class="gate-panel-toggle-hint" aria-hidden="true"><span class="when-open">收合</span><span class="when-closed">展開</span></span>
+        </summary>
+        <div class="gate-panel-body">
         <div id="auto-review-banner" class="warning" hidden><strong>系統已完成初步分析</strong><span>候選罪章、法律路由與問句已由系統建立。請直接檢視結果，無須逐項選擇；必要時回到事實欄位修正。</span></div>
         <div class="warning"><strong>分析方向，不是法律結論</strong><span>候選罪章與問句由系統依摘要自動整理；未知事項會保留 UNKNOWN，最終由你一次檢視。</span></div>
         <div id="candidate-element-analysis" class="structured-facts" hidden></div>
@@ -214,10 +223,15 @@
             <button id="approve-gate2" class="primary" type="button">我已核對罪章與全部回答，完成 Gate 2</button>
           </div>
         </section>
-      </section>
+        </div>
+      </details>
 
-      <section id="numbers-panel" class="panel" aria-labelledby="numbers-title" hidden>
-        <p class="gate-label">GATE 2.5</p><h3 id="numbers-title">補登公司系統案號</h3>
+      <details id="numbers-panel" class="panel gate-panel" aria-labelledby="numbers-title" open hidden>
+        <summary class="gate-panel-summary">
+          <span class="gate-panel-heading"><span class="gate-label">GATE 2.5</span><span id="numbers-title" class="gate-panel-title">補登公司系統案號</span></span>
+          <span class="gate-panel-toggle-hint" aria-hidden="true"><span class="when-open">收合</span><span class="when-closed">展開</span></span>
+        </summary>
+        <div class="gate-panel-body">
         <p>請先在公司系統輸登後，填入對應案號。下方為將寫入條陳的摘要。</p>
         <p id="brief-preview" class="brief-preview"></p>
         <form id="numbers-form" class="details-grid">
@@ -226,10 +240,15 @@
           <div id="case165-field" class="field-stack"><label for="case165-number">165 案號</label><input id="case165-number" name="case_165"></div>
           <div class="wide"><button class="primary" type="submit">確認案號並產生條陳 →</button></div>
         </form>
-      </section>
+        </div>
+      </details>
 
-      <section id="output-panel" class="panel" aria-labelledby="output-title" hidden>
-        <p class="gate-label">GATE 3–5</p><h3 id="output-title">筆錄與條陳</h3>
+      <details id="output-panel" class="panel gate-panel" aria-labelledby="output-title" open hidden>
+        <summary class="gate-panel-summary">
+          <span class="gate-panel-heading"><span class="gate-label">GATE 3–5</span><span id="output-title" class="gate-panel-title">筆錄與條陳</span></span>
+          <span class="gate-panel-toggle-hint" aria-hidden="true"><span class="when-open">收合</span><span class="when-closed">展開</span></span>
+        </summary>
+        <div class="gate-panel-body">
         <p>DOCX 由本機 LibreOffice 實際排版，超過 8 頁時禁止下載。</p>
         <div class="field-stack"><label for="output-role">輸出身分</label><select id="output-role"><option value="victim">被害人</option><option value="suspect">涉嫌人（有被害人）</option><option value="transfer">涉嫌人（移送／無被害人）</option></select></div>
         <div class="output-grid">
@@ -252,7 +271,8 @@
           <button id="reopen-case" class="danger" type="button">重新開啟並修正事實</button>
         </div>
         <p class="privacy-note" id="storage-notice">案件只暫存在目前本機服務的記憶體中；建立新案件或重啟服務後即不再保留。下載的 DOCX 是未加密明文。</p>
-      </section>
+        </div>
+      </details>
     </section>
   </main>
   <script src="/app.js" defer></script>

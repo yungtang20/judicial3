@@ -76,6 +76,43 @@ legend { font-weight: 800; margin-bottom: .4rem; font-size: .92rem; }
 #case-heading { font-size: 1.3rem; }
 .actions { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
 .panel { margin-bottom: 1.25rem; }
+.panel.gate-panel { padding: 0; overflow: hidden; }
+.gate-panel-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 64px;
+  padding: clamp(1rem, 2.5vw, 1.75rem);
+  cursor: pointer;
+  list-style: none;
+}
+.gate-panel-summary::-webkit-details-marker { display: none; }
+.gate-panel-summary::marker { content: ""; }
+.gate-panel-summary:hover { background: #f8fbf9; }
+.gate-panel-summary:focus-visible { outline: 3px solid #e9a23b; outline-offset: -3px; }
+.gate-panel-heading { display: flex; min-width: 0; flex-direction: column; }
+.gate-panel-title { font-size: 1.25rem; font-weight: 700; line-height: 1.35; }
+.gate-panel-toggle-hint {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-width: 4.5rem;
+  min-height: 40px;
+  padding: .45rem .8rem;
+  border: 1px solid var(--forest);
+  border-radius: .6rem;
+  color: var(--forest);
+  background: #fff;
+  font-weight: 700;
+}
+.gate-panel-toggle-hint::after { content: "▲"; margin-left: .4rem; font-size: .75rem; }
+.gate-panel:not([open]) .gate-panel-toggle-hint::after { content: "▼"; }
+.gate-panel .when-closed { display: none; }
+.gate-panel:not([open]) .when-open { display: none; }
+.gate-panel:not([open]) .when-closed { display: inline; }
+.gate-panel-body { padding: 0 clamp(1rem, 2.5vw, 1.75rem) clamp(1rem, 2.5vw, 1.75rem); }
 .warning { display: flex; gap: .6rem; background: var(--amber-bg); color: #6a3900; border-left: 4px solid var(--amber); padding: .65rem .9rem; margin: .75rem 0; font-size: .9rem; }
 .choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
 .choice { border: 1px solid var(--line); border-radius: .6rem; padding: .55rem .65rem; display: flex; gap: .5rem; align-items: flex-start; font-size: .92rem; cursor: pointer; }
@@ -153,6 +190,7 @@ legend { font-weight: 800; margin-bottom: .4rem; font-size: .92rem; }
   .report-heading { align-items: flex-start; }
   .law-source-list, #evidence-analysis { padding-left: .85rem; padding-right: .85rem; }
   .report-summary, .report-conclusion { margin-left: .85rem; margin-right: .85rem; }
+  .gate-panel-summary { align-items: flex-start; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 
