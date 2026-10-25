@@ -29,7 +29,7 @@ def validate_interview_completeness(case: dict[str, Any], role: str) -> list[str
     6. 年籍必要欄位
     """
     problems: list[str] = []
-    if case.get("state") != "OUTPUT_READY":
+    if case.get("state") not in {"CASE_NUMBERS", "OUTPUT_READY"}:
         problems.append("案件尚未完成必要 Gate")
     interview = case.get("interviews", {}).get(f"{role}:default")
     if interview is None:
@@ -45,14 +45,6 @@ def validate_interview_completeness(case: dict[str, Any], role: str) -> list[str
         if not str(q.get("answer", "")).strip():
             problems.append(f"問句未作答：{q.get('id')}")
             break
-
-    # 必要案號
-    missing_numbers = [
-        key for key in required_case_numbers(case)
-        if not case.get("case_numbers", {}).get(key)
-    ]
-    if missing_numbers:
-        problems.append("缺少必要案號：" + "、".join(missing_numbers))
 
     # 詢問時間（涉嫌人/移送必填）
     if role in ("suspect", "transfer"):
@@ -83,6 +75,11 @@ def validate_brief_completeness(case: dict[str, Any], role: str) -> list[str]:
         problems.append(f"案情摘要 {len(summary)} 字，超過 {MAX_SUMMARY_LENGTH} 字上限")
     if not summary.strip():
         problems.append("案情摘要不得空白")
+
+    context = case.get("output_context") or {}
+    for key, label in (("jurisdiction", "本案管轄"), ("officer", "處理員警"), ("report_time", "報案時間")):
+        if not str(context.get(key) or "").strip():
+            problems.append(f"缺少條陳資料：{label}")
 
     missing_numbers = [
         key for key in required_case_numbers(case)

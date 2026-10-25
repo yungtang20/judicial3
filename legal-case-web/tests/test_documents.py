@@ -172,11 +172,11 @@ def test_document_output_dispatch():
     assert validate_document_output(case, "victim", "brief") == []
 
 def test_document_validation_blocks_when_required_numbers_missing():
-    from app.document_validation import validate_interview_completeness
+    from app.document_validation import validate_brief_completeness
     case = completed_case()
-    # 移除證明單案號 → 應阻擋
+    # 筆錄可在條陳案號前產出。案號缺少時，應由條陳驗證阻擋。
     case["case_numbers"]["proof"] = ""
-    problems = validate_interview_completeness(case, "victim")
+    problems = validate_brief_completeness(case, "victim")
     assert any("缺少必要案號" in p for p in problems)
 
 

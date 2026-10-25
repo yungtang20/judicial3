@@ -811,13 +811,19 @@ function renderNumbers(caseData) {
   $("#brief-case-reason").value = template.case_reason || "";
   $("#brief-summary-label").value = template.summary_label || "";
   $("#brief-followup-label").value = template.followup_label || "";
+  const context = caseData.output_context || {};
+  $("#output-jurisdiction").value = context.jurisdiction || "";
+  $("#output-officer").value = context.officer || "";
+  $("#output-report-time").value = context.report_time || "";
   const needsWomenChild = caseData.intake.victim_is_code || /^(?:[A-Za-z]{1,8}\d{3,20}|[A-Za-z]{2,8}\d{2,8}-[A-Za-z]\d{3,12})$/.test(caseData.intake.victim_identifier || "");
   const offenseSet = new Set(caseData.selected_offenses);
   Object.values(caseData.interviews).forEach((item) => item.selected_offenses.forEach((id) => offenseSet.add(id)));
   setVisible("#women-child-field", needsWomenChild);
   $("#women-child-number").required = needsWomenChild;
-  setVisible("#case165-field", offenseSet.has("fraud"));
-  $("#case165-number").required = offenseSet.has("fraud");
+  const routes = new Set((caseData.selected_legal_routes || []).map((item) => item.route_id));
+  const needs165 = offenseSet.has("fraud") && (!routes.size || [...routes].some((id) => id !== "fraud_339_2_payment_device"));
+  setVisible("#case165-field", needs165);
+  $("#case165-number").required = needs165;
 }
 
 function renderOutputRoles(caseData) {
@@ -828,9 +834,14 @@ function renderOutputRoles(caseData) {
   const first = Array.from(select.options).find((option) => !option.disabled);
   if (first && select.selectedOptions[0]?.disabled) select.value = first.value;
   $("#start-suspect").hidden = !caseData.intake.has_victim || Boolean(caseData.interviews["suspect:default"]);
+  const briefReady = caseData.state === "OUTPUT_READY";
+  $("#download-brief").disabled = !briefReady;
+  $("#brief-output").placeholder = briefReady
+    ? "條陳預覽"
+    : "筆錄已可下載。完成管轄、員警、報案時間與案號後，才可產出條陳。";
   loadBrief().catch((error) => {
     $("#brief-output").value = "";
-    announce(error.message, true);
+    if (briefReady) announce(error.message, true);
   });
 }
 
@@ -878,12 +889,12 @@ function renderCase(caseData) {
   setVisible("#gate2-panel", caseData.state === "GATE2_QA");
   setVisible("#question-panel", caseData.state === "GATE2_QA");
   setVisible("#numbers-panel", caseData.state === "CASE_NUMBERS");
-  setVisible("#output-panel", caseData.state === "OUTPUT_READY");
+  setVisible("#output-panel", ["CASE_NUMBERS", "OUTPUT_READY"].includes(caseData.state));
   if (caseData.state === "GATE2_QA") {
     // 有罪章與問句時直接停在問答；否則從選罪章開始
     setGate2Step(autoPrepared && caseData.questions.length ? "qa" : (caseData.questions.length ? "qa" : "offense"));
   }
-  if (caseData.state === "OUTPUT_READY") renderOutputRoles(caseData);
+  if (["CASE_NUMBERS", "OUTPUT_READY"].includes(caseData.state)) renderOutputRoles(caseData);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -964,7 +975,11 @@ $("#intake-form").addEventListener("submit", async (event) => {
     renderCase(created);
     if (created.state === "GATE1_REVIEW" && created.candidates?.length) {
       await action("auto_prepare", {});
-      announce("案件已建立，系統已自動整理事實、候選罪章與問句，請直接檢視結果。 ");
+      if (state.current?.state === "GATE2_QA") {
+        announce("案件已建立，系統已自動整理事實、候選罪章與問句，請直接檢視結果。 ");
+      } else {
+        announce("案件已建立，已有待人工區辨的候選方向。請檢視候選路由後建立問句。 ");
+      }
     } else {
       announce("案件已建立。摘要不足以自動建立問句，請核對 Gate 1 後補充。 ");
     }
@@ -1172,6 +1187,13 @@ $("#numbers-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
     const raw = formObject(event.currentTarget);
+    await action("update_output_context", {
+      output_context: {
+        jurisdiction: raw.jurisdiction || "",
+        officer: raw.officer || "",
+        report_time: raw.report_time || "",
+      },
+    });
     await action("save_case_numbers", {
       case_numbers: {
         proof: raw.proof || "",
@@ -1184,7 +1206,7 @@ $("#numbers-form").addEventListener("submit", async (event) => {
         followup_label: $("#brief-followup-label").value,
       },
     });
-    announce("案號與條陳設定已確認，可以輸出文件。 ");
+    announce("條陳資料與案號已確認，可以輸出文件。 ");
   }
   catch (error) { announce(error.message, true); }
 });

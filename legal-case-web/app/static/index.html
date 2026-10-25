@@ -244,8 +244,8 @@
         <p>請先在公司系統輸登後，填入對應案號。下方為將寫入條陳的摘要。</p>
         <p id="brief-preview" class="brief-preview"></p>
         <details class="advanced">
-          <summary>條陳預設內容（留白沿用目前格式）</summary>
-          <p class="muted">可調整案由、案情摘要與後續處置標題。管轄與處理員警固定依案件資料產生。</p>
+          <summary>條陳內容設定</summary>
+          <p class="muted">筆錄完成後請手動填寫管轄、受理員警及報案時間。未填寫前不得產出條陳。</p>
           <div class="details-grid">
             <div class="field-stack wide"><label for="brief-case-reason">案由段落</label><input id="brief-case-reason" name="brief_case_reason" placeholder="留白：依案件名稱自動產生"></div>
             <div class="field-stack wide"><label for="brief-summary-label">案情摘要標題</label><input id="brief-summary-label" name="brief_summary_label" placeholder="留白：使用「五、案情摘要」等目前格式"></div>
@@ -253,10 +253,13 @@
           </div>
         </details>
         <form id="numbers-form" class="details-grid">
+          <div class="field-stack"><label for="output-jurisdiction">本案管轄</label><input id="output-jurisdiction" name="jurisdiction" placeholder="請手動填寫" required></div>
+          <div class="field-stack"><label for="output-officer">受理員警</label><input id="output-officer" name="officer" placeholder="請手動填寫" required></div>
+          <div class="field-stack"><label for="output-report-time">報案時間</label><input id="output-report-time" name="report_time" type="datetime-local" required></div>
           <div class="field-stack"><label for="proof-number">證明單案號</label><input id="proof-number" name="proof" required></div>
           <div id="women-child-field" class="field-stack"><label for="women-child-number">婦幼案號</label><input id="women-child-number" name="women_child"></div>
           <div id="case165-field" class="field-stack"><label for="case165-number">165 案號</label><input id="case165-number" name="case_165"></div>
-          <div class="wide"><button class="primary" type="submit">確認案號並產生條陳 →</button></div>
+          <div class="wide"><button class="primary" type="submit">確認條陳資料與案號 →</button></div>
         </form>
         </div>
       </details>

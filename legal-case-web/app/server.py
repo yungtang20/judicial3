@@ -834,9 +834,11 @@ class Handler(BaseHTTPRequestHandler):
 
     def _document(self, case_id: str, role: str, kind: str) -> None:
         try:
-            from .document_validation import validate_document_output
+            from .document_validation import validate_docx_structure, validate_document_output
             case = STORE.get(validate_case_id(case_id), _store_access_token(self))
-            if case["state"] != "OUTPUT_READY":
+            if kind == "brief" and case["state"] != "OUTPUT_READY":
+                raise DocumentError("條陳尚未完成末段資料與案號確認")
+            if kind == "interview" and case["state"] not in {"CASE_NUMBERS", "OUTPUT_READY"}:
                 raise DocumentError("案件尚未完成必要 Gate")
             # 完整性驗證（spec Phase 7）：有缺失即阻擋下載
             problems = validate_document_output(case, role, kind)
@@ -844,6 +846,9 @@ class Handler(BaseHTTPRequestHandler):
                 raise DocumentError("；".join(problems))
             artifact = build_document(case, role, kind)
             data = artifact.data
+            structure_problems = validate_docx_structure(data)
+            if structure_problems:
+                raise DocumentError("DOCX 結構驗證失敗：" + "；".join(structure_problems))
             filename = f"{safe_document_stem(case)}-{role}-{kind}.docx"
             ascii_filename = f"case-{case_id[:8]}-{role}-{kind}.docx"
             pages = str(artifact.page_count) if artifact.page_count is not None else "UNKNOWN"

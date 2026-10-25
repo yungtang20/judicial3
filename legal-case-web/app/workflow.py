@@ -41,6 +41,11 @@ MACHINE_STATUSES = {"FACT", "INFERENCE", "UNKNOWN", "DISPUTED"}
 SUMMARY_CONTEXT_RE = re.compile(
     r"(?P<kind>發生|破獲|查獲)(?P<field>時間|地點)\s*[：:]\s*(?P<value>[^\r\n，,；;。]+)"
 )
+SUMMARY_DATETIME_RE = re.compile(
+    r"(?P<year>\d{2,3})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日"
+    r"(?P<hour>\d{1,2})時(?:(?P<minute>\d{1,2})分)?"
+)
+SUMMARY_ADDRESS_RE = re.compile(r"(?:臺|台)北市[^，,。；;\s]{1,40}?\d+號")
 
 
 class WorkflowError(ValueError):
@@ -91,6 +96,17 @@ def _summary_context(summary: str) -> dict[str, str]:
             result["event_time"] = value
         elif field == "地點" and result["location"] == "UNKNOWN":
             result["location"] = value
+    # 白話案情常把多個事件直接寫在同一段。只在沒有明示標籤時，
+    # 使用第一個完整日期時間與第一個地址作為主要事件草稿，並保留
+    # 其餘時間、地點給 Gate 1 及事件鏈回查，不把它們當成法律結論。
+    if result["event_time"] == "UNKNOWN":
+        match = SUMMARY_DATETIME_RE.search(summary)
+        if match:
+            result["event_time"] = match.group(0)
+    if result["location"] == "UNKNOWN":
+        match = SUMMARY_ADDRESS_RE.search(summary)
+        if match:
+            result["location"] = match.group(0)
     return result
 
 
@@ -172,10 +188,20 @@ def create_case(raw: dict[str, Any], bank: dict[str, Any]) -> dict[str, Any]:
     has_victim = raw.get("has_victim") is True
     summary = _clean_summary(raw.get("summary"))
     summary_context = _summary_context(summary)
+    explicit_context = {
+        "event_time": bool(re.search(r"(?:發生|破獲|查獲)時間\s*[：:]", summary)),
+        "location": bool(re.search(r"(?:發生|破獲|查獲)地點\s*[：:]", summary)),
+    }
     intake = {
         "event_kind": _provided_or_derived(raw, "event_kind", summary_context["event_kind"], "時間類型"),
-        "event_time": _provided_or_derived(raw, "event_time", summary_context["event_time"], "發生／破獲時間"),
-        "location": _provided_or_derived(raw, "location", summary_context["location"], "發生／破獲地點"),
+        # 先以 UNKNOWN 交給 Gate 1 分析，避免把摘要推導出的主要時間／地點
+        # 再次混入 Gate 1 的事件清單。分析完成後才寫入主要事件草稿。
+        "event_time": _provided_or_derived(
+            raw, "event_time", summary_context["event_time"] if explicit_context["event_time"] else "UNKNOWN", "發生／破獲時間"
+        ),
+        "location": _provided_or_derived(
+            raw, "location", summary_context["location"] if explicit_context["location"] else "UNKNOWN", "發生／破獲地點"
+        ),
         "summary": summary,
         "has_victim": has_victim,
         "victim_identifier": _clean_text(raw.get("victim_identifier", ""), "被害人姓名或代號", required=False),
@@ -191,6 +217,11 @@ def create_case(raw: dict[str, Any], bank: dict[str, Any]) -> dict[str, Any]:
     # Gate 1 只在本機執行 deterministic segmentation。外部 AI 僅能由 Gate 2
     # 的明示操作觸發，避免僅因環境存在 API key 就外送案情摘要。
     gate1 = analyze_gate1(intake, use_ai=False)
+    gate1["source_summary"] = summary
+    if not str(raw.get("event_time", "")).strip() and summary_context["event_time"] != "UNKNOWN":
+        intake["event_time"] = summary_context["event_time"]
+    if not str(raw.get("location", "")).strip() and summary_context["location"] != "UNKNOWN":
+        intake["location"] = summary_context["location"]
     if has_victim and not intake["victim_identifier"]:
         derived_victim = next((
             item for item in gate1.get("person_attributes", [])
@@ -230,6 +261,12 @@ def create_case(raw: dict[str, Any], bank: dict[str, Any]) -> dict[str, Any]:
         "interview_sessions": {},
         "case_numbers": {},
         "brief_template": {},
+        "output_context": {
+            "jurisdiction": "",
+            "officer": "",
+            "report_time": "",
+            "sources": {},
+        },
         "case_identity": case_identity({
             "intake": intake,
             "candidates": candidates,
@@ -486,17 +523,35 @@ def apply_action(
             if len(primary) >= MAX_SELECTED_OFFENSES:
                 break
         if not primary:
-            raise WorkflowError("目前摘要不足以產生候選罪章，請補充可辨識的事件、行為或結果")
-        offense_ids = [item["id"] for item in primary]
-        case["state"] = "GATE2_QA"
-        case = apply_action(case, "set_offenses", {
-            "offense_ids": offense_ids,
-            "legal_route_ids": route_ids,
-            "route_review_confirmed": True,
-            "role": case.get("question_role", "victim" if case["intake"].get("has_victim") else "transfer"),
-        }, bank)
-        case["preparation_mode"] = "SYSTEM_AUTO_PREPARED_HUMAN_REVIEW_REQUIRED"
-        case["preparation_notice"] = "系統已依摘要自動整理候選罪章、法律路由與問句。請直接審核結果，必要時再修改。"
+            summary_signal = " ".join([
+                str(case.get("intake", {}).get("summary", "")),
+                " ".join(str(value) for value in case.get("gate1", {}).get("objects", [])),
+                " ".join(str(value) for value in case.get("gate1", {}).get("behaviors", [])),
+            ])
+            wallet_atm_signal = bool(
+                re.search(
+                    r"(?:\u9322\u5305|\u76ae\u593e).*(?:\u5361\u7247|\u63d0\u6b3e|\u63d0\u9818|\u9280\u884c\u7c21\u8a0a|\u975e\u672c\u4eba)"
+                    r"|(?:\u5361\u7247|\u91d1\u878d\u5361|\u63d0\u6b3e\u5361).*(?:\u63d0\u6b3e|\u63d0\u9818|\u975e\u672c\u4eba)",
+                    summary_signal,
+                )
+            )
+            if not wallet_atm_signal:
+                raise WorkflowError("\u76ee\u524d\u6458\u8981\u4e0d\u8db3\uff0c\u7121\u6cd5\u81ea\u52d5\u5efa\u7acb\u554f\u53e5\uff0c\u8acb\u5148\u7531\u4eba\u5de5\u78ba\u8a8d\u5019\u9078\u65b9\u5411")
+            # 候選存在但路由仍是 HINT_ONLY 時，保留 Gate 1 供人工選取，
+            # 不把不足以自動選入的方向當成例外，也不自動升格法律結論。
+            case["preparation_mode"] = "MANUAL_REVIEW_REQUIRED"
+            case["preparation_notice"] = "已有待人工區辨方向，請先檢視候選與法律路由，再建立問句。"
+        else:
+            offense_ids = [item["id"] for item in primary]
+            case["state"] = "GATE2_QA"
+            case = apply_action(case, "set_offenses", {
+                "offense_ids": offense_ids,
+                "legal_route_ids": route_ids,
+                "route_review_confirmed": True,
+                "role": case.get("question_role", "victim" if case["intake"].get("has_victim") else "transfer"),
+            }, bank)
+            case["preparation_mode"] = "SYSTEM_AUTO_PREPARED_HUMAN_REVIEW_REQUIRED"
+            case["preparation_notice"] = "系統已依摘要自動整理候選罪章、法律路由與問句。請直接審核結果，必要時再修改。"
 
     elif action == "approve_gate1":
         if case["state"] != "GATE1_REVIEW" or payload.get("confirmed") is not True:
@@ -869,6 +924,23 @@ def apply_action(
         case["approvals"]["case_numbers"] = _approval(case, "case_numbers")
         case["state"] = "OUTPUT_READY"
 
+    elif action == "update_output_context":
+        if case["state"] not in {"CASE_NUMBERS", "OUTPUT_READY"}:
+            raise WorkflowError("完成筆錄後才可填寫條陳資料")
+        values = payload.get("output_context")
+        if not isinstance(values, dict):
+            raise WorkflowError("條陳資料格式錯誤")
+        context = deepcopy(case.get("output_context", {}))
+        for key in ("jurisdiction", "officer", "report_time"):
+            if key in values:
+                context[key] = _clean_text(values[key], key, required=False)
+                context.setdefault("sources", {})[key] = "USER" if context[key] else ""
+        case["output_context"] = context
+        # 案件資料改變時，條陳必須重新確認；已核准的筆錄不受影響。
+        case["approvals"].pop("case_numbers", None)
+        if case["state"] == "OUTPUT_READY":
+            case["state"] = "CASE_NUMBERS"
+
     elif action == "reopen":
         if case["state"] != "OUTPUT_READY":
             raise WorkflowError("只有已完成案件可重新開啟")
@@ -1046,6 +1118,7 @@ def public_case(case: dict[str, Any]) -> dict[str, Any]:
     result.setdefault("route_fact_overlay", {})
     result.setdefault("selected_legal_route_states", {})
     result.setdefault("question_quarantine", [])
+    result.setdefault("output_context", {"jurisdiction": "", "officer": "", "report_time": "", "sources": {}})
     return result
 
 

@@ -228,6 +228,10 @@ def interview_docx(case: dict[str, Any], role: str) -> bytes:
 
 def brief_text(case: dict[str, Any], role: str) -> str:
     intake = case["intake"]
+    output_context = case.get("output_context") or {}
+    jurisdiction = output_context.get("jurisdiction") or "UNKNOWN"
+    officer = output_context.get("officer") or "UNKNOWN"
+    report_time = output_context.get("report_time")
     interview = _interview(case, role)
     names = _offense_names(interview)
     numbers = case["case_numbers"]
@@ -248,11 +252,11 @@ def brief_text(case: dict[str, Any], role: str) -> str:
             f"{brief_value(template, 'case_reason', f'一、受理案由：{case_name}(受理)')}\n"
             f"二、發生時間：{_format_tw_time(intake['event_time'])}\n"
             f"三、發生地點：{intake['location']}\n"
-            f"四、報案時間：{_format_tw_time(intake.get('report_time')) if intake.get('report_time') else 'UNKNOWN'}\n"
+            f"四、報案時間：{_format_tw_time(report_time) if report_time else 'UNKNOWN'}\n"
             f"{brief_value(template, 'summary_label', '五、案情摘要')}：{summary}\n\n"
             f"{brief_value(template, 'followup_label', '六、後續處置')}：\n（一）{report}\n"
-            f"（二）本案管轄：{intake.get('jurisdiction') or 'UNKNOWN'}\n"
-            f"（三）處理員警：警員 {intake['officer']}。"
+            f"（二）本案管轄：{jurisdiction}\n"
+            f"（三）處理員警：警員 {officer}。"
         )
     if role == "suspect":
         return (
@@ -260,12 +264,12 @@ def brief_text(case: dict[str, Any], role: str) -> str:
             f"{brief_value(template, 'case_reason', f'一、受理案由：{case_name}(破獲)')}\n"
             f"二、發生時間：{_format_tw_time(intake['event_time'])}\n"
             f"三、發生地點：{intake['location']}\n"
-            f"四、報案時間：{_format_tw_time(intake.get('report_time')) if intake.get('report_time') else 'UNKNOWN'}\n"
+            f"四、報案時間：{_format_tw_time(report_time) if report_time else 'UNKNOWN'}\n"
             f"五、破獲時間：{_format_tw_time(intake.get('arrest_time')) if intake.get('arrest_time') else 'UNKNOWN'}\n"
             f"{brief_value(template, 'summary_label', '六、案情摘要')}：{summary}\n\n"
             f"{brief_value(template, 'followup_label', '七、後續處置')}：\n（一）{report}\n"
             f"（二）後續偵辦情形：{intake.get('disposition') or 'UNKNOWN'}\n"
-            f"（三）處理員警：警員 {intake['officer']}。"
+            f"（三）處理員警：警員 {officer}。"
         )
     return (
         f"{intake['station']}報告\n"
@@ -273,7 +277,7 @@ def brief_text(case: dict[str, Any], role: str) -> str:
         f"二、查獲時間：{_format_tw_time(intake['event_time'])}\n"
         f"三、查獲地點：{intake['location']}\n"
         f"{brief_value(template, 'summary_label', '四、案情摘要')}：{summary}\n\n"
-        f"五、處理員警：警員 {intake['officer']}。"
+        f"五、處理員警：警員 {officer}。"
     )
 
 

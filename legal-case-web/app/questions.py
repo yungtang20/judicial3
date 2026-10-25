@@ -425,6 +425,90 @@ def build_property_taking_questions(
     return questions
 
 
+WALLET_ATM_ROUTE_IDS = {
+    "theft_320_1_movable",
+    "embezzlement_337_lost_property",
+    "fraud_339_2_payment_device",
+}
+
+
+def build_wallet_atm_questions(
+    role: str,
+    legal_route_ids: set[str] | None = None,
+    materialized_at: str | None = None,
+) -> list[dict[str, Any]]:
+    """錢包遺失後卡片遭提款的共用事實包。
+
+    同一事件可能同時涉及財物離手、遺失物及未授權提款。這些方向
+    共用時間、地點、持有、授權與證據事實，不能把三套父罪章題庫相加。
+    本包只確認一次，法律方向仍由人工 Gate 2 選擇與後續覆核決定。
+    """
+    if role not in {"victim", "suspect", "transfer"}:
+        return []
+    selected = set(legal_route_ids or ())
+    if not (selected & WALLET_ATM_ROUTE_IDS) or "fraud_339_2_payment_device" not in selected:
+        return []
+    texts = {
+        "victim": [
+            "請依時間順序說明你最後看到或持有錢包、發現錢包不見，以及收到銀行通知的經過。",
+            "你最後看到錢包的時間、地點、攜帶或保管方式為何？當時錢包內有哪些物品？",
+            "你何時、在哪裡發現錢包不見？發現後是否曾尋找、聯絡場所或辦理掛失？",
+            "錢包內的卡片是否由你申請、持有及使用？卡片遺失前是否曾交給他人？",
+            "銀行通知的提款時間、地點、金額及交易方式為何？你如何得知這些資料？",
+            "該筆提款是否由你本人操作或授權？你是否曾同意任何人使用該卡或取得密碼？",
+            "你是否知道提款時卡片或提款設備的實際使用人？目前能否辨識該人？",
+            "你是否保留銀行簡訊、交易明細、掛失紀錄、監視器或其他可供查證的資料？",
+            "你因錢包或提款事件受到的財物損失、後續處理及目前是否已追回情形為何？",
+            "你是否要提出告訴或請求民事賠償？是否願意配合提供資料及接受後續通知？",
+        ],
+        "suspect": [
+            "請依時間順序說明你接觸錢包、卡片或提款交易相關物品與資料的經過。",
+            "你何時、在哪裡接觸錢包或卡片？當時如何取得及保管？",
+            "你是否使用該卡提款？如有，請說明時間、地點、金額、設備及操作方式。",
+            "卡片持有人是否曾同意你持有、使用卡片或知道密碼？同意範圍及依據為何？",
+            "你是否知道錢包或卡片不是你的？你如何知道持有人及卡片來源？",
+            "你是否曾歸還、掛失、交付、轉交或處分錢包、卡片或提款所得？請說明時間及對象。",
+            "銀行紀錄、提款設備影像、通訊或其他資料是否能說明你的行動？",
+            "請提出你認為可供查證的資料、證人或其他有利於釐清經過的事項。",
+        ],
+        "transfer": [
+            "請依案卷及你親自知悉的情形，說明錢包遺失與卡片提款的時間順序。",
+            "案卷記載最後持有錢包的時間、地點及發現遺失的情形為何？來源為何？",
+            "銀行交易的時間、地點、金額、卡片及設備資料為何？來源為何？",
+            "目前有何資料可確認卡片持有人未授權該筆提款？",
+            "有無監視器、交易紀錄、掛失紀錄、通訊或證人可供調查？",
+            "請說明目前損失、追回、通知及後續處理情形。",
+        ],
+    }
+    route_ids = sorted(selected & WALLET_ATM_ROUTE_IDS)
+    prefix = {"victim": "V", "suspect": "S", "transfer": "T"}[role]
+    questions: list[dict[str, Any]] = []
+    for index, text in enumerate(texts[role], start=1):
+        questions.append({
+            "id": f"{prefix}-WALLET-ATM-{index:02d}",
+            "text": text,
+            "kind": "core",
+            "role": role,
+            "offense_id": "fraud",
+            "priority": 1,
+            "source": {"label": "錢包遺失及卡片提款共用事實包", "status": "HUMAN_REVIEW_REQUIRED"},
+            "status": "PENDING",
+            "answer": "",
+            "answer_code": "UNKNOWN",
+            "meta": {
+                "pack_id": "wallet-atm-v1",
+                "pack_version": "wallet-atm-v1",
+                "materialized_at": materialized_at or "",
+                "fact_target": f"wallet_atm_fact_{index:02d}",
+                "legal_targets": route_ids,
+                "purpose": "補齊共用事實",
+                "trigger_condition": "always",
+                "answer_map": {"YES": "YES", "NO": "NO", "UNKNOWN": "UNKNOWN"},
+            },
+        })
+    return questions
+
+
 class QuestionBudgetExceeded(ValueError):
     """必要核心題已超過題量上限，必須縮小法律路由而非靜默裁題。"""
 

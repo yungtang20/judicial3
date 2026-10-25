@@ -56,10 +56,16 @@ def completed_case(role: str = "victim", offense: str = "theft") -> dict:
     answers = {question["id"]: "測試回答" for question in case["questions"]}
     case = apply_action(case, "save_answers", {"answers": answers}, BANK)
     case = apply_action(case, "approve_gate2", {"confirmed": True}, BANK)
+    case = apply_action(case, "update_output_context", {
+        "output_context": {
+            "jurisdiction": intake(has_victim=role != "transfer")["jurisdiction"],
+            "officer": intake(has_victim=role != "transfer")["officer"],
+            "report_time": intake(has_victim=role != "transfer")["report_time"],
+        },
+    }, BANK)
     numbers = {"proof": "Z123456789", "women_child": "", "case_165": ""}
     if offense == "fraud":
         numbers["case_165"] = "1234567890"
     case = apply_action(case, "save_case_numbers", {"case_numbers": numbers}, BANK)
     case["revision"] = 1
     return deepcopy(case)
-

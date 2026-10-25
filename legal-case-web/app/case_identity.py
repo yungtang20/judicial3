@@ -45,7 +45,8 @@ def _offense_label(case: dict[str, Any]) -> str:
 def case_display_name(case: dict[str, Any]) -> str:
     intake = case.get("intake") or {}
     subject = str(intake.get("victim_identifier") or "").strip() or "未具名"
-    officer = str(intake.get("officer") or "").strip() or "未填員警"
+    output_context = case.get("output_context") or {}
+    officer = str(output_context.get("officer") or "").strip() or "未填員警"
     return f"{_compact_roc_date(intake.get('event_time'))}{subject}遭{_offense_label(case)}案({officer})"
 
 
@@ -56,7 +57,7 @@ def case_identity(case: dict[str, Any]) -> dict[str, str]:
         "date": _compact_roc_date(intake.get("event_time")),
         "subject_name": str(intake.get("victim_identifier") or "").strip() or "未具名",
         "case_label": _offense_label(case),
-        "officer_name": str(intake.get("officer") or "").strip() or "未填員警",
+        "officer_name": str((case.get("output_context") or {}).get("officer") or "").strip() or "未填員警",
         "display_name": case_display_name(case),
     }
 

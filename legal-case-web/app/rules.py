@@ -1736,6 +1736,12 @@ def _sentence_bound_anchor(
 
 
 def _element_anchor_ok(offense_id: str, summary: str) -> bool:
+    if offense_id == "fraud" and re.search(
+        r"(?:非本人|未經本人同意|未授權)[^。；]{0,30}(?:提款|提領)"
+        r"|(?:卡片|金融卡|提款卡)[^。；]{0,30}(?:提款|提領)",
+        summary,
+    ):
+        return True
     # 缺事實案例仍可保留妨害公務候選，但必須把強暴／脅迫列為待確認，
     # 不把「插手／干擾」直接當成已具備的法定手段。
     if offense_id == "stalking" and re.search(r"定位|監看", summary) and re.search(r"持續|反覆|多次", summary):
@@ -2099,6 +2105,12 @@ def candidate_offenses(
         if offense["id"] == "fraud" and not hits:
             if _scene_hit(r"佯稱|冒充|詐術", summary) and _scene_hit(r"匯款|轉帳|交付|付款", summary):
                 hits = ["詐術／財產處分情境"]
+            elif _scene_hit(
+                r"(?:非本人|未經本人同意|未授權)[^。；]{0,30}(?:提款|提領)"
+                r"|(?:卡片|金融卡|提款卡)[^。；]{0,30}(?:提款|提領)",
+                summary,
+            ):
+                hits = ["未經授權自動付款設備提款情境"]
         if offense["id"] == "injury" and not hits:
             if _scene_hit(r"受有[^。；]{0,50}(?:傷害|挫傷)|穿孔|腹膜炎|敗血症", summary) and _scene_hit(
                 r"毆打|揮打|攻擊|踢踹|腳踢|推擠|刺穿|手術|不慎|疏未注意", summary
@@ -2331,6 +2343,7 @@ def candidate_offenses(
     property_wanted = (
         _property_taking_values(summary) is not None
         or bool(matched_ids & PROPERTY_ROUTE_IDS)
+        or bool(re.search(r"(?:錢包|皮夾|皮包|金融卡|提款卡).{0,12}(?:不見|遺失|失去)", summary))
     )
     if property_wanted and (not attributed_spans or property_family_matched):
         # D1（人工核定「B 修正版」，2026-10-20）：財物三路區辨——
@@ -2347,6 +2360,8 @@ def candidate_offenses(
             related_ids.add("embezzlement")
         if signals["violence_take"]:
             related_ids.add("robbery")
+        if re.search(r"(?:錢包|皮夾|皮包).{0,12}(?:不見|遺失|失去)", summary):
+            related_ids.update({"theft", "embezzlement"})
         related_ids -= matched_ids
     for offense_id in sorted(related_ids):
         offense = by_id[offense_id]
@@ -2709,13 +2724,26 @@ def build_questions(
         THEFT_320_1_MOVABLE_ROUTE_ID,
         THEFT_320_1_MOVABLE_WORK_ITEM_HASH,
         build_property_taking_questions,
+        build_wallet_atm_questions,
     )
 
     # 候選只是 Gate 2 hint。只有已核准的 parent offense 才能影響問句
     # materialization，避免未選方向的區分題或 machine effect 滲入正式筆錄。
     candidate_ids = set(offense_ids)
     route_ids = list(dict.fromkeys(legal_route_ids or []))
-    focused_questions = build_property_taking_questions(
+    gate1_signal = " ".join([
+        str((gate1 or {}).get("source_summary", "")),
+        str((gate1 or {}).get("summary", "")),
+        " ".join(str(value) for value in (gate1 or {}).get("objects", [])),
+        " ".join(str(value) for value in (gate1 or {}).get("behaviors", [])),
+        " ".join(str(value) for value in (gate1 or {}).get("events", [])),
+    ])
+    wallet_atm_questions = (
+        build_wallet_atm_questions(role, set(route_ids), materialized_at)
+        if re.search(r"\u9322\u5305|\u76ae\u593e|\u5361\u7247|\u91d1\u878d\u5361|\u63d0\u6b3e\u5361|\u63d0\u6b3e|\u63d0\u9818|\u9280\u884c\u7c21\u8a0a|\u672a\u7d93\u6388\u6b0a|\u975e\u672c\u4eba", gate1_signal)
+        else []
+    )
+    focused_questions = wallet_atm_questions or build_property_taking_questions(
         role,
         candidate_ids,
         gate1 or {},
@@ -2734,7 +2762,8 @@ def build_questions(
         if offense is None:
             raise RuleError(f"未知罪章：{offense_id}")
         # 1) 公司套表罪章題（新套表.xlsm 各罪章欄）— 不受即時預算限制（公司核定題）
-        company_offense_questions = xlsm_questions_for(
+        compact_wallet_atm = bool(wallet_atm_questions)
+        company_offense_questions = [] if compact_wallet_atm else xlsm_questions_for(
             questions, role, offense_id, route_ids, gate1,
         )
         for question in company_offense_questions:
@@ -2744,6 +2773,8 @@ def build_questions(
             add_seen(question["text"])
         # 公司固定題逐字保留；若 child route 有經審查的中性核心缺口題，
         # 只插入該 route pack，不混入整套 md／JSON 題庫。
+        if compact_wallet_atm:
+            continue
         if has_company_standard_questions(role, offense_id):
             for question in route_questions_for(
                 role, offense_id, route_ids, offense["source"],
@@ -2812,6 +2843,25 @@ def build_questions(
         validate_generated_questions,
     )
     all_questions = list(questions)
+    # 不同題庫可能用不同文字重問同一程序概念。固定題仍保留第一個版本，
+    # 後續同屬告訴／民事／和解的題目不再重複進入筆錄。
+    procedure_keys: set[str] = set()
+    compacted: list[dict[str, Any]] = []
+    for question in all_questions:
+        text = str(question.get("text", ""))
+        key = "complaint_civil_resolution" if re.search(
+            r"告訴|提告|民事|求償|和解|調解", text
+        ) else None
+        # 構成要件核心題不得因文字相似被移除，否則會切斷 route element coverage。
+        # 只壓縮程序／補充題的重複。
+        compressible = question.get("kind") not in {"core", "company"}
+        if key and compressible and key in procedure_keys:
+            continue
+        if key and compressible:
+            procedure_keys.add(key)
+        compacted.append(question)
+    all_questions = compacted
+    questions = compacted
     try:
         questions = apply_question_budget(questions, max_offense_questions=MAX_OFFENSE_QUESTIONS)
     except QuestionBudgetExceeded as exc:
@@ -2919,7 +2969,15 @@ def required_case_numbers(case: dict[str, Any]) -> list[str]:
     for interview in case.get("interviews", {}).values():
         offense_ids.update(interview.get("selected_offenses", []))
     if "fraud" in offense_ids:
-        required.append("case_165")
+        route_ids = {
+            route.get("route_id")
+            for route in case.get("selected_legal_routes", [])
+            if isinstance(route, dict)
+        }
+        # 165 是特定詐騙案件的程序案號，不應由 fraud parent 無條件套用
+        # 到金融卡遭未授權 ATM 提款的第339條之2待查路由。
+        if not route_ids or route_ids - {"fraud_339_2_payment_device"}:
+            required.append("case_165")
     intake = case["intake"]
     if intake.get("victim_is_code") or is_victim_code(intake.get("victim_identifier", "")):
         required.append("women_child")

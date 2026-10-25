@@ -85,22 +85,22 @@
   "runtime_surfaces": [
     {
       "path": "app/server.py",
-      "sha256": "d4559bc68d42af9c2f3d0e971bd8da15bc13e6d467aeb590b12c45aca02c08dc",
+      "sha256": "c3cba3b4d3d0b5effe39e45f99b96c0141d1d0f38784757e8ea6840595f4c0e1",
       "expected_references": 0
     },
     {
       "path": "app/workflow.py",
-      "sha256": "cc1d64c21cda87655006e2de4fc12cc197b68141b4de537ece3fa316c5f8f512",
+      "sha256": "ad70f683d01e99ffa29e693bc7de1f8b566f4b8bfd9702d1ed2808ecb0192232",
       "expected_references": 0
     },
     {
       "path": "app/rules.py",
-      "sha256": "4b5177ed910553c5e77935714a01415134dd007caff103cbf2aded758435b4d4",
+      "sha256": "f30aa6795ba37feb74163b6281aac7db6d37d5c3423ae602610e45c43c0a28c8",
       "expected_references": 0
     },
     {
       "path": "app/static/app.js",
-      "sha256": "e3b27239cc365449edf0af4bd89919e83cf27dec8ced37ba9462e64d3ec75cbc",
+      "sha256": "911803468d168f28ab677ff6faba7ddd171de41e9661d0f11fd30578b8d1460a",
       "expected_references": 0
     }
   ],
