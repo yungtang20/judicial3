@@ -8,7 +8,7 @@
 2. 記錄該使用者 UUID，作為 `SUPABASE_OWNER_USER_ID`。
 3. 關閉公開註冊及匿名登入。
 4. 在方案支援時啟用 Leaked Password Protection。
-5. 保持 TOTP MFA enrollment 與 verification 啟用。
+5. 登入頁只使用固定使用者名稱與密碼；Supabase 電子郵件僅作為伺服器端 Auth 映射值。
 6. 不建立第二個應用程式使用者。
 
 ## 2. 資料表與 RLS
@@ -18,10 +18,9 @@
 3. 確認沒有剩餘 placeholder。
 4. 在 Supabase SQL Editor 執行整份交易。
 5. 在 Data API 設定關閉自動公開新資料表。
-6. 確認 `anon` 無權限，`authenticated` 仍須同時通過固定 UUID、`owner_id` 與 `aal2` RLS。
-7. 確認 `cases_require_mfa` 是 `RESTRICTIVE` policy，避免日後新增 permissive policy 時繞過 MFA。
+6. 確認 `anon` 無權限，`authenticated` 仍須同時通過固定 UUID 與 `owner_id` RLS。
 
-不得移除 `FORCE ROW LEVEL SECURITY`、固定 owner UUID 或 MFA 條件。
+不得移除 `FORCE ROW LEVEL SECURITY` 或固定 owner UUID 條件。
 
 ## 3. Render Secrets
 
@@ -32,6 +31,8 @@
 | `SUPABASE_URL` | Supabase Project URL（HTTPS） |
 | `SUPABASE_PUBLISHABLE_KEY` | Publishable key；不要使用 `service_role` 或 secret key |
 | `SUPABASE_OWNER_USER_ID` | 唯一核准使用者 UUID |
+| `SUPABASE_LOGIN_USERNAME` | 登入頁使用的固定使用者名稱 |
+| `SUPABASE_LOGIN_EMAIL` | 唯一 Supabase Auth 使用者的電子郵件；僅供伺服器映射 |
 | `JUDICIAL_ENCRYPTION_KEY` | 固定 Fernet key；遺失後既有案件無法解密 |
 
 `render.yaml` 另固定：
@@ -39,6 +40,7 @@
 - `AUTH_REQUIRED=true`
 - `AUTH_PROVIDER=supabase`
 - `CASE_STORAGE_PROVIDER=supabase`
+- `SUPABASE_REQUIRE_MFA=false`
 - `ALLOW_EXTERNAL_AI=false`
 
 產生 Fernet key 時只能在可信任環境執行，將結果直接貼入 Render Secret，不要貼入聊天、程式碼或命令紀錄：
@@ -50,12 +52,12 @@ py -3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().de
 ## 4. 驗收
 
 1. 非指定帳號登入必須失敗。
-2. 正確密碼但未完成 MFA 時，不得進入工作台或案件 API。
-3. 完成 MFA 後建立案件，案件清單只顯示 UUID、狀態與更新時間。
+2. 登入頁不得要求或回傳電子郵件與 MFA 資料。
+3. 正確帳密登入後建立案件，案件清單只顯示 UUID、狀態與更新時間。
 4. 重新部署 Render，重新登入後案件仍可開啟。
 5. Supabase `encrypted_payload` 必須是密文，不得出現姓名或案情明文。
 6. 以 `anon` key 直接查詢 `cases` 必須得到拒絕或空結果。
-7. 以非 owner 的 `aal2` 使用者查詢仍必須得到拒絕或空結果。
+7. 以非 owner 使用者查詢仍必須得到拒絕或空結果。
 8. Render log 不得出現電子郵件、姓名、案號、案情、JWT 或密鑰。
 
 ## 5. 邊界

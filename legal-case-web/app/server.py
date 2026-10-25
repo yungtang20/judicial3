@@ -29,7 +29,10 @@ from .config import (
     RENDER_HOSTNAME,
     STATIC_DIR,
     SUPABASE_OWNER_USER_ID,
+    SUPABASE_LOGIN_EMAIL,
+    SUPABASE_LOGIN_USERNAME,
     SUPABASE_PUBLISHABLE_KEY,
+    SUPABASE_REQUIRE_MFA,
     SUPABASE_URL,
 )
 from .accounts import AccountStore
@@ -60,7 +63,12 @@ RUNTIME_SOURCE_MTIME = _runtime_source_mtime()
 SESSION_TOKEN = secrets.token_urlsafe(32)
 BANK = load_bank(QUESTION_BANK_PATH)
 SUPABASE_GATEWAY = (
-    SupabaseGateway(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, SUPABASE_OWNER_USER_ID)
+    SupabaseGateway(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY,
+        SUPABASE_OWNER_USER_ID,
+        require_mfa=SUPABASE_REQUIRE_MFA,
+    )
     if AUTH_PROVIDER == "supabase" or CASE_STORAGE_PROVIDER == "supabase"
     else None
 )
@@ -442,6 +450,10 @@ class Handler(BaseHTTPRequestHandler):
                 "authenticated": authenticated,
                 "auth_provider": AUTH_PROVIDER,
                 "case_storage": CASE_STORAGE_PROVIDER,
+                "login_identifier": (
+                    "email" if AUTH_PROVIDER == "supabase" and SUPABASE_REQUIRE_MFA else "username"
+                ),
+                "mfa_required": bool(AUTH_PROVIDER == "supabase" and SUPABASE_REQUIRE_MFA),
                 "mfa_pending": bool(pending and not pending.authenticated),
                 "registration_available": bool(
                     AUTH_PROVIDER == "local" and AUTH_REQUIRED and _account_store_ready()
@@ -559,33 +571,66 @@ class Handler(BaseHTTPRequestHandler):
                         self._error(HTTPStatus.CONFLICT, "REGISTRATION_CLOSED", "本系統不開放註冊")
                         return
                     if path == "/api/auth/login":
-                        email = payload.get("email", "")
+                        login_name = (
+                            payload.get("email", "")
+                            if SUPABASE_REQUIRE_MFA
+                            else payload.get("username", "")
+                        )
                         password = payload.get("password", "")
                         if (
-                            not isinstance(email, str)
+                            not isinstance(login_name, str)
                             or not isinstance(password, str)
-                            or len(email) > 320
-                            or "@" not in email
                             or len(password) > 256
+                            or (
+                                SUPABASE_REQUIRE_MFA
+                                and (len(login_name) > 320 or "@" not in login_name)
+                            )
+                            or (
+                                not SUPABASE_REQUIRE_MFA
+                                and not re.fullmatch(r"[A-Za-z0-9_.-]{3,32}", login_name)
+                            )
                         ):
                             self._error(HTTPStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "帳號或密碼錯誤")
                             return
-                        if _login_is_locked(email):
+                        if _login_is_locked(login_name):
                             self._error(HTTPStatus.TOO_MANY_REQUESTS, "LOGIN_THROTTLED", "登入暫時鎖定，請稍後再試")
                             return
+                        if (
+                            not SUPABASE_REQUIRE_MFA
+                            and not secrets.compare_digest(login_name, SUPABASE_LOGIN_USERNAME)
+                        ):
+                            _record_login_failure(login_name)
+                            self._error(HTTPStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "帳號或密碼錯誤")
+                            return
+                        email = login_name.strip() if SUPABASE_REQUIRE_MFA else SUPABASE_LOGIN_EMAIL
                         try:
                             tokens = SUPABASE_GATEWAY.sign_in(email.strip(), password)
                         except SupabaseError:
-                            _record_login_failure(email)
+                            _record_login_failure(login_name)
                             self._error(HTTPStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", "帳號、密碼或授權不正確")
                             return
-                        LOGIN_FAILURES.pop(email.casefold(), None)
+                        LOGIN_FAILURES.pop(login_name.casefold(), None)
+                        now = time.time()
+                        if not SUPABASE_REQUIRE_MFA:
+                            record = AuthSession(
+                                expires_at=now + SESSION_TTL_SECONDS,
+                                authenticated=True,
+                                access_token=str(tokens.get("access_token", "")),
+                                refresh_token=str(tokens.get("refresh_token", "")),
+                                token_expires_at=float(tokens.get("expires_at") or now + 3600),
+                            )
+                            token = _new_session(record)
+                            self._json(
+                                HTTPStatus.OK,
+                                {"ok": True},
+                                Set_Cookie=_session_cookie(token),
+                            )
+                            return
                         try:
                             mfa_start = SUPABASE_GATEWAY.begin_mfa(tokens)
                         except SupabaseError:
                             self._error(HTTPStatus.SERVICE_UNAVAILABLE, "MFA_UNAVAILABLE", "MFA 服務暫時無法使用")
                             return
-                        now = time.time()
                         record = AuthSession(
                             expires_at=now + MFA_PENDING_TTL_SECONDS,
                             authenticated=False,
@@ -800,6 +845,11 @@ def run() -> None:
             raise RuntimeError("Supabase 單一所有人模式必須同時啟用登入與持久化案件儲存")
         if external_ai_enabled():
             raise RuntimeError("真實案件持久化模式禁止啟用外部 AI")
+        if not SUPABASE_REQUIRE_MFA:
+            if not re.fullmatch(r"[A-Za-z0-9_.-]{3,32}", SUPABASE_LOGIN_USERNAME):
+                raise RuntimeError("帳密模式必須設定有效的 SUPABASE_LOGIN_USERNAME")
+            if len(SUPABASE_LOGIN_EMAIL) > 320 or "@" not in SUPABASE_LOGIN_EMAIL:
+                raise RuntimeError("帳密模式必須設定有效的 SUPABASE_LOGIN_EMAIL")
         validate_persistent_encryption_key()
     if AUTH_REQUIRED and ACCOUNT_STORE is not None:
         if not ACCOUNT_STORE.has_account() and len(REGISTRATION_INVITE_CODE) < 32:

@@ -30,15 +30,7 @@ revoke all on table public.cases from anon;
 revoke all on table public.cases from authenticated;
 grant select, insert, update, delete on table public.cases to authenticated;
 
--- Keep MFA as a restrictive policy so a later permissive owner policy cannot
--- accidentally grant access to an aal1 session.
 drop policy if exists cases_require_mfa on public.cases;
-create policy cases_require_mfa on public.cases
-    as restrictive
-    for all
-    to authenticated
-    using (((select auth.jwt())->>'aal') = 'aal2')
-    with check (((select auth.jwt())->>'aal') = 'aal2');
 
 drop policy if exists cases_owner_select on public.cases;
 create policy cases_owner_select on public.cases
@@ -47,7 +39,6 @@ create policy cases_owner_select on public.cases
     using (
         (select auth.uid()) = owner_id
         and (select auth.uid()) = 'OWNER_USER_UUID_HERE'::uuid
-        and ((select auth.jwt())->>'aal') = 'aal2'
     );
 
 drop policy if exists cases_owner_insert on public.cases;
@@ -57,7 +48,6 @@ create policy cases_owner_insert on public.cases
     with check (
         (select auth.uid()) = owner_id
         and (select auth.uid()) = 'OWNER_USER_UUID_HERE'::uuid
-        and ((select auth.jwt())->>'aal') = 'aal2'
     );
 
 drop policy if exists cases_owner_update on public.cases;
@@ -67,12 +57,10 @@ create policy cases_owner_update on public.cases
     using (
         (select auth.uid()) = owner_id
         and (select auth.uid()) = 'OWNER_USER_UUID_HERE'::uuid
-        and ((select auth.jwt())->>'aal') = 'aal2'
     )
     with check (
         (select auth.uid()) = owner_id
         and (select auth.uid()) = 'OWNER_USER_UUID_HERE'::uuid
-        and ((select auth.jwt())->>'aal') = 'aal2'
     );
 
 drop policy if exists cases_owner_delete on public.cases;
@@ -82,7 +70,6 @@ create policy cases_owner_delete on public.cases
     using (
         (select auth.uid()) = owner_id
         and (select auth.uid()) = 'OWNER_USER_UUID_HERE'::uuid
-        and ((select auth.jwt())->>'aal') = 'aal2'
     );
 
 commit;

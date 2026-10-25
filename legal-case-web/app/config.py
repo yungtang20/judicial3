@@ -32,3 +32,6 @@ REGISTRATION_INVITE_CODE = os.environ.get("REGISTRATION_INVITE_CODE", "")
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "").strip().rstrip("/")
 SUPABASE_PUBLISHABLE_KEY = os.environ.get("SUPABASE_PUBLISHABLE_KEY", "").strip()
 SUPABASE_OWNER_USER_ID = os.environ.get("SUPABASE_OWNER_USER_ID", "").strip().lower()
+SUPABASE_LOGIN_USERNAME = os.environ.get("SUPABASE_LOGIN_USERNAME", "").strip()
+SUPABASE_LOGIN_EMAIL = os.environ.get("SUPABASE_LOGIN_EMAIL", "").strip()
+SUPABASE_REQUIRE_MFA = os.environ.get("SUPABASE_REQUIRE_MFA", "true").strip().lower() == "true"

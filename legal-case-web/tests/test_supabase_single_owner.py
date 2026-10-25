@@ -219,8 +219,13 @@ def test_gateway_mfa_enrollment_normalizes_svg_with_xml_declaration() -> None:
 
 class FakeAuthGateway:
     owner_user_id = OWNER_ID
+    require_mfa = True
+
+    def __init__(self):
+        self.last_email = ""
 
     def sign_in(self, email, password):
+        self.last_email = email
         return {
             "access_token": _token(),
             "refresh_token": "refresh-1",
@@ -251,6 +256,7 @@ def test_server_blocks_case_api_until_supabase_mfa(monkeypatch) -> None:
     monkeypatch.setattr(server_module, "AUTH_REQUIRED", True)
     monkeypatch.setattr(server_module, "AUTH_PROVIDER", "supabase")
     monkeypatch.setattr(server_module, "CASE_STORAGE_PROVIDER", "supabase")
+    monkeypatch.setattr(server_module, "SUPABASE_REQUIRE_MFA", True)
     monkeypatch.setattr(server_module, "SUPABASE_GATEWAY", FakeAuthGateway())
     monkeypatch.setattr(server_module, "STORE", EphemeralCaseStore())
     monkeypatch.setattr(server_module, "AUTH_SESSIONS", {})
@@ -310,16 +316,59 @@ def test_server_blocks_case_api_until_supabase_mfa(monkeypatch) -> None:
         thread.join(timeout=3)
 
 
-def test_deployment_sql_is_single_owner_and_mfa_fail_closed() -> None:
+def test_server_supports_fixed_username_without_mfa(monkeypatch) -> None:
+    gateway = FakeAuthGateway()
+    gateway.require_mfa = False
+    monkeypatch.setattr(server_module, "AUTH_REQUIRED", True)
+    monkeypatch.setattr(server_module, "AUTH_PROVIDER", "supabase")
+    monkeypatch.setattr(server_module, "CASE_STORAGE_PROVIDER", "supabase")
+    monkeypatch.setattr(server_module, "SUPABASE_REQUIRE_MFA", False)
+    monkeypatch.setattr(server_module, "SUPABASE_LOGIN_USERNAME", "owner")
+    monkeypatch.setattr(server_module, "SUPABASE_LOGIN_EMAIL", "owner@example.invalid")
+    monkeypatch.setattr(server_module, "SUPABASE_GATEWAY", gateway)
+    monkeypatch.setattr(server_module, "STORE", EphemeralCaseStore())
+    monkeypatch.setattr(server_module, "AUTH_SESSIONS", {})
+    monkeypatch.setattr(server_module, "LOGIN_FAILURES", {})
+    instance = ThreadingHTTPServer(("127.0.0.1", 0), server_module.Handler)
+    port = instance.server_address[1]
+    host = f"127.0.0.1:{port}"
+    monkeypatch.setattr(server_module, "ALLOWED_HOSTS", {host})
+    monkeypatch.setattr(server_module, "APP_ORIGIN", f"http://{host}")
+    thread = threading.Thread(target=instance.serve_forever, daemon=True)
+    thread.start()
+    try:
+        headers = {"Host": host, "Origin": f"http://{host}", "Content-Type": "application/json"}
+        login = json.dumps({"username": "owner", "password": "password"})
+        status, response_headers, body = request(
+            port,
+            "POST",
+            "/api/auth/login",
+            headers={**headers, "Content-Length": str(len(login))},
+            body=login,
+        )
+        assert status == 200
+        assert json.loads(body) == {"ok": True}
+        assert gateway.last_email == "owner@example.invalid"
+        cookie = response_headers["Set-Cookie"].split(";", 1)[0]
+
+        status, _, _ = request(
+            port, "GET", "/api/question-bank", headers={"Host": host, "Cookie": cookie}
+        )
+        assert status == 200
+    finally:
+        instance.shutdown()
+        instance.server_close()
+        thread.join(timeout=3)
+
+
+def test_deployment_sql_is_single_owner_without_mfa() -> None:
     sql = Path(__file__).parents[1].joinpath("deploy", "supabase_single_owner.sql").read_text(
         encoding="utf-8"
     )
     assert "force row level security" in sql.lower()
     assert "OWNER_USER_UUID_HERE" in sql
-    assert "(select auth.jwt())->>'aal'" in sql
-    assert "'aal2'" in sql
-    assert "create policy cases_require_mfa" in sql.lower()
-    assert "as restrictive" in sql.lower()
+    assert "(select auth.jwt())->>'aal'" not in sql
+    assert "create policy cases_require_mfa" not in sql.lower()
     assert "revoke all on table public.cases from anon" in sql.lower()
     assert "service_role" not in sql
 
@@ -336,6 +385,9 @@ def test_render_blueprint_has_no_registration_or_service_role_secret() -> None:
     assert "AUTH_PROVIDER\n        value: supabase" in blueprint
     assert "CASE_STORAGE_PROVIDER\n        value: supabase" in blueprint
     assert "SUPABASE_OWNER_USER_ID" in blueprint
+    assert "SUPABASE_LOGIN_USERNAME" in blueprint
+    assert "SUPABASE_LOGIN_EMAIL" in blueprint
+    assert 'SUPABASE_REQUIRE_MFA\n        value: "false"' in blueprint
     assert "JUDICIAL_ENCRYPTION_KEY" in blueprint
     assert "REGISTRATION_INVITE_CODE" not in blueprint
     assert "SERVICE_ROLE" not in blueprint.upper()

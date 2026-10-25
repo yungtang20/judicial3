@@ -9,6 +9,7 @@ const status = document.querySelector("#auth-status");
 let registrationAvailable = false;
 let registering = false;
 let authProvider = "local";
+let loginIdentifier = "username";
 let mfaPending = false;
 
 function showError(message) {
@@ -29,7 +30,8 @@ async function loadStatus() {
     return;
   }
   authProvider = data.auth_provider || "local";
-  if (authProvider === "supabase") {
+  loginIdentifier = data.login_identifier || "username";
+  if (authProvider === "supabase" && loginIdentifier === "email") {
     const username = document.querySelector("#username");
     document.querySelector("#username-label").textContent = "電子郵件";
     username.type = "email";
@@ -38,6 +40,8 @@ async function loadStatus() {
     username.removeAttribute("pattern");
     username.setAttribute("autocomplete", "email");
     document.querySelector("#auth-warning").textContent = "僅限核准的唯一帳號；登入後必須完成 MFA。";
+  } else if (authProvider === "supabase") {
+    document.querySelector("#auth-warning").textContent = "僅限核准的唯一帳號。";
   }
   registrationAvailable = data.registration_available === true;
   toggle.hidden = !registrationAvailable;
@@ -62,7 +66,7 @@ form.addEventListener("submit", async (event) => {
   status.classList.remove("error");
   submit.disabled = true;
   const values = new FormData(form);
-  const payload = authProvider === "supabase"
+  const payload = authProvider === "supabase" && loginIdentifier === "email"
     ? { email: String(values.get("email") || ""), password: String(values.get("password") || "") }
     : { username: String(values.get("username") || ""), password: String(values.get("password") || "") };
   if (registering) payload.invite_code = String(values.get("invite_code") || "");

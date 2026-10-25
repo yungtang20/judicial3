@@ -25,5 +25,11 @@ services:
         sync: false
       - key: SUPABASE_OWNER_USER_ID
         sync: false
+      - key: SUPABASE_LOGIN_USERNAME
+        sync: false
+      - key: SUPABASE_LOGIN_EMAIL
+        sync: false
+      - key: SUPABASE_REQUIRE_MFA
+        value: "false"
       - key: JUDICIAL_ENCRYPTION_KEY
         sync: false

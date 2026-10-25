@@ -72,6 +72,7 @@ class SupabaseGateway:
         publishable_key: str,
         owner_user_id: str,
         *,
+        require_mfa: bool = True,
         transport: Transport = _default_transport,
     ) -> None:
         parsed = urlparse(url)
@@ -97,6 +98,7 @@ class SupabaseGateway:
         self.url = url.rstrip("/")
         self.publishable_key = publishable_key
         self.owner_user_id = owner_user_id.lower()
+        self.require_mfa = require_mfa
         self._transport = transport
 
     def _request(
@@ -151,7 +153,7 @@ class SupabaseGateway:
         )
         if not isinstance(value, dict):
             raise SupabaseError("登入更新回應格式不正確")
-        self._validate_owner(value, require_aal2=True)
+        self._validate_owner(value, require_aal2=self.require_mfa)
         return value
 
     def begin_mfa(self, tokens: dict[str, Any]) -> MfaStart:
