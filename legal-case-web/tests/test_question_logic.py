@@ -301,6 +301,10 @@ def test_semantic_key_collapses_known_fixed_template_overlaps():
     assert by_key["fact:drug-weapon"] == "V-sexual-Z1-C-08"
     assert by_key["fact:profit-purpose-resources"] == "V-privacy-Q-C-11"
     assert by_key["procedure:complaint-confirmation"] == "V-sexual-Z1-D-15"
+    assert by_key["procedure:complaint-and-civil-claim"] == "COMPANY-V-06"
+    assert by_key["fact:prior-relationship"] == "COMPANY-V-04"
+    assert by_key["evidence:scene-and-investigation-support"] == "COMPANY-V-05"
+    assert by_key["procedure:final-confirmation"] == "COMPANY-V-07"
 
 
 def test_reevaluate_candidates_returns_existing():

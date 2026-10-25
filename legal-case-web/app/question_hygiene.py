@@ -128,6 +128,29 @@ def semantic_key(text: str) -> str:
         and ("是否為你本人" in value or "身分資料" in value)
     ):
         return "identity:personal-record"
+    if "提出告訴" in value and ("民事求償" in value or "民事賠償" in value):
+        return "procedure:complaint-and-civil-claim"
+    if (
+        ("與對方是否認識" in value or "與行為人原本有何關係" in value
+         or "雙方之間的關係" in value)
+        and ("關係" in value or "認識" in value)
+    ):
+        return "fact:prior-relationship"
+    if any(
+        marker in value
+        for marker in (
+            "現場有無裝設監視器",
+            "其他人見聞",
+            "哪些人可能看見或聽見",
+            "資料或物品可以提供警方查證",
+            "佐證資料可提供警方",
+            "請警方協助調查",
+            "需要警方協助調查其他有利事證",
+            "目擊者或知情人",
+            "提供警方相關佐證資料",
+        )
+    ):
+        return "evidence:scene-and-investigation-support"
     if "送達" in value and ("地址" in value or "何處" in value):
         return "procedure:service-address"
     if "告訴意願另依" in value:
@@ -136,8 +159,11 @@ def semantic_key(text: str) -> str:
         return "fact:drug-weapon"
     if "營利" in value and any(term in value for term in ("場所", "工具", "設備")):
         return "fact:profit-purpose-resources"
-    if ("以上" in value or "上述" in value) and "補充" in value:
-        return "procedure:final-addendum"
+    if (
+        ("以上" in value or "上述" in value or "其他想補充" in value)
+        and any(term in value for term in ("補充", "實在", "陳述"))
+    ):
+        return "procedure:final-confirmation"
     if "自由意識下" in value or "親自陳述" in value:
         return "procedure:voluntary-statement"
     if "時間與地點為何" in value:
@@ -147,5 +173,5 @@ def semantic_key(text: str) -> str:
     if "法定代理人或監護人" in value and "身分與聯絡方式" in value:
         return "person:legal-representative"
     if ("是否實在" in value or "是否屬實" in value) and "補充" in value:
-        return "procedure:final-addendum"
+        return "procedure:final-confirmation"
     return value
