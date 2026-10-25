@@ -207,8 +207,11 @@ class SupabaseGateway:
             return ""
         if value.startswith("data:image/svg+xml") or value.startswith("data:image/png"):
             return value
-        if value.startswith("<svg") and value.endswith("</svg>"):
-            encoded = base64.b64encode(value.encode("utf-8")).decode("ascii")
+        svg_start = value.find("<svg")
+        svg_end = value.rfind("</svg>")
+        if svg_start >= 0 and svg_end >= svg_start:
+            svg = value[svg_start:svg_end + len("</svg>")]
+            encoded = base64.b64encode(svg.encode("utf-8")).decode("ascii")
             return f"data:image/svg+xml;base64,{encoded}"
         raise SupabaseError("MFA QR Code 格式不正確")
 
