@@ -100,7 +100,7 @@
     },
     {
       "path": "app/static/app.js",
-      "sha256": "238a33d0627c104dd00419bee79193d61e3f2e2689e8bf6764927154fe050445",
+      "sha256": "2c584eed36153f93d9551a01b3e8db2383093324356673f310396aea477c7a1b",
       "expected_references": 0
     }
   ],
@@ -128,7 +128,7 @@
       "status": "PASS",
       "result": "PASS",
       "passed": null,
-      "verified_on": "2026-10-23"
+      "verified_on": "2026-10-25"
     },
     {
       "id": "V03",
@@ -144,8 +144,8 @@
       "status": "PASS",
       "result": "30 passed",
       "passed": 30,
-      "verified_on": "2026-10-23",
-      "note": "Frontend error-handling suite re-verified 2026-10-22; supersedes the 20-passed baseline recorded on 2026-10-15.；新增行為時法逐條警示與 HINT_ONLY 標示測試：26 -> 29；新增逐題 Enter 下一題與 Shift+Enter 換行測試：29 -> 30。"
+      "verified_on": "2026-10-25",
+      "note": "Frontend error-handling suite re-verified 2026-10-22; supersedes the 20-passed baseline recorded on 2026-10-15.；新增行為時法逐條警示與 HINT_ONLY 標示測試：26 -> 29；新增逐題 Enter 下一題與 Shift+Enter 換行測試：29 -> 30。；新增 Gate 1、Gate 2、筆錄問句獨立折疊面板與初始收合測試。"
     },
     {
       "id": "V05",
@@ -153,7 +153,7 @@
       "status": "PASS",
       "result": "PASS",
       "passed": null,
-      "verified_on": "2026-10-23"
+      "verified_on": "2026-10-25"
     }
   ],
   "approvals_required": [

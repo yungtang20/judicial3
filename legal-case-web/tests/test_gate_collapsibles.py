@@ -45,7 +45,7 @@ class GateMarkupParser(HTMLParser):
         if not self._gate_stack:
             return
         text = data.strip()
-        if text.startswith("GATE "):
+        if text.startswith("GATE ") or text == "筆錄問句":
             labels = self.gates[self._gate_stack[-1]]["labels"]
             assert isinstance(labels, set)
             labels.add(text)
@@ -58,6 +58,7 @@ def test_every_workflow_gate_uses_a_native_collapsible_panel() -> None:
     assert set(parser.gates) == {
         "gate1-panel",
         "gate2-panel",
+        "question-panel",
         "numbers-panel",
         "output-panel",
     }
@@ -66,9 +67,10 @@ def test_every_workflow_gate_uses_a_native_collapsible_panel() -> None:
         "GATE 2",
         "GATE 2.5",
         "GATE 3–5",
+        "筆錄問句",
     }
     for gate in parser.gates.values():
-        assert gate["open"] is True
+        assert gate["open"] is False
         assert gate["summary_count"] == 1
         assert gate["body_count"] == 1
 
@@ -77,8 +79,8 @@ def test_collapsible_controls_have_visible_state_and_focus_styles() -> None:
     html = INDEX_PATH.read_text(encoding="utf-8")
     styles = STYLES_PATH.read_text(encoding="utf-8")
 
-    assert html.count('class="when-open">收合</span>') == 4
-    assert html.count('class="when-closed">展開</span>') == 4
+    assert html.count('class="when-open">收合</span>') == 5
+    assert html.count('class="when-closed">展開</span>') == 5
     assert ".gate-panel-summary:focus-visible" in styles
     assert ".gate-panel:not([open]) .when-closed" in styles
     assert "min-height: 40px" in styles

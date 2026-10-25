@@ -82,7 +82,7 @@
         <button id="new-case" class="secondary" type="button">新增案件</button>
       </div>
       <div id="case-warnings" class="case-warnings" role="alert" hidden></div>
-      <details id="gate1-panel" class="panel gate-panel" aria-labelledby="gate1-title" open>
+      <details id="gate1-panel" class="panel gate-panel" aria-labelledby="gate1-title">
         <summary class="gate-panel-summary">
           <span class="gate-panel-heading"><span class="gate-label">GATE 1</span><span id="gate1-title" class="gate-panel-title">人、事、時、地、物、行為、結果、證據</span></span>
           <span class="gate-panel-toggle-hint" aria-hidden="true"><span class="when-open">收合</span><span class="when-closed">展開</span></span>
@@ -113,7 +113,7 @@
         </div>
       </details>
 
-      <details id="gate2-panel" class="panel gate-panel" aria-labelledby="gate2-title" open hidden>
+      <details id="gate2-panel" class="panel gate-panel" aria-labelledby="gate2-title" hidden>
         <summary class="gate-panel-summary">
           <span class="gate-panel-heading"><span class="gate-label">GATE 2</span><span id="gate2-title" class="gate-panel-title">候選罪章與中立問答</span></span>
           <span class="gate-panel-toggle-hint" aria-hidden="true"><span class="when-open">收合</span><span class="when-closed">展開</span></span>
@@ -202,6 +202,15 @@
           </form>
         </section>
 
+        </div>
+      </details>
+
+      <details id="question-panel" class="panel gate-panel" aria-labelledby="question-panel-title" hidden>
+        <summary class="gate-panel-summary">
+          <span class="gate-panel-heading"><span class="gate-label">筆錄問句</span><span id="question-panel-title" class="gate-panel-title">逐題確認與回答</span></span>
+          <span class="gate-panel-toggle-hint" aria-hidden="true"><span class="when-open">收合</span><span class="when-closed">展開</span></span>
+        </summary>
+        <div class="gate-panel-body">
         <section id="gate2-step-qa" class="gate2-step" hidden aria-labelledby="qa-step-title">
           <h4 id="qa-step-title" class="visually-hidden">逐題問答</h4>
           <section id="known-question-summary" class="warning" aria-label="摘要已知內容" hidden></section>
@@ -226,7 +235,7 @@
         </div>
       </details>
 
-      <details id="numbers-panel" class="panel gate-panel" aria-labelledby="numbers-title" open hidden>
+      <details id="numbers-panel" class="panel gate-panel" aria-labelledby="numbers-title" hidden>
         <summary class="gate-panel-summary">
           <span class="gate-panel-heading"><span class="gate-label">GATE 2.5</span><span id="numbers-title" class="gate-panel-title">補登公司系統案號</span></span>
           <span class="gate-panel-toggle-hint" aria-hidden="true"><span class="when-open">收合</span><span class="when-closed">展開</span></span>
@@ -243,7 +252,7 @@
         </div>
       </details>
 
-      <details id="output-panel" class="panel gate-panel" aria-labelledby="output-title" open hidden>
+      <details id="output-panel" class="panel gate-panel" aria-labelledby="output-title" hidden>
         <summary class="gate-panel-summary">
           <span class="gate-panel-heading"><span class="gate-label">GATE 3–5</span><span id="output-title" class="gate-panel-title">筆錄與條陳</span></span>
           <span class="gate-panel-toggle-hint" aria-hidden="true"><span class="when-open">收合</span><span class="when-closed">展開</span></span>

@@ -846,6 +846,7 @@ function renderCase(caseData) {
   $("#auto-prepare").hidden = autoPrepared;
   setVisible("#gate1-panel", ["GATE1_REVIEW", "GATE2_QA"].includes(caseData.state));
   setVisible("#gate2-panel", caseData.state === "GATE2_QA");
+  setVisible("#question-panel", caseData.state === "GATE2_QA");
   setVisible("#numbers-panel", caseData.state === "CASE_NUMBERS");
   setVisible("#output-panel", caseData.state === "OUTPUT_READY");
   if (caseData.state === "GATE2_QA") {
@@ -1064,11 +1065,22 @@ $("#profile-form").addEventListener("submit", async (event) => {
   } catch (error) { announce(error.message, true); }
 });
 
-$("#profile-to-qa").addEventListener("click", () => setGate2Step("qa"));
+function openQuestionPanel() {
+  const panel = $("#question-panel");
+  if (panel) panel.open = true;
+}
+
+$("#profile-to-qa").addEventListener("click", () => {
+  setGate2Step("qa");
+  openQuestionPanel();
+});
 
 $("#step-tab-offense").addEventListener("click", () => setGate2Step("offense"));
 $("#step-tab-profile").addEventListener("click", () => setGate2Step("profile"));
-$("#step-tab-qa").addEventListener("click", () => setGate2Step("qa"));
+$("#step-tab-qa").addEventListener("click", () => {
+  setGate2Step("qa");
+  openQuestionPanel();
+});
 
 $("#question-role").addEventListener("change", () => {
   $("#route-review-confirmed").checked = false;
@@ -1108,6 +1120,7 @@ $("#approve-gate2").addEventListener("click", async () => {
       const firstIndex = additionalQuestions(state.current).findIndex((q) => !(q.answer || "").trim());
       state.questionIndex = Math.max(0, firstIndex);
       setGate2Step("qa");
+      openQuestionPanel();
       renderCurrentQuestion(state.current);
       return;
     }
