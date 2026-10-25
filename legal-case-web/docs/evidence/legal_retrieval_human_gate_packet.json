@@ -95,12 +95,12 @@
     },
     {
       "path": "app/rules.py",
-      "sha256": "12e9f02aca2c481af936b1e3f6b86a61ebb5d47e435d9ecd903083d884303c1f",
+      "sha256": "4b5177ed910553c5e77935714a01415134dd007caff103cbf2aded758435b4d4",
       "expected_references": 0
     },
     {
       "path": "app/static/app.js",
-      "sha256": "e746158d2bcab2d834afdad3afc681afd8a6630c5770c76ac880c3a7be513326",
+      "sha256": "e3b27239cc365449edf0af4bd89919e83cf27dec8ced37ba9462e64d3ec75cbc",
       "expected_references": 0
     }
   ],

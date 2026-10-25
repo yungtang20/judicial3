@@ -17,7 +17,7 @@ from app.questions import (
     reevaluate_legal_routes_from_answers,
     sort_questions_by_priority,
 )
-from app.question_hygiene import normalize as normalize_question_text
+from app.question_hygiene import normalize as normalize_question_text, semantic_key
 from app.rules import build_questions
 from app.section_questions import read_section_questions
 
@@ -285,6 +285,22 @@ def test_build_questions_has_no_normalized_duplicate_text():
     questions = build_questions(BANK, "victim", ["sexual", "privacy"])
     keys = [normalize_question_text(item["text"]) for item in questions]
     assert len(keys) == len(set(keys))
+
+
+def test_build_questions_collapses_approved_cross_offense_semantic_duplicates():
+    questions = build_questions(BANK, "victim", ["sexual", "privacy", "sexual_harassment"])
+    keys = [semantic_key(item["text"]) for item in questions]
+    assert len(keys) == len(set(keys))
+
+
+def test_semantic_key_collapses_known_fixed_template_overlaps():
+    questions = build_questions(BANK, "victim", ["sexual", "privacy", "sexual_harassment"])
+    by_key = {semantic_key(item["text"]): item["id"] for item in questions}
+    assert by_key["identity:personal-record"] == "COMPANY-V-01"
+    assert by_key["procedure:service-address"] == "V-COM-004B"
+    assert by_key["fact:drug-weapon"] == "V-sexual-Z1-C-08"
+    assert by_key["fact:profit-purpose-resources"] == "V-privacy-Q-C-11"
+    assert by_key["procedure:complaint-confirmation"] == "V-sexual-Z1-D-15"
 
 
 def test_reevaluate_candidates_returns_existing():

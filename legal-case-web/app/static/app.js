@@ -670,7 +670,7 @@ function setGate2Step(step) {
   setVisible("#gate2-step-qa", step === "qa");
 }
 
-function renderCurrentQuestion(caseData) {
+function renderCurrentQuestion(caseData, { focusAnswer = false } = {}) {
   clampQuestionIndex(caseData);
   const container = $("#question-current");
   const progress = $("#qa-progress");
@@ -748,6 +748,7 @@ function renderCurrentQuestion(caseData) {
   }
   nodes.push(textarea);
   container.replaceChildren(...nodes);
+  if (focusAnswer) textarea.focus();
   $("#prev-question").disabled = index === 0;
   $("#next-question").disabled = index === count - 1;
   highlightOutline(index);
@@ -797,7 +798,7 @@ function stepQuestion(delta) {
   if (!state.current) return;
   const questions = additionalQuestions(state.current);
   state.questionIndex = Math.max(0, Math.min(questions.length - 1, state.questionIndex + delta));
-  renderCurrentQuestion(state.current);
+  renderCurrentQuestion(state.current, { focusAnswer: true });
 }
 
 function renderNumbers(caseData) {

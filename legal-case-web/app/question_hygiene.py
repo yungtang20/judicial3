@@ -112,3 +112,40 @@ def duplicate_verdict() -> Verdict:
 def normalize(text: str) -> str:
     """去重鍵：去除所有空白並折疊全形標點，使「？」與「?」等視為同一題。"""
     return re.sub(r"\s+", "", text.translate(_PUNCTUATION_FOLD))
+
+
+def semantic_key(text: str) -> str:
+    """回傳少數已核定的共同事實主題鍵。
+
+    只合併跨題庫明確詢問同一事實的固定句型，不用模糊相似度猜測法律問題。
+    未命中固定句型時，退回一般正規化文字鍵。
+    """
+
+    value = normalize(text)
+    if (
+        ("年籍資料" in value or "身分資料" in value or "姓名對照表" in value)
+        and "是否正確" in value
+        and ("是否為你本人" in value or "身分資料" in value)
+    ):
+        return "identity:personal-record"
+    if "送達" in value and ("地址" in value or "何處" in value):
+        return "procedure:service-address"
+    if "告訴意願另依" in value:
+        return "procedure:complaint-confirmation"
+    if "藥劑" in value and "兇器" in value:
+        return "fact:drug-weapon"
+    if "營利" in value and any(term in value for term in ("場所", "工具", "設備")):
+        return "fact:profit-purpose-resources"
+    if ("以上" in value or "上述" in value) and "補充" in value:
+        return "procedure:final-addendum"
+    if "自由意識下" in value or "親自陳述" in value:
+        return "procedure:voluntary-statement"
+    if "時間與地點為何" in value:
+        return "fact:time-place"
+    if "發現" in value and "時間為何" in value:
+        return "fact:discovery-report-time"
+    if "法定代理人或監護人" in value and "身分與聯絡方式" in value:
+        return "person:legal-representative"
+    if ("是否實在" in value or "是否屬實" in value) and "補充" in value:
+        return "procedure:final-addendum"
+    return value

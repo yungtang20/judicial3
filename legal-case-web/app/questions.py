@@ -1003,13 +1003,16 @@ def reevaluate_legal_routes_from_answers(case: dict[str, Any]) -> dict[str, Any]
 def deduplicate_questions(
     questions: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
-    """依 full text 去重；保留第一個（依優先序）"""
+    """依核定語意主題鍵去重；保留第一個（依優先序）。"""
+    from .question_hygiene import semantic_key
+
     seen: set[str] = set()
     unique: list[dict[str, Any]] = []
     for q in questions:
-        if q["text"] in seen:
+        key = semantic_key(q["text"])
+        if key in seen:
             continue
-        seen.add(q["text"])
+        seen.add(key)
         unique.append(q)
     return unique
 

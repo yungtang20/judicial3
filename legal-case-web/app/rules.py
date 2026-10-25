@@ -13,7 +13,7 @@ from .markdown_questions import merge_markdown_questions
 from .section_questions import ordered_section_questions
 from .route_questions import has_route_question_pack, route_questions_for
 from .supplemental_questions import supplemental_questions_for
-from .question_hygiene import normalize as normalize_question_text
+from .question_hygiene import semantic_key
 from .xlsm_questions import has_company_standard_questions, xlsm_questions_for
 
 # 8 頁防線（spec §7.5）：實測 97 題 = 8 頁（DOCX 上限）；每罪章 core+xls 約 24 題
@@ -2676,10 +2676,10 @@ def build_questions(
     seen: set[str] = set()
 
     def add_seen(text: str) -> None:
-        seen.add(normalize_question_text(text))
+        seen.add(semantic_key(text))
 
     def already_seen(text: str) -> bool:
-        return normalize_question_text(text) in seen
+        return semantic_key(text) in seen
 
     for raw in company_questions(role):
         text = render_company_text(raw["text"], today="　", now_time="　年　月　日　時　分")
@@ -2697,6 +2697,8 @@ def build_questions(
 
     for raw in bank["common"][role]:
         item = deepcopy(raw)
+        if already_seen(item["text"]):
+            continue
         item.update({"kind": "common", "role": role, "status": "PENDING", "answer": ""})
         questions.append(item)
         add_seen(item["text"])

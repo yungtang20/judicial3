@@ -32,6 +32,8 @@ function createHarness({ fetchImpl }) {
     children: [],
     classList: { toggle() {}, add() {}, remove() {} },
     _handlers: {},
+    focused: false,
+    focus() { this.focused = true; },
     addEventListener(type, handler) { this._handlers[type] = handler; },
     appendChild(node) { this.children.push(node); },
     append(...nodes) { this.children.push(...nodes); },
@@ -654,6 +656,7 @@ test("QA: Enter advances and Shift+Enter keeps a newline", () => {
   });
   assert.equal(prevented, true);
   assert.equal(stateRef.questionIndex, 1);
+  assert.equal(elements.get("question-current").children.at(-1).focused, true);
 
   stateRef.questionIndex = 0;
   context.renderCurrentQuestion(caseData);

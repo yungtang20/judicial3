@@ -536,7 +536,7 @@ def test_question_budget_caps_offense_questions_for_eight_page_guard():
     assert MAX_SELECTED_OFFENSES == 3
     questions = build_questions(BANK, "victim", selected)
     offense_questions = [item for item in questions if item["kind"] not in {"common", "company"}]
-    assert len(offense_questions) <= 78  # 8 頁防線：offense 題上限（97 總容量 - 19 company/common）
+    assert len(offense_questions) <= 78  # 8 頁防線：offense 題上限
     kinds = [item["kind"] for item in offense_questions]
     first_distinguishing = kinds.index("distinguishing") if "distinguishing" in kinds else len(kinds)
     assert kinds[:first_distinguishing].count("core") > 0
@@ -544,7 +544,7 @@ def test_question_budget_caps_offense_questions_for_eight_page_guard():
     assert company_count == 7  # victim 公司必問 7 題逐字保留
     # 單一罪章時也維持公司必問與預算
     single = build_questions(BANK, "victim", ["theft"])
-    assert sum(item["kind"] in {"common", "company"} for item in single) == 12 + 7
+    assert sum(item["kind"] in {"common", "company"} for item in single) == 11 + 7
     assert sum(item["kind"] not in {"common", "company"} for item in single) <= 78
 
     # 超過 runtime 選擇上限或 core 總量爆表時 fail closed（spec §7.5 不得靜默裁 core）
