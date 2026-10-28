@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>刑事案件筆錄輔助系統</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <button class="brand" id="home-button" type="button">案件筆錄工作台</button>
+    <span class="safety">本機模式 · 候選方向不是法律結論</span>
+  </header>
+  <main>
+    <section id="home-view" class="view hero">
+      <p class="eyebrow">CRIMINAL INVESTIGATION ASSISTANT</p>
+      <h1>從案情事實開始，逐步完成筆錄</h1>
+      <p class="lead">先整理人、事、時、地、物，再以中性問句縮小未知；每一批答案確認後才更新候選方向。</p>
+      <div class="grid-menu">
+        <button class="tile primary" id="new-case-button" type="button"><span>＋</span><strong>新增案件</strong><small>輸入時間、地點與摘要</small></button>
+        <button class="tile" id="case-list-button" type="button"><span>▤</span><strong>進行中案件</strong><small>查看不可變修訂紀錄</small></button>
+        <button class="tile" id="gate1-entry-button" type="button"><span>1</span><strong>Gate 1 事實整理</strong><small>開啟案件並修正事實拆解</small></button>
+        <button class="tile" id="gate2-entry-button" type="button"><span>2</span><strong>Gate 2 問句與候選</strong><small>繼續必要問句與候選檢查</small></button>
+        <button class="tile" id="documents-entry-button" type="button"><span>↓</span><strong>筆錄與條陳</strong><small>開啟已完成 Gate 的案件</small></button>
+        <button class="tile" id="families-button" type="button"><span>◇</span><strong>問句家族</strong><small>15 個家族與覆蓋狀態</small></button>
+        <button class="tile" id="source-button" type="button"><span>⌁</span><strong>來源及版本</strong><small>檢查題庫 build fingerprint</small></button>
+        <button class="tile" id="audit-entry-button" type="button"><span>✓</span><strong>稽核紀錄</strong><small>查看本機隔離與執行狀態</small></button>
+      </div>
+    </section>
+
+    <section id="intake-view" class="view hidden panel narrow">
+      <div class="section-heading"><div><p class="eyebrow">新增案件</p><h2>案件基本資料</h2></div><button class="ghost back-home" type="button">返回</button></div>
+      <form id="intake-form">
+        <label>發生（破獲）時間<input name="event_time" required placeholder="例如：民國115年10月27日10時"></label>
+        <label>發生（破獲）地點<input name="location" required placeholder="請輸入完整地址或明確場所"></label>
+        <label>案情摘要<textarea name="summary" required rows="8" placeholder="請按時間順序敘述；不要先下法律結論。"></textarea></label>
+        <fieldset><legend>案件類型</legend><label class="radio"><input type="radio" name="case_kind" value="WITH_VICTIM" checked> 有被害人</label><label class="radio"><input type="radio" name="case_kind" value="NO_VICTIM"> 無被害人／移送</label></fieldset>
+        <label id="initial-route-field" class="hidden">初始罪章／調查路線<select name="initial_route_id"><option value="">請選擇</option></select><small>這只是 Gate 5 的調查起點，不是犯罪認定。</small></label>
+        <label>備註（選填）<textarea name="notes" rows="3"></textarea></label>
+        <label>附件（選填，單檔上限 5 MB）<input type="file" name="attachments" multiple></label>
+        <button class="action" type="submit">建立案件並進入 Gate 1</button>
+      </form>
+    </section>
+
+    <section id="case-view" class="view hidden workspace">
+      <aside class="progress-card">
+        <p class="eyebrow">案件進度</p>
+        <h2 id="case-state-title">Gate 1</h2>
+        <ol id="todo-list"></ol>
+        <dl class="revision"><dt>Revision</dt><dd id="revision-value">—</dd><dt>題庫版本</dt><dd id="source-version">—</dd></dl>
+      </aside>
+      <div class="case-main">
+        <div class="notice">候選罪章是可撤回的待查證假設。系統審查標記為 AI_REVIEWED，不是人工法律核准。<button id="rebase-sources" class="ghost hidden" type="button">更新來源版本並重新檢查</button></div>
+        <section id="gate1-panel" class="panel hidden">
+          <p class="eyebrow">GATE 1</p><h2>事實拆解</h2>
+          <div id="attachment-list"></div>
+          <details class="edit-intake"><summary>修改發生時間、地點、摘要、路線或備註</summary><form id="intake-edit-form"><label>發生（破獲）時間<input name="event_time" required></label><label>發生（破獲）地點<input name="location" required></label><label>案情摘要<textarea name="summary" rows="6" required></textarea></label><label id="edit-initial-route-field" class="hidden">初始罪章／調查路線<select name="initial_route_id"><option value="">請選擇</option></select><small>變更後會使問答、核准、案號與文件失效。</small></label><label>備註（選填）<textarea name="notes" rows="3"></textarea></label><button class="ghost" type="submit">儲存並重新拆解</button></form></details>
+          <form id="facts-form"><div id="facts-grid" class="facts-grid"></div><button class="ghost" type="submit">儲存事實修正</button></form>
+          <h3>初步候選方向</h3><div id="candidate-list" class="candidate-list"></div>
+          <button id="confirm-gate1" class="action" type="button">確認事實整理，開始問答</button>
+        </section>
+        <section id="gate2-panel" class="panel hidden">
+          <p class="eyebrow">自適應問答</p><h2>目前這一批問題</h2>
+          <p>請依實際回答填寫；若不知道，請明確填寫「不知道」。</p>
+          <form id="answers-form"><div id="questions-list"></div><button class="action" type="submit">確認這批答案並重新分析</button></form>
+          <button id="complete-gate2" class="ghost" type="button">結束問答，進入案號補登</button>
+          <div id="answer-history-gate2"></div>
+          <h3>更新後候選方向</h3><div id="candidate-list-gate2" class="candidate-list"></div>
+        </section>
+        <section id="numbers-panel" class="panel hidden">
+          <p class="eyebrow">GATE 2.5</p><h2>案號補登</h2>
+          <form id="numbers-form">
+            <label id="proof-field">證明單案號<input name="proof_number"></label>
+            <label id="women-child-field">婦幼案號<input name="women_child_number"></label>
+            <label id="case165-field">165 案號<input name="case_165_number"></label>
+            <button class="action" type="submit">確認案號並產生輸出</button>
+          </form>
+        </section>
+        <section id="output-panel" class="panel hidden">
+          <p class="eyebrow">文件輸出</p><h2>筆錄與條陳</h2>
+          <div class="output-actions"><button id="download-interview" class="action" type="button">產生並下載筆錄</button><button id="download-brief" class="ghost" type="button">下載條陳 DOCX</button></div>
+          <h3>條陳預覽</h3><pre id="brief-preview"></pre><button id="copy-brief" class="ghost" type="button">複製條陳</button>
+          <div id="answer-history-output"></div>
+          <button id="next-role" class="next-button" type="button">下一步：涉嫌人筆錄</button>
+        </section>
+      </div>
+    </section>
+
+    <section id="list-view" class="view hidden panel"><div class="section-heading"><div><p class="eyebrow">案件</p><h2>進行中案件</h2></div><button class="ghost back-home" type="button">返回</button></div><div id="case-list"></div></section>
+    <section id="families-view" class="view hidden panel"><div class="section-heading"><div><p class="eyebrow">Question Bank</p><h2>15 個問句家族</h2></div><button class="ghost back-home" type="button">返回</button></div><div id="family-list" class="family-grid"></div></section>
+    <section id="source-view" class="view hidden panel narrow"><div class="section-heading"><div><p class="eyebrow">來源／稽核</p><h2 id="source-view-title">版本與隔離狀態</h2></div><button class="ghost back-home" type="button">返回</button></div><div id="source-content"></div></section>
+  </main>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>

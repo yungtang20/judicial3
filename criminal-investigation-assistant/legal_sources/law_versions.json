@@ -1,0 +1,18 @@
+{
+  "schema_version": "official-law-versions/v1",
+  "checked_at": "2026-10-28T00:00:00+08:00",
+  "provider": "taiwan_legal_db.query_regulation",
+  "case_data_sent": false,
+  "records": [
+    {"law_name":"中華民國刑法","pcode":"C0000001","status":"現行法規","last_amended":"2026-07-22","effective_date":"NOT_SEPARATELY_REPORTED","source_url":"https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001"},
+    {"law_name":"人口販運防制法","pcode":"D0080177","status":"現行法規","last_amended":"2023-06-14","effective_date":"NOT_SEPARATELY_REPORTED","source_url":"https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=D0080177"},
+    {"law_name":"兒童及少年福利與權益保障法","pcode":"D0050001","status":"現行法規","last_amended":"2021-01-20","effective_date":"NOT_SEPARATELY_REPORTED","source_url":"https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=D0050001"},
+    {"law_name":"家庭暴力防治法","pcode":"D0050071","status":"現行法規","last_amended":"2023-12-06","effective_date":"NOT_SEPARATELY_REPORTED","source_url":"https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=D0050071"},
+    {"law_name":"少年事件處理法","pcode":"C0010011","status":"現行法規","last_amended":"2023-06-21","effective_date":"NOT_SEPARATELY_REPORTED","source_url":"https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0010011"},
+    {"law_name":"性別平等工作法","pcode":"N0030014","status":"現行法規","last_amended":"2023-08-16","effective_date":"2024-03-08","source_url":"https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=N0030014"},
+    {"law_name":"性別平等教育法","pcode":"H0080067","status":"現行法規","last_amended":"2023-08-16","effective_date":"2024-03-08","source_url":"https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=H0080067"},
+    {"law_name":"性騷擾防治法","pcode":"D0050074","status":"現行法規","last_amended":"2023-08-16","effective_date":"NOT_SEPARATELY_REPORTED","source_url":"https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=D0050074"},
+    {"law_name":"毒品危害防制條例","pcode":"C0000008","status":"現行法規","last_amended":"2022-05-04","effective_date":"NOT_SEPARATELY_REPORTED","source_url":"https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000008"},
+    {"law_name":"跟蹤騷擾防制法","pcode":"D0080211","status":"現行法規","last_amended":"2021-12-01","effective_date":"NOT_SEPARATELY_REPORTED","source_url":"https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=D0080211"}
+  ]
+}

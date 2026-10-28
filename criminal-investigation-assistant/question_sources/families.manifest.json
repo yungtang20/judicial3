@@ -1,0 +1,22 @@
+{
+  "schema_version": "question-families/v1",
+  "runtime_policy": "ALLOWLIST_ONLY",
+  "families": [
+    {"family_id":"human_violence","label":"人身暴力與生命身體","file":"families/01_人身暴力與生命身體.md","routes":["injury","homicide","abandonment","abortion","domestic_violence"]},
+    {"family_id":"coercion_liberty_threat","label":"意思壓制、自由與恐嚇","file":"families/02_意思壓制自由與恐嚇.md","routes":["liberty","intimidation","stalking","robbery"]},
+    {"family_id":"property_possession_taking","label":"財物持有、取走與侵占","file":"families/03_財物持有取走與侵占.md","routes":["theft","aggravated_theft","embezzlement","robbery"]},
+    {"family_id":"property_damage","label":"財物毀損","file":"families/04_財物毀損.md","routes":["damage"]},
+    {"family_id":"deception_disposition_trust","label":"欺罔、財產處分與背信","file":"families/05_欺罔財產處分與背信.md","routes":["fraud"]},
+    {"family_id":"document_seal_identity","label":"文書、印文與身分冒用","file":"families/06_文書印文與身分冒用.md","routes":["forgery"]},
+    {"family_id":"reputation_speech","label":"名譽與公開言論","file":"families/07_名譽與公開言論.md","routes":["defamation"]},
+    {"family_id":"privacy_secret_sexual_image","label":"隱私、秘密與性影像","file":"families/08_隱私秘密與性影像.md","routes":["privacy"]},
+    {"family_id":"public_danger_traffic","label":"公共危險與交通","file":"families/09_公共危險與交通.md","routes":["public_danger"]},
+    {"family_id":"drugs_firearms_organization","label":"毒品、槍砲與組織","file":"families/10_毒品槍砲與組織.md","routes":["drugs","opium","firearms","organized_crime"]},
+    {"family_id":"justice_public_service_order","label":"妨害司法、公務與秩序","file":"families/11_妨害司法公務與秩序.md","routes":["obstruction","judicial_integrity","voting","disorder","escape","evidence","accusation","duty"]},
+    {"family_id":"computer_network_digital_evidence","label":"電腦、網路與數位證據","file":"families/12_電腦網路與數位證據.md","routes":["computer"]},
+    {"family_id":"sexual_child_exploitation","label":"性自主、兒少與性剝削","file":"families/13_性自主兒少與性剝削.md","routes":["sexual","sexual_harassment","child_protection","trafficking"]},
+    {"family_id":"money_flow_laundering_stolen_goods","label":"金流、洗錢與贓物","file":"families/14_金流洗錢與贓物.md","routes":["money_laundering","stolen_goods","securities"]},
+    {"family_id":"specialist_routes","label":"特殊專責路線","file":"families/15_特殊專責路線.md","routes":["state_security","currency","weights_measures","marriage","graves_religion","agriculture_commerce","gambling","obscenity","gender_equality","juvenile"]}
+  ],
+  "procedure_sources": ["procedure/common.md", "procedure/modules.md"]
+}

@@ -1,0 +1,28 @@
+{
+  "schema_version": "constitutional-route-verifications/v1",
+  "checked_at": "2026-10-28T00:00:00+08:00",
+  "provider": "taiwan_legal_db.get_interpretation",
+  "case_data_sent": false,
+  "records": [
+    {
+      "route_id": "obstruction_140_insult_official",
+      "article_no": "第140條",
+      "decision": "113年憲判字第5號",
+      "status": "CONSTITUTIONALLY_NARROWED",
+      "required_fact_fragments": [
+        "妨害公務之主觀目的",
+        "足以影響公務員執行公務"
+      ],
+      "invalidated_scope": "對於公務員依法執行之職務公然侮辱",
+      "source_url": "https://cons.judicial.gov.tw/docdata.aspx?fid=38&id=339983"
+    },
+    {
+      "excluded_route_id": "obstruction_141_1_false_statement",
+      "article_no": "第141條之1",
+      "decision": "113年憲判字第9號",
+      "status": "UNCONSTITUTIONAL_INVALIDATED",
+      "effective_rule": "自判決宣示之日起失其效力，不得作現行候選",
+      "source_url": "https://cons.judicial.gov.tw/docdata.aspx?fid=38&id=340359"
+    }
+  ]
+}

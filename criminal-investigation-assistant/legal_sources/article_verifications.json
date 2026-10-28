@@ -1,0 +1,31 @@
+{
+  "schema_version": "official-article-verification/v1",
+  "checked_at": "2026-10-28T00:00:00+08:00",
+  "provider": "taiwan_legal_db.query_regulation",
+  "case_data_sent": false,
+  "route_snapshot_sha256": "49ea791e6cc1941ab54d99ac06e08cfc78548c9ed584acaf531ded83167f4c4a",
+  "verification_status": "ALL_SNAPSHOT_CITATIONS_OFFICIAL_CURRENT_ARTICLE_EXISTS",
+  "proofs": [
+    {
+      "law_name": "中華民國刑法", "pcode": "C0000001", "verified_child_route_count": 259,
+      "returned_article_count": 255, "missing_count": 0,
+      "query_batches": [
+        "100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,115-1,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143",
+        "144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,161-1,162,163,164,165,166,167,168,169,170,171,172,172-1,172-2,172-3,185-3,185-4,195,196,197,198,199,200,201,201-1,202,203",
+        "204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,224,224-1,225,226,226-1,227,227-1,228,229,229-1,234,235,237,238,240,241,242,243,244,245,246,247,248,249,250,251",
+        "252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,268,269,270,271,272,272-1,273,274,275,276,277,278,279,280,281,282,283,284,286,287,288,289,290,291,292,293,294,294-1,295,296",
+        "296-1,297,298,299,300,301,302,302-1,303,304,305,306,307,308,309,310,311,312,313,314,315,315-1,315-2,315-3,316,317,318,318-1,318-2,319,319-1,319-2,319-3,319-4,319-5,319-6,320,321,323,324,325,326,328,329,330",
+        "332,333,334,335,336,337,338,339,339-1,339-2,339-3,339-4,341,342,343,344,344-1,346,352,353,354,355,356,357,358,359,360,361,362,363"
+      ]
+    },
+    {"law_name":"人口販運防制法","pcode":"D0080177","verified_child_route_count":13,"returned_article_count":13,"missing_count":0,"query_batches":["2,29,30,31,32,33,34,35,36,37,38,40,44"]},
+    {"law_name":"兒童及少年福利與權益保障法","pcode":"D0050001","verified_child_route_count":5,"returned_article_count":17,"missing_count":0,"query_batches":["43~56,112"]},
+    {"law_name":"家庭暴力防治法","pcode":"D0050071","verified_child_route_count":5,"returned_article_count":37,"missing_count":0,"query_batches":["2,9~21,29~42,61~63"]},
+    {"law_name":"少年事件處理法","pcode":"C0010011","verified_child_route_count":4,"returned_article_count":20,"missing_count":0,"query_batches":["2~3,14~18,27,42,65~74"]},
+    {"law_name":"性別平等工作法","pcode":"N0030014","verified_child_route_count":3,"returned_article_count":8,"missing_count":0,"query_batches":["12,13~13-1,32-1~34"]},
+    {"law_name":"性別平等教育法","pcode":"H0080067","verified_child_route_count":3,"returned_article_count":20,"missing_count":0,"query_batches":["21~40"]},
+    {"law_name":"性騷擾防治法","pcode":"D0050074","verified_child_route_count":5,"returned_article_count":18,"missing_count":0,"query_batches":["2,7~17,25~30"]},
+    {"law_name":"毒品危害防制條例","pcode":"C0000008","verified_child_route_count":8,"returned_article_count":8,"missing_count":0,"query_batches":["4~11"]},
+    {"law_name":"跟蹤騷擾防制法","pcode":"D0080211","verified_child_route_count":5,"returned_article_count":19,"missing_count":0,"query_batches":["3~21"]}
+  ]
+}

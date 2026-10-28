@@ -1,0 +1,3349 @@
+{
+  "question_bindings_sha256": "10e0fd4da6a0e568a3a7d6dc9676d4ba35424603a629d96b2baeba59c7a5a7f8",
+  "schema_version": "company-templates/v1",
+  "templates": {
+    "suspect": {
+      "atomic_question_count": 29,
+      "converted_path": "suspect.docx",
+      "converted_sha256": "b86913253b5aa10806dbb32ab7a0604bb4360d89f6254eb38951bbe1b5863b84",
+      "items": [
+        {
+          "kind": "paragraph",
+          "order": 1,
+          "text": "問 你上述年籍資料是否正確？是否為你本人？有無攜帶身分證明文件?"
+        },
+        {
+          "kind": "paragraph",
+          "order": 2,
+          "text": "答 正確，是我本人沒錯。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 3,
+          "text": "問 警方所告知之罪名及權利你是否清楚?你有無刑案紀錄？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 4,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 5,
+          "text": "問 你是否具有低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者的身分？妳是否需要通知親屬、法扶或委任律師陪同到場？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 6,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 7,
+          "text": "問 現在時間年月日時分時分許，依刑事訴訟法為夜間偵訊時間，警方不得對你詢問製作筆錄，你是否知悉？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 8,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 9,
+          "text": "問 妳今()日因何事接受警方製作筆錄？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 10,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 11,
+          "text": "問 你為何要拿取該物品？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 12,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 13,
+          "text": "問 你拿取該物品時，有無結帳？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 14,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 15,
+          "text": "問 該物品目前現於何處？物品是否為你同意並主動交付？且搜索扣押筆錄是否由你親自審視後，並簽名捺印？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 16,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 17,
+          "text": "問 你拿取物品時有無使用工具？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 18,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 19,
+          "text": "問\t你拿取物品後往何處離開？有無使用交通工具？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 20,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 21,
+          "text": "問 你是否願意前往商家結帳？是否願意提供明細？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 22,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 23,
+          "text": "問 0"
+        },
+        {
+          "kind": "paragraph",
+          "order": 24,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 25,
+          "text": "問 0"
+        },
+        {
+          "kind": "paragraph",
+          "order": 26,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 27,
+          "text": "問 0"
+        },
+        {
+          "kind": "paragraph",
+          "order": 28,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 29,
+          "text": "問 0"
+        },
+        {
+          "kind": "paragraph",
+          "order": 30,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 31,
+          "text": "問 0"
+        },
+        {
+          "kind": "paragraph",
+          "order": 32,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 33,
+          "text": "問 0"
+        },
+        {
+          "kind": "paragraph",
+          "order": 34,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 35,
+          "text": "問 你是否知悉於警詢筆錄中做不實陳述須負法律責任?"
+        },
+        {
+          "kind": "paragraph",
+          "order": 36,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 37,
+          "text": "問 你有無為自己或他人推卸刑責而向警方為不實陳述？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 38,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 39,
+          "text": "問 警方製作警詢筆錄時，有無全程錄音錄影？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 40,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 41,
+          "text": "問 警方於偵訊時你所陳述之事實是否為你自由意識下所陳述？警方有無以強暴脅迫等不正方法對你取供？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 42,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 43,
+          "text": "問 是否知道對方年籍資料、聯絡方式？與對方是否認識？有無仇恨或糾紛？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 44,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 45,
+          "text": "問 上述所說是否實在？有無其他意見補充？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 46,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 47,
+          "text": "上開筆錄因本所警力事實不足無法由詢問人外進行記錄"
+        },
+        {
+          "kind": "paragraph",
+          "order": 48,
+          "text": "並經受詢問人親閱無訛後始簽名捺印"
+        },
+        {
+          "kind": "paragraph",
+          "order": 49,
+          "text": "受詢問人："
+        },
+        {
+          "kind": "paragraph",
+          "order": 50,
+          "text": "詢 問 人："
+        },
+        {
+          "kind": "paragraph",
+          "order": 51,
+          "text": "筆 錄 記 錄 人："
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 52,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 53,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 54,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 55,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 56,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 57,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 58,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 59,
+          "row": 1,
+          "table": 0,
+          "text": "詢 問"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 60,
+          "row": 1,
+          "table": 0,
+          "text": "時間"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 61,
+          "row": 1,
+          "table": 0,
+          "text": "自年月日時分00時53分起 至年月日時分01時09分止"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 62,
+          "row": 1,
+          "table": 0,
+          "text": "自年月日時分00時53分起 至年月日時分01時09分止"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 63,
+          "row": 1,
+          "table": 0,
+          "text": "自年月日時分00時53分起 至年月日時分01時09分止"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 64,
+          "row": 1,
+          "table": 0,
+          "text": "自年月日時分00時53分起 至年月日時分01時09分止"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 65,
+          "row": 1,
+          "table": 0,
+          "text": "自年月日時分00時53分起 至年月日時分01時09分止"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 66,
+          "row": 2,
+          "table": 0,
+          "text": "詢 問"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 67,
+          "row": 2,
+          "table": 0,
+          "text": "地點"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 68,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局吳興街派出所"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 69,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局吳興街派出所"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 70,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局吳興街派出所"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 71,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局吳興街派出所"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 72,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局吳興街派出所"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 73,
+          "row": 3,
+          "table": 0,
+          "text": "案由"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 74,
+          "row": 3,
+          "table": 0,
+          "text": "案由"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 75,
+          "row": 3,
+          "table": 0,
+          "text": "竊盜(涉嫌人)"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 76,
+          "row": 3,
+          "table": 0,
+          "text": "竊盜(涉嫌人)"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 77,
+          "row": 3,
+          "table": 0,
+          "text": "竊盜(涉嫌人)"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 78,
+          "row": 3,
+          "table": 0,
+          "text": "竊盜(涉嫌人)"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 79,
+          "row": 3,
+          "table": 0,
+          "text": "竊盜(涉嫌人)"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 80,
+          "row": 4,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 81,
+          "row": 4,
+          "table": 0,
+          "text": "姓名"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 82,
+          "row": 4,
+          "table": 0,
+          "text": "黃慧美"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 83,
+          "row": 4,
+          "table": 0,
+          "text": "黃慧美"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 84,
+          "row": 4,
+          "table": 0,
+          "text": "黃慧美"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 85,
+          "row": 4,
+          "table": 0,
+          "text": "黃慧美"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 86,
+          "row": 4,
+          "table": 0,
+          "text": "黃慧美"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 87,
+          "row": 5,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 88,
+          "row": 5,
+          "table": 0,
+          "text": "別（綽號）號"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 89,
+          "row": 6,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 90,
+          "row": 6,
+          "table": 0,
+          "text": "性別"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 91,
+          "row": 6,
+          "table": 0,
+          "text": "女"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 92,
+          "row": 6,
+          "table": 0,
+          "text": "女"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 93,
+          "row": 6,
+          "table": 0,
+          "text": "女"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 94,
+          "row": 6,
+          "table": 0,
+          "text": "女"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 95,
+          "row": 6,
+          "table": 0,
+          "text": "女"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 96,
+          "row": 7,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 97,
+          "row": 7,
+          "table": 0,
+          "text": "出生年月日"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 98,
+          "row": 7,
+          "table": 0,
+          "text": "89.04.03"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 99,
+          "row": 7,
+          "table": 0,
+          "text": "89.04.03"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 100,
+          "row": 7,
+          "table": 0,
+          "text": "89.04.03"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 101,
+          "row": 7,
+          "table": 0,
+          "text": "89.04.03"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 102,
+          "row": 7,
+          "table": 0,
+          "text": "89.04.03"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 103,
+          "row": 8,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 104,
+          "row": 8,
+          "table": 0,
+          "text": "出生地"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 105,
+          "row": 8,
+          "table": 0,
+          "text": "臺北市"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 106,
+          "row": 8,
+          "table": 0,
+          "text": "臺北市"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 107,
+          "row": 8,
+          "table": 0,
+          "text": "臺北市"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 108,
+          "row": 8,
+          "table": 0,
+          "text": "臺北市"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 109,
+          "row": 8,
+          "table": 0,
+          "text": "臺北市"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 110,
+          "row": 9,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 111,
+          "row": 9,
+          "table": 0,
+          "text": "職業"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 112,
+          "row": 9,
+          "table": 0,
+          "text": "服務業"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 113,
+          "row": 9,
+          "table": 0,
+          "text": "服務業"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 114,
+          "row": 9,
+          "table": 0,
+          "text": "服務業"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 115,
+          "row": 9,
+          "table": 0,
+          "text": "服務業"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 116,
+          "row": 9,
+          "table": 0,
+          "text": "服務業"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 117,
+          "row": 10,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 118,
+          "row": 10,
+          "table": 0,
+          "text": "身分證 統一編號"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 119,
+          "row": 10,
+          "table": 0,
+          "text": "A230589928"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 120,
+          "row": 10,
+          "table": 0,
+          "text": "A230589928"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 121,
+          "row": 10,
+          "table": 0,
+          "text": "A230589928"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 122,
+          "row": 10,
+          "table": 0,
+          "text": "A230589928"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 123,
+          "row": 10,
+          "table": 0,
+          "text": "A230589928"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 124,
+          "row": 11,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 125,
+          "row": 11,
+          "table": 0,
+          "text": "戶籍地址"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 126,
+          "row": 11,
+          "table": 0,
+          "text": "臺北市中山區敬業三路162巷19號四樓"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 127,
+          "row": 11,
+          "table": 0,
+          "text": "臺北市中山區敬業三路162巷19號四樓"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 128,
+          "row": 11,
+          "table": 0,
+          "text": "臺北市中山區敬業三路162巷19號四樓"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 129,
+          "row": 11,
+          "table": 0,
+          "text": "臺北市中山區敬業三路162巷19號四樓"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 130,
+          "row": 11,
+          "table": 0,
+          "text": "臺北市中山區敬業三路162巷19號四樓"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 131,
+          "row": 12,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 132,
+          "row": 12,
+          "table": 0,
+          "text": "現住地址"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 133,
+          "row": 12,
+          "table": 0,
+          "text": "臺北市中山區敬業三路162巷19號四樓"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 134,
+          "row": 12,
+          "table": 0,
+          "text": "臺北市中山區敬業三路162巷19號四樓"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 135,
+          "row": 12,
+          "table": 0,
+          "text": "臺北市中山區敬業三路162巷19號四樓"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 136,
+          "row": 12,
+          "table": 0,
+          "text": "臺北市中山區敬業三路162巷19號四樓"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 137,
+          "row": 12,
+          "table": 0,
+          "text": "臺北市中山區敬業三路162巷19號四樓"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 138,
+          "row": 13,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 139,
+          "row": 13,
+          "table": 0,
+          "text": "教育程度"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 140,
+          "row": 13,
+          "table": 0,
+          "text": "高職肄業"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 141,
+          "row": 13,
+          "table": 0,
+          "text": "高職肄業"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 142,
+          "row": 13,
+          "table": 0,
+          "text": "高職肄業"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 143,
+          "row": 13,
+          "table": 0,
+          "text": "高職肄業"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 144,
+          "row": 13,
+          "table": 0,
+          "text": "高職肄業"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 145,
+          "row": 14,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 146,
+          "row": 14,
+          "table": 0,
+          "text": "電話號碼"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 147,
+          "row": 14,
+          "table": 0,
+          "text": "0978253182"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 148,
+          "row": 14,
+          "table": 0,
+          "text": "0978253182"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 149,
+          "row": 14,
+          "table": 0,
+          "text": "0978253182"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 150,
+          "row": 14,
+          "table": 0,
+          "text": "0978253182"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 151,
+          "row": 14,
+          "table": 0,
+          "text": "0978253182"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 152,
+          "row": 15,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 153,
+          "row": 15,
+          "table": 0,
+          "text": "家庭經濟狀況"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 154,
+          "row": 15,
+          "table": 0,
+          "text": "貧寒"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 155,
+          "row": 15,
+          "table": 0,
+          "text": "勉持"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 156,
+          "row": 15,
+          "table": 0,
+          "text": "小康"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 157,
+          "row": 15,
+          "table": 0,
+          "text": "中產"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 158,
+          "row": 15,
+          "table": 0,
+          "text": "富裕"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 159,
+          "row": 16,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 160,
+          "row": 16,
+          "table": 0,
+          "text": "家庭經濟狀況"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 161,
+          "row": 16,
+          "table": 0,
+          "text": "▲"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 162,
+          "row": 17,
+          "table": 0,
+          "text": "應 告 知 事 項"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 163,
+          "row": 17,
+          "table": 0,
+          "text": "你涉嫌　竊盜　案，於受詢問時，得行使下列權利： 一、得保持沉默，無須違背自己之意思而為陳述。 二、得選任辯護人。如為低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者，得請求之。 三、得請求調查有利之證據。 受詢問人："
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 164,
+          "row": 17,
+          "table": 0,
+          "text": "你涉嫌　竊盜　案，於受詢問時，得行使下列權利： 一、得保持沉默，無須違背自己之意思而為陳述。 二、得選任辯護人。如為低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者，得請求之。 三、得請求調查有利之證據。 受詢問人："
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 165,
+          "row": 17,
+          "table": 0,
+          "text": "你涉嫌　竊盜　案，於受詢問時，得行使下列權利： 一、得保持沉默，無須違背自己之意思而為陳述。 二、得選任辯護人。如為低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者，得請求之。 三、得請求調查有利之證據。 受詢問人："
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 166,
+          "row": 17,
+          "table": 0,
+          "text": "你涉嫌　竊盜　案，於受詢問時，得行使下列權利： 一、得保持沉默，無須違背自己之意思而為陳述。 二、得選任辯護人。如為低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者，得請求之。 三、得請求調查有利之證據。 受詢問人："
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 167,
+          "row": 17,
+          "table": 0,
+          "text": "你涉嫌　竊盜　案，於受詢問時，得行使下列權利： 一、得保持沉默，無須違背自己之意思而為陳述。 二、得選任辯護人。如為低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者，得請求之。 三、得請求調查有利之證據。 受詢問人："
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 168,
+          "row": 17,
+          "table": 0,
+          "text": "你涉嫌　竊盜　案，於受詢問時，得行使下列權利： 一、得保持沉默，無須違背自己之意思而為陳述。 二、得選任辯護人。如為低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者，得請求之。 三、得請求調查有利之證據。 受詢問人："
+        }
+      ],
+      "round_trip_status": "SEMANTIC_ITEMS_PRESERVED",
+      "semantic_item_count": 168,
+      "semantic_sha256": "72297bacb429cfd6f697d61c417f0954686c71a7e9d01afd20f891e10792bd9d",
+      "source_name": "通用涉嫌人筆錄.doc",
+      "source_sha256": "945be1335ec6a48c5050eb4b66a84f88863843ca60aea8716be6048c59cc9096"
+    },
+    "transfer": {
+      "atomic_question_count": 36,
+      "converted_path": "transfer.docx",
+      "converted_sha256": "6481d10bb2e123f5d5aba2f000245625b2c646d82418b3b5a8985684311408b1",
+      "items": [
+        {
+          "kind": "paragraph",
+          "order": 1,
+          "text": "問 你上述年籍資料是否正確？是否為你本人？有無攜帶身分證明文件?"
+        },
+        {
+          "kind": "paragraph",
+          "order": 2,
+          "text": "答 正確，是我本人沒錯。有。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 3,
+          "text": "問 警方所告知之罪名及權利你是否清楚?你有無刑案紀錄？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 4,
+          "text": "答 是。無。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 5,
+          "text": "問 你是否具有低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者的身分？妳是否需要通知親屬、法扶或委任律師陪同到場？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 6,
+          "text": "答 是。否。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 7,
+          "text": "問 依據提審法第1條之規定，人民被法院以外之任何機關逮捕、拘禁時，其本人或他人得向逮捕、拘禁地之地方法院聲請提審。但其他法律規定得聲請及時由法院審查者，依其規定。前項聲請及第10條之抗告，免徵費用，你是否清楚此規定？是否需要聲請提審？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 8,
+          "text": "答 是。否。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 9,
+          "text": "問 現在時間年月日時分時分許，依刑事訴訟法為夜間偵訊時間，你是否同意接受製作夜間警詢筆錄？目前精神狀況是否良好？意識是否清醒？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 10,
+          "text": "答"
+        },
+        {
+          "kind": "paragraph",
+          "order": 11,
+          "text": "問 妳今()日因何事接受警方製作筆錄？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 12,
+          "text": "答 我因為涉嫌竊盜案，所以我自行到派出所說明。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 13,
+          "text": "問 你於何時、何地如何發現你的財物遭何人竊取？該竊嫌竊取物品時的裝扮、特徵？如何竊取？過程為何？遭竊取的財物為何？數量為何？價值多少？請詳述之。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 14,
+          "text": "答 是。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 15,
+          "text": "問 你的財物遭竊取當時你是否在場？是否有人看管？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 16,
+          "text": "答 基隆市安樂區武嶺街297號3樓。否。因為沒收到才沒開庭。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 17,
+          "text": "問 承上述，你是否有上鎖？該竊嫌是否有使用工具竊取？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 18,
+          "text": "答 家人支助。無。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 19,
+          "text": "問 該竊嫌是否有同伙？有幾人？往何方向逃逸？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 20,
+          "text": "答 無。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 21,
+          "text": "問 你是否知悉於警詢筆錄中做不實陳述須負法律責任?"
+        },
+        {
+          "kind": "paragraph",
+          "order": 22,
+          "text": "答 是。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 23,
+          "text": "問 你有無為自己或他人推卸刑責而向警方為不實陳述？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 24,
+          "text": "答 無。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 25,
+          "text": "問 警方製作警詢筆錄時，有無全程錄音錄影？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 26,
+          "text": "答 有。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 27,
+          "text": "問 警方於偵訊時你所陳述之事實是否為你自由意識下所陳述？警方有無以強暴脅迫等不正方法對你取供？警方在逮捕你時，有無使你受傷？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 28,
+          "text": "答 是。無。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 29,
+          "text": "問 上述所說是否實在？有無其他意見補充？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 30,
+          "text": "答 實在。無。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 31,
+          "text": "上開筆錄因本所警力事實不足無法由詢問人外進行記錄"
+        },
+        {
+          "kind": "paragraph",
+          "order": 32,
+          "text": "並經受詢問人親閱無訛後始簽名捺印"
+        },
+        {
+          "kind": "paragraph",
+          "order": 33,
+          "text": "受詢問人："
+        },
+        {
+          "kind": "paragraph",
+          "order": 34,
+          "text": "詢 問 人："
+        },
+        {
+          "kind": "paragraph",
+          "order": 35,
+          "text": "筆 錄 記 錄 人："
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 36,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 37,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 38,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 39,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 40,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 41,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 42,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 43,
+          "row": 1,
+          "table": 0,
+          "text": "詢 問"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 44,
+          "row": 1,
+          "table": 0,
+          "text": "時間"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 45,
+          "row": 1,
+          "table": 0,
+          "text": "自年月日時分10時19分起 至年月日時分10時25分止"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 46,
+          "row": 1,
+          "table": 0,
+          "text": "自年月日時分10時19分起 至年月日時分10時25分止"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 47,
+          "row": 1,
+          "table": 0,
+          "text": "自年月日時分10時19分起 至年月日時分10時25分止"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 48,
+          "row": 1,
+          "table": 0,
+          "text": "自年月日時分10時19分起 至年月日時分10時25分止"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 49,
+          "row": 1,
+          "table": 0,
+          "text": "自年月日時分10時19分起 至年月日時分10時25分止"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 50,
+          "row": 2,
+          "table": 0,
+          "text": "詢 問"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 51,
+          "row": 2,
+          "table": 0,
+          "text": "地點"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 52,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局三張犁派出所"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 53,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局三張犁派出所"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 54,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局三張犁派出所"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 55,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局三張犁派出所"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 56,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局三張犁派出所"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 57,
+          "row": 3,
+          "table": 0,
+          "text": "案由"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 58,
+          "row": 3,
+          "table": 0,
+          "text": "案由"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 59,
+          "row": 3,
+          "table": 0,
+          "text": "竊盜(被害人)"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 60,
+          "row": 3,
+          "table": 0,
+          "text": "竊盜(被害人)"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 61,
+          "row": 3,
+          "table": 0,
+          "text": "竊盜(被害人)"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 62,
+          "row": 3,
+          "table": 0,
+          "text": "竊盜(被害人)"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 63,
+          "row": 3,
+          "table": 0,
+          "text": "竊盜(被害人)"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 64,
+          "row": 4,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 65,
+          "row": 4,
+          "table": 0,
+          "text": "姓名"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 66,
+          "row": 4,
+          "table": 0,
+          "text": "楊子慶"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 67,
+          "row": 4,
+          "table": 0,
+          "text": "楊子慶"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 68,
+          "row": 4,
+          "table": 0,
+          "text": "楊子慶"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 69,
+          "row": 4,
+          "table": 0,
+          "text": "楊子慶"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 70,
+          "row": 4,
+          "table": 0,
+          "text": "楊子慶"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 71,
+          "row": 5,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 72,
+          "row": 5,
+          "table": 0,
+          "text": "別（綽號）號"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 73,
+          "row": 6,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 74,
+          "row": 6,
+          "table": 0,
+          "text": "性別"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 75,
+          "row": 6,
+          "table": 0,
+          "text": "男"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 76,
+          "row": 6,
+          "table": 0,
+          "text": "男"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 77,
+          "row": 6,
+          "table": 0,
+          "text": "男"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 78,
+          "row": 6,
+          "table": 0,
+          "text": "男"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 79,
+          "row": 6,
+          "table": 0,
+          "text": "男"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 80,
+          "row": 7,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 81,
+          "row": 7,
+          "table": 0,
+          "text": "出生年月日"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 82,
+          "row": 7,
+          "table": 0,
+          "text": "87.10.15"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 83,
+          "row": 7,
+          "table": 0,
+          "text": "87.10.15"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 84,
+          "row": 7,
+          "table": 0,
+          "text": "87.10.15"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 85,
+          "row": 7,
+          "table": 0,
+          "text": "87.10.15"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 86,
+          "row": 7,
+          "table": 0,
+          "text": "87.10.15"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 87,
+          "row": 8,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 88,
+          "row": 8,
+          "table": 0,
+          "text": "出生地"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 89,
+          "row": 8,
+          "table": 0,
+          "text": "基隆市"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 90,
+          "row": 8,
+          "table": 0,
+          "text": "基隆市"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 91,
+          "row": 8,
+          "table": 0,
+          "text": "基隆市"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 92,
+          "row": 8,
+          "table": 0,
+          "text": "基隆市"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 93,
+          "row": 8,
+          "table": 0,
+          "text": "基隆市"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 94,
+          "row": 9,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 95,
+          "row": 9,
+          "table": 0,
+          "text": "職業"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 96,
+          "row": 9,
+          "table": 0,
+          "text": "服務業"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 97,
+          "row": 9,
+          "table": 0,
+          "text": "服務業"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 98,
+          "row": 9,
+          "table": 0,
+          "text": "服務業"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 99,
+          "row": 9,
+          "table": 0,
+          "text": "服務業"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 100,
+          "row": 9,
+          "table": 0,
+          "text": "服務業"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 101,
+          "row": 10,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 102,
+          "row": 10,
+          "table": 0,
+          "text": "身分證 統一編號"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 103,
+          "row": 10,
+          "table": 0,
+          "text": "A130510449"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 104,
+          "row": 10,
+          "table": 0,
+          "text": "A130510449"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 105,
+          "row": 10,
+          "table": 0,
+          "text": "A130510449"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 106,
+          "row": 10,
+          "table": 0,
+          "text": "A130510449"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 107,
+          "row": 10,
+          "table": 0,
+          "text": "A130510449"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 108,
+          "row": 11,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 109,
+          "row": 11,
+          "table": 0,
+          "text": "戶籍地址"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 110,
+          "row": 11,
+          "table": 0,
+          "text": "新竹縣竹東鎮公道路758巷27弄5二樓"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 111,
+          "row": 11,
+          "table": 0,
+          "text": "新竹縣竹東鎮公道路758巷27弄5二樓"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 112,
+          "row": 11,
+          "table": 0,
+          "text": "新竹縣竹東鎮公道路758巷27弄5二樓"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 113,
+          "row": 11,
+          "table": 0,
+          "text": "新竹縣竹東鎮公道路758巷27弄5二樓"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 114,
+          "row": 11,
+          "table": 0,
+          "text": "新竹縣竹東鎮公道路758巷27弄5二樓"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 115,
+          "row": 12,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 116,
+          "row": 12,
+          "table": 0,
+          "text": "現住地址"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 117,
+          "row": 12,
+          "table": 0,
+          "text": "基隆市安樂區武嶺街279號3樓"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 118,
+          "row": 12,
+          "table": 0,
+          "text": "基隆市安樂區武嶺街279號3樓"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 119,
+          "row": 12,
+          "table": 0,
+          "text": "基隆市安樂區武嶺街279號3樓"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 120,
+          "row": 12,
+          "table": 0,
+          "text": "基隆市安樂區武嶺街279號3樓"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 121,
+          "row": 12,
+          "table": 0,
+          "text": "基隆市安樂區武嶺街279號3樓"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 122,
+          "row": 13,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 123,
+          "row": 13,
+          "table": 0,
+          "text": "教育程度"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 124,
+          "row": 13,
+          "table": 0,
+          "text": "大專畢業"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 125,
+          "row": 13,
+          "table": 0,
+          "text": "大專畢業"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 126,
+          "row": 13,
+          "table": 0,
+          "text": "大專畢業"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 127,
+          "row": 13,
+          "table": 0,
+          "text": "大專畢業"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 128,
+          "row": 13,
+          "table": 0,
+          "text": "大專畢業"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 129,
+          "row": 14,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 130,
+          "row": 14,
+          "table": 0,
+          "text": "電話號碼"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 131,
+          "row": 14,
+          "table": 0,
+          "text": "0921332553"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 132,
+          "row": 14,
+          "table": 0,
+          "text": "0921332553"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 133,
+          "row": 14,
+          "table": 0,
+          "text": "0921332553"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 134,
+          "row": 14,
+          "table": 0,
+          "text": "0921332553"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 135,
+          "row": 14,
+          "table": 0,
+          "text": "0921332553"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 136,
+          "row": 15,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 137,
+          "row": 15,
+          "table": 0,
+          "text": "家庭經濟狀況"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 138,
+          "row": 15,
+          "table": 0,
+          "text": "貧寒"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 139,
+          "row": 15,
+          "table": 0,
+          "text": "勉持"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 140,
+          "row": 15,
+          "table": 0,
+          "text": "小康"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 141,
+          "row": 15,
+          "table": 0,
+          "text": "中產"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 142,
+          "row": 15,
+          "table": 0,
+          "text": "富裕"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 143,
+          "row": 16,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 144,
+          "row": 16,
+          "table": 0,
+          "text": "家庭經濟狀況"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 145,
+          "row": 16,
+          "table": 0,
+          "text": "▲"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 146,
+          "row": 17,
+          "table": 0,
+          "text": "應 告 知 事 項"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 147,
+          "row": 17,
+          "table": 0,
+          "text": "你涉嫌　竊盜　案，於受詢問時，得行使下列權利： 一、得保持沉默，無須違背自己之意思而為陳述。 二、得選任辯護人。如為低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者，得請求之。 三、得請求調查有利之證據。 四、提審法第1條：人民被法院以外之任何機關逮捕、拘禁時，其本人或他人得向逮捕、拘禁地之地方法院聲請提審。但其他法律規定得聲請即時由法院審查者，依其規定。前項聲請及第10條之抗告，免徵費用。 受詢問人："
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 148,
+          "row": 17,
+          "table": 0,
+          "text": "你涉嫌　竊盜　案，於受詢問時，得行使下列權利： 一、得保持沉默，無須違背自己之意思而為陳述。 二、得選任辯護人。如為低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者，得請求之。 三、得請求調查有利之證據。 四、提審法第1條：人民被法院以外之任何機關逮捕、拘禁時，其本人或他人得向逮捕、拘禁地之地方法院聲請提審。但其他法律規定得聲請即時由法院審查者，依其規定。前項聲請及第10條之抗告，免徵費用。 受詢問人："
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 149,
+          "row": 17,
+          "table": 0,
+          "text": "你涉嫌　竊盜　案，於受詢問時，得行使下列權利： 一、得保持沉默，無須違背自己之意思而為陳述。 二、得選任辯護人。如為低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者，得請求之。 三、得請求調查有利之證據。 四、提審法第1條：人民被法院以外之任何機關逮捕、拘禁時，其本人或他人得向逮捕、拘禁地之地方法院聲請提審。但其他法律規定得聲請即時由法院審查者，依其規定。前項聲請及第10條之抗告，免徵費用。 受詢問人："
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 150,
+          "row": 17,
+          "table": 0,
+          "text": "你涉嫌　竊盜　案，於受詢問時，得行使下列權利： 一、得保持沉默，無須違背自己之意思而為陳述。 二、得選任辯護人。如為低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者，得請求之。 三、得請求調查有利之證據。 四、提審法第1條：人民被法院以外之任何機關逮捕、拘禁時，其本人或他人得向逮捕、拘禁地之地方法院聲請提審。但其他法律規定得聲請即時由法院審查者，依其規定。前項聲請及第10條之抗告，免徵費用。 受詢問人："
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 151,
+          "row": 17,
+          "table": 0,
+          "text": "你涉嫌　竊盜　案，於受詢問時，得行使下列權利： 一、得保持沉默，無須違背自己之意思而為陳述。 二、得選任辯護人。如為低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者，得請求之。 三、得請求調查有利之證據。 四、提審法第1條：人民被法院以外之任何機關逮捕、拘禁時，其本人或他人得向逮捕、拘禁地之地方法院聲請提審。但其他法律規定得聲請即時由法院審查者，依其規定。前項聲請及第10條之抗告，免徵費用。 受詢問人："
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 152,
+          "row": 17,
+          "table": 0,
+          "text": "你涉嫌　竊盜　案，於受詢問時，得行使下列權利： 一、得保持沉默，無須違背自己之意思而為陳述。 二、得選任辯護人。如為低收入戶、中低收入戶、原住民或其他依法令得請求法律扶助者，得請求之。 三、得請求調查有利之證據。 四、提審法第1條：人民被法院以外之任何機關逮捕、拘禁時，其本人或他人得向逮捕、拘禁地之地方法院聲請提審。但其他法律規定得聲請即時由法院審查者，依其規定。前項聲請及第10條之抗告，免徵費用。 受詢問人："
+        }
+      ],
+      "round_trip_status": "SEMANTIC_ITEMS_PRESERVED",
+      "semantic_item_count": 152,
+      "semantic_sha256": "bf207b806b45614a4aaaa3ee6e7a726f2e527c5f3dbb70d05bb8e13bd5c62b86",
+      "source_name": "通用涉嫌人筆錄（移送）.doc",
+      "source_sha256": "d0d0e82fd3a5665fbce1f476ed2bd96b721f5a2fb8b31ea7febb938ac981224c"
+    },
+    "victim": {
+      "atomic_question_count": 30,
+      "converted_path": "victim.docx",
+      "converted_sha256": "cf1da4406a1c44cf55352a95350902a74d00b90a30ee91837f83ce40596866a8",
+      "items": [
+        {
+          "kind": "paragraph",
+          "order": 1,
+          "text": "問 你上述年籍資料是否正確？是否為你本人？有無攜帶身分證明文件?"
+        },
+        {
+          "kind": "paragraph",
+          "order": 2,
+          "text": "答 正確，是我本人沒錯。有。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 3,
+          "text": "問 你今(12)日因何事接受警方製作筆錄？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 4,
+          "text": "答 報案人稱於115年09月12日12時18分載乘客右轉臺北市信義區吳興街156巷左轉至臺北市信義區吳興街206號的方式，遭不知名民眾用左拳頭敲擊自小營(TDW-2575)右後門後側板金，並造成凹陷，故至所報案。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 5,
+          "text": "問 妳遭毀損何物？價值為何？你為何會認為你遭染色之衣物是遭故意毀棄、損壞或致令不堪用？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 6,
+          "text": "答 自小營(TDW-2575)右後門後側板金，價值新臺幣五千元，並造成凹陷，因為人很多我一直都是行駛在馬路的中線上，因為他一開始就跟著我也是朝吳興街206號方向，然後再故意走回去(往吳興街156巷)敲打我的右後側板金。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 7,
+          "text": "問 該遭毀損之物為何人所有？在何處遭到毀損？以何方式遭到毀損？毀損程度如何？除對你住所（或所有物）毀損外，有無其他侵害行為？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 8,
+          "text": "答 是我的，在臺北市信義區吳興街206號。拳頭。凹陷。無。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 9,
+          "text": "問 根據你提供的監視器影像，敲打你右後側板金的人，是否為他？(詳如附圖)"
+        },
+        {
+          "kind": "paragraph",
+          "order": 10,
+          "text": "答 是。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 11,
+          "text": "問 對於特定或不特定人士做不實指控或謊報、隱匿實情，致使公務人員於文書登載不實必須擔負法律責任，是否清楚？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 12,
+          "text": "答 是。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 13,
+          "text": "問 是否知道對方年籍資料、聯絡方式？與對方是否認識？有無仇恨或糾紛？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 14,
+          "text": "答 否。否。無。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 15,
+          "text": "問 現場有無裝設監視器或其他人見聞？時間有無誤差？有無聯絡方式？有無佐證資料可提供警方?或有利事證須請警方協助調查?"
+        },
+        {
+          "kind": "paragraph",
+          "order": 16,
+          "text": "答 我有行車紀錄器給警方。無誤差。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 17,
+          "text": "問 你是否要提出告訴？提出何種告訴？是否曾向其他警察單位報案（有無開立證明單或未獲受理緣由過程）？是否附帶民事求償？有無與嫌犯和解或調解之意願？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 18,
+          "text": "答 是。我要對敲擊我自小營導致板金凹陷的人提出毀損告訴。否。是。有。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 19,
+          "text": "問 上述所說是否實在？有無其他意見補充？"
+        },
+        {
+          "kind": "paragraph",
+          "order": 20,
+          "text": "答 是。無。"
+        },
+        {
+          "kind": "paragraph",
+          "order": 21,
+          "text": "上開筆錄因本所警力事實不足無法由詢問人外進行記錄"
+        },
+        {
+          "kind": "paragraph",
+          "order": 22,
+          "text": "並經受詢問人親閱無訛後始簽名捺印"
+        },
+        {
+          "kind": "paragraph",
+          "order": 23,
+          "text": "受詢問人："
+        },
+        {
+          "kind": "paragraph",
+          "order": 24,
+          "text": "詢 問 人："
+        },
+        {
+          "kind": "paragraph",
+          "order": 25,
+          "text": "筆 錄 記 錄 人："
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 26,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 27,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 28,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 29,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 30,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 31,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 32,
+          "row": 0,
+          "table": 0,
+          "text": "偵　　詢　　筆　　錄　　第　1　次"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 33,
+          "row": 1,
+          "table": 0,
+          "text": "詢 問"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 34,
+          "row": 1,
+          "table": 0,
+          "text": "時間"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 35,
+          "row": 1,
+          "table": 0,
+          "text": "自115年09月12日13時38分起 至115年09月12日14時10分止"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 36,
+          "row": 1,
+          "table": 0,
+          "text": "自115年09月12日13時38分起 至115年09月12日14時10分止"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 37,
+          "row": 1,
+          "table": 0,
+          "text": "自115年09月12日13時38分起 至115年09月12日14時10分止"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 38,
+          "row": 1,
+          "table": 0,
+          "text": "自115年09月12日13時38分起 至115年09月12日14時10分止"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 39,
+          "row": 1,
+          "table": 0,
+          "text": "自115年09月12日13時38分起 至115年09月12日14時10分止"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 40,
+          "row": 2,
+          "table": 0,
+          "text": "詢 問"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 41,
+          "row": 2,
+          "table": 0,
+          "text": "地點"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 42,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局吳興街派出所"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 43,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局吳興街派出所"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 44,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局吳興街派出所"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 45,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局吳興街派出所"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 46,
+          "row": 2,
+          "table": 0,
+          "text": "臺北市政府警察局信義分局吳興街派出所"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 47,
+          "row": 3,
+          "table": 0,
+          "text": "案由"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 48,
+          "row": 3,
+          "table": 0,
+          "text": "案由"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 49,
+          "row": 3,
+          "table": 0,
+          "text": "毀損(被害人)"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 50,
+          "row": 3,
+          "table": 0,
+          "text": "毀損(被害人)"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 51,
+          "row": 3,
+          "table": 0,
+          "text": "毀損(被害人)"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 52,
+          "row": 3,
+          "table": 0,
+          "text": "毀損(被害人)"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 53,
+          "row": 3,
+          "table": 0,
+          "text": "毀損(被害人)"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 54,
+          "row": 4,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 55,
+          "row": 4,
+          "table": 0,
+          "text": "姓名"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 56,
+          "row": 4,
+          "table": 0,
+          "text": "黃軾錦"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 57,
+          "row": 4,
+          "table": 0,
+          "text": "黃軾錦"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 58,
+          "row": 4,
+          "table": 0,
+          "text": "黃軾錦"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 59,
+          "row": 4,
+          "table": 0,
+          "text": "黃軾錦"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 60,
+          "row": 4,
+          "table": 0,
+          "text": "黃軾錦"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 61,
+          "row": 5,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 62,
+          "row": 5,
+          "table": 0,
+          "text": "別（綽號）號"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 63,
+          "row": 6,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 64,
+          "row": 6,
+          "table": 0,
+          "text": "性別"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 65,
+          "row": 6,
+          "table": 0,
+          "text": "男"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 66,
+          "row": 6,
+          "table": 0,
+          "text": "男"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 67,
+          "row": 6,
+          "table": 0,
+          "text": "男"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 68,
+          "row": 6,
+          "table": 0,
+          "text": "男"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 69,
+          "row": 6,
+          "table": 0,
+          "text": "男"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 70,
+          "row": 7,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 71,
+          "row": 7,
+          "table": 0,
+          "text": "出生年月日"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 72,
+          "row": 7,
+          "table": 0,
+          "text": "74.09.11"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 73,
+          "row": 7,
+          "table": 0,
+          "text": "74.09.11"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 74,
+          "row": 7,
+          "table": 0,
+          "text": "74.09.11"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 75,
+          "row": 7,
+          "table": 0,
+          "text": "74.09.11"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 76,
+          "row": 7,
+          "table": 0,
+          "text": "74.09.11"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 77,
+          "row": 8,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 78,
+          "row": 8,
+          "table": 0,
+          "text": "出生地"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 79,
+          "row": 8,
+          "table": 0,
+          "text": "基隆市"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 80,
+          "row": 8,
+          "table": 0,
+          "text": "基隆市"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 81,
+          "row": 8,
+          "table": 0,
+          "text": "基隆市"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 82,
+          "row": 8,
+          "table": 0,
+          "text": "基隆市"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 83,
+          "row": 8,
+          "table": 0,
+          "text": "基隆市"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 84,
+          "row": 9,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 85,
+          "row": 9,
+          "table": 0,
+          "text": "職業"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 86,
+          "row": 9,
+          "table": 0,
+          "text": "司機"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 87,
+          "row": 9,
+          "table": 0,
+          "text": "司機"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 88,
+          "row": 9,
+          "table": 0,
+          "text": "司機"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 89,
+          "row": 9,
+          "table": 0,
+          "text": "司機"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 90,
+          "row": 9,
+          "table": 0,
+          "text": "司機"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 91,
+          "row": 10,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 92,
+          "row": 10,
+          "table": 0,
+          "text": "身分證 統一編號"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 93,
+          "row": 10,
+          "table": 0,
+          "text": "C121205026"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 94,
+          "row": 10,
+          "table": 0,
+          "text": "C121205026"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 95,
+          "row": 10,
+          "table": 0,
+          "text": "C121205026"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 96,
+          "row": 10,
+          "table": 0,
+          "text": "C121205026"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 97,
+          "row": 10,
+          "table": 0,
+          "text": "C121205026"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 98,
+          "row": 11,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 99,
+          "row": 11,
+          "table": 0,
+          "text": "戶籍地址"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 100,
+          "row": 11,
+          "table": 0,
+          "text": "基隆市七堵區百一街149號"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 101,
+          "row": 11,
+          "table": 0,
+          "text": "基隆市七堵區百一街149號"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 102,
+          "row": 11,
+          "table": 0,
+          "text": "基隆市七堵區百一街149號"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 103,
+          "row": 11,
+          "table": 0,
+          "text": "基隆市七堵區百一街149號"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 104,
+          "row": 11,
+          "table": 0,
+          "text": "基隆市七堵區百一街149號"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 105,
+          "row": 12,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 106,
+          "row": 12,
+          "table": 0,
+          "text": "現住地址"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 107,
+          "row": 12,
+          "table": 0,
+          "text": "基隆市七堵區百一街149號"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 108,
+          "row": 12,
+          "table": 0,
+          "text": "基隆市七堵區百一街149號"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 109,
+          "row": 12,
+          "table": 0,
+          "text": "基隆市七堵區百一街149號"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 110,
+          "row": 12,
+          "table": 0,
+          "text": "基隆市七堵區百一街149號"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 111,
+          "row": 12,
+          "table": 0,
+          "text": "基隆市七堵區百一街149號"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 112,
+          "row": 13,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 113,
+          "row": 13,
+          "table": 0,
+          "text": "教育程度"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 114,
+          "row": 13,
+          "table": 0,
+          "text": "大學畢業"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 115,
+          "row": 13,
+          "table": 0,
+          "text": "大學畢業"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 116,
+          "row": 13,
+          "table": 0,
+          "text": "大學畢業"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 117,
+          "row": 13,
+          "table": 0,
+          "text": "大學畢業"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 118,
+          "row": 13,
+          "table": 0,
+          "text": "大學畢業"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 119,
+          "row": 14,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 120,
+          "row": 14,
+          "table": 0,
+          "text": "電話號碼"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 121,
+          "row": 14,
+          "table": 0,
+          "text": "0989987244"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 122,
+          "row": 14,
+          "table": 0,
+          "text": "0989987244"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 123,
+          "row": 14,
+          "table": 0,
+          "text": "0989987244"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 124,
+          "row": 14,
+          "table": 0,
+          "text": "0989987244"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 125,
+          "row": 14,
+          "table": 0,
+          "text": "0989987244"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 126,
+          "row": 15,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 127,
+          "row": 15,
+          "table": 0,
+          "text": "家庭經濟狀況"
+        },
+        {
+          "cell": 2,
+          "kind": "table_cell",
+          "order": 128,
+          "row": 15,
+          "table": 0,
+          "text": "貧寒"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 129,
+          "row": 15,
+          "table": 0,
+          "text": "勉持"
+        },
+        {
+          "cell": 4,
+          "kind": "table_cell",
+          "order": 130,
+          "row": 15,
+          "table": 0,
+          "text": "小康"
+        },
+        {
+          "cell": 5,
+          "kind": "table_cell",
+          "order": 131,
+          "row": 15,
+          "table": 0,
+          "text": "中產"
+        },
+        {
+          "cell": 6,
+          "kind": "table_cell",
+          "order": 132,
+          "row": 15,
+          "table": 0,
+          "text": "富裕"
+        },
+        {
+          "cell": 0,
+          "kind": "table_cell",
+          "order": 133,
+          "row": 16,
+          "table": 0,
+          "text": "受 詢 問 人"
+        },
+        {
+          "cell": 1,
+          "kind": "table_cell",
+          "order": 134,
+          "row": 16,
+          "table": 0,
+          "text": "家庭經濟狀況"
+        },
+        {
+          "cell": 3,
+          "kind": "table_cell",
+          "order": 135,
+          "row": 16,
+          "table": 0,
+          "text": "▲"
+        }
+      ],
+      "round_trip_status": "SEMANTIC_ITEMS_PRESERVED",
+      "semantic_item_count": 135,
+      "semantic_sha256": "60375c4a4d3b5cef857a82cfb155698e87a02242448c03994b6d05214ad70315",
+      "source_name": "通用被害人筆錄.doc",
+      "source_sha256": "0ed21c08cff93f47b3c7f7685b87733a0ef47116be977db30e6616c79526babf"
+    }
+  }
+}

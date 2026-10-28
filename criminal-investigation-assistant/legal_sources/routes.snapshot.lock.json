@@ -1,0 +1,11 @@
+{
+  "child_count": 310,
+  "ingestion_status": "IMMUTABLE_SNAPSHOT",
+  "legal_approval_status": "HUMAN_REVIEW_REQUIRED",
+  "parent_count": 44,
+  "runtime_meaning": "STRUCTURAL_ROUTE_MAPPING_ONLY",
+  "schema_version": "legal-route-snapshot-lock/v1",
+  "snapshot_sha256": "49ea791e6cc1941ab54d99ac06e08cfc78548c9ed584acaf531ded83167f4c4a",
+  "source_name": "legal-case-web/data/legal_route_crosswalk.json",
+  "source_sha256": "f92ae2f338ddbfa260cbcf2b8e88937cec05813baf7069130905d62215dfe3bc"
+}

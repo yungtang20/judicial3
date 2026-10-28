@@ -1,0 +1,9 @@
+{
+  "schema_version": "extension-routes/v1",
+  "routes": [
+    {"id":"firearms","label":"槍砲相關","status":"BLOCKED_NO_FORMAL_CROSSWALK","legal_review_status":"HUMAN_REVIEW_REQUIRED"},
+    {"id":"organized_crime","label":"組織犯罪相關","status":"BLOCKED_NO_FORMAL_CROSSWALK","legal_review_status":"HUMAN_REVIEW_REQUIRED"},
+    {"id":"money_laundering","label":"洗錢相關","status":"BLOCKED_NO_FORMAL_CROSSWALK","legal_review_status":"HUMAN_REVIEW_REQUIRED"},
+    {"id":"stolen_goods","label":"贓物相關","status":"BLOCKED_NO_FORMAL_CROSSWALK","legal_review_status":"HUMAN_REVIEW_REQUIRED"}
+  ]
+}
