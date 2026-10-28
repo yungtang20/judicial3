@@ -1,0 +1,526 @@
+<!-- SUBMISSION_START -->
+
+```yaml
+document_status: DESIGN_DRAFT
+runtime_enabled: false
+review_status: CODEX_REVIEWED
+submission_status: REVIEW_PASS
+handoff_status: CODEX_ROUTE_REVIEW_COMPLETE
+last_completed_section: O
+resume_from_section: ARCHIVE_AND_SELECT_NEXT_ROUTE
+current_blockers: []
+last_validation: PASS_630_PYTEST_SINGLE_RUN_AND_20_QUESTION_RENDER
+last_executor_summary: "Codex 已完成 aggravated_theft_321 的內容、工程、證據與風險審核；QUESTION_DESIGN_ONLY，未接線、不定罪。"
+designer_role: TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT
+author_role: TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT
+question_ruleset_version: question-rules-v2-draft
+ruleset_status: QUESTION_DESIGN_ACCEPTED
+ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+runtime_ruleset_status: UNCHANGED_RUNTIME
+failure_scope: NONE
+task_type: AUTHOR_ROUTE_QUESTIONS
+queue_no: 2
+target_route_id: aggravated_theft
+target_child_route_id: aggravated_theft_321
+target_interview_roles: [victim, suspect, transfer, witness_review_only]
+iteration: 0
+allowed_output: WORK_ITEM_FILE_ONLY
+allowed_write_path: docs/QUESTION_WORK_ITEM.md
+automatic_advance: false
+next_route: NOT_AUTHORIZED
+```
+
+## A. 工作單 Metadata 與法源
+
+```yaml
+artifact_type: CHILD_ROUTE_WORK_ITEM
+iteration: 0
+execution_mode: REVIEWED_PIPELINE
+runtime_enabled: false
+review_status: CODEX_REVIEWED
+submission_status: REVIEW_PASS
+primary_route: aggravated_theft
+primary_child_route: aggravated_theft_321
+parent_route_status: PARTIAL_SCOPE
+child_count_in_crosswalk: 1
+question_concept_count: 8
+question_concept_budget: 8
+case_selection_budget: 3-5 core concepts
+evidence_followup_budget: max 2
+output_page_budget: 8
+case_human_gate: REQUIRED
+user_final_acceptance: PENDING
+```
+
+官方來源查詢卡：
+
+| 欄位 | 結果 |
+|---|---|
+| 問句 | 2026-10-26 台灣，中華民國刑法第320條與第321條現行內容及第321條六款事由 |
+| 證據 | 法務部全國法規資料庫，中華民國刑法，修正日期民國115年7月22日，查詢日2026-10-26 |
+| URL | https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001 |
+| 痕跡 | 第320條第一、二項基礎行為；第321條第一項六款；第321條第二項未遂 |
+| 行為時法 | UNKNOWN；實際案件日期未提供，須由承辦人逐案調閱 |
+
+本工作單只把官方條文拆成可觀察事實問句。條文回查不代表任何個案成立犯罪。
+
+## B. Route Scope
+
+```yaml
+route_scope:
+  primary_route: aggravated_theft_321
+  allowed_comparison_routes:
+    - theft_320_1_movable
+    - theft_320_2_real_estate
+  allowed_alternative_routes: []
+```
+
+本 route 是第320條第一項或第二項基礎方向的加重層。加重搶奪、加重強盜、侵入住居及毀損等其他路由不在本工作單 allowlist；如個案需要，輸出 `ROUTE_SCOPE_EXPANSION_REQUIRED`，不得靜默加入。
+
+## C. Elements 與雙鏈結
+
+| element_id | 中性事實目標 | 法律定位 | Human Gate |
+|---|---|---|---|
+| AGT-E00 | 第320條基礎候選仍在範圍 | 第321條以前條第一、二項為前提 | REQUIRED |
+| AGT-E01 | 進入或隱匿於住宅、有人居住建築或船艦的具體方式 | 第321條第1款方向 | REQUIRED |
+| AGT-E02 | 對門窗、牆垣或其他安全設備的具體動作 | 第321條第2款方向 | REQUIRED |
+| AGT-E03 | 行為時攜帶器械的種類、狀態及取得方式 | 第321條第3款方向 | REQUIRED |
+| AGT-E04 | 現場共同參與者人數及各自行為 | 第321條第4款方向 | REQUIRED |
+| AGT-E05 | 火災、水災或其他災害及行為時點 | 第321條第5款方向 | REQUIRED |
+| AGT-E06 | 行為地點與車站、港埠、航空站或公共運輸工具的關係 | 第321條第6款方向 | REQUIRED |
+| AGT-E07 | 行為人對實際加重情況所知的外部表徵 | 主觀認識只由言詞、準備與行為推認 | REQUIRED |
+
+每個 concept 同時連到 exact child route 與中性 fact target；不得要求受詢問人回答「是否構成加重竊盜」。
+
+## D. 區分軸與相鄰路由矩陣
+
+| distinction_axis | fact_target | YES／明確資料 | NO／缺資料 | 安全效果 |
+|---|---|---|---|---|
+| 進入或隱匿於法定場所 | entry_or_concealment_facts | 保留第1款方向 | 仍檢查其他五款 | 不排除 |
+| 毀越安全邊界 | security_barrier_action | 保留第2款方向 | 仍檢查其他五款 | 不排除 |
+| 攜帶器械及客觀狀態 | carried_instrument_facts | 保留第3款方向 | 仍檢查其他五款 | 不自行判斷兇器 |
+| 三人以上共同參與 | participant_count_and_roles | 保留第4款方向 | 仍檢查其他五款 | 不以在場人數直接推定結夥 |
+| 災害之際 | disaster_timing_facts | 保留第5款方向 | 仍檢查其他五款 | 不推定利用災害 |
+| 公共運輸場所 | transport_venue_facts | 保留第6款方向 | 仍檢查其他五款 | 先確認精確地點 |
+| 對加重事實的認識 | knowledge_of_aggravating_facts | 與客觀事實一併保留 | 否認或不清楚仍待證據 | 一律 Human Gate |
+
+第321條任一款未確認，不代表其他各款不存在；因此單題 NO 不產生 `EXCLUDED`。
+
+## E. 角色知識矩陣
+
+| fact_target | victim | suspect | transfer | witness_review_only |
+|---|---|---|---|---|
+| entry_or_concealment_facts | 可述現場、權限與發現狀態 | 可述進入、停留與權限來源 | 可述移送資料與現場證據 | 只述親自看到的進入或隱匿 |
+| security_barrier_action | 可述原狀與受損狀態 | 可述操作方式與工具 | 可述勘察、照片與扣案 | 只述親自看到的動作 |
+| carried_instrument_facts | 可述看到或發現的器械 | 可述攜帶目的、取得與狀態 | 可述扣案及影像 | 只述親自看到的器械 |
+| participant_count_and_roles | 可述看到的人數與行為 | 可述同行者與分工 | 可述影像、指認與移送資料 | 只述親自看到的人數與行為 |
+| disaster_timing_facts | 可述災害與時間 | 可述當時所見及行動 | 可述客觀時間資料 | 只述親自感受或看到的災害 |
+| transport_venue_facts | 可述精確地點 | 可述所在位置與移動 | 可述場站、車次及影像 | 只述親自所在位置 |
+| knowledge_of_aggravating_facts | 不推測他人內心 | 可述事前言詞、準備與當時所知 | 可述可回查外部證據 | 只述親自聽見或看到的表徵 |
+
+## F. Standard Set
+
+<!-- STANDARD_SET_START -->
+```json
+[
+  {
+    "question_concept_id": "AGT-C01",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "narrative",
+    "parent_question_id": null,
+    "fact_target": "aggravated_taking_narrative",
+    "distinction_axis": "第320條基礎候選與第321條加重事實的時間順序",
+    "answer_mode": "narrative_only",
+    "answer_codes": [],
+    "answer_map": null,
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {
+      "victim": "請依時間順序說明財物或不動產遭取走、占用前後，你所知道的地點、進入方式、現場人員、物品及環境情況。",
+      "suspect": "請依時間順序說明你到達現場、進入或停留、接觸財物或不動產及離開的完整經過。",
+      "transfer": "請依移送資料的時間順序，說明第320條基礎候選及可能涉及第321條各款的客觀資料；無資料的部分請明列 UNKNOWN。",
+      "witness_review_only": "請只依你親自看到或聽到的時間順序，說明現場位置、人員、進入方式、器械、環境及取物或占用經過。"
+    },
+    "legal_targets": ["aggravated_theft_321", "theft_320_1_movable", "theft_320_2_real_estate"],
+    "legal_target_details": [],
+    "alternative_target_details": [],
+    "source_basis": "法務部全國法規資料庫刑法第320條、第321條；查詢日2026-10-26",
+    "rationale": "先取得不中斷的自由敘述，再逐一釐清六款事實。",
+    "trigger_condition": "candidate:aggravated_theft_321:present",
+    "existing_question_refs": ["T-N-01"],
+    "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "AGT-C02",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "AGT-C01",
+    "fact_target": "entry_or_concealment_facts",
+    "distinction_axis": "是否有進入或隱匿於第321條第1款所列場所的具體事實",
+    "answer_mode": "boolean",
+    "answer_codes": ["YES", "NO"],
+    "answer_map": {"YES": "YES", "NO": "NO", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {
+      "victim": "對方進入或留在該處的具體位置、方式及你是否同意，各是什麼情況？",
+      "suspect": "你如何進入或留在該處？當時你認為自己可進入或停留的依據是什麼？",
+      "transfer": "移送資料可確認的場所性質、進入或隱匿方式及權限資料各是什麼？",
+      "witness_review_only": "你親自看到對方從哪裡、以何方式進入、離開或留在該處？"
+    },
+    "legal_targets": ["aggravated_theft_321", "theft_320_1_movable", "theft_320_2_real_estate"],
+    "legal_target_details": [
+      {"route_id": "aggravated_theft_321", "effects": {"YES": "ACTIVE", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_1_movable", "effects": {"YES": "NEED_REVIEW", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_2_real_estate", "effects": {"YES": "NEED_REVIEW", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第321條第1項第1款",
+    "rationale": "以場所、進入方式及權限事實取代法律標籤。",
+    "trigger_condition": "after:AGT-C01 && fact:entry_or_concealment_facts:UNKNOWN && candidate:aggravated_theft_321:present",
+    "existing_question_refs": ["T-A-01"],
+    "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "AGT-C03",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "AGT-C01",
+    "fact_target": "security_barrier_action",
+    "distinction_axis": "是否有對門窗、牆垣或安全設備採取具體動作",
+    "answer_mode": "boolean",
+    "answer_codes": ["YES", "NO"],
+    "answer_map": {"YES": "YES", "NO": "NO", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {
+      "victim": "門窗、牆垣或其他安全設備原本的狀態，以及事後發現的變化各是什麼？",
+      "suspect": "你接觸門窗、牆垣或其他安全設備時，做了哪些具體動作？",
+      "transfer": "現場勘察、照片、影像或扣案物可確認哪些門窗、牆垣或安全設備的變化與動作？",
+      "witness_review_only": "你親自看到有人對門窗、牆垣或其他安全設備做了哪些動作？"
+    },
+    "legal_targets": ["aggravated_theft_321", "theft_320_1_movable", "theft_320_2_real_estate"],
+    "legal_target_details": [
+      {"route_id": "aggravated_theft_321", "effects": {"YES": "ACTIVE", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_1_movable", "effects": {"YES": "NEED_REVIEW", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_2_real_estate", "effects": {"YES": "NEED_REVIEW", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第321條第1項第2款",
+    "rationale": "只問可觀察動作，不由問句預先認定毀越。",
+    "trigger_condition": "after:AGT-C01 && fact:security_barrier_action:UNKNOWN && candidate:aggravated_theft_321:present",
+    "existing_question_refs": ["T-A-02"],
+    "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "AGT-C04",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "AGT-C01",
+    "fact_target": "carried_instrument_facts",
+    "distinction_axis": "行為時是否攜帶器械及其客觀狀態",
+    "answer_mode": "boolean",
+    "answer_codes": ["YES", "NO"],
+    "answer_map": {"YES": "YES", "NO": "NO", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {
+      "victim": "你看到或事後發現哪些器械？其外觀、放置位置及當時狀態為何？",
+      "suspect": "你當時帶有哪些器械？各器械如何取得、放在哪裡及原本準備做什麼？",
+      "transfer": "影像、搜索扣押或其他資料可確認哪些器械、位置、狀態及攜帶時間？",
+      "witness_review_only": "你親自看到對方帶著哪些器械？器械當時放在哪裡、呈現何種狀態？"
+    },
+    "legal_targets": ["aggravated_theft_321", "theft_320_1_movable", "theft_320_2_real_estate"],
+    "legal_target_details": [
+      {"route_id": "aggravated_theft_321", "effects": {"YES": "ACTIVE", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_1_movable", "effects": {"YES": "NEED_REVIEW", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_2_real_estate", "effects": {"YES": "NEED_REVIEW", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第321條第1項第3款",
+    "rationale": "先固定器械、攜帶與狀態，再由承辦人判斷是否屬兇器。",
+    "trigger_condition": "after:AGT-C01 && fact:carried_instrument_facts:UNKNOWN && candidate:aggravated_theft_321:present",
+    "existing_question_refs": ["T-A-03"],
+    "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "AGT-C05",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "AGT-C01",
+    "fact_target": "participant_count_and_roles",
+    "distinction_axis": "是否有三人以上共同參與及各自分工",
+    "answer_mode": "boolean",
+    "answer_codes": ["YES", "NO"],
+    "answer_map": {"YES": "YES", "NO": "NO", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {
+      "victim": "你看到或可辨識哪些人在場？每人各做了什麼？",
+      "suspect": "當時還有哪些人與你同行、聯絡或在現場？每人各自做了什麼？",
+      "transfer": "影像、通聯、指認或其他資料可確認哪些人及其個別行為？",
+      "witness_review_only": "你親自看到現場共有多少人？每一個人分別做了什麼？"
+    },
+    "legal_targets": ["aggravated_theft_321", "theft_320_1_movable", "theft_320_2_real_estate"],
+    "legal_target_details": [
+      {"route_id": "aggravated_theft_321", "effects": {"YES": "ACTIVE", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_1_movable", "effects": {"YES": "NEED_REVIEW", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_2_real_estate", "effects": {"YES": "NEED_REVIEW", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第321條第1項第4款",
+    "rationale": "分開確認人數與個別行為，不以單純在場推定結夥。",
+    "trigger_condition": "after:AGT-C01 && fact:participant_count_and_roles:UNKNOWN && candidate:aggravated_theft_321:present",
+    "existing_question_refs": ["T-A-04"],
+    "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "AGT-C06",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "AGT-C01",
+    "fact_target": "disaster_timing_facts",
+    "distinction_axis": "行為是否發生於火災、水災或其他災害之際",
+    "answer_mode": "boolean",
+    "answer_codes": ["YES", "NO"],
+    "answer_map": {"YES": "YES", "NO": "NO", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {
+      "victim": "行為發生前後，現場有何火災、水災或其他災害？各事件的時間順序為何？",
+      "suspect": "當時現場有何火災、水災或其他災害？你何時得知，之後做了什麼？",
+      "transfer": "通報、影像、氣象、消防或其他資料可確認何種災害及其與行為的時間關係？",
+      "witness_review_only": "你親自感受或看到何種災害？災害與現場行為的先後順序為何？"
+    },
+    "legal_targets": ["aggravated_theft_321", "theft_320_1_movable", "theft_320_2_real_estate"],
+    "legal_target_details": [
+      {"route_id": "aggravated_theft_321", "effects": {"YES": "ACTIVE", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_1_movable", "effects": {"YES": "NEED_REVIEW", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_2_real_estate", "effects": {"YES": "NEED_REVIEW", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第321條第1項第5款",
+    "rationale": "以災害種類與時間關係取代抽象的乘隙結論。",
+    "trigger_condition": "after:AGT-C01 && fact:disaster_timing_facts:UNKNOWN && candidate:aggravated_theft_321:present",
+    "existing_question_refs": ["T-A-05"],
+    "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "AGT-C07",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "AGT-C01",
+    "fact_target": "transport_venue_facts",
+    "distinction_axis": "行為地點是否位於第321條第1項第6款所列公共運輸場所或工具",
+    "answer_mode": "boolean",
+    "answer_codes": ["YES", "NO"],
+    "answer_map": {"YES": "YES", "NO": "NO", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {
+      "victim": "財物所在及遭取走的精確位置為何？與車站、港埠、航空站或公共運輸工具有何空間關係？",
+      "suspect": "你接觸財物或不動產時的精確位置為何？當時是否在場站或公共運輸工具內？",
+      "transfer": "場站圖、車次、座位、影像或定位資料可確認行為發生在哪一個精確位置？",
+      "witness_review_only": "你親自所在及看到行為發生的精確位置為何？是否在場站或公共運輸工具內？"
+    },
+    "legal_targets": ["aggravated_theft_321", "theft_320_1_movable", "theft_320_2_real_estate"],
+    "legal_target_details": [
+      {"route_id": "aggravated_theft_321", "effects": {"YES": "ACTIVE", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_1_movable", "effects": {"YES": "NEED_REVIEW", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_2_real_estate", "effects": {"YES": "NEED_REVIEW", "NO": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第321條第1項第6款",
+    "rationale": "先固定精確位置，不以附近或途經直接套用場所要件。",
+    "trigger_condition": "after:AGT-C01 && fact:transport_venue_facts:UNKNOWN && candidate:aggravated_theft_321:present",
+    "existing_question_refs": ["T-A-06"],
+    "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "AGT-C08",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "AGT-C01",
+    "fact_target": "knowledge_of_aggravating_facts",
+    "distinction_axis": "行為人對已查得客觀加重情況的認識之外部表徵",
+    "answer_mode": "enum",
+    "answer_codes": ["KNOWN_ONE_OR_MORE", "DENIES_KNOWLEDGE", "NO_RECOLLECTION"],
+    "answer_map": {"KNOWN_ONE_OR_MORE": "KNOWN_ONE_OR_MORE", "DENIES_KNOWLEDGE": "DENIES_KNOWLEDGE", "NO_RECOLLECTION": "NO_RECOLLECTION", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["suspect", "transfer", "witness_review_only"],
+    "role_variants": {
+      "suspect": "針對前面已確認的該項客觀情況，你在行為前或當時知道什麼？你從何得知？",
+      "transfer": "針對前面已確認的該項客觀情況，哪些事前言詞、準備、聯絡、影像或其他資料可供核對行為人當時所知？",
+      "witness_review_only": "針對前面已確認的該項客觀情況，你親自聽見或看到哪些事前言詞、準備或現場反應？"
+    },
+    "legal_targets": ["aggravated_theft_321", "theft_320_1_movable", "theft_320_2_real_estate"],
+    "legal_target_details": [
+      {"route_id": "aggravated_theft_321", "effects": {"KNOWN_ONE_OR_MORE": "ACTIVE", "DENIES_KNOWLEDGE": "NEED_REVIEW", "NO_RECOLLECTION": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_1_movable", "effects": {"KNOWN_ONE_OR_MORE": "NEED_REVIEW", "DENIES_KNOWLEDGE": "NEED_REVIEW", "NO_RECOLLECTION": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_2_real_estate", "effects": {"KNOWN_ONE_OR_MORE": "NEED_REVIEW", "DENIES_KNOWLEDGE": "NEED_REVIEW", "NO_RECOLLECTION": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第321條各款客觀事實；主觀認識由外部事實供承辦人評價",
+    "rationale": "不直接詢問故意或法律結論，只蒐集當時所知的來源與外部表徵。",
+    "trigger_condition": "after:AGT-C01 && any_fact:[entry_or_concealment_facts,security_barrier_action,carried_instrument_facts,participant_count_and_roles,disaster_timing_facts,transport_venue_facts]:KNOWN && fact:knowledge_of_aggravating_facts:UNKNOWN && candidate:aggravated_theft_321:present",
+    "existing_question_refs": [],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  }
+]
+```
+<!-- STANDARD_SET_END -->
+
+## G. 角色實體化規則
+
+- Concept 只在其 `role_variants` 列出的角色產生 instance；ID 為 `<concept_id>-<V|S|T|W>`。
+- `witness_review_only` 永遠維持 `runtime_enabled: false`。
+- C01 先問；C02 至 C08 只在對應 fact 仍為 `UNKNOWN` 且候選仍存在時啟用。
+- 刑事訴訟法第95條權利告知、移送來源與既有筆錄是程序題，不納入八個 offense concepts，也不得刪除。
+
+## H. 回答效果與聚合
+
+- 單一加重事由 `YES` 只把 `aggravated_theft_321` 保留為 `ACTIVE` 候選；第320條基礎事實未齊時，整體仍聚合為 `NEED_REVIEW`。
+- 任一單題 `NO` 不能排除第321條，因其他五款可能仍存在。
+- `UNKNOWN`、`CONFLICT`、否認認識或無法回憶全部維持 `NEED_REVIEW`。
+- 不產生 `EXCLUDED`，不輸出犯罪成立、不成立、有罪或無罪。
+
+## I. 去重與既有題處理
+
+| 新 concept | 既有來源 | 處理 |
+|---|---|---|
+| AGT-C01 | T-N-01 | 語意重用，不共同出題 |
+| AGT-C02 | T-A-01 | 以角色化中性版本取代，不共同出題 |
+| AGT-C03 | T-A-02 | 以具體動作版本取代，不共同出題 |
+| AGT-C04 | T-A-03 | 移除「是否為兇器」式法律判斷，不共同出題 |
+| AGT-C05 | T-A-04 | 分開人數與個別行為，不共同出題 |
+| AGT-C06 | T-A-05 | 補時間關係，不共同出題 |
+| AGT-C07 | T-A-06 | 補精確位置，不共同出題 |
+| AGT-C08 | 無 | 新增主觀認識之外部表徵缺口 |
+
+公司逐字題、common 題、XLSM 題及程序題仍依既有優先序保留。
+
+## J. 不採用問句
+
+- 「你是否犯加重竊盜罪？」：要求法律評價。
+- 「該器械是不是兇器？」：把法律判斷交給受詢問人。
+- 「你們是否結夥三人以上？」：同時預設共同犯意與法定人數。
+- 「你是否乘災害之際行竊？」：預設利用關係及基礎犯罪。
+- 「是否在車站附近犯案？」：附近不等於條文所列精確場所。
+
+## K. 最低校準案例
+
+| 案例 | 期望輸出 |
+|---|---|
+| 白天由未上鎖後門進入住家取物 | 時段不影響第1款提問；進入、權限與基礎取物分開，候選 `NEED_REVIEW` |
+| 受邀進入住家後取物 | 同意範圍與後續行為分開；不得只因位於住宅就套用第1款 |
+| 撬門但沒有確認取物或竊佔 | 保留安全設備事實；第320條基礎前提 `UNKNOWN`，整體 `NEED_REVIEW` |
+| 隨身有一般工具 | 記錄工具、位置、狀態與目的；不得由問句認定兇器 |
+| 三人在場但僅一人行動 | 記錄人數與各自行為；不得以在場直接認定結夥 |
+| 災害發生在行為結束後 | 記錄時間順序；不得倒推第5款 |
+| 車站外商店取物 | 固定精確位置；不得以「車站附近」直接套用第6款 |
+| 跨角色說法衝突 | 對應 fact 為 `CONFLICT`，聚合 `NEED_REVIEW` |
+
+## L. 題數與輸出預算
+
+```yaml
+new_concepts: 8
+concept_budget: 8
+case_core_selection: 3-5
+evidence_followup_max: 2
+single_case_total_max: 8
+output_page_budget: 8
+company_question_protection: PRESERVED
+xlsm_question_protection: PRESERVED
+common_question_protection: PRESERVED
+budget_exceeded_policy: OUTPUT_BUDGET_EXCEEDED
+```
+
+本工作單未接線；設計驗證以每角色20題做實際 LibreOffice DOCX→PDF 排版：victim 2頁、suspect 2頁、transfer 3頁。此結果只證明目前題長與版型在合成上限案例未超過八頁，不代表 runtime 已採用本 ruleset。
+
+## M. 法律與安全邊界
+
+- 官方第321條文字已於2026-10-26回查；實際行為時法仍為 `UNKNOWN`。
+- 第321條以前條第一、二項為基礎，本工作單不重做或預先核准第320條個案判斷。
+- 加重搶奪、加重強盜、侵入住居、毀損及競合均不在本 route scope。
+- 所有候選效果只供安排詢問；實際個案由承辦人執行 `CASE_HUMAN_GATE`。
+
+## N. 自我檢查
+
+```yaml
+self_check:
+  structural_review: PASS
+  route_id_exactness: PASS
+  official_article_check: PASS
+  schema: PASS
+  static_dedupe_contract: PASS
+  runtime_semantic_dedupe: PASS_EXACT_AND_DECLARED_REPLACEMENT_CONTRACT
+  question_method_review: PASS
+  role_boundary: PASS
+  legal_effect_review: PASS
+  unknown_and_conflict_handling: PASS
+  calibration_review: PASS
+  concept_budget: PASS
+  output_page_budget_validation: PASS_SYNTHETIC_20_QUESTION_LIBREOFFICE
+  case_human_gate: REQUIRED
+```
+
+## O. Gate 與 Handoff
+
+```yaml
+route_review_gate: PASS
+case_human_gate: REQUIRED
+user_final_acceptance: PENDING
+runtime_enabled: false
+runtime_auto_advance: false
+deployment_status: NOT_DEPLOYED
+automatic_advance: false
+next_route: NOT_AUTHORIZED
+next_action: ARCHIVE_AND_SELECT_NEXT
+```
+
+本 submission 不代表法律結論、runtime 接線或部署核准。只有完成剩餘驗證並通過 Codex route review 後，controller 才能處理下一個 locked queue 項目。
+
+<!-- SUBMISSION_END -->
+
+## Reviewer Decision
+
+```yaml
+gate_id: GATE-AGT321-20261026-01
+current_route_id: aggravated_theft_321
+iteration: 0
+ruleset_version: question-rules-v2-draft
+ruleset_file_sha256: DAF06F74D278165A436FDA028133EFC989A289A14660FEB4066B9BD8678DBB16
+ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+official_source_status: VERIFIED_CURRENT_BEHAVIOR_TIME_UNKNOWN
+schema_validation: PASS
+exact_dedupe_validation: PASS_ZERO_DUPLICATES
+semantic_dedupe_validation: PASS_DECLARED_REPLACEMENT_CONTRACT
+budget_validation: PASS_8_CONCEPTS
+output_page_budget_validation: PASS_SYNTHETIC_20_QUESTION_LIBREOFFICE
+calibration_review: PASS
+reviewer_decision: PASS
+review_execution_mode: REVIEWED_PIPELINE
+reviewer_identity: Codex (model identity UNVERIFIED)
+independent_admission_review_model_requested: gpt-5.6-sol
+independent_model_identity: UNVERIFIED
+independent_content_review: NOT_RUN_DUE_TO_ONE_MAIN_REVIEW_CAP
+hash_scope: UTF8_LF_BYTES_BETWEEN_SUBMISSION_MARKERS
+submission_sha256: 17DC2C8975944A33B7B74AF9D2BB414AC4A07BD03D031AAABEA650B926D665CD
+test_results:
+  - "question work item and offense linkage contracts: 15 passed"
+  - "py -3 -X utf8 -m pytest -q: 630 passed"
+  - "node tests/test_frontend_api_errors.mjs: 31 passed"
+  - "node --check app/static/app.js: PASS"
+  - "GET /api/health: HTTP 200"
+  - "synthetic 20-question LibreOffice: victim 2 pages; suspect 2 pages; transfer 3 pages"
+open_blockers: []
+legal_conclusion: false
+runtime_enabled: false
+runtime_auto_advance: false
+deployment_status: NOT_DEPLOYED
+reviewed_at: 2026-10-26T22:35:00+08:00
+decision_reason: "第321條六款客觀事實與行為人知悉之外部表徵已分離；單題否定不排除其他款，UNKNOWN與CONFLICT均維持NEED_REVIEW。工程與合成排版驗證通過；本決定只核准問句設計，不核准runtime、法律結論、部署或個案Human Gate。"
+route_review_gate: PASS
+case_human_gate: REQUIRED
+next_route: NOT_AUTHORIZED
+```

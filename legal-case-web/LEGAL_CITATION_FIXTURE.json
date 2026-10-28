@@ -1,0 +1,93 @@
+{
+  "fixture_version": "tw-citation-fixture-v1",
+  "normalization_version": "tw-citation-v1",
+  "cases": [
+    {
+      "id": "single-full-001",
+      "input": "刑法第320條第1項",
+      "purpose": "單一完整法條引用",
+      "expected": [{"law_name": "中華民國刑法", "article_number": 320, "article_subnumber": null, "paragraph_number": 1, "item_number": null, "subitem_number": null, "parse_status": "SUCCESS"}]
+    },
+    {
+      "id": "number-forms-001",
+      "input": "刑法第三百二十條第一項",
+      "purpose": "中文數字與阿拉伯數字等價",
+      "expected": [{"law_name": "中華民國刑法", "article_number": 320, "article_subnumber": null, "paragraph_number": 1, "item_number": null, "subitem_number": null, "parse_status": "SUCCESS"}]
+    },
+    {
+      "id": "same-article-different-paragraph-001",
+      "input": "刑法第320條第2項",
+      "purpose": "同條不同項不可混同",
+      "expected": [{"law_name": "中華民國刑法", "article_number": 320, "article_subnumber": null, "paragraph_number": 2, "item_number": null, "subitem_number": null, "parse_status": "SUCCESS"}]
+    },
+    {
+      "id": "same-article-different-law-001",
+      "input": "民法第320條與刑法第320條",
+      "purpose": "不同法規相同條號",
+      "expected": [
+        {"law_name": "中華民國民法", "article_number": 320, "article_subnumber": null, "paragraph_number": null, "item_number": null, "subitem_number": null, "parse_status": "SUCCESS"},
+        {"law_name": "中華民國刑法", "article_number": 320, "article_subnumber": null, "paragraph_number": null, "item_number": null, "subitem_number": null, "parse_status": "SUCCESS"}
+      ]
+    },
+    {
+      "id": "subnumber-001",
+      "input": "刑法第319條之1",
+      "purpose": "條之款次",
+      "expected": [{"law_name": "中華民國刑法", "article_number": 319, "article_subnumber": 1, "paragraph_number": null, "item_number": null, "subitem_number": null, "parse_status": "SUCCESS"}]
+    },
+    {
+      "id": "compound-001",
+      "input": "刑法第320條、第337條",
+      "purpose": "多條合併引用",
+      "expected": [
+        {"law_name": "中華民國刑法", "article_number": 320, "article_subnumber": null, "paragraph_number": null, "item_number": null, "subitem_number": null, "parse_status": "SUCCESS"},
+        {"law_name": "中華民國刑法", "article_number": 337, "article_subnumber": null, "paragraph_number": null, "item_number": null, "subitem_number": null, "parse_status": "SUCCESS"}
+      ]
+    },
+    {
+      "id": "same-law-context-001",
+      "input": "依刑法第320條，並依同法第337條",
+      "purpose": "同法依前文解析",
+      "expected": [
+        {"law_name": "中華民國刑法", "article_number": 320, "article_subnumber": null, "paragraph_number": null, "item_number": null, "subitem_number": null, "parse_status": "SUCCESS"},
+        {"law_name": "中華民國刑法", "article_number": 337, "article_subnumber": null, "paragraph_number": null, "item_number": null, "subitem_number": null, "parse_status": "SUCCESS"}
+      ]
+    },
+    {
+      "id": "negation-001",
+      "input": "本案與刑法第320條無關。",
+      "purpose": "保留引用但不分析語句立場",
+      "expected": [{"law_name": "中華民國刑法", "article_number": 320, "article_subnumber": null, "paragraph_number": null, "item_number": null, "subitem_number": null, "parse_status": "SUCCESS"}]
+    },
+    {
+      "id": "unknown-law-001",
+      "input": "某法第320條",
+      "purpose": "法規名稱未知不得猜測",
+      "expected": [{"law_name": null, "article_number": 320, "article_subnumber": null, "paragraph_number": null, "item_number": null, "subitem_number": null, "parse_status": "PARTIAL"}]
+    },
+    {
+      "id": "missing-law-001",
+      "input": "第320條第1項",
+      "purpose": "未具體指定法規名稱",
+      "expected": [{"law_name": null, "article_number": 320, "article_subnumber": null, "paragraph_number": 1, "item_number": null, "subitem_number": null, "parse_status": "PARTIAL"}]
+    },
+    {
+      "id": "item-subitem-001",
+      "input": "刑法第320條第1項第2款第3目",
+      "purpose": "項款目層級",
+      "expected": [{"law_name": "中華民國刑法", "article_number": 320, "article_subnumber": null, "paragraph_number": 1, "item_number": 2, "subitem_number": 3, "parse_status": "SUCCESS"}]
+    },
+    {
+      "id": "unparsed-001",
+      "input": "刑法第320項",
+      "purpose": "法條樣式不完整時不得靜默丟棄",
+      "expected": [{"law_name": "中華民國刑法", "article_number": null, "article_subnumber": null, "paragraph_number": null, "item_number": null, "subitem_number": null, "parse_status": "UNPARSED"}]
+    }
+  ],
+  "version_drift": {
+    "input": "刑法第320條",
+    "old_version": "tw-citation-v1",
+    "new_version": "tw-citation-v2-diagnostic",
+    "raw_text_must_remain": "刑法第320條"
+  }
+}

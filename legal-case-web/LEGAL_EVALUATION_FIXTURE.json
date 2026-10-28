@@ -1,0 +1,153 @@
+{
+  "fixture_version": "tw-legal-eval-fixture-v1",
+  "status": "INITIAL_REGRESSION_BASELINE_WITH_CONDITIONS",
+  "gold_author": "offline-contract-draft",
+  "gold_reviewer": "PENDING_FORMAL_LEGAL_REVIEW_AFTER_USER_GUIDANCE",
+  "candidate_layer": "parent_offense_id",
+  "k": 3,
+  "rules_entry": "app.rules.analyze_gate1(use_ai=False) -> candidate_offenses -> build_questions",
+  "external_dependencies": {"llm": "NOT_USED", "database": "NOT_USED", "http": "NOT_USED", "frontend": "NOT_USED"},
+  "legal_sources": [
+    {
+      "source_id": "law:criminal-code:320-1",
+      "law_name": "中華民國刑法",
+      "article": "第320條第1項",
+      "official_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+      "law_version": "LOCAL_METADATA_2026-10-26",
+      "behavior_time": "UNKNOWN",
+      "applicability_status": "UNKNOWN",
+      "fetched_at": "NOT_FETCHED_BY_THIS_TEST",
+      "content_hash": "NOT_AVAILABLE_OFFLINE",
+      "parser_version": "tw-citation-v1",
+      "source_type": "STATUTE_METADATA"
+    },
+    {
+      "source_id": "law:criminal-code:337",
+      "law_name": "中華民國刑法",
+      "article": "第337條",
+      "official_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+      "law_version": "LOCAL_METADATA_2026-10-26",
+      "behavior_time": "UNKNOWN",
+      "applicability_status": "UNKNOWN",
+      "fetched_at": "NOT_FETCHED_BY_THIS_TEST",
+      "content_hash": "NOT_AVAILABLE_OFFLINE",
+      "parser_version": "tw-citation-v1",
+      "source_type": "STATUTE_METADATA"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "phone-baseline",
+      "purpose": "持有狀態與不法所有意圖均未知",
+      "raw_summary": "甲表示手機為其所有，曾將手機暫放在便利商店櫃檯旁。乙承認拿取手機離開，表示自己以為手機是他人遺留、不要的物品。目前未確認手機是否仍在甲的持有範圍、乙對手機所有權的認知及乙是否具有不法所有意圖。手機尚未尋獲。",
+      "gold_facts": [
+        {"fact_id":"b-owner","fact_key":"ownership_claim","assertion_class":"ASSERTED","verification_status":"UNVERIFIED","value":"甲主張手機為其所有","source":{"type":"PARTY_STATEMENT","start":0,"end":9,"text":"甲表示手機為其所有"}},
+        {"fact_id":"b-place","fact_key":"placement","assertion_class":"ASSERTED","verification_status":"UNVERIFIED","value":"暫放櫃檯旁","source":{"type":"PARTY_STATEMENT","start":10,"end":24,"text":"曾將手機暫放在便利商店櫃檯旁"}},
+        {"fact_id":"b-taking","fact_key":"taking","assertion_class":"ADMITTED","verification_status":"UNVERIFIED","value":"乙拿取後離開","source":{"type":"PARTY_STATEMENT","start":25,"end":34,"text":"乙承認拿取手機離開"}},
+        {"fact_id":"b-belief","fact_key":"ownership_knowledge","assertion_class":"ASSERTED","verification_status":"UNVERIFIED","value":"乙稱認為是遺留不要之物","source":{"type":"PARTY_STATEMENT","start":35,"end":54,"text":"表示自己以為手機是他人遺留、不要的物品"}},
+        {"fact_id":"b-possession","fact_key":"original_possession","assertion_class":"UNKNOWN","verification_status":"UNKNOWN","value":"UNKNOWN","source":{"type":"PARTY_STATEMENT","start":55,"end":72,"text":"目前未確認手機是否仍在甲的持有範圍"}},
+        {"fact_id":"b-intent","fact_key":"intent","assertion_class":"UNKNOWN","verification_status":"UNKNOWN","value":"UNKNOWN","source":{"type":"PARTY_STATEMENT","start":84,"end":95,"text":"乙是否具有不法所有意圖"}}
+      ],
+      "gold_candidates":{"required":["theft","embezzlement"],"acceptable":[],"prohibited":[]},
+      "gold_elements":[
+        {"route_id":"theft_320_1_movable","element_label":"他人動產及原持有狀態","state":"UNKNOWN","fact_refs":["b-possession"]},
+        {"route_id":"theft_320_1_movable","element_label":"為自己或第三人不法所有之意圖","state":"UNKNOWN","fact_refs":["b-intent"]},
+        {"route_id":"embezzlement_337_lost_property","element_label":"遺失物、漂流物或其他離本人持有之物","state":"UNKNOWN","fact_refs":["b-possession"]},
+        {"route_id":"embezzlement_337_lost_property","element_label":"為自己或第三人不法所有之意圖","state":"UNKNOWN","fact_refs":["b-intent"]}
+      ],
+      "question_selection":{"parents":["theft","embezzlement"],"routes":["theft_320_1_movable","embezzlement_337_lost_property"]},
+      "gold_question_gaps":["possession_before_taking","post_acquisition_conduct","original_possession","stated_use_or_return_plan"]
+    },
+    {
+      "case_id": "phone-possession-retained",
+      "purpose": "甲仍能立即支配且乙看見甲注意手機",
+      "raw_summary": "甲表示手機為其所有，曾將手機暫放在便利商店櫃檯旁。甲仍在櫃檯旁，手機在甲伸手可及的位置；乙拿取時看見甲正在注意該手機。乙承認拿取手機離開；乙是否具有不法所有意圖仍未知。",
+      "gold_facts": [
+        {"fact_id":"a-possession","fact_key":"original_possession","assertion_class":"ASSERTED","verification_status":"UNVERIFIED","value":"甲仍可立即支配","source":{"type":"PARTY_STATEMENT","start":25,"end":43,"text":"甲仍在櫃檯旁，手機在甲伸手可及的位置"}},
+        {"fact_id":"a-knowledge","fact_key":"ownership_knowledge","assertion_class":"ASSERTED","verification_status":"UNVERIFIED","value":"乙看見甲注意手機","source":{"type":"PARTY_STATEMENT","start":44,"end":58,"text":"乙拿取時看見甲正在注意該手機"}},
+        {"fact_id":"a-taking","fact_key":"taking","assertion_class":"ADMITTED","verification_status":"UNVERIFIED","value":"乙拿取後離開","source":{"type":"PARTY_STATEMENT","start":59,"end":68,"text":"乙承認拿取手機離開"}},
+        {"fact_id":"a-intent","fact_key":"intent","assertion_class":"UNKNOWN","verification_status":"UNKNOWN","value":"UNKNOWN","source":{"type":"PARTY_STATEMENT","start":69,"end":83,"text":"乙是否具有不法所有意圖仍未知"}}
+      ],
+      "gold_candidates":{
+        "required":[],
+        "acceptable":["theft","embezzlement"],
+        "prohibited":[],
+        "conditions":[
+          "目前保留 embezzlement 僅因持有陳述尚未獨立查證；若原持有／管領狀態獲確認為持續存在，embezzlement 應移至 prohibited。"
+        ]
+      },
+      "gold_elements":[
+        {"route_id":"theft_320_1_movable","element_label":"他人動產及原持有狀態","state":"SUPPORTED","fact_refs":["a-possession"]},
+        {"route_id":"theft_320_1_movable","element_label":"為自己或第三人不法所有之意圖","state":"UNKNOWN","fact_refs":["a-intent"]}
+      ],
+      "question_selection":{"parents":["theft"],"routes":["theft_320_1_movable"]},
+      "gold_question_gaps":["post_acquisition_conduct"]
+    },
+    {
+      "case_id": "phone-lost",
+      "purpose": "甲離場後始發現遺失，意圖仍未知",
+      "raw_summary": "甲表示手機為其所有，曾將手機暫放在便利商店櫃檯旁；甲離開店內後才發現手機遺失。乙承認拾得手機時甲不在現場，並將手機帶離；乙是否具有不法所有意圖仍未知。",
+      "gold_facts": [
+        {"fact_id":"l-lost","fact_key":"original_possession","assertion_class":"ASSERTED","verification_status":"UNVERIFIED","value":"甲離場後始發現遺失","source":{"type":"PARTY_STATEMENT","start":25,"end":38,"text":"甲離開店內後才發現手機遺失"}},
+        {"fact_id":"l-taking","fact_key":"taking","assertion_class":"ADMITTED","verification_status":"UNVERIFIED","value":"乙稱甲不在場時拾得並帶離","source":{"type":"PARTY_STATEMENT","start":39,"end":59,"text":"乙承認拾得手機時甲不在現場，並將手機帶離"}},
+        {"fact_id":"l-intent","fact_key":"intent","assertion_class":"UNKNOWN","verification_status":"UNKNOWN","value":"UNKNOWN","source":{"type":"PARTY_STATEMENT","start":60,"end":74,"text":"乙是否具有不法所有意圖仍未知"}}
+      ],
+      "gold_candidates":{
+        "required":[],
+        "acceptable":["theft","embezzlement"],
+        "prohibited":[],
+        "conditions":[
+          "theft 是否保留取決於店員、店家或其他人是否已接續實際管領；確認無其他管領時才可排除該方向。"
+        ]
+      },
+      "gold_elements":[
+        {"route_id":"embezzlement_337_lost_property","element_label":"遺失物、漂流物或其他離本人持有之物","state":"SUPPORTED","fact_refs":["l-lost"]},
+        {"route_id":"embezzlement_337_lost_property","element_label":"為自己或第三人不法所有之意圖","state":"UNKNOWN","fact_refs":["l-intent"]}
+      ],
+      "question_selection":{"parents":["embezzlement"],"routes":["embezzlement_337_lost_property"]},
+      "gold_question_gaps":["original_possession","stated_use_or_return_plan","evidence"]
+    },
+    {
+      "case_id": "phone-immediate-handover",
+      "purpose": "立即交店員是意圖分析資料但不自動排除全部犯罪",
+      "raw_summary": "甲表示手機為其所有，曾將手機暫放在便利商店櫃檯旁。乙拿起手機後立即交給店員，並表示希望尋找失主。乙拿取、交付的時間與經過、店員證述及乙是否具有不法所有意圖仍待核對。",
+      "gold_facts": [
+        {"fact_id":"h-handover","fact_key":"post_acquisition_conduct","assertion_class":"ASSERTED","verification_status":"UNVERIFIED","value":"乙稱立即交給店員","source":{"type":"PARTY_STATEMENT","start":25,"end":37,"text":"乙拿起手機後立即交給店員"}},
+        {"fact_id":"h-purpose","fact_key":"stated_use_or_return_plan","assertion_class":"ASSERTED","verification_status":"UNVERIFIED","value":"乙稱希望尋找失主","source":{"type":"PARTY_STATEMENT","start":38,"end":47,"text":"並表示希望尋找失主"}},
+        {"fact_id":"h-intent","fact_key":"intent","assertion_class":"UNKNOWN","verification_status":"UNKNOWN","value":"UNKNOWN","source":{"type":"PARTY_STATEMENT","start":66,"end":81,"text":"乙是否具有不法所有意圖仍待核對"}}
+      ],
+      "gold_candidates":{"required":[],"acceptable":["theft","embezzlement"],"prohibited":[]},
+      "gold_elements":[
+        {"route_id":"theft_320_1_movable","element_label":"為自己或第三人不法所有之意圖","state":"UNKNOWN","fact_refs":["h-intent"]},
+        {"route_id":"embezzlement_337_lost_property","element_label":"為自己或第三人不法所有之意圖","state":"UNKNOWN","fact_refs":["h-intent"]}
+      ],
+      "question_selection":{"parents":["theft","embezzlement"],"routes":["theft_320_1_movable","embezzlement_337_lost_property"]},
+      "gold_question_gaps":["post_acquisition_conduct","stated_use_or_return_plan","evidence"]
+    },
+    {
+      "case_id": "phone-denial-cctv-conflict",
+      "purpose": "保留否認與監視器資料間的矛盾",
+      "raw_summary": "甲表示手機為其所有，曾將手機暫放在便利商店櫃檯旁。乙先否認曾將手機帶離店內；監視器資料顯示乙拿著手機離開。手機當時是否仍在甲的持有範圍、乙的認知及不法所有意圖仍待確認。",
+      "gold_facts": [
+        {"fact_id":"d-denial","fact_key":"taking","assertion_class":"DENIED","verification_status":"UNVERIFIED","value":"乙否認帶離","source":{"type":"PARTY_STATEMENT","start":25,"end":37,"text":"乙先否認曾將手機帶離店內"}},
+        {"fact_id":"d-cctv","fact_key":"taking","assertion_class":"ASSERTED","verification_status":"UNVERIFIED","value":"監視器資料顯示乙拿手機離開","source":{"type":"EVIDENCE","start":38,"end":52,"text":"監視器資料顯示乙拿著手機離開"}},
+        {"fact_id":"d-possession","fact_key":"original_possession","assertion_class":"UNKNOWN","verification_status":"UNKNOWN","value":"UNKNOWN","source":{"type":"PARTY_STATEMENT","start":53,"end":67,"text":"手機當時是否仍在甲的持有範圍"}},
+        {"fact_id":"d-intent","fact_key":"intent","assertion_class":"UNKNOWN","verification_status":"UNKNOWN","value":"UNKNOWN","source":{"type":"PARTY_STATEMENT","start":73,"end":83,"text":"不法所有意圖仍待確認"}}
+      ],
+      "gold_candidates":{
+        "required":[],
+        "acceptable":["theft","embezzlement"],
+        "prohibited":[],
+        "conditions":[
+          "影像拍到拿取不等於已確認拿取當時的持有／管領狀態或不法所有意圖；須依影像實際內容再決定必要候選。"
+        ]
+      },
+      "gold_elements":[
+        {"route_id":"theft_320_1_movable","element_label":"未經同意竊取並破壞原持有","state":"UNKNOWN","fact_refs":["d-denial","d-cctv"]},
+        {"route_id":"theft_320_1_movable","element_label":"為自己或第三人不法所有之意圖","state":"UNKNOWN","fact_refs":["d-intent"]}
+      ],
+      "question_selection":{"parents":["theft"],"routes":["theft_320_1_movable"]},
+      "gold_question_gaps":["event_sequence","possession_before_taking","post_acquisition_conduct","evidence"]
+    }
+  ]
+}

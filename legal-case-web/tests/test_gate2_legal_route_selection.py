@@ -43,12 +43,20 @@ def test_set_offenses_atomically_saves_separate_route_snapshot():
     }]
     for question in case["questions"]:
         assert question["meta"]["route_context_ids"] == [THEFT_ROUTE]
+    verification = next(
+        question["meta"].get("legal_verification")
+        for question in case["questions"]
+        if question.get("meta", {}).get("legal_verification")
+    )
+    assert verification["article_no"] == "第320條第1項"
+    assert verification["verification_status"] == "HUMAN_REVIEW_REQUIRED"
     coverage = case["question_coverage_by_route"]["routes"][THEFT_ROUTE]
     assert coverage["pack_scope"] == "EXACT_CHILD_PACK"
     assert coverage["materialization_status"] == "COMPLETE"
     assert coverage["coverage_claim"] == "BOUNDED_TO_APPROVED_WORK_ITEM"
     assert coverage["human_review_required"] is True
     assert coverage["legal_conclusion"] is False
+    assert coverage["legal_verification"]["article_no"] == "第320條第1項"
 
 
 def test_route_review_must_be_explicit_but_optional_policy_allows_none():

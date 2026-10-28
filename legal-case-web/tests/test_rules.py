@@ -645,6 +645,13 @@ def test_event_time_after_law_amendment_no_warning():
     assert check_event_time_against_law("2026-08-01T10:00", "2026-07-22") is None
 
 
+def test_roc_event_time_is_checked_against_law_amendment():
+    from app.law_reference import check_event_time_against_law
+    warning = check_event_time_against_law("民國115年7月21日20時30分", "2026-07-22")
+    assert warning is not None
+    assert warning["event_date"] == "2026-07-21"
+
+
 def test_event_time_warning_empty_inputs():
     from app.law_reference import check_event_time_against_law
     assert check_event_time_against_law("", "2026-07-22") is None
@@ -671,7 +678,7 @@ def test_roc_time_boundaries():
     assert format_roc_time("1911-12-31T23:59") == "民國前1年12月31日23時59分"
     assert format_roc_date("1911-06-15T00:00") == "民國前1年6月15日"
     # 民國元年
-    assert format_roc_time("1912-01-01T00:00") == "1年1月1日0時00分"
+    assert format_roc_time("1912-01-01T00:00") == "1年1月1日00時00分"
     # 正常
     assert format_roc_time("2026-10-10T10:30") == "115年10月10日10時30分"
     # 空白與垃圾字串保持既有行為

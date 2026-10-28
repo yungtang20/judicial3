@@ -2,6 +2,66 @@
 
 > 本檔保留階段與驗證歷史。下方早期 `COMPLETE` 僅代表當時有界線的實作輪次，不能作為目前法律完整、Human Gate、部署或整體驗收證明。現況應以實際 checkout、測試及 [README.md](README.md) 的證據規則重新確認。
 
+## 2026-10-26 基準路由歸檔與下一路由准入
+
+```yaml
+execution_mode: REVIEWED_PIPELINE
+routing_triggers: [S3, S4]
+archive_id: QRA-TH320-1-MOV-20261026-01
+route_id: theft_320_1_movable
+submission_sha256: 21807B231A1868BE9AA5565904471CE8A9C2DD1B5EE0B74A40CFE59EA30A6FA7
+archive_file_sha256: 9BCB4A012C2557504ACEAFBBAE2C9EA412877E26B0183E046B82C709DE7087A6
+ruleset_id: question-rules-v2-draft
+ruleset_file_sha256: DAF06F74D278165A436FDA028133EFC989A289A14660FEB4066B9BD8678DBB16
+ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+runtime_ruleset_status: UNCHANGED_RUNTIME
+legal_acceptance: false
+legal_conclusion: false
+calibration_review: PASS
+route_review_gate: PASS
+case_human_gate: REQUIRED
+user_final_acceptance: PENDING
+runtime_auto_advance: false
+deployment_status: NOT_DEPLOYED
+next_route_id: aggravated_theft_321
+next_route_selection_owner: CONTROLLER
+```
+
+- 完整 submission、Reviewer Decision 與驗證紀錄已保存於 `docs/evidence/question_route_archives/theft_320_1_movable-iteration-4-20261026.txt`，manifest 為 `docs/evidence/question_route_archive_manifest.json`。
+- `question-rules-v2-draft` 只在問句設計範圍通過基準校準；未升級為 runtime 規則，也不是法律內容、部署或實際個案核准。
+- 同一次完整 pytest 為 `630 passed`；Node 前端測試 `31 passed`、JavaScript 語法 PASS、健康檢查 HTTP 200。這些只屬工程證據。
+- 獨立准入審查建議採 `ACCEPT_WITH_MODIFICATIONS`：先完成 archive 與 hash 對帳，再由 controller 選取 locked queue 的 `aggravated_theft_321`。實際模型身分維持 `UNVERIFIED`。
+
+---
+
+## 2026-10-26 aggravated_theft_321 問句設計審核與歸檔
+
+```yaml
+execution_mode: REVIEWED_PIPELINE
+routing_triggers: [S3, S4]
+archive_id: QRA-AGT321-20261026-01
+route_id: aggravated_theft_321
+submission_sha256: 17DC2C8975944A33B7B74AF9D2BB414AC4A07BD03D031AAABEA650B926D665CD
+archive_file_sha256: 6B960B1224AF42B4683892F4600EC05F10AE42703BCA76E7ACDC712088FB2743
+ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+official_source_status: VERIFIED_CURRENT_BEHAVIOR_TIME_UNKNOWN
+calibration_review: PASS
+route_review_gate: PASS
+case_human_gate: REQUIRED
+legal_conclusion: false
+runtime_enabled: false
+runtime_auto_advance: false
+deployment_status: NOT_DEPLOYED
+next_locked_target: embezzlement_335_general
+```
+
+- 8 個 concepts 涵蓋第321條六款客觀事實、自由敘述及對已確認單一客觀情況的知悉來源；不直接詢問法律結論。
+- Exact dedupe 為 0；既有 T-A-01 至 T-A-06 採 replace/do-not-coemit 契約。20 題合成上限實際排版為 victim 2頁、suspect 2頁、transfer 3頁。
+- 完整 pytest `630 passed`、前端 `31 passed`、JavaScript 語法 PASS、健康檢查 HTTP 200。
+- 完整 artifact 已歸檔；controller 已鎖定下一個單一路由 `embezzlement_335_general`，不需使用者逐 route 核准。
+
+---
+
 ## 2026-10-14 審核責任與 loop 邊界修正
 
 ```yaml
@@ -1122,3 +1182,1930 @@ agent_mode: `SINGLE_AGENT_MODE`
 ### MAINTAIN
 
 - 若摘要未使用明示標籤，後續時間、地點保持 `UNKNOWN`，必須在 Gate 1 人工補正；不得以候選或其他上下文推測。
+
+## 2026-10-27：財產罪橫向驗收—一般侵占第335條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### PLAN / DESIGN
+
+- Input：依 queue 鎖定 `embezzlement_335_general`，比較 `theft_320_1_movable`、`embezzlement_336_1_public`、`embezzlement_336_2_business`、`embezzlement_337_lost_property`。
+- Gate：只核准問句設計；runtime、部署、法律結論與個案 `CASE_HUMAN_GATE` 均不在授權範圍。
+- Sol decision：`ACCEPT_WITH_MODIFICATIONS`；既有 `prior_lawful_custody`、`authorization_scope`、`post_acquisition_conduct` 改採引用與缺漏追問，單一答案不得產生 `ACTIVE`。
+
+### BUILD / TEST
+
+- 建立8個 role-aware concepts；exact重複為內部0、既有來源0。
+- `tests/test_question_work_item_contract.py` 與 `tests/test_offense_linkage_poc.py`：15 passed。
+- Full pytest：630 passed；Node前端：31 passed；JavaScript syntax：PASS；`GET /api/health`：HTTP 200。
+- 合成20題LibreOffice排版：victim 2頁、suspect 4頁、transfer 3頁。
+- 歸檔SHA-256：`6EE5032F154C6C0B0FD980987961BADE0A874DBED2F4E64CFEBF16C77E2AB7A4`；與來源逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未授權runtime接線或外部部署。
+- `embezzlement_335_general` 已歸檔；下一鎖定 child route 為 `embezzlement_336_1_public`。
+
+## 2026-10-27：財產罪橫向驗收—公務／公益侵占第336條第1項
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`embezzlement_336_1_public`；比較一般侵占、業務侵占、動產竊盜及侵占遺失物。
+- 獨立審查：`ACCEPT_WITH_MODIFICATIONS`；C05只保留身分／任用／委託／職掌，C06拆分公務與公益nexus，C07移除既遂／未遂法律分類。
+- 聚合邊界：單題不得 `ACTIVE` 或 `EXCLUDED`；多來源一致時最高仍為 `CANDIDATE_NEED_REVIEW`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed；Node前端：31 passed；JavaScript syntax：PASS；health：HTTP 200。
+- exact重複：內部0、既有來源0；LibreOffice 20題：victim 2頁、suspect 4頁、transfer 3頁。
+- 歸檔SHA-256：`D7149646B2FDB598DBE884F42A94A78790CB09F35C0CF196F7E6462BB48CC7C2`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、未取代個案 `CASE_HUMAN_GATE`。
+- 下一鎖定 child route：`embezzlement_336_2_business`。
+
+## 2026-10-27：財產罪橫向驗收—業務侵占第336條第2項
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`embezzlement_336_2_business`；比較一般侵占、公務公益侵占、動產竊盜及侵占遺失物。
+- 工作單由336(1)模板轉換後清理殘留語意；C05限縮業務職務／任用／委託／職掌，C06限縮特定物與具體業務事項nexus，C07只記錄外部處置。
+- 獨立審查規格結論：`ACCEPT_WITH_MODIFICATIONS_SPEC_LEVEL`；不得由職稱、帳款短少或單一處置升候選。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed；Node前端：31 passed；JavaScript syntax：PASS；health：HTTP 200。
+- exact重複：內部0、既有來源0；LibreOffice 20題：victim 2頁、suspect 4頁、transfer 3頁。
+- 歸檔SHA-256：`642430642FE1027F350962E1349C4F340239B97D925E2F97E7F4CB60B7EB0F31`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一鎖定 child route：`embezzlement_337_lost_property`。
+
+## 2026-10-27：財產罪橫向驗收—侵占遺失物等離本人持有之物第337條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`embezzlement_337_lost_property`；比較一般侵占、公務／公益侵占、業務侵占及動產竊盜。
+- C05確認取得時是否為遺失、漂流或其他離本人持有；C06另查原持有人可辨識性與回復脈絡；C07只記錄外部處置，不作既遂／未遂分類。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與民事替代方向均為 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed；Node前端：31 passed；JavaScript syntax：PASS；health：HTTP 200。
+- exact重複：內部0、既有來源0；LibreOffice 20題：victim 2頁、suspect 4頁、transfer 3頁。
+- 歸檔SHA-256：`411A2B5191C59DEFD655A0F59E011E0AC62C77A1A63152822EB3F31DFFF6F15E`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一鎖定 child route：`embezzlement_338_applicable`；先判定其程序性質，不直接建立犯罪構成要件題組。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：妨害公務橫向驗收—刑法第138條毀損隱匿公務掌管文書物品
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`obstruction_138_official_property`；第135至137及第139至141條其他妨害公務路線、第140條部分與第141條之1失效／排除路線分開處理。
+- C02至C08分開確認公務掌管／委託掌管關係、文書圖畫或物品、毀棄／損壞／隱匿／致令不堪用行為、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true；內部 exact duplicate：0。
+- 歸檔SHA-256：`4D7E80B97C478878A9277F535277A140F064B3439C0E2AB61A1E2317108E1DF5`；submission：`AA336FDE87E783C650606477C2B29DEAC782959A3E501F3ECD045BFF01CF8AC0`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 為 `obstruction_139_seal_seizure`。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：妨害公務橫向驗收—刑法第137條妨害依法舉行考試
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`obstruction_137_exam_fraud`；第135、136及第138至141條其他妨害公務路線、第140條部分與第141條之1失效／排除路線分開處理。
+- C02至C08分開確認依法舉行考試、詐術／其他非法方法、不正確結果、未遂／既遂與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true；內部 exact duplicate：0。
+- 歸檔SHA-256：`E8FB248232062F36F6C61305997335D3320E5AB5FF8C3263DB2A009C78E880CB`；submission：`354DB114EEF06FFB7E877426736148EAC61A856DE037AB94AEB713897E932A4E`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 為 `obstruction_138_official_property`。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：妨害公務橫向驗收—刑法第136條聚集三人以上妨害公務
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`obstruction_136_group`；第135條及第137至141條其他妨害公務路線、第140條部分與第141條之1失效／排除路線分開處理。
+- C02至C08分開確認公共場所、三人以上聚集、第135條行為、在場助勢／首謀／下手實施角色、死亡或重傷結果與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true；內部 exact duplicate：0。
+- 歸檔SHA-256：`46195C5E7B271AC581E8FE02E845C861B5795F184BD4556F9F3DC02F3CC54C31`；submission：`39585DF3589228349BFFB7C55F715F5DED11CB302F5BCA37BF3DB531067C82E8`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 為 `obstruction_137_exam_fraud`。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：妨害公務橫向驗收—刑法第135條對依法執行職務公務員施強暴脅迫
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`obstruction_135_violence_threat`；第136至141條其他妨害公務路線及第140條部分、第141條之1失效／排除路線分開處理。
+- C02至C08分開確認依法執行職務、公務員身分、強暴脅迫、工具／危險物品、死亡或重傷結果、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true；內部 exact duplicate：0。
+- 歸檔SHA-256：`7FF997A6783ACCE1461B4E167D50615CB4B000C6B3083D7A604B308333DA961C`；submission：`8A20DCD3E505C3D6000E78E4E329830E9CDBB1A4057F7860841CB048FC0D4D5E`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 為 `obstruction_136_group`。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第134條公務員假借職務犯一般罪加重
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_134_official_aggravation`；第129至133條其他瀆職、基本罪、定義與程序路線分開處理。
+- C02至C08分開確認公務員身分、假借職務權力／機會／方法、章外故意犯罪、既有特別刑度、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true；內部 exact duplicate：0。
+- 歸檔SHA-256：`86AB414536D4E54E1871077F12BE03D81BE779FC8D6DEC0373B7BCEEB3A2C8F7`；submission：`E989CE4F9340B1C237CC94E300C31E3CF67DA119287DAC55FB448C29FDB16854`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 parent route 為 `obstruction`，尚未選定 child route。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第133條郵電公務員開拆隱匿郵件電報
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_133_mail`；第129至132條及第134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認郵務／電報機關執行職務身分、郵件電報種類、開拆／隱匿／交付行為、對象流向、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true；內部 exact duplicate：0。
+- 歸檔SHA-256：`3FB38B31C8A5BCDE8530A9A6180AD04CABB1D0F2588FECB3A0A5EB404E685898`；submission：`5028CBB72483BA679CE2B3847908ECC05F8352314EA5F152198CD6BC1FB0F4C7`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第132條洩漏國防以外公務秘密
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_132_nondefense_secret`；第129至131條及第133至134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認秘密資料是否依法應秘密、取得／持有／洩漏行為、洩漏對象、故意／過失、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true；內部 exact duplicate：0。
+- 歸檔SHA-256：`12569968DD52E2CEF53D8D90E5D8E256E95983D4E001E705EA0E82132A78938B`；submission：`C5F09A9A021078F2017F4990416C5C3477FD0AB57C6EB4B83BF9C8EAFBB09FB2`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第129條違法徵收或抑留剋扣
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_129_illegal_collection`；第120至128條及第130至134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認公務員身分、職務款項物品、違法徵收／抑留／剋扣、明知狀態、未遂／既遂、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；archive_equal：true；內部 exact duplicate：0；全量測試待收尾執行。
+- 歸檔SHA-256：`E0A5167DB01796D509493FCE0ED3F17668DC3BEFBCF6CFB2FEC19D8423BA29E0`；submission：`2D0545FCB4669958C7CD7E9B6E0402BDC42C831FFF56B699C3C13BC1EC7859CD`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第130條公務員廢弛職務釀成災害
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_130_disaster`；第129條及第131至134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認公務員身分、法定職務、廢弛職務、災害結果、因果關係、可預見性、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true；內部 exact duplicate：0。
+- 歸檔SHA-256：`1A81EC8EE3B956A18DD8E2F3BEB2BC3E298EA6A17D6D65BAFE1C4F20B34000E4`；submission：`057B90C258286AE28CAA6F361BE78FBCE80B7BD9E49671688369FF06CD32B727`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第131條主管監督事務圖利
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_131_unlawful_benefit`；第129、130條及第132至134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認公務員主管／監督事務、法令違反、私人不法利益、利益結果、因果關係、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true；內部 exact duplicate：0。
+- 歸檔SHA-256：`FBB35E991F46E959DE490B5D1401481572EDEA81103AA9B140C5CEF7A5AF0A10`；submission：`4299B407A19C8AF002D72E7F838F091B40E09F12E23DEF254E44529818C77677`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第128條明知不應受理訴訟而受理
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_128_unlawful_acceptance`；第120至127條及第129至134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認公務員身分、訴訟事件、法定受理要件、明知不應受理、實際受理行為、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；archive_equal：true；內部 exact duplicate：0；全量測試待收尾執行。
+- 歸檔SHA-256：`7C7C11CBF7F852F0F6C073297B0D66970B6B76A4A0294AA0BB912467D262A4EC`；submission：`275D5FC465C334FA9D57EF1FA361D968AF0298E9B170BB994B651FC7DFF44808`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第127條違法執行或不執行刑罰
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_127_execution`；第120至126條及第128至134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認執行刑罰職務身分、違法執行／不執行／過失執行行為、刑罰內容與執行依據、執行狀態、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；archive_equal：true；內部 exact duplicate：0；全量測試待收尾執行。
+- 歸檔SHA-256：`5A827094ECC8FB2A478CCD86DBBF44BE7D0B4933E3C753A980C93FFD88AAA2F5`；submission：`DD0C276062822F876397797C418A2A82CE9DA8E03BD87D8176BB993A10409B26`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第126條職務上凌虐人犯
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_126_abuse_detainee`；第120至125條及第127至134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認管收解送拘禁職務身分、凌虐行為、死亡或重傷結果、因果關係、可預見性、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；archive_equal：true；內部 exact duplicate：0；全量測試待收尾執行。
+- 歸檔SHA-256：`3B0B8287BB70CEB59837302CDBB5EF3EBB5C940771788ABB53BDB45C6A4064FE`；submission：`F8B3B8473C535A9E6493232AA313F67A45FD3CC7537351A035CB5B55A0305461`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第125條追訴處罰職務濫權
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_125_abuse_prosecution`；第120至124條及第126至134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認追訴處罰職務身分、濫權逮捕羈押／取供／錯誤追訴行為、死亡或重傷結果、因果關係、可預見性、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；archive_equal：true；內部 exact duplicate：0；全量測試待收尾執行。
+- 歸檔SHA-256：`4D88451630DD597AFB5039B17A714A9DD87CEDD4398DCA189BC862690FB1979B`；submission：`40EC502774F3A792699FB340CD666451D0733DC199053650366356D29D006DFF`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第124條枉法裁判或仲裁
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_124_unlawful_judgment`；第120至123條及第125至134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認司法身分、裁判或仲裁行為、法令依據、明知違法、個別角色、結果因果與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；archive_equal：true；內部 exact duplicate：0；全量測試待收尾執行。
+- 歸檔SHA-256：`E30FE8942F6AB22FAB60C15672D92420ED5BCC6E04BEE13ABD2AB58F0419AB67`；submission：`599A80AC49F5B910CE2378E88857AED85AAA2AB58D99AD31537FCBF635B91443`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第123條準公務員預先受賄後履行
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_123_advance_bribery`；第120至122條及第124至134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認預先尚未具身分、預先要求／期約／收受利益、後來取得身分、後續履行、個別角色、利益流向與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；archive_equal：true；內部 exact duplicate：0；全量測試待收尾執行。
+- 歸檔SHA-256：`4ACFE021D801912421929DF9A8B6A7E2D773175B9AA6EE52172361849277942B`；submission：`E4E10FFD28EFB924D22A3795C1E19F9319AAA5E196A896C6DE93AA67C213DBFA`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第122條違背職務受賄
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_122_bribery_breach`；第120、121、123至134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認公務員或仲裁人身分、要求／期約／收受／行求交付不正利益、違背職務、個別角色、利益流向與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；archive_equal：true；內部 exact duplicate：0；全量測試待收尾執行。
+- 歸檔SHA-256：`0C7DF03D4A9DF1DE3B79439890FE101FA669DDDFCDEB73D800EA3CF44C33A26F`；submission：`6AC9F343984135F284CA4228672771CEE48BE07D437C1D07F70B581DB2B11CCF`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第121條職務行為受賄
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_121_bribery_duty`；第120條、第122至134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認公務員或仲裁人身分、受賄行為、職務上行為、個別角色、利益流向與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；archive_equal：true；內部 exact duplicate：0；全量測試待收尾執行。
+- 歸檔SHA-256：`4781176611954206ED68B06B78441E4AC75D8FC4395AF0F7A454AE676B3793C7`；submission：`CB4650367272A3E64F371CD8F8323D6A3E118E78A68C437B025218165666DC6D`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：瀆職罪章橫向驗收—刑法第120條公務員委棄守地
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`duty_120_abandon_post`；第121至134條其他瀆職、加重、定義與程序路線分開處理。
+- C02至C08分開確認公務員身分、守地職責、委棄守地行為、守地範圍、個別角色、結果因果與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；archive_equal：true；內部 exact duplicate：0；全量測試待收尾執行。
+- 歸檔SHA-256：`1A53063DEB0E51BDC407E6BD26F2A81AC8E5C7FED396A81C6CE13961042FF9FB`；submission：`998837ADC9B9C3AC5039242F2A52346074A9A53CB82CB556D287C6EEE69E1AE6`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第118條公然侮辱外國國旗國章
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`state_security_118_foreign_symbol`；第100至117條及第115之1、116、119條路線分開處理。
+- C02至C08分開確認侮辱意圖、公然行為、公然性、外國旗章客體、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+
+### TEST / ARCHIVE
+
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true；內部 exact duplicate：0。
+- 歸檔SHA-256：`4CEF3A07A8AADA51215396D7A42A77C527D23EB99C09270541B8C99C7D07A509`；submission：`41852F27F55BC78F6C550039AD4947EC75D21C63930955F4E8548D9CAB832692`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代 `CASE_HUMAN_GATE`；下一個 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第117條違背局外中立命令
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+- 目標：`state_security_117_neutrality`；第100至116、118條及第102、107、115之1、119條路線分開處理。
+- C02至C08分開確認外國交戰期間、政府局外中立命令、具體違背命令行為、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- 契約與 linkage：15 passed；archive_equal：true；本輪全量測試待收尾執行。
+- 歸檔SHA-256：`0735EFBA2B1F63F2BCCFAFB76A93B520DE13E753E61AF1D5D486C3F751DFB316`；submission：`799D46C08C2DF093660AA94B79089478B47268C41FBD6463234B882841556AE8`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳暫停、未取代 `CASE_HUMAN_GATE`；下一 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第115條毀損隱匿對外權利證據
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+- 目標：`state_security_115_foreign_right_evidence`；第100至114條及第115之1、116、119條路線分開處理。
+- C02至C08分開確認我國對外權利證據客體、偽造／變造／毀棄／隱匿行為、個別角色、結果與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- 契約與 linkage：15 passed；archive_equal：true；本輪全量測試待收尾執行。
+- 歸檔SHA-256：`1B616647C2A29C6A232220B8D1E5A33BEFD7ADA5C911515D2B628D654666E9B3`；submission：`67BDA93F44B19697B9759662EB4ACE6A455DB7308BD35B46DC9B517383330E9D`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳暫停、未取代 `CASE_HUMAN_GATE`；下一 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第114條違背外交事務委任
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+- 目標：`state_security_114_breach_mandate`；第100至113條及第115、102、107、115之1、119條路線分開處理。
+- C02至C08分開確認政府委任、外交事務、委任內容、違背行為、損害結果、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- 契約與 linkage：15 passed；archive_equal：true；本輪全量測試待收尾執行。
+- 歸檔SHA-256：`1B102CDC3082E1BAEE31D669613B4B918246FDCBE2BA1DD730FEB5C94BA8FE97`；submission：`6B3BA11A255EEEBA7BB0CE8056F0262EDD8BEE64CCB08D95A30F1FFCEB5A9864`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳暫停、未取代 `CASE_HUMAN_GATE`；下一 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第113條未授權私與外國政府約定
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+- 目標：`state_security_113_foreign_agreement`；第100至112條及第114、115、102、107、115之1、119條路線分開處理。
+- C02至C08分開確認依法應授權事項、未獲授權、外國政府／派遣人、約定內容、損害風險與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- 契約與 linkage：15 passed；archive_equal：true；本輪全量測試待收尾執行。
+- 歸檔SHA-256：`442A576BD7B5B9FEEDB616EC2DAB74B858CBA06E271F36D59E3B955627B9DDD6`；submission：`0801F6824638C89B8F16613776307C1E2BE259FF23897524A12D2A9807938565`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳暫停、未取代 `CASE_HUMAN_GATE`；下一 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第112條侵入軍事處所
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+- 目標：`state_security_112_military_site`；第100至111條及第102、107、115之1、119條路線分開處理。
+- C02至C08分開確認刺探／收集國防秘密目的、未受允准、軍事處所、進入／留滯行為、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- 契約與 linkage：15 passed；archive_equal：true；本輪全量測試待收尾執行。
+- 歸檔SHA-256：`1D5FE42701C9D31FEFE044F30DB8AA6B5B419D9BA55A6313F08B41D41F4EB298`；submission：`0C650A97954DCC0AE35209F2F64014010D91F7E4A3B83A9C9BC7C3D854866F05`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳暫停、未取代 `CASE_HUMAN_GATE`；下一 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第111條刺探收集國防秘密
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+- 目標：`state_security_111_collect_secret`；第100至110條及第112、102、107、115之1、119條路線分開處理。
+- C02至C08分開確認刺探／收集行為、國防秘密客體、行為進度、個別角色、對象與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- 契約與 linkage：15 passed；archive_equal：true；本輪全量測試待收尾執行。
+- 歸檔SHA-256：`0A399937B7108F706BC1EF9FAE924E9A9B3CF5B75098287896B4A34F2A96794D`；submission：`254164A783BA1C09CD8599E988047153FE7F3F5B90C6116AB070C562731B6A67`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳暫停、未取代 `CASE_HUMAN_GATE`；下一 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第110條公務員過失洩漏國防秘密
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+- 目標：`state_security_110_negligent_secret`；第100至109條及第111、112、102、107、115之1、119條路線分開處理。
+- C02至C08分開確認公務員身分、職務上知悉／持有、國防秘密、過失洩漏／交付、對象與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- 契約與 linkage：15 passed；archive_equal：true；本輪全量測試待收尾執行。
+- 歸檔SHA-256：`7D8247E37319CDE70754C6F13F38E06FFD42262B30AA22827DA26B262E9CC3DB`；submission：`C700B58EE9D3613DB5535F24878F028472342B016F2A5F7D2C2FF702BCDCAF81`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳暫停、未取代 `CASE_HUMAN_GATE`；下一 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第109條洩漏交付國防秘密
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+- 目標：`state_security_109_defense_secret`；第100至108條及第110至112、102、107、115之1、119條路線分開處理。
+- C02至C08分開確認國防秘密客體、洩漏／交付行為、對象、行為進度、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- 契約與 linkage：15 passed；archive_equal：true；本輪全量測試待收尾執行。
+- 歸檔SHA-256：`F295907C473225B2C2A4FE87D12CCEA21C1E10FD380B1510F6430D87F10DF469`；submission：`10762FF2357EC6958BFB07E1EABC1F251FF789E7399E8C5F6A7C7FC9A3924B38`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳暫停、未取代 `CASE_HUMAN_GATE`；下一 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第108條戰時不履行軍需契約
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+- 目標：`state_security_108_military_supply`；第100至106條及第102、107、115之1、116、119條路線分開處理。
+- C02至C08分開確認開戰期間、軍需供給契約、故意／過失、不履行或不完全履行、個別角色與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true。
+- 歸檔SHA-256：`DF8E450E90C427CD559F0AA02AB6AF18CDCAC7A33C94F66A19CA07007A5ADD1E`；submission：`94832DE431268A3E089735E3B3F898AFB65024997D38830C69324669B3BD9309`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳暫停、未取代 `CASE_HUMAN_GATE`；下一 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第106條供敵軍事利益或害我國軍事利益
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+- 目標：`state_security_106_military_advantage`；第100、101、103至105條及第102、107、115之1、119條路線分開處理。
+- C02至C08分開確認戰時／將戰期間、敵軍事利益或我國軍事不利益、具體行為進度、個別角色、結果與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true。
+- 歸檔SHA-256：`42CBCB93D66BEC5340135C826F42ECD63AF396BB7F939E8E9BA982D823EA546C`；submission：`36279321E4F48D20768C584AAC8F87970D7C3719B6604FAE9E67BECA0F0C077D`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳暫停、未取代 `CASE_HUMAN_GATE`；下一 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第105條為敵軍服役或械抗我國
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+- 目標：`state_security_105_enemy_service`；第100、101、103、104、106條及第102、107、115之1、119條路線分開處理。
+- C02至C08分開確認國民身分、敵軍服役／械抗行為、行為進度、個別角色、對象／結果、聯絡脈絡與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true。
+- 歸檔SHA-256：`8FB7467E7B1EF9842E92472D690F3C321428DB187D562D3CE74AE26371DA0FF0`；submission：`9C9DFBD2FF571D42037B2E848F78F1E578BA67F3D619E890A34680282C46CCD4`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳暫停、未取代 `CASE_HUMAN_GATE`；下一 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第104條通謀外國使我國領域屬於他國
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+- 目標：`state_security_104_territory`；第100、101、103、105條及第102、107、115之1、119條路線分開處理。
+- C02至C08分開確認通謀對象、領域移轉目的、行為進度、個別角色、目標／結果、聯絡脈絡與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true。
+- 歸檔SHA-256：`84836285280D49D59485DCF341E56F01910F60BEED826C23928C2DD0E5B2AB8B`；submission：`E0C2DB5C3310ECEA456E7980DF5B96AA02D575F716AFF1AD3F8BABDD8E7F7C4D`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳暫停、未取代 `CASE_HUMAN_GATE`；下一 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第103條通謀外國使開戰
+
+execution_mode: `REVIEWED_PIPELINE`; agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`; triggers: `S3`、`S4`
+
+- 目標：`state_security_103_start_war`；第100、101、104、105條及第102、107、115之1、119條路線分開處理。
+- C02至C08分開確認通謀對象、使開戰目的、行為進度、個別角色、目標／結果、聯絡脈絡與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- 契約與 linkage：15 passed；Full pytest：630 passed；archive_equal：true。
+- 歸檔SHA-256：`C299EA6824879003F3FF1343739396BE5C33426D3568602E30D1F2E33FF0DE0A`；submission：`4303FC4653630E58BA381072DEA149E5D3CD96A3DCCE58CAEDE9B8230429C819`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳暫停、未取代 `CASE_HUMAN_GATE`；下一 child route 尚未選定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第101條暴動內亂
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`state_security_101_riot`；第100條、第103至105條及第102、107、115之1、119條路線分開處理。
+- C02至C08分開確認暴動內亂目的、強暴或脅迫、行為進度、個別角色、目標／結果、聯絡脈絡與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- `UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`；本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed；archive_equal：true。
+- 歸檔SHA-256：`B499EA1D9AE4A9174B6137421F7FB0857BB1B046155A9BBDE548FE5A943761BA`；submission SHA-256：`14D3E022C7A82BE3E4C69122EF2B4DD609A041247F6DA02149DBA39709345E94`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；仍須由 controller 鎖定，不可整章展開。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：國家安全罪章橫向驗收—刑法第100條內亂
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`state_security_100_insurrection`；第101條暴動內亂、第103至105條外患及第102、107、115之1、119條減免／加重／定義／程序路線分開處理。
+- C02至C08分開確認法定目的、強暴或脅迫、行為進度、個別角色、目標／結果、聯絡脈絡與證據來源；單題不產生 `ACTIVE` 或 `EXCLUDED`。
+- `UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`；本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed；archive_equal：true。
+- 歸檔SHA-256：`3DC8F6BD6D8F309FAE4C518777EA266DBE010CC06601D3F932323710D91697E8`；submission SHA-256：`D480F3AAE2A0A6D0B86EC661113C18582EA032976ACFA52B4CA3DA14AC63FA2E`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 為 `state_security_101_riot`，仍須由 controller 鎖定；不可整章展開。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：毒品危害防制條例橫向驗收—持有毒品或專供製造施用器具第11條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`drugs_11_possession`；第4至8條、第10條及第9條加重邊界分開處理，未混入同一工作單元。
+- C02至C05分別處理持有／管領、毒品類別、純質淨重／門檻、專供製造施用器具目的與來源證據；各題保留 `CASE_HUMAN_GATE`。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；archive_equal：true。
+- 歸檔SHA-256：`42307E94EC95B3E396E15813BF34882A6039B916B8CE8BC050A7457B176B800C`；submission SHA-256：`8570F6D6D34C93A63E9868CC877F8A7D135EEAF58422C5989CA0B42D4A46CEF7`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 parent route 為 `state_security`，必須先由 controller 鎖定單一 child route；不可整章展開。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：毒品危害防制條例橫向驗收—持有毒品或專供製造施用器具第11條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+- 目標：`drugs_11_possession`；第4至10條及第9條加重路線未混入本單一路線。
+- C02至C05分開確認持有／實力支配、毒品品項／級別、純質淨重／數量門檻、器具用途、持有來源及證據；敏感內容維持 `CASE_HUMAN_GATE`，單題不產生 `ACTIVE` 或法律結論。
+- 契約與 offense linkage：15 passed；archive_equal：`True`；歸檔SHA-256：`42307E94EC95B3E396E15813BF34882A6039B916B8CE8BC050A7457B176B800C`；submission SHA-256：`8570F6D6D34C93A63E9868CC877F8A7D135EEAF58422C5989CA0B42D4A46CEF7`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停；`UNKNOWN`／`CONFLICT` 維持 `NEED_REVIEW`。
+
+## 2026-10-27：毒品危害防制條例橫向驗收—施用第一級或第二級毒品第10條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+- 目標：`drugs_10_use`；第4至9、11條及其他持有／交易路線未混入本單一路線。
+- C02至C05分開確認施用行為、時間／地點／方法、毒品品項／級別、採尿／鑑驗與可回查證據；敏感內容維持 `CASE_HUMAN_GATE`，單題不產生 `ACTIVE` 或法律結論。
+- 契約與 offense linkage：15 passed；archive_equal：`True`；歸檔SHA-256：`AB76DF8B9696BC5018BAD78FF16441C23AC4C14B6378CCB4AF7E4466C6F2FD44`；submission SHA-256：`D28F4A807320E9DB9076697F6D28F39D2D7D1D2716E19FFD07C574EBBE781E1F`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停；`UNKNOWN`／`CONFLICT` 維持 `NEED_REVIEW`。
+
+## 2026-10-27：毒品危害防制條例第9條加重邊界決定
+
+execution_mode: `REVIEWED_PIPELINE`
+
+- `drugs_9_aggravation`：`route_kind=aggravation`，以第6至8條基礎行為或法定混合毒品行為為前提，不建立獨立 offense-core 題組。
+- 未成年人、孕婦、混合毒品等加重事實及行為人認識保留 `HUMAN_REVIEW_REQUIRED`，於基礎路線完成後另行核對。
+- `SKIPPED_WITH_REASON`：未將加重路線複製成獨立候選；`UNKNOWN`／`CONFLICT` 維持 `NEED_REVIEW`。
+
+## 2026-10-27：毒品危害防制條例橫向驗收—轉讓毒品第8條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+- 目標：`drugs_8_transfer`；第4至7、10至11條及第9條加重路線未混入本單一路線。
+- C02至C05分開確認轉讓／交付、毒品品項／級別、受讓人、交付經過、未遂既遂及證據；敏感內容維持 `CASE_HUMAN_GATE`，單題不產生 `ACTIVE` 或法律結論。
+- 契約與 offense linkage：15 passed；Full pytest：630 passed；archive_equal：`True`。
+- 歸檔SHA-256：`939AA1548A2070E3BF16796E8979D172523A61E3A182DDB269DD8FE26803484A`；submission SHA-256：`DCC727DEBA01646B37AF6A367E205BFA9CD2460823AC907D1225B67EF6468277`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停；`UNKNOWN`／`CONFLICT` 維持 `NEED_REVIEW`。
+
+## 2026-10-27：毒品危害防制條例橫向驗收—引誘他人施用毒品第7條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+- 目標：`drugs_7_induce_use`；第4至6、8至11條及第9條加重路線未混入本單一路線。
+- C02至C05分開確認引誘行為與內容、他人施用、毒品品項／級別、未遂既遂及證據；敏感內容維持 `CASE_HUMAN_GATE`，單題不產生 `ACTIVE` 或法律結論。
+- 契約與 offense linkage：15 passed；Full pytest：630 passed；archive_equal：`True`。
+- 歸檔SHA-256：`4B51E6015CF9C4A5E25A2B2744779E73228270D0582BB4F6D5CD2EA7697ECC48`；submission SHA-256：`D73443DB49612DA10911D560794D024D282CE7A64FFC6FF750E516F9E9F7F742`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停；`UNKNOWN`／`CONFLICT` 維持 `NEED_REVIEW`。
+
+## 2026-10-27：毒品危害防制條例橫向驗收—以強暴脅迫等方法使人施用毒品第6條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+- 目標：`drugs_6_force_use`；第4、5、7至11條及第9條加重路線未混入本單一路線。
+- C02至C05分開確認強暴／脅迫／欺瞞方法、他人施用、毒品品項／級別、死亡／重傷結果、因果及證據；敏感內容維持 `CASE_HUMAN_GATE`，單題不產生 `ACTIVE` 或法律結論。
+- 契約與 offense linkage：15 passed；Full pytest：630 passed；archive_equal：`True`。
+- 歸檔SHA-256：`B21875721A5791C5710F6DED6774FBC17F300C25DFF913E1A1BE6A259225CC93`；submission SHA-256：`8DB3DB5C6A67866795BA4A1C96D06C86FD7C736E82D1192C7A55CD7CEB352BB6`。
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停；`UNKNOWN`／`CONFLICT` 維持 `NEED_REVIEW`。
+
+## 2026-10-27：毒品危害防制條例橫向驗收—意圖販賣而持有毒品第5條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`drugs_5_possession_intent_sale`；第4、6至11條及第9條加重路線未混入本單一路線。
+- C02至C05分開確認持有／實力支配、毒品品項／級別、販賣意圖客觀指標、數量／純質淨重、未遂既遂及證據；敏感內容維持最小必要詢問與 `CASE_HUMAN_GATE`。
+- 所有單題不產生 `ACTIVE` 或法律結論；`UNKNOWN`、`CONFLICT` 與其他毒品路線維持 `NEED_REVIEW`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`490D888676ED9EDCA5399B4D7F273DCCAF0953F9F92AA694FD55AA94B7D2B04B`。
+- submission SHA-256：`3B6BB9F0DFB27134571CCC5382D4C863FEBE8518598E8FC291C3FDA745BF98F1`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；持有、施用、轉讓與加重需逐一保留分流。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：毒品危害防制條例橫向驗收—製造運輸販賣毒品第4條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`drugs_4_manufacture_transport_sale`；第5至11條及第9條加重路線未混入本單一路線。
+- C02至C05分開確認製造／運輸／販賣行為、毒品品項／級別、交易／運送／製造流程、角色、未遂既遂及證據；敏感內容維持最小必要詢問與 `CASE_HUMAN_GATE`。
+- 所有單題不產生 `ACTIVE` 或法律結論；`UNKNOWN`、`CONFLICT` 與其他毒品路線維持 `NEED_REVIEW`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`35BDC8D6038E49EA297524BE508104E6C9D3595BD8A54ACB8D82FF8BA5CE87F5`。
+- submission SHA-256：`CE827800BA17F8E8D8705AB98C21E72524E060187AF058CB809C29DCA5704E4E`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；毒品級別、交易與角色需逐一保留分流。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：公共危險橫向驗收—交通事故致人死傷逃逸第185條之4
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`public_danger_185_4_hit_and_run`；第185條之3酒毒駕及其他公共危險路線未混入本單一路線。
+- C02至C05分開確認駕駛動力交通工具、事故、死傷結果、知悉事故、逃逸行為、過失減免及證據；所有單題不產生 `ACTIVE` 或法律結論。
+- `UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`；`CASE_HUMAN_GATE` 仍為 `REQUIRED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`EC5279C9B56FD84994038BE5C8F4BF2184E4480ACD49CF612C79249FA522CA98`。
+- submission SHA-256：`B741C4A44C6E72AAEF656ED2A0B2A0A72FF02F9AA0113459EACFD7C2D8D65AB5`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 parent route：`drugs`，仍須由 controller 逐一選定 child route。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：公共危險橫向驗收—酒毒駕駛動力交通工具第185條之3
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`public_danger_185_3_impaired_driving`；第185條之4交通事故逃逸及其他公共危險路線未混入本單一路線。
+- C02至C05分開確認駕駛動力交通工具、酒精／毒品影響、不能安全駕駛、死亡／重傷結果、因果、可預見性與前案狀態；所有單題不產生 `ACTIVE` 或法律結論。
+- `UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`；`CASE_HUMAN_GATE` 仍為 `REQUIRED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`E61764202758A508A30709003A4342B7174C066DAC98ED23DC4A756BD2E5DC1F`。
+- submission SHA-256：`0FA630A64094787144298756B546C210FACEB812DE1357362DF3C73F0FABB487`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；第185條之4事故逃逸另行製作。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：跟蹤騷擾章分類／保護／審理程序邊界決定
+
+execution_mode: `REVIEWED_PIPELINE`
+
+- `stalking_3_definition`：`route_kind=classification`，只處理法定跟騷行為定義與適用分類。
+- `stalking_4_17_protection`、`stalking_20_21_procedure`：`route_kind=procedure`，只處理書面告誡、保護令、審理不公開與羈押特別程序。
+- 上述路線均保留 `HUMAN_REVIEW_REQUIRED`，不進犯罪構成要件題組；`UNKNOWN`／`CONFLICT` 不得反推第18或19條成立。
+- `SKIPPED_WITH_REASON`：依 crosswalk route_kind 邊界，未將分類、保護令或審理程序混入 offense loop。
+- 下一個 parent route：`public_danger`，仍須由 controller 逐一選定 child route。
+
+## 2026-10-27：跟蹤騷擾橫向驗收—違反跟蹤騷擾保護令第19條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`stalking_19_protection_order`；第3條定義、第4至17條保護令、第18條基礎犯罪及第20至21條程序未混入本單一路線。
+- C02至C05分開確認保護令有效性、送達／知悉、命令範圍、具體違反行為、程序脈絡及證據；敏感內容維持最小必要詢問與 `CASE_HUMAN_GATE`。
+- 所有單題不產生 `ACTIVE` 或法律結論；`UNKNOWN`、`CONFLICT` 與其他跟騷路線維持 `NEED_REVIEW`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`EA4DACA1E68DF240C73654DB06EED58020983A7FB720117DC1766D2B317F1EB3`。
+- submission SHA-256：`9405D5093773E22F1570B923B765EC28090B572DB7E9A70E58815AC5BC2D52D9`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；定義、保護令與審理程序另行處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：跟蹤騷擾橫向驗收—實行跟蹤騷擾及攜帶危險物加重第18條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`stalking_18_offense`；第3條定義、第4至17條保護令、第19至21條保護令犯罪／程序未混入本單一路線。
+- C02至C05分開確認跟蹤騷擾法定態樣、反覆持續、違反意願、畏怖與日常生活影響、危險物品及證據；敏感內容維持最小必要詢問與 `CASE_HUMAN_GATE`。
+- 所有單題不產生 `ACTIVE` 或法律結論；`UNKNOWN`、`CONFLICT` 與其他跟騷路線維持 `NEED_REVIEW`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`E05BF9DB5F7A84FDC0F6BC98B0BE83091E3B1BF5F9CBEAAED93DD195A97D047C`。
+- submission SHA-256：`EC7778EFC98F8D3B855CA1688AE7451E006805B290F332AEBF1B11CD44290737`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；第19條保護令犯罪與定義／程序路線另行處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：性騷擾章分類／保護／行政邊界決定
+
+execution_mode: `REVIEWED_PIPELINE`
+
+- `sexual_harassment_2_scope`：`route_kind=classification`，只處理性騷擾定義、權勢分類及與性別平等工作／教育法的適用分流。
+- `sexual_harassment_7_13_prevention`、`sexual_harassment_14_17_complaint`：`route_kind=procedure`，只處理防治、保護、申訴與調查流程。
+- `sexual_harassment_26_30_administrative`：`route_kind=administrative`，只處理行政義務與裁罰事實。
+- 上述路線均保留 `HUMAN_REVIEW_REQUIRED`，不進犯罪構成要件題組；`UNKNOWN`／`CONFLICT` 不得反推第25條成立。
+- `SKIPPED_WITH_REASON`：依 crosswalk route_kind 邊界，未將分類、保護、申訴或行政責任混入 offense loop。
+- 下一個 parent route：`stalking`，仍須由 controller 逐一選定 child route。
+
+## 2026-10-27：敏感案件橫向驗收—乘人不及抗拒之性騷擾觸摸罪第25條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`sexual_harassment_25_unwanted_touch`；第2條分類、第7至17條保護／申訴程序及第26至30條行政路線未混入本單一路線。
+- C02至C05分開確認性騷擾意圖、被害人不及抗拒情境、親吻／擁抱／觸摸方式、權勢關係、被害人反應與證據；敏感內容維持最小必要詢問與 `CASE_HUMAN_GATE`。
+- 所有單題不產生 `ACTIVE` 或法律結論；`UNKNOWN`、`CONFLICT` 與其他性別事件路線維持 `NEED_REVIEW`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`283A0BDB9EB75011434EFCB2404C4B80EB1498D113FF49DBFC82A07289645871`。
+- submission SHA-256：`EF8E3E614E72FCCA1AC41820E69B2F2E4E22CBD3EBB65C1FEAEB349555130895`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；性騷擾行政、保護與申訴程序另行處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：妨害電腦使用章第363條程序邊界決定
+
+execution_mode: `REVIEWED_PIPELINE`
+
+- `computer_363_complaint`：`route_kind=procedure`，只處理第358至360條部分罪名的告訴權人、告訴意思與提出情形，不建立犯罪構成要件題組。
+- `SKIPPED_WITH_REASON`：依 crosswalk route_kind 邊界，未將告訴條件混入犯罪候選問句；程序問句須另建流程工作流。
+- 電腦章可製作 offense／aggravation 路線已完成邊界整理；下一個 parent route 為 `sexual_harassment`，仍須由 controller 逐一選定 child route。
+
+## 2026-10-27：財產罪橫向驗收—製作供電腦犯罪之程式第362條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`computer_362_malware`；第358至361、363條及其他電腦犯罪相鄰／加重／程序路線未混入本單一路線。
+- C02至C05分開確認程式內容、製作行為、供犯罪使用意圖、製作人與資料來源及損害風險；所有單題不產生 `ACTIVE` 或法律結論。
+- `UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`；`CASE_HUMAN_GATE` 仍為 `REQUIRED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`EC94C54070F4AFA0388DDD1A0FDA002155BF6EA2C3DD5CA3341CF0D10263D4E6`。
+- submission SHA-256：`1C027987CEF6EF973E3D7329A4701C5E211BEBE2A40D945791907FD1DB244A14`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；由 controller 依佇列鎖定下一路線。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：妨害電腦使用章第361條加重邊界決定
+
+execution_mode: `REVIEWED_PIPELINE`
+
+- `computer_361_public_agency`：`route_kind=aggravation`，以第358至360條基礎行為及公務機關標的為前提，不建立獨立 offense-core 題組。
+- 加重事由保留 `HUMAN_REVIEW_REQUIRED`，於基礎路線完成個案 `CASE_HUMAN_GATE` 後另行核對；runtime、crosswalk 與法律結論均未自動改寫。
+- `SKIPPED_WITH_REASON`：依 crosswalk route_kind 邊界，未將加重路線當成可獨立候選罪名複製。
+- 下一個可進入 offense-core 的 child route：`computer_362_malware`。
+
+## 2026-10-27：財產罪橫向驗收—無故干擾他人電腦或相關設備第360條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`computer_360_interference`；第358、359、361至363條及其他電腦犯罪相鄰／加重／程序路線未混入本單一路線。
+- C02至C05分開確認電腦程式／電磁方式、設備對象、干擾方法、授權範圍與損害風險；所有單題不產生 `ACTIVE` 或法律結論。
+- `UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`；`CASE_HUMAN_GATE` 仍為 `REQUIRED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`2516B15DE69FAA250697791466BDCFA92B261397B4824464A321752B112E75CB`。
+- submission SHA-256：`52012830BD9C7882733FE018A84D6855E4C3B6BF12CABA1BF539E593F505F062`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；由 controller 依佇列鎖定下一路線。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—無故取得刪除或變更電磁紀錄第359條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`computer_359_data_change`；第358、360至363條及其他電腦犯罪相鄰／加重／程序路線未混入本單一路線。
+- C02至C05分開確認電磁紀錄對象、取得／刪除／變更方法、設備關聯、權限與損害風險；所有單題不產生 `ACTIVE` 或法律結論。
+- `UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`；`CASE_HUMAN_GATE` 仍為 `REQUIRED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`F1B0D6CF40DB8AB00965303A486E952333A53790170872CCF44FC4F9FBCC3200`。
+- submission SHA-256：`217401FE0DAAA3603BF8E0A393D06F082C157A7A3073875544632FBF6B4F23D5`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；由 controller 依佇列鎖定下一路線。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—無故入侵他人電腦或相關設備第358條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`computer_358_intrusion`；第359至363條及其他電腦犯罪相鄰／加重／程序路線未混入本單一路線。
+- C02至C05分開確認設備對象、入侵方法、帳號／密碼、授權範圍、無故狀態與損害風險；所有單題不產生 `ACTIVE` 或法律結論。
+- `UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`；`CASE_HUMAN_GATE` 仍為 `REQUIRED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`9C8279D26F5369009B1FB08280C161961AEFC3DE7BB070EE0F8592B78A5D55AA`。
+- submission SHA-256：`C0E1C7368B9831915641ABD70A8E0747CD748BE7FE24C2BE98A029A6997771B2`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；由 controller 依佇列鎖定下一路線。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：偽造文書章 collateral／definition 邊界決定
+
+execution_mode: `REVIEWED_PIPELINE`
+
+- `forgery_219_confiscation`：`route_kind=collateral`，僅處理偽造印章、印文或署押與本章行為的沒收關聯；不建立 offense-core 構成要件題組。
+- `forgery_220_document_definition`：`route_kind=definition`，僅處理文書／電磁紀錄準文書的範圍定義；不建立獨立定罪候選題組。
+- 兩路線均保留 `HUMAN_REVIEW_REQUIRED`，並由對應犯罪路線在個案 `CASE_HUMAN_GATE` 中引用；runtime、crosswalk 與法律結論均未自動改寫。
+- `SKIPPED_WITH_REASON`：依 `docs/OFFENSE_QUESTION_WORK_QUEUE.md` 第1、2、5節及 crosswalk route_kind 邊界，未把 collateral／definition 混入 offense loop。
+- 下一個可進入 offense-core 的 parent route：`computer`，仍須由 controller 鎖定 child route。
+
+## 2026-10-27：財產罪橫向驗收—偽造盜用公印或公印文第218條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`forgery_218_official_seal`；第210至217、219至220條及程序路線保留為相鄰／另案處理，未混入本單一路線。
+- C02至C05分開確認公印／公印文、公署或機關、來源、形成／使用方式、公署／機關關聯與損害風險；所有單題不產生 `ACTIVE` 或法律結論。
+- `UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`；`CASE_HUMAN_GATE` 仍為 `REQUIRED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`2764AD022E10EF9810A7FFB885477E54244A2BA21AB0233217060993B47E105B`。
+- submission SHA-256：`0E70861D4FA25BFDFEE8590EEB297F851B32A2D8E20BC29E88321DD0951EA467`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route `forgery_219_confiscation` 為 collateral 路線，需另行邊界處理，不自動納入犯罪構成要件題組。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—偽造盜用印章印文或署押第217條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`forgery_217_seal_signature`；第210至216、218至220條及程序路線保留為相鄰／另案處理，未混入本單一路線。
+- C02至C05分開確認印章、印文或署押種類、權利人、授權範圍、形成／使用方式、授權關聯與損害風險；所有單題不產生 `ACTIVE` 或法律結論。
+- `UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`；`CASE_HUMAN_GATE` 仍為 `REQUIRED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`117982BA471DBBF4E9C0705219AE380AE84ADBD70CB2D85368562961CEC98439`。
+- submission SHA-256：`6ACCC2890C931D6BDDE386EEBC31695F36C6248512E87BC7604AE23C55EB42CF`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；由 controller 依佇列鎖定下一路線。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—業務上文書不實登載第215條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`forgery_215_business_false_entry`；第210至214、216至220條及程序路線保留為相鄰／另案處理，未混入本單一路線。
+- C02至C05分開確認業務身分、業務上文書、不實登載內容、業務關聯與損害風險；所有單題不產生 `ACTIVE` 或法律結論。
+- `UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`；`CASE_HUMAN_GATE` 仍為 `REQUIRED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed。
+- archive_equal：`True`；歸檔SHA-256：`D02E23C01F63F273A531EB2A18DE3AF42D23D65D9FC55D79EA2A6F731A402FF8`。
+- submission SHA-256：`D5C5D9A19E709285ED20C54AB74A1222C3E970FA7D0EA74947B727768BE49B2A`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；由 controller 依佇列鎖定下一路線。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-28：財產罪橫向驗收—行使偽造變造或登載不實文書第216條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`forgery_216_use_document`；第210至215條基礎文書、印章、沒收與文書定義路線分開處理。
+- C02確認行使文書來源與使用狀態，C03確認文書是否置於可發生內容效用的狀態；C04-C05分開保留對來源／不實內容的認識、使用關聯及證據來源。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`DC3FA32F5DAFCB60A8E3CF8AC769D9D1B44EC0DFA828D5BCB5427FD864828091`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；第217、218條印章、第219條沒收及第220條定義路線仍須分別處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-28：財產罪橫向驗收—使公務員登載不實第214條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`forgery_214_cause_official_false_entry`；第210至213條及行使、印章、沒收與文書定義路線分開處理。
+- C02確認向公務員提出不實事項，C03確認使公務員將不實事項登載於職務上掌管公文書；C04-C05分開保留損害風險、提出與登載因果及證據來源。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`2300D7DEAC95D3BBB85590082BEB87D4BB6B14FF49047D0FB5DC15FBF0BD0FD0`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；其餘偽造、行使、印章、沒收與定義路線仍須分別處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-28：財產罪橫向驗收—公務員登載不實第213條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`forgery_213_official_false_entry`；第210、211、212、214條及行使、印章、沒收與文書定義路線分開處理。
+- C02確認公務員身分、職務及公文書掌管，C03確認明知不實而登載；C04-C05分開保留損害風險、職務權限、行為與風險關聯及證據來源。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`53CAAFB018D19591DABBF5381D23EE8D2D1618DCFE780E66BA1CD9C27CA56122`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；第214條及其行使、印章、沒收與定義路線仍須分別處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-28：財產罪橫向驗收—偽造變造特種文書第212條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`forgery_212_certificate`；第210、211、213、214條及行使、印章、沒收與文書定義路線分開處理。
+- C02確認護照、旅券、免許證、特許證或其他法定相類證書的偽造變造，C03確認損害風險；C04-C05分開保留文件種類、製作名義、權限、行為與風險關聯及證據來源。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`8B37DAE0FDFE69D189DCB4DB85CB64C2F0F1374BF52A99DF4FF1777E45BF4BDB`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；第213、214條及其行使、印章、沒收與定義路線仍須分別處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-28：財產罪橫向驗收—偽造變造公文書第211條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`forgery_211_public_document`；第210、212、213、214條及行使、印章、沒收與文書定義路線分開處理。
+- C02確認公文書偽造變造，C03確認足以生損害於公眾或他人的風險；C04-C05分開保留製作機關、名義、內容、權限、行為與風險關聯及證據來源。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`0D8F6C4D7CDBD94A5FD28D4EE828D3D43D1F1F4C423BE970650097C9B0062343`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；第212、213、214條及其行使、印章、沒收與定義路線仍須分別處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—偽造變造私文書第210條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`forgery_210_private_document`；第211、212、213、214條及行使、印章、沒收與文書定義路線分開處理。
+- C02確認私文書偽造變造，C03確認足以生損害於公眾或他人的風險；C04-C05分開保留製作名義、內容、權限、行為與風險關聯及證據來源。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`FB29E45415FAF50CD885B047A1625888F3AC0E26C45D36E9179B3C004A7ADEBD`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；第211、212、213、214條及其行使、印章、沒收與定義路線仍須分別處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—損害信用第313條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`defamation_313_credit`；第309、310、311、312條及第314條告訴條件分開處理。
+- C02確認散布流言或施用詐術，C03確認他人信用受損；C04-C05分開保留傳播工具、損害程度、因果關係及證據來源。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`A7D8C60E9EFDA204A77E2453AD52059934BC1D939AE95E1AE4F30F2BAEF24E04`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；第311條例外與第314條程序仍須分別處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—侮辱或誹謗已死之人第312條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`defamation_312_deceased`；第309、310、311、313條及第314條告訴條件分開處理。
+- C02確認對象為已死之人，C03確認公然侮辱或誹謗內容；C04-C05分開保留傳播、表意內容、死者名譽影響及證據來源。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`BA6C70502022B9BA20096C5A1AC4F457BB94CB9593164473C88F48C566647190`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；第313條信用、第311條例外與第314條程序仍須分別處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—誹謗第310條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`defamation_310_defamation`；第309條公然侮辱、第311條善意言論、第312條死者、第313條信用及第314條告訴條件分開處理。
+- C02確認指摘或傳述具體事項，C03確認散布於眾及散布方式；C04-C05分開保留名譽損害、真實性、公共利益、私德範圍及證據來源。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`4ECD4E0138B5A7507B6125633EEC641D9F4DAB2FE9B267C0E57A373A507E658B`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；第312、313條及第311條例外、第314條程序仍須分別處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—公然侮辱第309條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`defamation_309_public_insult`；第310條誹謗、第311條善意言論、第312條死者、第313條信用及第314條告訴條件分開處理。
+- C02確認言論內容與被害人，C03確認公然性與表意脈絡；C04-C05分開保留一般人可合理忍受範圍、言論價值及證據來源，並記錄第309條憲法限縮狀態。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`82F7E2C259B711F5D03448D64E8D64EB5BF77C8E2B3E73916635513113C19B48`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；第310、312、313條及第311條例外、第314條程序仍須分別處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—恐嚇取財或得利第346條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`intimidation_346_property`；第305條恐嚇危害安全、詐術損害、一般物毀損、傷害及程序路線維持相鄰比較，不混入候選。
+- C02確認恐嚇內容與被害人／財物關係，C03確認財物交付或不法利益，C04確認不法所有意圖；C05另保留財產流向及既遂／未遂資料。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`E17A1714856D8968D17C01825768020F7187726E9AAE514AB3F9C603557C7686`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；恐嚇取財路線已完成本輪 child route 審查。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—恐嚇危害安全第305條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`intimidation_305_safety`；恐嚇取財第346條、詐術損害、傷害、一般物毀損及程序路線維持相鄰比較，不混入候選。
+- C02確認恐嚇內容與傳達對象，C03確認傳達方式及對象；C04-C05分開保留安全危害、行為與危害關聯及證據來源。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`A9DA8375F5FB037D1CC3B7745940C81494CFB0C3B1DC2BF0B43EE1F7E265B1BD`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；`intimidation_346_property` 後續另行處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—詐術使人處分財產致損害第355條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`damage_355_fraud`；文書毀損、一般物毀損、建築物毀損及第357條程序路線維持相鄰比較，不混入候選。
+- C02確認損害意圖與財產處分關係，C03確認詐術及財產處分行為；C04-C05分開保留財產損害、因果關係及證據來源。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`92AAE4B7F4A6FA544C92EFB6F1725BCB29914A32E036D7745E99150213DB7D95`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；第357條程序路線仍依 work queue 邊界另行處理。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—一般物毀損第354條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`damage_354_property`；文書毀損、建築物毀損、詐術損害及第357條程序路線維持相鄰比較，不混入候選。
+- C02確認他人之物及所有／持有狀態，C03確認毀棄、損壞或致令不堪用的具體行為；C04-C05分開保留損害結果、行為與損害關聯及證據來源。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：待本輪全量驗證；Node前端與 JavaScript syntax 沿用既有證據。
+- exact重複：內部0、既有來源0；歸檔SHA-256：`0E7512D003676C2506E25E6DA2702ECC8A5AFAE68D010FBBA98104F481868FB0`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 鎖定為 `damage_355_fraud`，仍須由 controller 選取後逐一路由驗收。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—毀壞建築物礦坑船艦第353條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`damage_353_building`；分開設計建築物、礦坑或船艦客體、毀壞或不堪使用行為、死亡／重傷結果、可預見性與因果關聯。
+- 文書毀損、一般物毀損、詐術損害、損害債權及第357條程序路線未混入本題組。
+- 單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- archive SHA-256：`AEEF1A96AC6111408B2BF4D4D3CFF02F9DBD86D72C779365F8B8415FDFBE7669`；與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route：由 controller 依鎖定 queue 選取；目前尚未自動前進。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—毀損他人文書第352條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`damage_352_document`；分開設計文書身分、毀棄損壞或不堪使用行為、足以生損害於公眾或他人的風險、關聯與證據來源。
+- 一般物毀損、建築物毀損、詐術損害、損害債權及第357條程序路線未混入本題組。
+- 單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- archive SHA-256：`62244333E6BDDB74A05C11D3720638B4F08C3F0FF73FEB0B89251F742FF9114B`；與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route：由 controller 依鎖定 queue 選取；目前尚未自動前進。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—凌虐或妨害未成年人身心發育第286條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`injury_286_child_abuse`；分開設計未成年人年齡身分、凌虐或妨害身心發育行為、營利意圖、死亡／重傷結果、因果關聯與證據來源。
+- 普通傷害、重傷害、過失傷害、聚眾鬥毆及第287條程序路線未混入本題組。
+- 單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- archive SHA-256：`A43D8C1AA2963C5E66F3E6A6B6559E269C453DAFF99A9D3862508FF3615FBC0E`；與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route：由 controller 依鎖定 queue 選取；目前尚未自動前進。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—過失傷害第284條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`injury_284_negligent`；分開設計注意義務與可預見性、違反行為、不作為或替代措施、傷害／重傷結果、因果關聯與證據來源。
+- 普通傷害、重傷害、義憤、身分加重、聚眾鬥毆、兒少保護及第287條程序路線未混入本題組。
+- 單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- archive SHA-256：`B64F8F87368126F249B90CCDE5AE20CAC64E20B1726D00E789FBF1F22F03554E`；與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route：由 controller 依鎖定 queue 選取；目前尚未自動前進。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—聚眾鬥毆在場助勢第283條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`injury_283_group_fight`；分開設計聚眾鬥毆事件、在場位置、助勢角色、死亡／重傷結果、因果關聯與證據來源。
+- 普通傷害、重傷害、義憤、身分加重、過失傷害、兒少保護及第287條程序路線未混入本題組。
+- 單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- archive SHA-256：`BC5D0BE996507368FB5B12F9B179FBDBA067E75DF13B166DDF1073E6D9AB1A71`；與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route：由 controller 依鎖定 queue 選取；目前尚未自動前進。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—受囑託承諾傷害或加工自傷第282條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`injury_282_requested_self_harm`；分開設計囑託、承諾、教唆或幫助態樣、本人意思形成、死亡／重傷結果、因果關聯與證據來源。
+- 普通傷害、重傷害、義憤、身分加重、過失傷害、兒少保護及第287條程序路線未混入本題組。
+- 單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁；archive SHA-256：`1D1AC580E9A2DEE2C86EDD65772B9EAE27C35546E3C8DCAF42A7D4152B35BAAF`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route：`injury_283_group_fight`。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—對直系血親尊親屬施強暴未成傷第281條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`injury_281_violence_ancestor`；分開設計施強暴行為、被害人直系血親尊親屬身分、未造成傷害結果、身分證據與事件關聯。
+- 普通傷害、重傷害、義憤、過失傷害、兒少保護及第287條程序路線未混入本題組。
+- 單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁；archive SHA-256：`4BBA4E6C85CD2D7A5BE01037A5B71631D98E1781676E9A50DD9DC44684D54AE0`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route：`injury_282_requested_self_harm`。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—對直系血親尊親屬傷害加重第280條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`injury_280_ancestor`；分開設計第277／278條基礎傷害、被害人直系血親尊親屬身分、身分證據與基礎行為關聯。
+- 普通傷害、重傷害、義憤、過失傷害、兒少保護及第287條程序路線未混入本題組。
+- 單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁；archive SHA-256：`82C2B18667CD171182FF8E3D3ED37D44BBEA1B96A12973C1AC06E2CA50FCE8C8`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route：`injury_281_violence_ancestor`。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—當場激於義憤傷害第279條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`injury_279_righteous_indignation`；分開設計第277／278條基礎行為、當場性、激於義憤事件脈絡、死亡結果、關聯與證據來源。
+- 普通傷害、重傷害、身分加重、過失傷害、兒少保護及第287條程序路線未混入本題組。
+- 單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁；archive SHA-256：`2D564A69A421E1381C9F312FEB52010DB04F9D93718E79CF3C1BB16108B89723`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route：`injury_280_ancestor`，屬身分加重路線，須與基礎行為分開審核。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—重傷害第278條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`injury_278_serious`；分開設計重傷行為、重傷結果與因果、死亡結果、未遂／既遂與證據來源。
+- 普通傷害、義憤、身分加重、過失傷害、兒少保護及第287條程序路線未混入本題組。
+- 單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁；archive SHA-256：`A2635A963EE560A627A561B48A9B8D0FF35E31C45F2FFAF9D56B0F9C3DD515CC`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route：`injury_279_righteous_indignation`。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—普通傷害及結果加重第277條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`injury_277_general`；分開設計傷害行為、傷害結果與因果、死亡／重傷結果、進度與證據來源。
+- 重傷、義憤、身分加重、過失傷害、兒少保護及第287條程序路線未混入本題組。
+- 單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁；archive SHA-256：`25DB54D5452CD899DEFE924C2FB14262F1AD7370B5B65BAA18CA0468839E6AA0`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route：`injury_278_serious`。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—加重重利第344條之1
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`fraud_344_1_aggravated_usury`；以第344條重利基礎行為、加重方法、重利結果、方法關聯、進度與證據來源分開設計。
+- 強暴、脅迫、恐嚇、侵入住宅、傷害、毀損、監控或相類方法只作外部事實整理，不由單一方法名稱直接產生法律結論。
+- 單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁；archive SHA-256：`45B601485DDBF5969AEF13224FE0CBECF6DAF452DA640C417699986D7062642A`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；fraud parent 的 substantive child routes 已完成本輪列示範圍，343仍為程序分流。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—重利第344條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`fraud_344_usury`；分開設計急迫／輕率／無經驗／難以求助處境、貸與、顯不相當重利、借貸相關費用、交易脈絡、進度與證據來源。
+- 詐欺、侵占、背信與加重重利只作相鄰比較；第343條程序路線未混入犯罪構成要件題組。
+- 單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁；archive SHA-256：`4EC2D21FB275073F1F2289A4088ED0FA6F9765C4E20915B7027D371B9C677F92`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 為 `fraud_344_1_aggravated_usury`，仍須逐一路由審核。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—背信第342條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`fraud_342_breach_of_trust`；分開設計為他人處理事務關係、任務界線、違背行為、利益／損害目的、損害結果、進度與證據來源。
+- 詐欺、侵占、竊盜與重利只作相鄰比較；第343條程序路線未混入犯罪構成要件題組。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；exact重複：內部0、既有來源0。
+- LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁；archive與工作單SHA-256一致：`B35F380B91E4486C963F17FCE91C74F26FD7AE58787FECD52DAC1E8935FB8C63`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 crosswalk child route 是程序路線 `fraud_343_property_family_rules`，不進犯罪構成要件製作 loop。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—乘機詐欺第341條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`fraud_341_exploitation`；以客觀脆弱處境、利用關聯、財產處分、意圖、進度與證據來源分開設計八個 concepts。
+- 第339條一般詐欺、第339條之1至之3只作相鄰比較；不混入設備、電腦、背信、重利或程序路線。
+- C02不由年齡、認知描述或單一說法直接產生ACTIVE；C03另確認利用與財產處分的外部因果脈絡。獨立 Sol 工具面不可用，身份維持 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁。
+- exact重複：內部0、既有來源0；archive與工作單SHA-256一致：`C57994B67CB7BFDC6753E8BAB2EE80FF4B0125C23500F4E6349E31787E1CC89A`。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 controller 鎖定 child route：`fraud_342_breach_of_trust`。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—一般詐欺第339條
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`fraud_339_general`；設備、電腦、加重、乘機、背信、重利及第343條程序路線未納入。
+- 8 concepts 分開確認詐術、錯誤、財產處分、損害流向、不法所有意圖、行為進度與證據來源；不以不履約、付款或損害單獨推定詐欺。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與未列入 scope 的相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed；Node前端：31 passed；JavaScript syntax：PASS。
+- exact重複：內部0、既有來源0；LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁。
+- `/api/health`：HTTP 200。
+- 歸檔SHA-256：`192C5D75860732C03B40F0E576461260E4C7E689E13DCB71D2C64316FAC05034`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；設備／電腦／加重等 route 必須逐一由 controller 鎖定，不批次展開。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—收費設備詐欺第339條之1
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`fraud_339_1_charge_device`；一般詐欺、電腦詐欺、加重詐欺、乘機詐欺、背信、重利及第343條程序路線未混入。
+- C02與C03分開確認收費設備不正操作及取得財物或不法利益；其餘概念保留結果、流向、意圖、進度與證據來源的人工審核邊界。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed；Node前端：31 passed；JavaScript syntax：PASS。
+- exact重複：內部0、既有來源0；LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁。
+- 歸檔SHA-256：`5C804989A49803C5071FEA2D5A62EBC244433725FAA0B23E0F2FD163F8743422`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；電腦、加重、乘機、背信、重利及程序路線必須逐一由 controller 鎖定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—電腦詐欺第339條之3
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`fraud_339_3_computer`；一般詐欺、收費設備、自動付款設備、加重詐欺、乘機詐欺、背信、重利及第343條程序路線未混入。
+- C02與C03分開確認輸入虛偽資料或不正指令及取得財物或不法利益；其餘概念保留系統影響、流向、意圖、進度與證據來源的人工審核邊界。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed；Node前端：31 passed；JavaScript syntax：PASS。
+- exact重複：內部0、既有來源0；LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁。
+- `/api/health`：HTTP 200。
+- 歸檔SHA-256：`4E2BF050E961EAA5AFF854DADD913502DE50C0FCA744FA502615843C987CF531`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；加重、乘機、背信、重利及程序路線必須逐一由 controller 鎖定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—加重詐欺第339條之4
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`fraud_339_4_aggravated`；一般詐欺及第339條之1至之3、乘機詐欺、背信、重利與第343條程序路線分開處理。
+- C02確認第339條之4列舉加重態樣，C03另確認第339條基礎詐欺行為；加重態樣不能取代基礎行為。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed；Node前端：31 passed；JavaScript syntax：PASS。
+- exact重複：內部0、既有來源0；LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁。
+- 歸檔SHA-256：`17A029B78682F6271EDC98269C505F434C2DC6665058D7BAFD8546045A76ED73`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；乘機、背信、重利及程序路線必須逐一由 controller 鎖定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`
+
+## 2026-10-27：財產罪橫向驗收—自動付款設備詐欺第339條之2
+
+execution_mode: `REVIEWED_PIPELINE`
+agent_mode: `SINGLE_AGENT_MODE / independent model identity UNVERIFIED`
+triggers: `S3`、`S4`
+
+### DESIGN / REVIEW
+
+- 目標：`fraud_339_2_payment_device`；一般詐欺、收費設備詐欺、電腦詐欺、加重詐欺、乘機詐欺、背信、重利及第343條程序路線未混入。
+- C02與C03分開確認自動付款設備不正操作及取得財物或不法利益；其餘概念保留結果、流向、意圖、進度與證據來源的人工審核邊界。
+- 所有單題不產生 `ACTIVE` 或 `EXCLUDED`；`UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。本 route 未使用獨立 Sol 工具面，保留 `UNVERIFIED`。
+
+### TEST / ARCHIVE
+
+- 契約與 offense linkage：15 passed；Full pytest：630 passed；Node前端：31 passed；JavaScript syntax：PASS。
+- exact重複：內部0、既有來源0；LibreOffice 20題：victim 2頁、suspect 3頁、transfer 3頁。
+- `/api/health`：HTTP 200。
+- 歸檔SHA-256：`0B97EE3F02CC09F5F6A09DE16B271C4CFC7EE2D5667E9643FDD9645FE0329DDF`，與工作單逐位元一致。
+
+### DEPLOY / MAINTAIN
+
+- `SKIPPED_WITH_REASON`：未修改runtime、未部署、條陳格式設定仍暫停、未取代個案 `CASE_HUMAN_GATE`。
+- 下一個 child route 尚未選定；電腦、加重、乘機、背信、重利及程序路線必須逐一由 controller 鎖定。
+- final_status：`COMPLETE / REVIEWED_PIPELINE_UNVERIFIED`

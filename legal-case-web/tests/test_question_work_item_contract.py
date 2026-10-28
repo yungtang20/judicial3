@@ -280,9 +280,15 @@ def test_reference_standard_and_canonical_rules_do_not_drift():
     assert "最多使用八個 question concepts" in rules
     assert "next_route: NOT_AUTHORIZED" in work_item
     assert "next_route: WAITING_FOR_EXPLICIT_SELECTION" not in work_item
-    assert "current_target: NONE_SELECTED" in queue
-    if "submission_status: READY_FOR_REVIEW" in work_item:
-        raise AssertionError("No work item may be READY_FOR_REVIEW while no queue target is selected")
+    selected = re.search(r"^current_target:\s*([^\s]+)", queue, re.MULTILINE)
+    assert selected, "Queue missing current_target"
+    if selected.group(1) == "NONE_SELECTED":
+        if "submission_status: READY_FOR_REVIEW" in work_item:
+            raise AssertionError("No work item may be READY_FOR_REVIEW while no queue target is selected")
+    else:
+        assert selected.group(1) == target_route, (
+            f"Active work item {target_route} does not match queue target {selected.group(1)}"
+        )
 
 
 def test_reviewer_decision_binds_the_canonical_submission_only():

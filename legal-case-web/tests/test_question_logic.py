@@ -19,7 +19,11 @@ from app.questions import (
 )
 from app.question_hygiene import normalize as normalize_question_text, semantic_key
 from app.rules import build_questions
-from app.section_questions import read_section_questions
+from app.section_questions import (
+    QUESTION_LAYER_CONTRACT_VERSION,
+    build_question_layer_coverage,
+    read_section_questions,
+)
 
 from tests.helpers import BANK
 
@@ -33,6 +37,7 @@ def _sample_questions() -> list[dict]:
         {"id": "V-theft-R-1", "text": "補強題", "kind": "reinforce", "section": "reinforce", "offense_id": "theft", "priority": 3},
         {"id": "V-theft-D-1", "text": "區分題", "kind": "distinguishing", "section": "distinguishing", "offense_id": "theft", "priority": 4},
         {"id": "V-theft-A-1", "text": "加重題", "kind": "aggravating", "section": "aggravating", "offense_id": "theft", "priority": 5},
+        {"id": "V-theft-J-1", "text": "判決爭點題", "kind": "precedent", "section": "precedent", "offense_id": "theft", "priority": 6},
     ]
 
 
@@ -61,6 +66,47 @@ def test_markdown_parser_preserves_parent_role_scope(tmp_path):
     assert {item["id"] for item in sections["victim"]["reinforce"]} == {"X-R-01"}
     assert sections["suspect"]["reinforce"] == []
     assert sections["transfer"]["reinforce"] == []
+
+
+def test_markdown_parser_loads_precedent_section_after_aggravating(tmp_path):
+    question_file = tmp_path / "precedent.md"
+    question_file.write_text(
+        "# 測試題庫\n"
+        "## 被害人端\n"
+        "### 加重問句\n"
+        "- **X-A-01**：請說明加重情形。\n"
+        "### 判決爭點問句\n"
+        "- **X-J-01**：依某判決意旨，請說明相關事實。\n",
+        encoding="utf-8",
+    )
+    sections = read_section_questions(question_file)
+    assert {item["id"] for item in sections["victim"]["aggravating"]} == {"X-A-01"}
+    assert {item["id"] for item in sections["victim"]["precedent"]} == {"X-J-01"}
+
+
+def test_all_loaded_offenses_expose_question_layer_contract():
+    contract = BANK["question_layer_contract"]
+    assert contract["contract_version"] == QUESTION_LAYER_CONTRACT_VERSION
+    assert contract["layer_order"] == [
+        "core", "evidence_gap", "reinforce", "distinguishing", "aggravating", "precedent",
+    ]
+    assert set(contract["offenses"]) == {item["id"] for item in BANK["offenses"]}
+    for item in contract["offenses"].values():
+        assert item["human_review_required"] is True
+        assert item["layers"]["core"]["question_count"] > 0
+        assert item["layers"]["precedent"]["status"] in {"READY", "NOT_PROVIDED"}
+
+
+def test_question_layer_coverage_does_not_fabricate_missing_precedents():
+    coverage = build_question_layer_coverage([{
+        "id": "sample",
+        "question_source": "sample.md",
+        "section_questions": {"victim": {layer: [] for layer in (
+            "core", "evidence_gap", "reinforce", "distinguishing", "aggravating", "precedent",
+        )}},
+    }])
+    assert coverage["offenses"]["sample"]["layers"]["precedent"]["status"] == "NOT_PROVIDED"
+    assert coverage["offenses"]["sample"]["layers"]["precedent"]["question_count"] == 0
 
 
 def test_markdown_parser_keeps_witness_review_only(tmp_path):
@@ -209,6 +255,49 @@ def test_apply_question_budget_protects_core_and_company():
     assert any(q["kind"] == "company" for q in pruned)
 
 
+def test_confirmed_case_uses_compact_twenty_question_total_budget():
+    questions = build_questions(
+        BANK,
+        "victim",
+        ["theft"],
+        gate1={
+            "summary": "甲在店內發現錢包遺失，後有人使用卡片提領款項。",
+            "events": ["錢包遺失", "未經同意提領"],
+            "facts": [{"fact_key": "action", "value": "提領"}],
+        },
+    )
+    assert len(questions) <= 20
+    offense_questions = [
+        item for item in questions if item["kind"] not in {"common", "company"}
+    ]
+    assert any(item["kind"] == "core" for item in offense_questions)
+
+
+def test_compact_property_flow_appends_precedent_questions_last():
+    questions = build_questions(
+        BANK,
+        "victim",
+        ["theft", "robbery"],
+        gate1={
+            "summary": "行為人趁被害人不注意拿走包包，離開前發生拉扯。",
+            "events": ["拿走包包", "拉扯"],
+            "facts": [
+                {"fact_key": "action", "value": "拿走"},
+                {"fact_key": "object", "value": "包包"},
+            ],
+        },
+    )
+    offense_questions = [
+        item for item in questions if item["kind"] not in {"common", "company"}
+    ]
+    precedent = [item for item in offense_questions if item["kind"] == "precedent"]
+    assert len(precedent) >= 2
+    assert all(item["meta"]["human_review_required"] for item in precedent)
+    assert all(item["meta"]["purpose"] == "確認判決或函示爭點事實" for item in precedent)
+    last_precedent_index = max(i for i, item in enumerate(offense_questions) if item["kind"] == "precedent")
+    assert all(item["kind"] == "precedent" for item in offense_questions[last_precedent_index:])
+
+
 def test_budget_fails_closed_when_required_questions_exceed_limit():
     """必要 core／company_offense 超額時必須縮小路由，不得裁核心。"""
     questions = []
@@ -300,8 +389,10 @@ def test_semantic_key_collapses_known_fixed_template_overlaps():
     assert by_key["procedure:service-address"] == "V-COM-004B"
     assert by_key["fact:drug-weapon"] == "V-sexual-Z1-C-08"
     assert by_key["fact:profit-purpose-resources"] == "V-privacy-Q-C-11"
-    assert by_key["procedure:complaint-confirmation"] == "V-sexual-Z1-D-15"
+    # 告訴、民事與和解已由公司通用固定題完整涵蓋；罪名底下的同義延伸題
+    # 不應因舊測試期待而重新加入，避免再次形成重複問句。
     assert by_key["procedure:complaint-and-civil-claim"] == "COMPANY-V-06"
+    assert by_key["procedure:complaint-confirmation"] == "V-sexual-Z1-D-15"
     assert by_key["fact:prior-relationship"] == "COMPANY-V-04"
     assert by_key["evidence:scene-and-investigation-support"] == "COMPANY-V-05"
     assert by_key["procedure:final-confirmation"] == "COMPANY-V-07"
@@ -695,10 +786,11 @@ def test_exact_theft_route_materializes_approved_pack_and_only_replaces_allowlis
         q["meta"]["fact_target"] for q in questions
         if q.get("meta", {}).get("mapping_version") == "property-taking-v1"
     }
-    assert legacy == {
+    assert legacy <= {
         "prior_lawful_possession",
         "stated_use_or_return_plan", "evidence",
     }
+    assert len(questions) <= 20
     assert {q["kind"] for q in questions if q["kind"] in {"company", "common"}} == {"company", "common"}
     coverage = build_questions.question_coverage_by_route["routes"]["theft_320_1_movable"]
     assert coverage["materialization_status"] == "COMPLETE"

@@ -174,6 +174,87 @@ class RevisionStore:
                     artifact_name TEXT NOT NULL,
                     created_at TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS case_party(
+                    case_id TEXT NOT NULL,
+                    revision INTEGER NOT NULL,
+                    party_id TEXT NOT NULL,
+                    display_name TEXT NOT NULL,
+                    role TEXT NOT NULL,
+                    identity_status TEXT NOT NULL,
+                    source TEXT NOT NULL,
+                    PRIMARY KEY(case_id, revision, party_id),
+                    FOREIGN KEY(case_id, revision) REFERENCES case_revision(case_id, revision)
+                );
+                CREATE TABLE IF NOT EXISTS behavior_event(
+                    case_id TEXT NOT NULL,
+                    revision INTEGER NOT NULL,
+                    event_id TEXT NOT NULL,
+                    sequence_no INTEGER NOT NULL,
+                    event_type TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    source TEXT NOT NULL,
+                    actor_party_id TEXT,
+                    PRIMARY KEY(case_id, revision, event_id),
+                    FOREIGN KEY(case_id, revision) REFERENCES case_revision(case_id, revision)
+                );
+                CREATE TABLE IF NOT EXISTS payment_event(
+                    case_id TEXT NOT NULL,
+                    revision INTEGER NOT NULL,
+                    payment_id TEXT NOT NULL,
+                    payer_party_id TEXT,
+                    payee_party_id TEXT,
+                    amount_text TEXT,
+                    channel TEXT,
+                    status TEXT NOT NULL,
+                    source TEXT NOT NULL,
+                    PRIMARY KEY(case_id, revision, payment_id),
+                    FOREIGN KEY(case_id, revision) REFERENCES case_revision(case_id, revision)
+                );
+                CREATE TABLE IF NOT EXISTS evidence_item(
+                    case_id TEXT NOT NULL,
+                    revision INTEGER NOT NULL,
+                    evidence_id TEXT NOT NULL,
+                    kind TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    source TEXT NOT NULL,
+                    sha256 TEXT,
+                    PRIMARY KEY(case_id, revision, evidence_id),
+                    FOREIGN KEY(case_id, revision) REFERENCES case_revision(case_id, revision)
+                );
+                CREATE TABLE IF NOT EXISTS fact_assertion(
+                    case_id TEXT NOT NULL,
+                    revision INTEGER NOT NULL,
+                    assertion_id TEXT NOT NULL,
+                    fact_id TEXT NOT NULL,
+                    party_id TEXT,
+                    statement_role TEXT NOT NULL,
+                    assertion_status TEXT NOT NULL,
+                    value_text TEXT NOT NULL,
+                    source TEXT NOT NULL,
+                    PRIMARY KEY(case_id, revision, assertion_id),
+                    FOREIGN KEY(case_id, revision) REFERENCES case_revision(case_id, revision)
+                );
+                CREATE TABLE IF NOT EXISTS fact_evidence_link(
+                    case_id TEXT NOT NULL,
+                    revision INTEGER NOT NULL,
+                    fact_id TEXT NOT NULL,
+                    evidence_id TEXT NOT NULL,
+                    relation TEXT NOT NULL,
+                    PRIMARY KEY(case_id, revision, fact_id, evidence_id),
+                    FOREIGN KEY(case_id, revision) REFERENCES case_revision(case_id, revision)
+                );
+                CREATE TABLE IF NOT EXISTS interview_session(
+                    case_id TEXT NOT NULL,
+                    revision INTEGER NOT NULL,
+                    session_id TEXT NOT NULL,
+                    role TEXT NOT NULL,
+                    party_id TEXT,
+                    status TEXT NOT NULL,
+                    PRIMARY KEY(case_id, revision, session_id),
+                    FOREIGN KEY(case_id, revision) REFERENCES case_revision(case_id, revision)
+                );
                 """
             )
             gap_columns = {row[1] for row in db.execute("PRAGMA table_info(element_gap)")}
@@ -198,6 +279,24 @@ class RevisionStore:
                     DROP TABLE element_gap_legacy;
                     """
                 )
+            self._ensure_case_fact_foreign_key(db)
+            db.executescript(
+                """
+                CREATE INDEX IF NOT EXISTS idx_case_revision_case ON case_revision(case_id, revision);
+                CREATE INDEX IF NOT EXISTS idx_case_fact_lookup ON case_fact(case_id, revision, category);
+                CREATE INDEX IF NOT EXISTS idx_candidate_lookup ON case_candidate(case_id, revision, status);
+                CREATE INDEX IF NOT EXISTS idx_question_item_lookup ON question_item(case_id, revision, question_id);
+                CREATE INDEX IF NOT EXISTS idx_answer_lookup ON case_answer(case_id, revision, role);
+                CREATE INDEX IF NOT EXISTS idx_evidence_lookup ON evidence_item(case_id, revision, status);
+                CREATE INDEX IF NOT EXISTS idx_behavior_sequence ON behavior_event(case_id, revision, sequence_no);
+                CREATE TRIGGER IF NOT EXISTS case_revision_immutable_update
+                BEFORE UPDATE ON case_revision
+                BEGIN SELECT RAISE(ABORT, 'case_revision is immutable'); END;
+                CREATE TRIGGER IF NOT EXISTS case_revision_immutable_delete
+                BEFORE DELETE ON case_revision
+                BEGIN SELECT RAISE(ABORT, 'case_revision is immutable'); END;
+                """
+            )
         with self._audit_connect() as audit:
             audit.execute(
                 """
@@ -212,6 +311,34 @@ class RevisionStore:
                 )
                 """
             )
+
+    def _ensure_case_fact_foreign_key(self, db: sqlite3.Connection) -> None:
+        """Upgrade the original table in place while preserving existing rows."""
+        foreign_keys = list(db.execute("PRAGMA foreign_key_list(case_fact)"))
+        if foreign_keys:
+            return
+        db.execute("ALTER TABLE case_fact RENAME TO case_fact_legacy")
+        db.executescript(
+            """
+            CREATE TABLE case_fact(
+                case_id TEXT NOT NULL,
+                revision INTEGER NOT NULL,
+                fact_id TEXT NOT NULL,
+                category TEXT NOT NULL,
+                value_text TEXT NOT NULL,
+                provenance TEXT NOT NULL,
+                status TEXT NOT NULL CHECK(status <> ''),
+                confidence REAL,
+                PRIMARY KEY(case_id, revision, fact_id),
+                FOREIGN KEY(case_id, revision) REFERENCES case_revision(case_id, revision)
+            );
+            INSERT INTO case_fact
+                (case_id,revision,fact_id,category,value_text,provenance,status,confidence)
+            SELECT case_id,revision,fact_id,category,value_text,provenance,status,confidence
+            FROM case_fact_legacy;
+            DROP TABLE case_fact_legacy;
+            """
+        )
 
     def list_cases(self) -> list[dict[str, Any]]:
         with self._connect() as db:
@@ -337,6 +464,58 @@ class RevisionStore:
                 "INSERT INTO case_fact VALUES(?,?,?,?,?,?,?,?)",
                 (case["case_id"], case["revision"], fact["fact_id"], fact["category"],
                  str(fact["value"]), fact["provenance"], fact["status"], fact.get("confidence")),
+            )
+        for party in case.get("parties", []):
+            db.execute(
+                "INSERT INTO case_party VALUES(?,?,?,?,?,?,?)",
+                (case["case_id"], case["revision"], party["party_id"],
+                 str(party.get("display_name", "")), party.get("role", "UNKNOWN"),
+                 party.get("identity_status", "UNKNOWN"), party.get("source", "SYSTEM")),
+            )
+        for event in case.get("behavior_events", []):
+            db.execute(
+                "INSERT INTO behavior_event VALUES(?,?,?,?,?,?,?,?,?)",
+                (case["case_id"], case["revision"], event["event_id"],
+                 int(event.get("sequence", 0)), event.get("event_type", "UNKNOWN"),
+                 str(event.get("description", "")), event.get("status", "UNKNOWN"),
+                 event.get("source", "SYSTEM"), event.get("actor_party_id")),
+            )
+        for payment in case.get("payment_events", []):
+            db.execute(
+                "INSERT INTO payment_event VALUES(?,?,?,?,?,?,?,?,?)",
+                (case["case_id"], case["revision"], payment["payment_id"],
+                 payment.get("payer_party_id"), payment.get("payee_party_id"),
+                 payment.get("amount_text"), payment.get("channel"),
+                 payment.get("status", "UNKNOWN"), payment.get("source", "SYSTEM")),
+            )
+        for evidence in case.get("evidence_items", []):
+            db.execute(
+                "INSERT INTO evidence_item VALUES(?,?,?,?,?,?,?,?)",
+                (case["case_id"], case["revision"], evidence["evidence_id"],
+                 evidence.get("kind", "UNSPECIFIED"), str(evidence.get("description", "")),
+                 evidence.get("status", "UNKNOWN"), evidence.get("source", "SYSTEM"),
+                 evidence.get("sha256")),
+            )
+        for assertion in case.get("fact_assertions", []):
+            db.execute(
+                "INSERT INTO fact_assertion VALUES(?,?,?,?,?,?,?,?,?)",
+                (case["case_id"], case["revision"], assertion["assertion_id"],
+                 assertion["fact_id"], assertion.get("party_id"),
+                 assertion.get("statement_role", "UNKNOWN"),
+                 assertion.get("assertion_status", "UNKNOWN"),
+                 str(assertion.get("value", "")), assertion.get("source", "SYSTEM")),
+            )
+        for link in case.get("fact_evidence_links", []):
+            db.execute(
+                "INSERT INTO fact_evidence_link VALUES(?,?,?,?,?)",
+                (case["case_id"], case["revision"], link["fact_id"],
+                 link["evidence_id"], link.get("relation", "UNKNOWN")),
+            )
+        for session in case.get("interview_sessions", []):
+            db.execute(
+                "INSERT INTO interview_session VALUES(?,?,?,?,?,?)",
+                (case["case_id"], case["revision"], session["session_id"],
+                 session["role"], session.get("party_id"), session.get("status", "OPEN")),
             )
         for candidate in case.get("candidates", []):
             db.execute(

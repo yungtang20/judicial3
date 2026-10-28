@@ -76,6 +76,12 @@ def normalize_article(article_no: str) -> str:
 def _parse_date(value: Any) -> date | None:
     if not isinstance(value, str) or not value.strip():
         return None
+    roc = re.search(r"(?:民國\s*)?(\d{2,3})年\s*(\d{1,2})月\s*(\d{1,2})日", value)
+    if roc:
+        try:
+            return date(int(roc.group(1)) + 1911, int(roc.group(2)), int(roc.group(3)))
+        except ValueError:
+            return None
     try:
         return date.fromisoformat(value.strip()[:10])
     except ValueError:

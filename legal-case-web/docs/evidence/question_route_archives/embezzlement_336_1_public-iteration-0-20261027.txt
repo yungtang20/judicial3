@@ -1,0 +1,368 @@
+<!-- SUBMISSION_START -->
+
+```yaml
+document_status: DESIGN_DRAFT
+runtime_enabled: false
+review_status: CODEX_REVIEWED
+submission_status: REVIEW_PASS
+handoff_status: CODEX_ROUTE_REVIEW_COMPLETE
+last_completed_section: O
+resume_from_section: ARCHIVE_AND_SELECT_NEXT_ROUTE
+current_blockers: []
+designer_role: TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT
+author_role: TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT
+question_ruleset_version: question-rules-v2-draft
+ruleset_status: QUESTION_DESIGN_ACCEPTED
+ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+runtime_ruleset_status: UNCHANGED_RUNTIME
+task_type: AUTHOR_ROUTE_QUESTIONS
+queue_no: 3
+target_route_id: embezzlement
+target_child_route_id: embezzlement_336_1_public
+target_interview_roles: [victim, suspect, transfer, witness_review_only]
+iteration: 0
+allowed_output: WORK_ITEM_FILE_ONLY
+allowed_write_path: docs/QUESTION_WORK_ITEM.md
+automatic_advance: false
+next_route: NOT_AUTHORIZED
+```
+
+## A. 工作單 Metadata 與法源
+
+```yaml
+artifact_type: CHILD_ROUTE_WORK_ITEM
+iteration: 0
+execution_mode: REVIEWED_PIPELINE
+runtime_enabled: false
+review_status: CODEX_REVIEWED
+submission_status: REVIEW_PASS
+primary_route: embezzlement
+primary_child_route: embezzlement_336_1_public
+parent_route_status: PARTIAL_SCOPE
+child_count_in_crosswalk: 5
+question_concept_count: 8
+question_concept_budget: 8
+case_selection_budget: 3-5 core concepts
+evidence_followup_budget: max 2
+output_page_budget: 8
+case_human_gate: REQUIRED
+user_final_acceptance: PENDING
+```
+
+官方來源查詢卡：
+
+| 欄位 | 結果 |
+|---|---|
+| 問句 | 2026-10-27 台灣，中華民國刑法第10條第2項、第335條及第336條現行內容 |
+| 證據 | 法務部全國法規資料庫，中華民國刑法，修正日期民國115年7月22日，查詢日2026-10-27 |
+| URL | https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001 |
+| 痕跡 | 第10條第2項公務員定義；第335條基礎侵占；第336條第1項公務或公益持有、第3項未遂 |
+| 行為時法 | UNKNOWN；實際案件日期未提供，須由承辦人逐案調閱 |
+
+本工作單不把公務員身分、公益關係、帳款短少或物品未返還直接等同犯罪成立。
+
+## B. Route Scope
+
+```yaml
+route_scope:
+  primary_route: embezzlement_336_1_public
+  allowed_comparison_routes:
+    - embezzlement_335_general
+    - embezzlement_336_2_business
+    - theft_320_1_movable
+    - embezzlement_337_lost_property
+  allowed_alternative_routes:
+    - civil_possession_dispute
+```
+
+公務員圖利、貪污治罪條例、背信或其他未列 route 只能標記 `ROUTE_SCOPE_EXPANSION_REQUIRED`，不得靜默加入候選。
+
+## C. Elements 與雙鏈結
+
+| element_id | 中性事實目標 | 法律定位 | Human Gate |
+|---|---|---|---|
+| EMBP-E01 | 特定物、所有與實際持有 | 第335條基礎客觀前提 | REQUIRED |
+| EMBP-E02 | 最初取得持有的方式 | 區分侵占、竊盜與離本人持有物 | REQUIRED |
+| EMBP-E03 | 使用、處分與返還權限 | 區分越權處置及民事爭議 | REQUIRED |
+| EMBP-E04 | 行為時身分、任用／委託依據、法定職權及實際職掌 | 第10條第2項及第336條第1項身分方向 | REQUIRED |
+| EMBP-E05 | 該物與具體公務或具體公益事務的持有關聯 | 第336條第1項兩條互斥證據路徑 | REQUIRED |
+| EMBP-E06 | 取得後處置、控制移轉、返還可能性及時間序列 | 第335條基礎行為之外部事實 | REQUIRED |
+| EMBP-E07 | 主張的授權、命令、返還、留置或其他依據 | 不法所有意圖之外部資料 | REQUIRED |
+
+## D. 相鄰路由矩陣
+
+| 觀察組合 | 336(1) | 335 | 336(2) | 320(1) | 337 |
+|---|---|---|---|---|---|
+| 私人一般關係持有 | LOWERED | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+| 工作關係持有但無公務／公益來源 | LOWERED | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+| 有法定職務或公益受託，但該物與其無關 | LOWERED | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+| 該物因公務或公益原因交由行為人持有 | NEED_REVIEW | NEED_REVIEW | LOWERED | LOWERED | LOWERED |
+| 物品來源、身分或持有關聯衝突 | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+
+任一單一觀察都不足以產生 `ACTIVE` 或法律結論。
+
+## E. 問句方法
+
+- C03、C04、C07優先引用既有 `prior_lawful_custody`、`authorization_scope_status`、`post_acquisition_conduct`，只在缺漏或衝突時追問。
+- C05只查行為時身分、任用／委託、法定職權與實際職掌；C06另查該物與公務／公益的持有關聯，不得由同一答案同時滿足。
+- 「公益」只記錄具體受託目的、委託人、規範與執行內容，不由受詢問人作抽象法律判斷。
+- 所有 `UNKNOWN`、`CONFLICT` 與替代方向維持 `NEED_REVIEW`。
+
+## F. STANDARD_SET
+
+<!-- STANDARD_SET_START -->
+```json
+[
+  {
+    "question_concept_id": "EMB3361-C01", "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT", "question_phase": "narrative", "parent_question_id": null,
+    "fact_target": "event_narrative", "distinction_axis": "不預設公務公益侵占的自由敘述", "answer_mode": "narrative_only", "answer_map": null,
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {"victim": "請依時間順序說明這件物品如何交付、由誰保管，以及後來發生了什麼事。", "suspect": "請依時間順序說明你如何接觸或持有這件物品，以及後來如何處理。", "transfer": "請依卷內可核對資料，按時間順序整理物品的交付、持有與後續處置。", "witness_review_only": "請依時間順序說明你親自看到或聽到的交付、持有與後續處置。"},
+    "legal_targets": ["embezzlement_336_1_public", "embezzlement_335_general", "embezzlement_336_2_business", "theft_320_1_movable", "embezzlement_337_lost_property"], "legal_target_details": [], "alternative_target_details": [],
+    "source_basis": "刑法第335條、第336條第1項的中性事實入口", "rationale": "先取得完整時間線，不以身分或罪名引導。", "trigger_condition": "candidate:embezzlement_336_1_public:present", "existing_question_refs": ["EMB-N-01"], "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT", "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "EMB3361-C02", "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT", "question_phase": "single_fact", "parent_question_id": "EMB3361-C01",
+    "fact_target": "object_status", "distinction_axis": "特定物及權利歸屬", "answer_mode": "enum", "answer_codes": ["OTHER_OWNED_OBJECT", "OWN_OBJECT", "OWNERSHIP_DISPUTED", "OBJECT_UNIDENTIFIED"],
+    "answer_map": {"OTHER_OWNED_OBJECT": "OTHER_OWNED_OBJECT", "OWN_OBJECT": "OWN_OBJECT", "OWNERSHIP_DISPUTED": "OWNERSHIP_DISPUTED", "OBJECT_UNIDENTIFIED": "OBJECT_UNIDENTIFIED", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {"victim": "本案所指的是哪一件具體物品？請說明可辨識特徵及你主張權利的依據。", "suspect": "本案所指的是哪一件具體物品？請說明可辨識特徵及你所知的權利歸屬。", "transfer": "哪些資料可識別本案物品及各方主張的權利歸屬？", "witness_review_only": "你親自看到的是哪一件具體物品？你親自見聞哪些與權利歸屬有關的事實？"},
+    "legal_targets": ["embezzlement_336_1_public", "embezzlement_335_general", "embezzlement_336_2_business"],
+    "legal_target_details": [
+      {"route_id": "embezzlement_336_1_public", "effects": {"OTHER_OWNED_OBJECT": "NEED_REVIEW", "OWN_OBJECT": "LOWERED", "OWNERSHIP_DISPUTED": "NEED_REVIEW", "OBJECT_UNIDENTIFIED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_335_general", "effects": {"OTHER_OWNED_OBJECT": "NEED_REVIEW", "OWN_OBJECT": "LOWERED", "OWNERSHIP_DISPUTED": "NEED_REVIEW", "OBJECT_UNIDENTIFIED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_336_2_business", "effects": {"OTHER_OWNED_OBJECT": "NEED_REVIEW", "OWN_OBJECT": "LOWERED", "OWNERSHIP_DISPUTED": "NEED_REVIEW", "OBJECT_UNIDENTIFIED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ], "alternative_target_details": [],
+    "source_basis": "刑法第335條第1項及第336條第1項", "rationale": "先固定特定物與權利資料。", "trigger_condition": "after:EMB3361-C01 && fact:object_status:UNKNOWN && candidate:embezzlement_336_1_public:present", "existing_question_refs": ["EMB335-C02"], "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT", "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "EMB3361-C03", "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT", "question_phase": "single_fact", "parent_question_id": "EMB3361-C01",
+    "fact_target": "prior_lawful_custody", "distinction_axis": "先合法持有或自他人控制下取走", "answer_mode": "enum", "answer_codes": ["LAWFUL_DELIVERY", "OFFICIAL_OR_PUBLIC_DELIVERY", "BUSINESS_DELIVERY", "NO_PRIOR_CONTROL"],
+    "answer_map": {"LAWFUL_DELIVERY": "LAWFUL_DELIVERY", "OFFICIAL_OR_PUBLIC_DELIVERY": "OFFICIAL_OR_PUBLIC_DELIVERY", "BUSINESS_DELIVERY": "BUSINESS_DELIVERY", "NO_PRIOR_CONTROL": "NO_PRIOR_CONTROL", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {"victim": "既有資料未能確認時，請說明對方最初在何時、以何種方式取得這件物品的實際控制。", "suspect": "既有資料未能確認時，請說明你最初在何時、以何種方式取得這件物品的實際控制。", "transfer": "既有資料未能確認時，哪些交付、保管或取走資料可確認最初控制來源？", "witness_review_only": "既有資料未能確認時，請說明你親自看到物品最初如何交付或被取走。"},
+    "legal_targets": ["embezzlement_336_1_public", "embezzlement_335_general", "embezzlement_336_2_business", "theft_320_1_movable", "embezzlement_337_lost_property"],
+    "legal_target_details": [
+      {"route_id": "embezzlement_336_1_public", "effects": {"LAWFUL_DELIVERY": "NEED_REVIEW", "OFFICIAL_OR_PUBLIC_DELIVERY": "NEED_REVIEW", "BUSINESS_DELIVERY": "NEED_REVIEW", "NO_PRIOR_CONTROL": "LOWERED", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_335_general", "effects": {"LAWFUL_DELIVERY": "NEED_REVIEW", "OFFICIAL_OR_PUBLIC_DELIVERY": "NEED_REVIEW", "BUSINESS_DELIVERY": "NEED_REVIEW", "NO_PRIOR_CONTROL": "LOWERED", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_336_2_business", "effects": {"LAWFUL_DELIVERY": "NEED_REVIEW", "OFFICIAL_OR_PUBLIC_DELIVERY": "NEED_REVIEW", "BUSINESS_DELIVERY": "NEED_REVIEW", "NO_PRIOR_CONTROL": "LOWERED", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "theft_320_1_movable", "effects": {"LAWFUL_DELIVERY": "LOWERED", "OFFICIAL_OR_PUBLIC_DELIVERY": "LOWERED", "BUSINESS_DELIVERY": "LOWERED", "NO_PRIOR_CONTROL": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_337_lost_property", "effects": {"LAWFUL_DELIVERY": "LOWERED", "OFFICIAL_OR_PUBLIC_DELIVERY": "LOWERED", "BUSINESS_DELIVERY": "LOWERED", "NO_PRIOR_CONTROL": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ], "alternative_target_details": [],
+    "source_basis": "刑法第335條、第336條與第320條、第337條的持有來源區分", "rationale": "只在既有欄位缺漏時追問。", "trigger_condition": "after:EMB3361-C01 && fact:prior_lawful_custody:UNKNOWN && candidate:embezzlement_336_1_public:present", "existing_question_refs": ["THF3201MOV-C02", "EMB335-C03"], "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT", "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "EMB3361-C04", "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT", "question_phase": "single_fact", "parent_question_id": "EMB3361-C01",
+    "fact_target": "authorization_scope_status", "distinction_axis": "使用、處分及返還權限", "answer_mode": "enum", "answer_codes": ["WITHIN_SCOPE", "BEYOND_SCOPE", "NO_AGREED_SCOPE", "SCOPE_DISPUTED"],
+    "answer_map": {"WITHIN_SCOPE": "WITHIN_SCOPE", "BEYOND_SCOPE": "BEYOND_SCOPE", "NO_AGREED_SCOPE": "NO_AGREED_SCOPE", "SCOPE_DISPUTED": "SCOPE_DISPUTED", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {"victim": "既有資料未能確認時，交付這件物品時約定可如何使用、處分或返還？", "suspect": "既有資料未能確認時，你取得這件物品時所知的使用、處分或返還約定為何？", "transfer": "既有資料未能確認時，哪些規範、命令、契約或紀錄可確認使用、處分或返還範圍？", "witness_review_only": "既有資料未能確認時，你親自聽見或看到哪些使用、處分或返還約定？"},
+    "legal_targets": ["embezzlement_336_1_public", "embezzlement_335_general", "embezzlement_336_2_business"],
+    "legal_target_details": [
+      {"route_id": "embezzlement_336_1_public", "effects": {"WITHIN_SCOPE": "LOWERED", "BEYOND_SCOPE": "NEED_REVIEW", "NO_AGREED_SCOPE": "NEED_REVIEW", "SCOPE_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_335_general", "effects": {"WITHIN_SCOPE": "LOWERED", "BEYOND_SCOPE": "NEED_REVIEW", "NO_AGREED_SCOPE": "NEED_REVIEW", "SCOPE_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_336_2_business", "effects": {"WITHIN_SCOPE": "LOWERED", "BEYOND_SCOPE": "NEED_REVIEW", "NO_AGREED_SCOPE": "NEED_REVIEW", "SCOPE_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ],
+    "alternative_target_details": [{"route_id": "civil_possession_dispute", "effects": {"WITHIN_SCOPE": "NEED_REVIEW", "BEYOND_SCOPE": "NEED_REVIEW", "NO_AGREED_SCOPE": "NEED_REVIEW", "SCOPE_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false, "candidate_eligible": false, "routing_eligible": false, "question_generation_eligible": false, "template_activation_eligible": false, "effect_executable": false, "human_review_required": true}],
+    "source_basis": "刑法第335條、第336條第1項；權限事實供人工評價", "rationale": "不以逾期、短少或失聯直接推定侵占。", "trigger_condition": "after:EMB3361-C01 && fact:authorization_scope_status:UNKNOWN && candidate:embezzlement_336_1_public:present", "existing_question_refs": ["EMB335-C04"], "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT", "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "EMB3361-C05", "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT", "question_phase": "single_fact", "parent_question_id": "EMB3361-C01",
+    "fact_target": "public_role_source", "distinction_axis": "行為時身分、任用委託、法定職權與實際職掌", "answer_mode": "enum", "answer_codes": ["STATUTORY_PUBLIC_DUTY", "PUBLIC_AFFAIRS_DELEGATION", "OTHER_APPOINTMENT_OR_MANDATE", "PRIVATE_OR_BUSINESS_ONLY", "ROLE_DISPUTED"],
+    "answer_map": {"STATUTORY_PUBLIC_DUTY": "STATUTORY_PUBLIC_DUTY", "PUBLIC_AFFAIRS_DELEGATION": "PUBLIC_AFFAIRS_DELEGATION", "OTHER_APPOINTMENT_OR_MANDATE": "OTHER_APPOINTMENT_OR_MANDATE", "PRIVATE_OR_BUSINESS_ONLY": "PRIVATE_OR_BUSINESS_ONLY", "ROLE_DISPUTED": "ROLE_DISPUTED", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {"victim": "對方行為時的任用、委託或職務依據及實際職掌為何？", "suspect": "你行為時的任用、委託或職務依據及實際職掌為何？", "transfer": "哪些法令、任用、委託、組織或職務文件可確認行為時身分及實際職掌？", "witness_review_only": "你親自見聞哪些與當事人行為時身分及實際職掌有關的事實？"},
+    "legal_targets": ["embezzlement_336_1_public", "embezzlement_335_general", "embezzlement_336_2_business"],
+    "legal_target_details": [
+      {"route_id": "embezzlement_336_1_public", "effects": {"STATUTORY_PUBLIC_DUTY": "NEED_REVIEW", "PUBLIC_AFFAIRS_DELEGATION": "NEED_REVIEW", "OTHER_APPOINTMENT_OR_MANDATE": "NEED_REVIEW", "PRIVATE_OR_BUSINESS_ONLY": "LOWERED", "ROLE_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_335_general", "effects": {"STATUTORY_PUBLIC_DUTY": "NEED_REVIEW", "PUBLIC_AFFAIRS_DELEGATION": "NEED_REVIEW", "OTHER_APPOINTMENT_OR_MANDATE": "NEED_REVIEW", "PRIVATE_OR_BUSINESS_ONLY": "NEED_REVIEW", "ROLE_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_336_2_business", "effects": {"STATUTORY_PUBLIC_DUTY": "LOWERED", "PUBLIC_AFFAIRS_DELEGATION": "LOWERED", "OTHER_APPOINTMENT_OR_MANDATE": "NEED_REVIEW", "PRIVATE_OR_BUSINESS_ONLY": "NEED_REVIEW", "ROLE_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ], "alternative_target_details": [],
+    "source_basis": "刑法第10條第2項及第336條第1項", "rationale": "身分來源與持有關聯分題；身分本身不產生ACTIVE。", "trigger_condition": "after:EMB3361-C01 && fact:public_role_source:UNKNOWN && candidate:embezzlement_336_1_public:present", "existing_question_refs": [], "dedupe_action": "NEW_GAP", "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "EMB3361-C06", "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT", "question_phase": "single_fact", "parent_question_id": "EMB3361-C05", "depends_on_question_id": "EMB3361-C05",
+    "fact_target": "public_holding_nexus", "distinction_axis": "該特定物與具體公務或具體公益事務的互斥持有路徑", "answer_mode": "enum", "answer_codes": ["PUBLIC_DUTY_NEXUS", "PUBLIC_INTEREST_NEXUS", "INCIDENTAL_ACCESS_ONLY", "PRIVATE_OR_BUSINESS_NEXUS", "NEXUS_DISPUTED"],
+    "answer_map": {"PUBLIC_DUTY_NEXUS": "PUBLIC_DUTY_NEXUS", "PUBLIC_INTEREST_NEXUS": "PUBLIC_INTEREST_NEXUS", "INCIDENTAL_ACCESS_ONLY": "INCIDENTAL_ACCESS_ONLY", "PRIVATE_OR_BUSINESS_NEXUS": "PRIVATE_OR_BUSINESS_NEXUS", "NEXUS_DISPUTED": "NEXUS_DISPUTED", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {"victim": "這件物品基於哪一項具體公務或具體公益事務而交由對方持有？", "suspect": "這件物品基於哪一項具體公務或具體公益事務而由你持有？", "transfer": "哪些交付、帳冊、職掌、制度或委託資料可確認該物屬公務路徑或公益事務路徑？", "witness_review_only": "你親自見聞這件物品因哪一項具體公務或具體公益事務而交由當事人持有？"},
+    "legal_targets": ["embezzlement_336_1_public", "embezzlement_335_general", "embezzlement_336_2_business"],
+    "legal_target_details": [
+      {"route_id": "embezzlement_336_1_public", "effects": {"PUBLIC_DUTY_NEXUS": "NEED_REVIEW", "PUBLIC_INTEREST_NEXUS": "NEED_REVIEW", "INCIDENTAL_ACCESS_ONLY": "LOWERED", "PRIVATE_OR_BUSINESS_NEXUS": "LOWERED", "NEXUS_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_335_general", "effects": {"PUBLIC_DUTY_NEXUS": "NEED_REVIEW", "PUBLIC_INTEREST_NEXUS": "NEED_REVIEW", "INCIDENTAL_ACCESS_ONLY": "NEED_REVIEW", "PRIVATE_OR_BUSINESS_NEXUS": "NEED_REVIEW", "NEXUS_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_336_2_business", "effects": {"PUBLIC_DUTY_NEXUS": "LOWERED", "PUBLIC_INTEREST_NEXUS": "NEED_REVIEW", "INCIDENTAL_ACCESS_ONLY": "NEED_REVIEW", "PRIVATE_OR_BUSINESS_NEXUS": "NEED_REVIEW", "NEXUS_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ], "alternative_target_details": [],
+    "source_basis": "刑法第336條第1項之公務上或因公益所持有", "rationale": "另行確認物與職務／公益間的持有關聯。", "trigger_condition": "after:EMB3361-C05 && fact:public_holding_nexus:UNKNOWN && candidate:embezzlement_336_1_public:present", "existing_question_refs": [], "dedupe_action": "NEW_GAP", "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "EMB3361-C07", "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT", "question_phase": "single_fact", "parent_question_id": "EMB3361-C01",
+    "fact_target": "post_acquisition_conduct", "distinction_axis": "後續處置、控制移轉、返還可能性及時間序列", "answer_mode": "enum", "answer_codes": ["RETURNED_OR_AVAILABLE", "RETAINED_ONLY", "TRANSFERRED_OR_SOLD", "CONCEALED_OR_DESTROYED", "CONTROL_TRANSFER_NOT_COMPLETED"],
+    "answer_map": {"RETURNED_OR_AVAILABLE": "RETURNED_OR_AVAILABLE", "RETAINED_ONLY": "RETAINED_ONLY", "TRANSFERRED_OR_SOLD": "TRANSFERRED_OR_SOLD", "CONCEALED_OR_DESTROYED": "CONCEALED_OR_DESTROYED", "CONTROL_TRANSFER_NOT_COMPLETED": "CONTROL_TRANSFER_NOT_COMPLETED", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {"victim": "既有資料未能確認時，請按時間說明物品取得後曾被返還、保留、移轉、出售、隱藏或毀損的具體動作。", "suspect": "既有資料未能確認時，請按時間說明你取得物品後曾做的返還、保留、移轉、出售、隱藏或毀損動作。", "transfer": "既有資料未能確認時，哪些紀錄可確認取得後各項處置及其時間順序？", "witness_review_only": "既有資料未能確認時，請按時間說明你親自看到取得後的哪些具體處置。"},
+    "legal_targets": ["embezzlement_336_1_public", "embezzlement_335_general", "embezzlement_336_2_business"],
+    "legal_target_details": [
+      {"route_id": "embezzlement_336_1_public", "effects": {"RETURNED_OR_AVAILABLE": "NEED_REVIEW", "RETAINED_ONLY": "NEED_REVIEW", "TRANSFERRED_OR_SOLD": "NEED_REVIEW", "CONCEALED_OR_DESTROYED": "NEED_REVIEW", "CONTROL_TRANSFER_NOT_COMPLETED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_335_general", "effects": {"RETURNED_OR_AVAILABLE": "NEED_REVIEW", "RETAINED_ONLY": "NEED_REVIEW", "TRANSFERRED_OR_SOLD": "NEED_REVIEW", "CONCEALED_OR_DESTROYED": "NEED_REVIEW", "CONTROL_TRANSFER_NOT_COMPLETED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_336_2_business", "effects": {"RETURNED_OR_AVAILABLE": "NEED_REVIEW", "RETAINED_ONLY": "NEED_REVIEW", "TRANSFERRED_OR_SOLD": "NEED_REVIEW", "CONCEALED_OR_DESTROYED": "NEED_REVIEW", "CONTROL_TRANSFER_NOT_COMPLETED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ], "alternative_target_details": [],
+    "source_basis": "刑法第335條第1、2項及第336條第1、3項", "rationale": "後續處置不能單獨證明不法所有意圖。", "trigger_condition": "after:EMB3361-C01 && fact:post_acquisition_conduct:UNKNOWN && candidate:embezzlement_336_1_public:present", "existing_question_refs": ["EMB335-C07"], "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT", "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "EMB3361-C08", "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT", "question_phase": "evidence_followup", "parent_question_id": "EMB3361-C01",
+    "fact_target": "claimed_disposition_basis", "distinction_axis": "處置所主張的命令、授權、返還、留置或其他依據", "answer_mode": "enum", "answer_codes": ["DOCUMENTED_AUTHORITY", "OFFICIAL_ORDER_CLAIMED", "RETURN_OR_ACCOUNTING_CLAIMED", "NO_STATED_BASIS", "BASIS_DISPUTED"],
+    "answer_map": {"DOCUMENTED_AUTHORITY": "DOCUMENTED_AUTHORITY", "OFFICIAL_ORDER_CLAIMED": "OFFICIAL_ORDER_CLAIMED", "RETURN_OR_ACCOUNTING_CLAIMED": "RETURN_OR_ACCOUNTING_CLAIMED", "NO_STATED_BASIS": "NO_STATED_BASIS", "BASIS_DISPUTED": "BASIS_DISPUTED", "UNKNOWN": "UNKNOWN"},
+    "target_interview_roles": ["victim", "suspect", "transfer", "witness_review_only"],
+    "role_variants": {"victim": "對方曾主張何種處置依據？請指出可供核對的命令、規範、帳冊、訊息或其他資料。", "suspect": "你主張基於何種依據處置物品？請指出可供核對的命令、規範、帳冊、訊息或其他資料。", "transfer": "卷內哪些資料可核對各方所主張的命令、授權、返還、留置或其他處置依據？", "witness_review_only": "你親自聽見何人主張何種處置依據？你親自看到哪些可核對資料？"},
+    "legal_targets": ["embezzlement_336_1_public", "embezzlement_335_general", "embezzlement_336_2_business"],
+    "legal_target_details": [
+      {"route_id": "embezzlement_336_1_public", "effects": {"DOCUMENTED_AUTHORITY": "NEED_REVIEW", "OFFICIAL_ORDER_CLAIMED": "NEED_REVIEW", "RETURN_OR_ACCOUNTING_CLAIMED": "NEED_REVIEW", "NO_STATED_BASIS": "NEED_REVIEW", "BASIS_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_335_general", "effects": {"DOCUMENTED_AUTHORITY": "NEED_REVIEW", "OFFICIAL_ORDER_CLAIMED": "NEED_REVIEW", "RETURN_OR_ACCOUNTING_CLAIMED": "NEED_REVIEW", "NO_STATED_BASIS": "NEED_REVIEW", "BASIS_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false},
+      {"route_id": "embezzlement_336_2_business", "effects": {"DOCUMENTED_AUTHORITY": "NEED_REVIEW", "OFFICIAL_ORDER_CLAIMED": "NEED_REVIEW", "RETURN_OR_ACCOUNTING_CLAIMED": "NEED_REVIEW", "NO_STATED_BASIS": "NEED_REVIEW", "BASIS_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false}
+    ],
+    "alternative_target_details": [{"route_id": "civil_possession_dispute", "effects": {"DOCUMENTED_AUTHORITY": "NEED_REVIEW", "OFFICIAL_ORDER_CLAIMED": "NEED_REVIEW", "RETURN_OR_ACCOUNTING_CLAIMED": "NEED_REVIEW", "NO_STATED_BASIS": "NEED_REVIEW", "BASIS_DISPUTED": "NEED_REVIEW", "UNKNOWN": "NEED_REVIEW", "CONFLICT": "NEED_REVIEW"}, "exclusion_safe": false, "candidate_eligible": false, "routing_eligible": false, "question_generation_eligible": false, "template_activation_eligible": false, "effect_executable": false, "human_review_required": true}],
+    "source_basis": "刑法第335條不法所有意圖與第336條第1項持有關聯均由外部資料供人工評價", "rationale": "主張本身不證明真實、合法或有效。", "trigger_condition": "after:EMB3361-C01 && fact:claimed_disposition_basis:UNKNOWN && candidate:embezzlement_336_1_public:present", "existing_question_refs": ["EMB335-C08"], "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT", "exclusion_safe": false
+  }
+]
+```
+<!-- STANDARD_SET_END -->
+
+## G. 角色實體化規則
+
+- ID為 `<concept_id>-<V|S|T|W>`；`witness_review_only` 永遠 `runtime_enabled: false`。
+- C01先問；C03、C04、C07只在既有 fact 為 `UNKNOWN` 或 `CONFLICT` 時追問。既有資料完整時只引用；衝突時保留新舊版本，不得靜默覆蓋。
+- 刑事訴訟法第95條權利告知與既有筆錄為程序題，不納入八個 offense concepts。
+
+## H. 回答效果與聚合
+
+- 所有單題均不得產生 `ACTIVE` 或 `EXCLUDED`。
+- `LOWERED` 只表示該軸較不支持某 route；多要件與相反資料仍由 Human Gate 聚合。
+- 法定職務、公益受託、帳款短少或後續處置都不能單獨認定第336條第1項。
+- 至少須由不同來源共同支持 C03先合法持有、C04/C07/C08越權及外部行為、C05身分職掌、C06特定物nexus；即使一致，本階段最高仍為 `CANDIDATE_NEED_REVIEW`。
+- `UNKNOWN`、`CONFLICT` 與 `civil_possession_dispute` 全部為 `NEED_REVIEW`。
+
+## I. 去重與既有題處理
+
+| concept | 既有來源 | 處理 |
+|---|---|---|
+| C01、C02 | EMB335-C01、C02 | 語意重用，不共同出題 |
+| C03 | `prior_lawful_custody`、EMB335-C03 | 引用；缺漏才追問 |
+| C04 | `authorization_scope_status`、EMB335-C04 | 引用；缺漏才追問 |
+| C05 | 無 | 新增身分／受託來源缺口 |
+| C06 | 無 | 新增物與公務／公益持有關聯缺口 |
+| C07 | `post_acquisition_conduct`、EMB335-C07 | 引用；缺漏才追問 |
+| C08 | EMB335-C08 | 公務公益語境的證據追問，不共同出題 |
+
+## J. 不採用問句
+
+- 「你是不是公務員，所以構成公務侵占？」：把身分直接等同犯罪。
+- 「這是公益款項，你為何侵占？」：預設公益性及侵占行為。
+- 「帳款短少是否就是侵占？」：短少本身不足。
+- 「你的職務讓你碰到物品，所以是公務上持有？」：接觸不等於基於職務持有。
+
+## K. 最低校準案例
+
+| 案例 | 期望輸出 |
+|---|---|
+| 公務員私人借車後出售 | 336(1) `LOWERED`；335 `NEED_REVIEW` |
+| 承辦人依法保管規費後轉入私人帳戶 | 336(1) `NEED_REVIEW`；不得升ACTIVE |
+| 公益團體志工偶然接觸物資 | 若無持有nexus，336(1) `LOWERED` |
+| 公司員工保管貨款短少 | 336(2) `NEED_REVIEW`；336(1) `LOWERED` |
+| 公務庫存帳面短少但去向不明 | 所有 route `NEED_REVIEW`，不得由短少推定處置者 |
+| 依正式命令移轉物品 | 命令真實性、範圍與執行情形 `NEED_REVIEW` |
+| 跨角色說法衝突 | 對應 fact 為 `CONFLICT`，全部 `NEED_REVIEW` |
+
+## L. 題數與輸出預算
+
+```yaml
+new_concepts: 8
+concept_budget: 8
+case_core_selection: 3-5
+evidence_followup_max: 2
+single_case_total_max: 8
+output_page_budget: 8
+company_question_protection: PRESERVED
+xlsm_question_protection: PRESERVED
+common_question_protection: PRESERVED
+budget_exceeded_policy: OUTPUT_BUDGET_EXCEEDED
+```
+
+## M. 法律與安全邊界
+
+- 官方法源已於2026-10-27回查；行為時法仍為 `UNKNOWN`。
+- 貪污治罪條例、公務員圖利、背信及競合不在本 route scope。
+- 本工作單只核准問句設計；個案由承辦人執行 `CASE_HUMAN_GATE`。
+
+## N. 自我檢查
+
+```yaml
+self_check:
+  structural_review: PASS
+  route_id_exactness: PASS
+  official_article_check: PASS
+  schema: PASS
+  static_dedupe_contract: PASS_ZERO_EXACT_DUPLICATES
+  runtime_semantic_dedupe: PASS_DECLARED_REUSE_CONTRACT
+  question_method_review: PASS
+  role_boundary: PASS
+  legal_effect_review: PASS_NO_SINGLE_ANSWER_ACTIVE
+  unknown_and_conflict_handling: PASS
+  calibration_review: PASS
+  concept_budget: PASS
+  output_page_budget_validation: PASS_SYNTHETIC_20_QUESTION_LIBREOFFICE
+  case_human_gate: REQUIRED
+```
+
+## O. Gate 與 Handoff
+
+```yaml
+route_review_gate: PASS
+case_human_gate: REQUIRED
+user_final_acceptance: PENDING
+runtime_enabled: false
+runtime_auto_advance: false
+deployment_status: NOT_DEPLOYED
+automatic_advance: false
+next_route: NOT_AUTHORIZED
+next_action: ARCHIVE_AND_SELECT_NEXT
+```
+
+<!-- SUBMISSION_END -->
+
+## Reviewer Decision
+
+```yaml
+gate_id: GATE-EMB3361-20261027-01
+current_route_id: embezzlement_336_1_public
+iteration: 0
+ruleset_version: question-rules-v2-draft
+ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+official_source_status: VERIFIED_CURRENT_BEHAVIOR_TIME_UNKNOWN
+schema_validation: PASS
+exact_dedupe_validation: PASS_ZERO_DUPLICATES
+semantic_dedupe_validation: PASS_DECLARED_REUSE_AND_GAP_CONTRACT
+budget_validation: PASS_8_CONCEPTS
+output_page_budget_validation: PASS_SYNTHETIC_20_QUESTION_LIBREOFFICE
+calibration_review: PASS
+reviewer_decision: PASS
+review_execution_mode: REVIEWED_PIPELINE
+reviewer_identity: Codex (model identity UNVERIFIED)
+independent_review_model_requested: gpt-5.6-sol
+independent_model_identity: UNVERIFIED
+independent_review_decision: ACCEPT_WITH_MODIFICATIONS
+hash_scope: UTF8_LF_BYTES_BETWEEN_SUBMISSION_MARKERS
+submission_sha256: D12D28A15BF774C23FC7FD6C1C5DD28E5FAD2B1B26B109C7D14FBDA136A540AB
+test_results:
+  - "question work item and offense linkage contracts: 15 passed"
+  - "synthetic 20-question LibreOffice: victim 2 pages; suspect 4 pages; transfer 3 pages"
+open_blockers: []
+legal_conclusion: false
+runtime_enabled: false
+runtime_auto_advance: false
+deployment_status: NOT_DEPLOYED
+reviewed_at: 2026-10-27T02:00:00+08:00
+decision_reason: "C05身分職掌與C06特定物公務／公益nexus已分離；公務與公益採互斥答案路徑，既有三個facts只引用或缺漏追問，所有單題均不得ACTIVE或EXCLUDED。"
+route_review_gate: PASS
+case_human_gate: REQUIRED
+next_route: NOT_AUTHORIZED
+```

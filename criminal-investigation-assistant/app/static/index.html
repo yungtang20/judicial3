@@ -84,6 +84,12 @@
           <button id="next-role" class="next-button" type="button">下一步：涉嫌人筆錄</button>
         </section>
       </div>
+      <aside id="case-insights" class="insight-rail" aria-label="案件洞察">
+        <section class="insight-card"><p class="eyebrow">案件洞察</p><h3>目前狀態</h3><p id="insight-state">—</p><div class="insight-meter"><span id="insight-meter-fill"></span></div><small id="insight-revision">—</small></section>
+        <section class="insight-card"><h3>候選方向</h3><div id="insight-candidates"></div></section>
+        <section class="insight-card"><h3>事實與證據</h3><div id="insight-facts"></div></section>
+        <p class="insight-note">候選方向僅供調查排序；回答、證據與相反事實仍須逐項核對。</p>
+      </aside>
     </section>
 
     <section id="list-view" class="view hidden panel"><div class="section-heading"><div><p class="eyebrow">案件</p><h2>進行中案件</h2></div><button class="ghost back-home" type="button">返回</button></div><div id="case-list"></div></section>

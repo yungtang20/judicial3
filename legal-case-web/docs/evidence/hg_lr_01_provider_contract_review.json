@@ -6,7 +6,7 @@
   "human_gate_id": "HG-LR-01",
   "human_gate_status": "PENDING",
   "packet_id": "LR-HG-20261015-04",
-  "packet_sha256": "4995c3f44f3fad8951178e8ed1cf465dbcea875614e4f8a12283365e9254e2fe",
+  "packet_sha256": "cc22b1ab0a35ea157adba7bd1beab111b857f696fdbd66472067df830697b68f",
   "repinned_on": "2026-10-25",
   "repin_note": "本 review 的結論未變；僅因證據包重新凍結而更新 packet_sha256。重新凍結的原因：新增 TLR pack bundle 契約、自架 provider 端點政策，並更新 V01 通過數（見 packet 的 verification 區段）。新增檔案列入 frozen_files，仍待本 Gate 人工覆核。；2026-10-23 第二輪：行為時法（law_version）接入 app/workflow.py 與 app/static/app.js，兩個 runtime surface 的 hash 隨之更新，但四者仍未引用任何檢索模組（expected_references 仍為 0），檢索 runtime 仍不可達；結論與門檻不變。；2026-10-23 第三輪：僅修正 app/rules.py 的 §321Ⅰ① 侵入住宅竊盜情境（離線規則，不涉任何法律檢索模組），runtime surface hash 隨之更新，但檢索 runtime 仍不可達；結論與門檻不變。；2026-10-24：單一所有人 Supabase 認證與加密案件儲存改動 server.py 與 app.js，但未接入本 review 的法律檢索 provider，四個 runtime surface 對檢索模組的 expected_references 仍為 0。本 review 不審查或核准新的雲端案件儲存，HG-LR-01 與其他 Human Gate 仍維持 PENDING。；2026-10-25：MFA 完成後輪替 server-side session、縮短 pending MFA 期限並強化 HTTPS Cookie；只更新 app/server.py runtime hash 與工程測試基線，法律檢索仍不可達且所有 Human Gate 維持 PENDING。；2026-10-25 文件產製修復：server.py 新增 LibreOffice 啟動預熱與 renderer health 狀態，未引用任何法律檢索模組；僅重新綁定 runtime hash 與 603 passed 工程基線，所有 Human Gate 維持 PENDING。；2026-10-25 前端便利操作：app.js 新增逐題 Enter 下一題與 Shift+Enter 換行，未引用任何法律檢索模組；僅重新綁定 runtime hash 與 30 passed 前端工程基線，所有 Human Gate 維持 PENDING。；2026-10-25 UI 導航整理：Gate 1、Gate 2、筆錄問句改為獨立初始收合面板，未改變法律檢索資料流，所有 Human Gate 維持 PENDING。；2026-10-25 案件名稱、條陳模板與案件刪除功能未改變法律檢索資料流，僅重新綁定 runtime surface hash，所有 Human Gate 維持 PENDING。",
   "execution_mode": "SINGLE_EXECUTOR",

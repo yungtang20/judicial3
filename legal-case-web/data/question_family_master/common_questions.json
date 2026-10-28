@@ -1,0 +1,693 @@
+{
+  "schema_version": "question-common-master-v1-draft",
+  "document_status": "DESIGN_DRAFT",
+  "review_status": "HUMAN_REVIEW_REQUIRED",
+  "runtime_integration_status": "EXISTING_COMMON_ONLY",
+  "source": "data/question_bank.json:common",
+  "source_sha256": "d16c2d95dbab2fc89647c115720ebae74ca8e1c086b4cfa096de4d9246d179f4",
+  "record_count": 40,
+  "existing_runtime_record_count": 34,
+  "review_only_record_count": 6,
+  "records": [
+    {
+      "id": "V-COM-000",
+      "text": "上述身分資料是否正確？",
+      "target_interview_role": "victim",
+      "fact_target": "identity",
+      "purpose": "identity",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "V-COM-001",
+      "text": "請用自己的話說明事情從開始到結束的經過。",
+      "target_interview_role": "victim",
+      "fact_target": "free_account",
+      "purpose": "free_account",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "V-COM-002",
+      "text": "事情發生時，你看見或聽見了什麼？",
+      "target_interview_role": "victim",
+      "fact_target": "perception",
+      "purpose": "perception",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "V-COM-002A",
+      "text": "你是否知道行為人的身分或可供辨識的特徵？",
+      "target_interview_role": "victim",
+      "fact_target": "identification",
+      "purpose": "identification",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "V-COM-002B",
+      "text": "你與行為人原本有何關係或糾紛？",
+      "target_interview_role": "victim",
+      "fact_target": "relationship",
+      "purpose": "relationship",
+      "layer": "common",
+      "priority": 2,
+      "required_or_optional": "OPTIONAL",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "V-COM-003",
+      "text": "你知道哪些人可能看見或聽見這件事嗎？",
+      "target_interview_role": "victim",
+      "fact_target": "witness",
+      "purpose": "witness",
+      "layer": "common",
+      "priority": 2,
+      "required_or_optional": "OPTIONAL",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "V-COM-004",
+      "text": "你有哪些資料或物品可以提供警方查證？",
+      "target_interview_role": "victim",
+      "fact_target": "evidence",
+      "purpose": "evidence",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "V-COM-004A",
+      "text": "你是否要提出告訴或請求民事賠償？",
+      "target_interview_role": "victim",
+      "fact_target": "complaint",
+      "purpose": "complaint",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "V-COM-004B",
+      "text": "後續司法文書應送達何處？",
+      "target_interview_role": "victim",
+      "fact_target": "service_address",
+      "purpose": "service_address",
+      "layer": "common",
+      "priority": 2,
+      "required_or_optional": "OPTIONAL",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "V-COM-004C",
+      "text": "你是否需要警方協助調查其他有利事證？",
+      "target_interview_role": "victim",
+      "fact_target": "investigation_request",
+      "purpose": "investigation_request",
+      "layer": "common",
+      "priority": 2,
+      "required_or_optional": "OPTIONAL",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "V-COM-004D",
+      "text": "以上回答是否為你親自陳述且內容實在？",
+      "target_interview_role": "victim",
+      "fact_target": "accuracy",
+      "purpose": "accuracy",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "V-COM-005",
+      "text": "你是否還有其他想補充或請警方調查的事項？",
+      "target_interview_role": "victim",
+      "fact_target": "closing",
+      "purpose": "closing",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "S-COM-000",
+      "text": "上述身分資料是否正確？",
+      "target_interview_role": "suspect",
+      "fact_target": "identity",
+      "purpose": "identity",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "S-COM-001",
+      "text": "警方告知的涉嫌罪名及權利，你是否清楚？",
+      "target_interview_role": "suspect",
+      "fact_target": "rights",
+      "purpose": "rights",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "S-COM-001A",
+      "text": "你是否需要辯護人或法律扶助到場協助？",
+      "target_interview_role": "suspect",
+      "fact_target": "counsel",
+      "purpose": "counsel",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "S-COM-002",
+      "text": "請用自己的話說明你所知道的事情經過。",
+      "target_interview_role": "suspect",
+      "fact_target": "free_account",
+      "purpose": "free_account",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "S-COM-002A",
+      "text": "你是否知道被害人的身分？",
+      "target_interview_role": "suspect",
+      "fact_target": "victim_identity",
+      "purpose": "victim_identity",
+      "layer": "common",
+      "priority": 2,
+      "required_or_optional": "OPTIONAL",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "S-COM-002B",
+      "text": "你與被害人原本有何關係或糾紛？",
+      "target_interview_role": "suspect",
+      "fact_target": "relationship",
+      "purpose": "relationship",
+      "layer": "common",
+      "priority": 2,
+      "required_or_optional": "OPTIONAL",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "S-COM-003",
+      "text": "你有哪些對自己有利的資料或證據希望警方調查？",
+      "target_interview_role": "suspect",
+      "fact_target": "exculpatory",
+      "purpose": "exculpatory",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "S-COM-003A",
+      "text": "警方製作筆錄時是否全程錄音？",
+      "target_interview_role": "suspect",
+      "fact_target": "recording",
+      "purpose": "recording",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "S-COM-004",
+      "text": "以上回答是否出於你的自由意思？",
+      "target_interview_role": "suspect",
+      "fact_target": "voluntariness",
+      "purpose": "voluntariness",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "S-COM-004A",
+      "text": "筆錄記載是否與你的回答相符？",
+      "target_interview_role": "suspect",
+      "fact_target": "record_accuracy",
+      "purpose": "record_accuracy",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "S-COM-005",
+      "text": "你是否還有其他想補充或更正的事項？",
+      "target_interview_role": "suspect",
+      "fact_target": "closing",
+      "purpose": "closing",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "T-COM-000",
+      "text": "上述身分資料是否正確？",
+      "target_interview_role": "transfer",
+      "fact_target": "identity",
+      "purpose": "identity",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "T-COM-001",
+      "text": "警方告知的涉嫌罪名及權利，你是否清楚？",
+      "target_interview_role": "transfer",
+      "fact_target": "rights",
+      "purpose": "rights",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "T-COM-001A",
+      "text": "你是否需要辯護人或法律扶助到場協助？",
+      "target_interview_role": "transfer",
+      "fact_target": "counsel",
+      "purpose": "counsel",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "T-COM-001B",
+      "text": "你是否需要依法聲請提審？",
+      "target_interview_role": "transfer",
+      "fact_target": "habeas_corpus",
+      "purpose": "habeas_corpus",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "T-COM-002",
+      "text": "請說明你在查獲時間及地點所做的事情。",
+      "target_interview_role": "transfer",
+      "fact_target": "free_account",
+      "purpose": "free_account",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "T-COM-003",
+      "text": "你有哪些對自己有利的資料或證據希望警方調查？",
+      "target_interview_role": "transfer",
+      "fact_target": "exculpatory",
+      "purpose": "exculpatory",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "T-COM-003A",
+      "text": "警方製作筆錄時是否全程錄音？",
+      "target_interview_role": "transfer",
+      "fact_target": "recording",
+      "purpose": "recording",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "T-COM-003B",
+      "text": "警方查獲或逮捕你時是否使你受傷？",
+      "target_interview_role": "transfer",
+      "fact_target": "arrest_injury",
+      "purpose": "arrest_injury",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "T-COM-004",
+      "text": "以上回答是否出於你的自由意思？",
+      "target_interview_role": "transfer",
+      "fact_target": "voluntariness",
+      "purpose": "voluntariness",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "T-COM-004A",
+      "text": "筆錄記載是否與你的回答相符？",
+      "target_interview_role": "transfer",
+      "fact_target": "record_accuracy",
+      "purpose": "record_accuracy",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "T-COM-005",
+      "text": "你是否還有其他想補充或更正的事項？",
+      "target_interview_role": "transfer",
+      "fact_target": "closing",
+      "purpose": "closing",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": true,
+      "source_runtime_status": "EXISTING_RUNTIME_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_bank.json",
+        "source_label": "本庫通用題"
+      }
+    },
+    {
+      "id": "W-COM-000",
+      "text": "上述身分資料是否正確？",
+      "target_interview_role": "witness_review_only",
+      "fact_target": "identity",
+      "purpose": "identity",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": false,
+      "source_runtime_status": "DESIGN_ONLY_WITNESS_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_family_fixtures/common_layer.json",
+        "source_label": "USER_FAMILY_DESIGN_DRAFT"
+      }
+    },
+    {
+      "id": "W-COM-001",
+      "text": "你與本案當事人各是什麼關係？",
+      "target_interview_role": "witness_review_only",
+      "fact_target": "relationship",
+      "purpose": "relationship",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": false,
+      "source_runtime_status": "DESIGN_ONLY_WITNESS_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_family_fixtures/common_layer.json",
+        "source_label": "USER_FAMILY_DESIGN_DRAFT"
+      }
+    },
+    {
+      "id": "W-COM-002",
+      "text": "請依照時間順序，用自己的話說明你親自知道的事情經過。",
+      "target_interview_role": "witness_review_only",
+      "fact_target": "free_account",
+      "purpose": "free_account",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": false,
+      "source_runtime_status": "DESIGN_ONLY_WITNESS_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_family_fixtures/common_layer.json",
+        "source_label": "USER_FAMILY_DESIGN_DRAFT"
+      }
+    },
+    {
+      "id": "W-COM-003",
+      "text": "你剛才所說的內容，哪些是親自看見或聽見，哪些是由他人告知？",
+      "target_interview_role": "witness_review_only",
+      "fact_target": "knowledge_basis",
+      "purpose": "knowledge_basis",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": false,
+      "source_runtime_status": "DESIGN_ONLY_WITNESS_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_family_fixtures/common_layer.json",
+        "source_label": "USER_FAMILY_DESIGN_DRAFT"
+      }
+    },
+    {
+      "id": "W-COM-004",
+      "text": "你有哪些資料或物品可以提供警方查證？",
+      "target_interview_role": "witness_review_only",
+      "fact_target": "evidence",
+      "purpose": "evidence",
+      "layer": "common",
+      "priority": 2,
+      "required_or_optional": "OPTIONAL",
+      "runtime_enabled": false,
+      "source_runtime_status": "DESIGN_ONLY_WITNESS_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_family_fixtures/common_layer.json",
+        "source_label": "USER_FAMILY_DESIGN_DRAFT"
+      }
+    },
+    {
+      "id": "W-COM-005",
+      "text": "你是否還有其他想補充或更正的事項？",
+      "target_interview_role": "witness_review_only",
+      "fact_target": "closing",
+      "purpose": "closing",
+      "layer": "common",
+      "priority": 1,
+      "required_or_optional": "REQUIRED",
+      "runtime_enabled": false,
+      "source_runtime_status": "DESIGN_ONLY_WITNESS_COMMON",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "data/question_family_fixtures/common_layer.json",
+        "source_label": "USER_FAMILY_DESIGN_DRAFT"
+      }
+    }
+  ]
+}

@@ -515,6 +515,7 @@ class Handler(BaseHTTPRequestHandler):
                     "law_name": route.get("law_name", ""),
                     "article_no": route.get("article_no", ""),
                     "review_status": route.get("review_status", "HUMAN_REVIEW_REQUIRED"),
+                    "legal_verification": deepcopy(route.get("legal_verification")),
                 }
                 cached = get_cached_law_article(result["law_name"], result["article_no"])
                 result["source"] = {
@@ -534,6 +535,7 @@ class Handler(BaseHTTPRequestHandler):
                 "library_version": BANK["library_version"],
                 "review_status": BANK["review_status"],
                 "legal_route_crosswalk_version": BANK["legal_route_crosswalk_version"],
+                "question_layer_contract": BANK.get("question_layer_contract", {}),
                 "external_ai_enabled": external_ai_enabled(),
                 "offenses": [{
                     "id": item["id"],
@@ -541,6 +543,8 @@ class Handler(BaseHTTPRequestHandler):
                     "source": public_source(item),
                     "route_type": item["route_type"],
                     "selection_policy": item["selection_policy"],
+                    "question_layers": BANK.get("question_layer_contract", {})
+                    .get("offenses", {}).get(item["id"], {}),
                     "legal_routes": [public_route(route) for route in item["legal_routes"]],
                 } for item in BANK["offenses"]],
             })

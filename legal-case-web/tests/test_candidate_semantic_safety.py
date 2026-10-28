@@ -124,3 +124,23 @@ def test_attempted_property_threat_without_transfer_fails_closed():
     assert case["selected_offenses"] == []
     assert case["selected_legal_routes"] == []
     assert case["questions"] == []
+
+
+def test_ambiguous_property_boundary_enters_clarification_mode_without_selecting_route():
+    summary = (
+        "林雅婷把皮夾放在咖啡店座位旁的椅子上，短暫離席後發現不見；"
+        "店員看見男子拿起皮夾離開，男子後來交出皮夾並稱以為是遺失物，"
+        "但現金少了1000元，尚不確定皮夾當時是否仍在林雅婷控制範圍，"
+        "也不確定是否曾請男子代為保管。"
+    )
+    prepared = apply_action(
+        create_case({"summary": summary, "has_victim": True}, BANK),
+        "auto_prepare",
+        {},
+        BANK,
+    )
+    assert prepared["state"] == "GATE2_QA"
+    assert prepared["preparation_mode"] == "SYSTEM_CLARIFICATION_PREPARED_HUMAN_REVIEW_REQUIRED"
+    assert {"theft", "embezzlement"}.issubset(set(prepared["selected_offenses"]))
+    assert prepared["selected_legal_routes"] == []
+    assert any(question.get("kind") == "distinguishing" for question in prepared["questions"])

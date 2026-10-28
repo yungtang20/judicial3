@@ -1,0 +1,93 @@
+{
+  "schema_version": "question-family-fixture-v1-draft",
+  "document_status": "DESIGN_DRAFT",
+  "runtime_enabled": false,
+  "review_status": "HUMAN_REVIEW_REQUIRED",
+  "fixture_id": "property_family_template_20261027",
+  "family_id": "property_acquisition_and_damage",
+  "coverage_id_prefix": "property_gap",
+  "source_markdown": "docs/family_templates/catalog/財物取得與毀損家族.md",
+  "source_provenance": {
+    "kind": "REPOSITORY_RECONSTRUCTION_DRAFT",
+    "inputs": [
+      "data/question_bank.json",
+      "../questions/theft.md",
+      "review/property-taking-issue-matrix.md"
+    ],
+    "legal_verification": "PARTIAL_OFFICIAL_SOURCE_VERIFIED",
+    "legal_verification_evidence": "docs/evidence/property_family_legal_verification_20261027.json"
+  },
+  "role_tables": {
+    "victim": {"prefix": "P-V", "expected_count": 18, "runtime_role": "victim"},
+    "suspect": {"prefix": "P-S", "expected_count": 14, "runtime_role": "suspect"},
+    "witness": {"prefix": "P-W", "expected_count": 10, "runtime_role": "witness_review_only"}
+  },
+  "fact_target_by_id": {
+    "P-V01": "event_sequence", "P-V02": "property_identity_quantity_value", "P-V03": "ownership_possession_control", "P-V04": "last_confirmed_control", "P-V05": "discovery_and_result", "P-V06": "acquisition_or_contact_method", "P-V07": "authorization_scope", "P-V08": "post_acquisition_disposition", "P-V09": "loss_damage_and_usability", "P-V10": "property_rights_and_value_documents", "P-V11": "property_specific_records", "P-V12": "property_witnesses", "P-V13": "prior_lawful_possession", "P-V14": "return_demand_and_response", "P-V15": "claimed_right_or_entitlement", "P-V16": "family_or_shared_property_relationship", "P-V17": "complaint_intent_and_identification_time", "P-V18": "additional_information",
+    "P-S01": "event_sequence", "P-S02": "property_identity_quantity_condition", "P-S03": "ownership_possession_control", "P-S04": "acquisition_or_contact_method", "P-S05": "authorization_scope", "P-S06": "claimed_right_and_disposition_purpose", "P-S07": "post_acquisition_disposition", "P-S08": "return_demand_and_response", "P-S09": "damage_before_after_condition", "P-S10": "method_and_tools", "P-S11": "participant_conduct", "P-S12": "family_entrustment_or_official_relationship", "P-S13": "property_specific_records", "P-S14": "additional_information",
+    "P-W01": "witness_relationship", "P-W02": "event_sequence", "P-W03": "property_identity_quantity_condition", "P-W04": "observed_possession_control", "P-W05": "observed_acquisition_or_contact", "P-W06": "authorization_knowledge_basis", "P-W07": "observed_post_acquisition_disposition", "P-W08": "observed_damage_and_usability", "P-W09": "evidence_items", "P-W10": "additional_information",
+    "P-E1-1": "property_location_and_control", "P-E1-2": "removal_from_control", "P-E1-3": "exclusion_of_original_holder", "P-E1-4": "temporary_use_and_return_plan",
+    "P-E2-1": "entry_method", "P-E2-2": "security_device_condition", "P-E2-3": "instrument_carried_or_used", "P-E2-4": "participant_conduct", "P-E2-5": "disaster_context", "P-E2-6": "transport_location_context",
+    "P-E3-1": "entrustment_terms", "P-E3-2": "business_public_or_public_interest_possession", "P-E3-3": "unauthorized_disposition_timing", "P-E3-4": "return_or_reconciliation_response", "P-E3-5": "entrustment_and_accounting_records",
+    "P-E4-1": "original_holder_control_at_loss", "P-E4-2": "third_party_or_place_management", "P-E4-3": "discovery_state_and_source_knowledge", "P-E4-4": "lost_property_post_discovery_conduct",
+    "P-E5-1": "damage_before_after_condition", "P-E5-2": "damage_method_and_actor", "P-E5-3": "usability_repair_and_cost", "P-E5-4": "damage_knowledge_and_awareness", "P-E5-5": "special_damage_object_and_harm",
+    "P-E6-1": "property_object_classification", "P-E6-2": "real_estate_possession_and_exclusion", "P-E6-3": "energy_acquisition_and_measurement", "P-E6-4": "document_building_or_credit_right_harm"
+  },
+  "source_applicability_route_map": {
+    "竊": ["theft_320_1_movable", "theft_320_2_real_estate", "theft_323_energy", "theft_324_relative"],
+    "加": ["aggravated_theft_321"],
+    "侵": ["embezzlement_335_general", "embezzlement_336_1_public", "embezzlement_336_2_business", "embezzlement_338_applicable"],
+    "遺": ["embezzlement_337_lost_property"],
+    "損": ["damage_352_document", "damage_353_building", "damage_354_property", "damage_355_fraud", "damage_356_creditor", "damage_357_complaint"],
+    "全": ["theft_320_1_movable", "theft_320_2_real_estate", "theft_323_energy", "theft_324_relative", "aggravated_theft_321", "embezzlement_335_general", "embezzlement_336_1_public", "embezzlement_336_2_business", "embezzlement_337_lost_property", "embezzlement_338_applicable", "damage_352_document", "damage_353_building", "damage_354_property", "damage_355_fraud", "damage_356_creditor", "damage_357_complaint"],
+    "P-E1": ["theft_320_1_movable", "theft_324_relative"],
+    "P-E2": ["aggravated_theft_321"],
+    "P-E3": ["embezzlement_335_general", "embezzlement_336_1_public", "embezzlement_336_2_business", "embezzlement_338_applicable"],
+    "P-E4": ["embezzlement_337_lost_property"],
+    "P-E5": ["damage_352_document", "damage_353_building", "damage_354_property", "damage_355_fraud", "damage_356_creditor", "damage_357_complaint"],
+    "P-E6": ["theft_320_2_real_estate", "theft_323_energy", "damage_352_document", "damage_353_building", "damage_355_fraud", "damage_356_creditor"]
+  },
+  "route_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+  "precondition_registry": {
+    "entrustment_or_delivery_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "prior_lawful_possession_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "rights_dispute_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "family_relationship_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "complaint_requirement_review": {"evaluation": "HUMAN_LEGAL_REVIEW"},
+    "damage_claim_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "tool_or_forced_entry_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "multiple_participants_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "authorization_dispute_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "post_acquisition_conduct_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "unauthorized_taking_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"},
+    "aggravated_access_factor_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"},
+    "lawful_possession_then_disposition_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"},
+    "lost_or_uncontrolled_property_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"},
+    "property_damage_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"},
+    "special_property_object_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"}
+  },
+  "question_precondition_ids": {
+    "P-V13": ["entrustment_or_delivery_indicated"], "P-V14": ["prior_lawful_possession_indicated"], "P-V15": ["rights_dispute_indicated"], "P-V16": ["family_relationship_indicated"], "P-V17": ["complaint_requirement_review"],
+    "P-S08": ["prior_lawful_possession_indicated"], "P-S09": ["damage_claim_indicated"], "P-S10": ["tool_or_forced_entry_indicated"], "P-S11": ["multiple_participants_indicated"],
+    "P-W06": ["authorization_dispute_indicated"], "P-W07": ["post_acquisition_conduct_indicated"], "P-W08": ["damage_claim_indicated"]
+  },
+  "module_precondition_ids": {
+    "P-E1": ["unauthorized_taking_indicated"],
+    "P-E2": ["aggravated_access_factor_indicated"],
+    "P-E3": ["lawful_possession_then_disposition_indicated"],
+    "P-E4": ["lost_or_uncontrolled_property_indicated"],
+    "P-E5": ["property_damage_indicated"],
+    "P-E6": ["special_property_object_indicated"]
+  },
+  "route_mapping_policy": {
+    "allow_parent_route_only": false,
+    "requires_exact_child_route": true,
+    "unknown_route_mapping_must_not_be_silently_promoted": true
+  },
+  "human_gate": {
+    "case_acceptance": "REQUIRED",
+    "legal_source_acceptance": "REQUIRED",
+    "ownership_and_possession_classification": "REQUIRED",
+    "complaint_and_family_exception": "REQUIRED"
+  }
+}

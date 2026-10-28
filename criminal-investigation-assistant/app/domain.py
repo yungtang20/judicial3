@@ -9,17 +9,20 @@ from uuid import uuid4
 from .question_bank import QuestionBank
 
 
-SCHEMA_VERSION = "case-snapshot/v1"
+SCHEMA_VERSION = "case-snapshot/v2"
 MAX_SUMMARY_LENGTH = 500
 
 ROUTE_RULES = [
-    ("theft", "property_possession_taking", ("偷", "竊", "拿走", "取走", "皮夾", "手機", "金融卡")),
+    # A property object is not an act.  Keep object words out of the parent
+    # trigger so a fraud narrative mentioning a phone/account does not become
+    # a theft candidate without a taking/possession fact.
+    ("theft", "property_possession_taking", ("偷", "竊", "拿起", "拿走", "取走", "竊取", "盜取")),
     ("aggravated_theft", "property_possession_taking", ("破壞門窗", "侵入住宅", "攜帶兇器", "結夥")),
-    ("embezzlement", "property_possession_taking", ("保管", "借用", "代收", "拾得", "拒不返還", "侵占")),
+    ("embezzlement", "property_possession_taking", ("保管", "借用", "代收", "拾得", "拾獲", "遺失", "遺留", "失主", "拒不返還", "侵占")),
     ("robbery", "coercion_liberty_threat", ("搶", "強盜", "強奪", "壓制", "不能抗拒")),
     ("damage", "property_damage", ("毀損", "砸", "破壞", "刮傷")),
     ("fraud", "deception_disposition_trust", ("詐騙", "詐欺", "假投資", "匯款", "騙")),
-    ("injury", "human_violence", ("打", "踢", "傷害", "受傷", "毆")),
+    ("injury", "human_violence", ("打傷", "打人", "踢傷", "傷害", "受傷", "毆打", "毆傷")),
     ("homicide", "human_violence", ("殺", "死亡", "致死")),
     ("liberty", "coercion_liberty_threat", ("限制自由", "拘禁", "強制")),
     ("intimidation", "coercion_liberty_threat", ("恐嚇", "威脅")),
@@ -29,7 +32,9 @@ ROUTE_RULES = [
     ("privacy", "privacy_secret_sexual_image", ("偷拍", "竊錄", "性影像", "秘密")),
     ("public_danger", "public_danger_traffic", ("酒駕", "毒駕", "肇事逃逸", "酒測")),
     ("drugs", "drugs_firearms_organization", ("毒品", "安非他命", "大麻", "販毒")),
-    ("computer", "computer_network_digital_evidence", ("駭客", "入侵", "帳號", "密碼", "刪除資料")),
+    # Account and password are evidence objects.  A computer route requires an
+    # explicit digital act or system impact; these words alone are insufficient.
+    ("computer", "computer_network_digital_evidence", ("駭客", "入侵系統", "登入系統", "破解密碼", "刪除資料", "竄改資料", "電磁紀錄")),
     ("sexual", "sexual_child_exploitation", ("性侵", "性交", "猥褻")),
     ("sexual_harassment", "sexual_child_exploitation", ("性騷擾",)),
     ("state_security", "specialist_routes", ("內亂", "外患", "國家安全", "國安法", "間諜")),
@@ -62,7 +67,7 @@ ROUTE_RULES = [
 ROUTE_LABELS = {
     "theft": "竊盜／竊佔",
     "aggravated_theft": "加重竊盜",
-    "embezzlement": "侵占",
+    "embezzlement": "侵占（含侵占遺失物）",
     "robbery": "強盜／搶奪",
     "damage": "毀損",
     "fraud": "詐欺／背信",
@@ -116,6 +121,84 @@ ROUTE_CONTRARY_RULES = {
     "injury": ("沒有受傷", "傷勢與本案無關"),
     "homicide": ("無人死亡", "死亡與本案無關"),
 }
+
+ROUTE_ISSUES = {
+    "theft": ("POSSESSION_STATE", "UNLAWFUL_OWNERSHIP_INTENT"),
+    "embezzlement": ("LOST_OR_OUT_OF_POSSESSION", "UNLAWFUL_OWNERSHIP_INTENT", "POST_TAKING_HANDLING"),
+}
+
+
+def _semantic_route_adjustment(route_id: str, text: str) -> tuple[int, list[str], list[str]]:
+    """Return transparent fact-pattern adjustments; never return a legal verdict."""
+    positive: list[str] = []
+    contrary: list[str] = []
+    adjustment = 0
+    if route_id == "theft":
+        if any(token in text for token in ("伸手即可取回", "一直坐在", "持續注意", "仍在支配", "仍可立即取回")):
+            adjustment += 30
+            positive.append("新增事實指向原持有或實際支配仍可能存在")
+        if any(token in text for token in ("離開店內一段時間", "甲不在現場", "已脫離持有", "遺失後才發現")):
+            adjustment -= 25
+            contrary.append("新增事實指向物品可能已脫離原持有")
+    if route_id == "embezzlement":
+        if (("遺留" in text and "拾得" in text) or any(token in text for token in ("遺失", "拾得", "脫離持有", "甲不在現場"))):
+            adjustment += 25
+            positive.append("新增事實指向遺失物或已脫離原持有")
+        if any(token in text for token in ("伸手即可取回", "持續注意", "仍在支配")):
+            adjustment -= 25
+            contrary.append("新增事實指向原持有或實際支配仍可能存在")
+    if any(token in text for token in ("明知是他人", "據為己有", "帶回家", "拒不返還", "不歸還")):
+        adjustment += 15
+        positive.append("新增事實涉及不法所有意圖的待核對線索")
+    if any(token in text for token in ("誤認", "不要的物品", "交給店員", "協助尋找失主", "尋找失主")):
+        adjustment -= 15
+        contrary.append("新增事實涉及善意認知或返還行為，降低不法所有意圖線索")
+    return adjustment, positive, contrary
+
+
+def _candidate_role(route_id: str, score: int, text: str) -> str:
+    if route_id in {"theft", "embezzlement"}:
+        theft_score = 0
+        lost_score = 0
+        if any(token in text for token in ("伸手即可取回", "持續注意", "仍在支配")):
+            theft_score += 1
+        if (("遺留" in text and "拾得" in text) or any(token in text for token in ("遺失", "拾得", "脫離持有", "甲不在現場"))):
+            lost_score += 1
+        if theft_score == lost_score:
+            return "UNRESOLVED"
+        if route_id == "theft":
+            return "PRIMARY" if theft_score > lost_score else "ALTERNATIVE"
+        return "PRIMARY" if lost_score > theft_score else "ALTERNATIVE"
+    return "PRIMARY" if score >= 65 else "LOW_CONFIDENCE"
+
+
+def _legal_basis(child_routes: list[dict[str, Any]]) -> dict[str, Any]:
+    first = child_routes[0] if child_routes else {}
+    return {
+        "law_name": first.get("law_name", ""),
+        "article_no": first.get("article_no", ""),
+        "source_url": first.get("source_url", ""),
+        "source_version": first.get("source_version", ""),
+        "verification_status": first.get("article_verification_status", "UNKNOWN"),
+    }
+
+
+def _element_assessments(route_id: str, child_routes: list[dict[str, Any]], text: str) -> list[dict[str, Any]]:
+    assessments = []
+    for child in child_routes:
+        for gap in child.get("element_gaps", []):
+            element = gap["element"]
+            status = "UNKNOWN"
+            if route_id == "theft" and any(token in text for token in ("伸手即可取回", "持續注意")) and "持有" in element:
+                status = "SUPPORTED"
+            if route_id == "embezzlement" and (("遺留" in text and "拾得" in text) or any(token in text for token in ("遺失", "拾得", "脫離持有"))) and "遺失" in element:
+                status = "SUPPORTED"
+            assessments.append({
+                "element_id": gap["route_element_key"], "element_text": element,
+                "status": status, "supporting_fact_ids": [], "contrary_fact_ids": [],
+                "evidence_ids": [], "issue_ids": list(ROUTE_ISSUES.get(route_id, ())),
+            })
+    return assessments
 
 # These hints only prioritize which child-route facts to ask first. They do not
 # establish an offense, remove another route, or change candidate scores.
@@ -188,7 +271,7 @@ def extract_facts(intake: dict[str, Any]) -> list[dict[str, Any]]:
     facts = [
         _fact("F-TIME", "time", intake["event_time"], "INTAKE:event_time"),
         _fact("F-PLACE", "place", intake["location"], "INTAKE:location"),
-        _fact("F-NARRATIVE", "event", summary, "INTAKE:summary"),
+        _fact("F-NARRATIVE", "event", summary, "INTAKE:summary", "NARRATIVE", 1.0),
     ]
     names = []
     for token in re.findall(r"(?:甲|乙|丙|丁|[A-Z]{1,3}\d{3,})", summary):
@@ -205,6 +288,81 @@ def extract_facts(intake: dict[str, Any]) -> list[dict[str, Any]]:
     facts.append(_fact("F-CAUSATION", "causation", "待問答確認", "SYSTEM:GATE1", "UNKNOWN", 0.0))
     facts.append(_fact("F-EVIDENCE", "evidence", "待問答確認", "SYSTEM:GATE1", "UNKNOWN", 0.0))
     return facts
+
+
+def _initial_parties(summary: str, case_kind: str) -> list[dict[str, Any]]:
+    """Create neutral party records; inference is never promoted to identity."""
+    tokens = []
+    for token in re.findall(r"(?:甲|乙|丙|丁|[A-Z]{1,3}\d{3,})", summary):
+        if token not in tokens:
+            tokens.append(token)
+    for token in re.findall(r"報案人([\u4e00-\u9fff○]{2,8})(?=表示|稱)", summary):
+        if token not in tokens:
+            tokens.append(token)
+    for token in re.findall(r"自稱[「『]([^」』]{2,20})[」』]", summary):
+        if token not in tokens:
+            tokens.append(token)
+    parties = []
+    for index, token in enumerate(tokens, start=1):
+        role = "UNKNOWN"
+        if case_kind == "WITH_VICTIM" and index == 1:
+            role = "VICTIM_OR_REPORTER"
+        parties.append({
+            "party_id": f"P-{index:03d}", "display_name": token,
+            "role": role, "identity_status": "INFERRED_TOKEN",
+            "source": "INTAKE:summary-token",
+        })
+    return parties
+
+
+def _initial_behavior_events(intake: dict[str, Any]) -> list[dict[str, Any]]:
+    sentences = [item.strip() for item in re.split(r"[。！？\n]+", intake["summary"]) if item.strip()]
+    return [{
+        "event_id": f"BE-{index:03d}", "sequence": index,
+        "event_type": "UNCONFIRMED_EVENT", "description": sentence,
+        "status": "REPORTED", "source": "INTAKE:summary", "actor_party_id": None,
+    } for index, sentence in enumerate(sentences or [intake["summary"]], start=1)]
+
+
+def _initial_payment_events(intake: dict[str, Any]) -> list[dict[str, Any]]:
+    summary = intake["summary"]
+    if not re.search(r"匯款|轉帳|付款|交付金錢", summary):
+        return []
+    match = re.search(
+        r"(?:匯款|轉帳|付款)[^。！？\n]{0,12}(兩|二|2|多)筆|"
+        r"(兩|二|2|多)筆[^。！？\n]{0,12}(?:匯款|轉帳|付款)",
+        summary,
+    )
+    count = 2 if match else 1
+    return [{
+        "payment_id": f"PAY-{index:03d}", "payer_party_id": "P-001",
+        "payee_party_id": "P-002" if len(_initial_parties(summary, intake["case_kind"])) > 1 else None,
+        "amount_text": None, "channel": "UNKNOWN", "status": "REPORTED",
+        "source": "INTAKE:summary",
+    } for index in range(1, count + 1)]
+
+
+def _initial_evidence_items(intake: dict[str, Any]) -> list[dict[str, Any]]:
+    summary = intake["summary"]
+    evidence = []
+    evidence_keywords = {
+        "通訊紀錄": ("LINE", "通訊軟體", "對話", "訊息", "聊天"),
+        "交易紀錄": ("匯款", "轉帳", "付款", "銀行"),
+        "社群資料": ("社群平台", "帳號", "貼文", "個人頁面"),
+        "照片或影像": ("照片", "圖片", "截圖", "影像"),
+        "契約或文件": ("契約", "文件", "收據", "訂單"),
+    }
+    for kind, keywords in evidence_keywords.items():
+        if any(keyword in summary for keyword in keywords):
+            evidence.append({
+                "evidence_id": f"EV-{len(evidence) + 1:03d}", "kind": kind,
+                "description": f"摘要提及{kind}，尚待取得原始資料並核對。",
+                "status": "REPORTED", "source": "INTAKE:summary", "sha256": None,
+            })
+    return evidence or [{
+        "evidence_id": "EV-001", "kind": "UNSPECIFIED", "description": "摘要尚未列明證據",
+        "status": "UNKNOWN", "source": "SYSTEM:GATE1", "sha256": None,
+    }]
 
 
 def _classify_route_element(element: str) -> str:
@@ -243,7 +401,8 @@ def analyze_candidates(
         if not hits and not selected:
             continue
         contrary_hits = [keyword for keyword in ROUTE_CONTRARY_RULES.get(route_id, ()) if keyword in text]
-        score = max(5, min(95, 35 + len(hits) * 15 + (15 if selected else 0) - len(contrary_hits) * 25))
+        semantic_adjustment, semantic_support, semantic_contrary = _semantic_route_adjustment(route_id, text)
+        score = max(5, min(95, 35 + len(hits) * 15 + (15 if selected else 0) - len(contrary_hits) * 25 + semantic_adjustment))
         child_routes = []
         for child in bank.child_routes(route_id) if bank else []:
             gaps = [
@@ -262,6 +421,7 @@ def analyze_candidates(
             for gap in child["element_gaps"]:
                 if gap["status"] != "CONFIRMED" and gap["element"] not in unresolved:
                     unresolved.append(gap["element"])
+        candidate_role = _candidate_role(route_id, score, text)
         candidates.append({
             "candidate_id": route_id,
             "family_id": family_id,
@@ -269,12 +429,19 @@ def analyze_candidates(
             "status": "LOWERED" if contrary_hits else ("NEEDS_FACTS" if score < 65 else "CANDIDATE"),
             "score": score,
             "supporting_facts": (["使用者指定的初始調查路線（非犯罪認定）"] if selected else [])
-            + [f"文字線索：{item}" for item in hits],
+            + [f"文字線索：{item}" for item in hits] + semantic_support,
+            "supporting_fact_ids": [],
             "contrary_facts": [f"相反文字線索：{item}" for item in contrary_hits]
-            + [f"被害人與涉嫌人對 {target} 的陳述不一致" for target in sorted(disputes)],
+            + [f"被害人與涉嫌人對 {target} 的陳述不一致" for target in sorted(disputes)] + semantic_contrary,
+            "contrary_fact_ids": [],
             "missing_elements": unresolved or ["主觀認知", "行為細節", "證據來源"],
             "child_routes": child_routes,
             "source_status": "HUMAN_REVIEW_REQUIRED",
+            "candidate_role": candidate_role,
+            "legal_basis": _legal_basis(child_routes),
+            "core_issue_ids": list(ROUTE_ISSUES.get(route_id, ()))
+            + [f"ROLE_CONTRADICTION:{target}" for target in sorted(disputes)],
+            "element_assessments": _element_assessments(route_id, child_routes, text),
             "explanation": (
                 "依使用者指定的初始調查路線暫列，仍須由後續中性問句確認或排除。"
                 if selected else "依已確認文字線索暫列，須由後續中性問句確認或排除。"
@@ -351,6 +518,16 @@ def make_case(raw: dict[str, Any], bank: QuestionBank) -> dict[str, Any]:
         "state": "GATE1_REVIEW",
         "intake": intake,
         "facts": extract_facts(intake),
+        "parties": _initial_parties(summary, case_kind),
+        "behavior_events": _initial_behavior_events(intake),
+        "payment_events": _initial_payment_events(intake),
+        "evidence_items": _initial_evidence_items(intake),
+        "fact_assertions": [],
+        "fact_evidence_links": [],
+        "interview_sessions": [{
+            "session_id": f"IS-{role.upper()}-001", "role": role,
+            "party_id": "P-001" if role == "victim" else None, "status": "OPEN",
+        }],
         "candidates": candidates,
         "element_gaps": _element_gaps(candidates),
         "active_role": role,
@@ -396,6 +573,26 @@ def _answered_element_keys(case: dict[str, Any]) -> set[str]:
             if question.get("question_id") in answered_ids:
                 answered_keys.update(question.get("route_element_keys", []))
     return answered_keys
+
+
+def _analysis_text(case: dict[str, Any]) -> str:
+    values = [case.get("intake", {}).get("summary", "")]
+    for fact in case.get("facts", []):
+        value = str(fact.get("value", ""))
+        if value and not value.startswith("待問答確認") and not value.startswith("摘要記載之物品"):
+            values.append(value)
+    return " ".join(values)
+
+
+def _record_assertion(case: dict[str, Any], role: str, question_id: str, fact_id: str, value: str, status: str = "ASSERTED") -> None:
+    assertions = case.setdefault("fact_assertions", [])
+    assertion_id = f"AS-{role.upper()}-{question_id}-{len(assertions) + 1:04d}"
+    assertions.append({
+        "assertion_id": assertion_id, "fact_id": fact_id,
+        "party_id": "P-001" if role == "victim" else None,
+        "statement_role": role, "assertion_status": status,
+        "value": value, "source": f"ANSWER:{role}:{question_id}",
+    })
 
 
 def _case_question_context(case: dict[str, Any]) -> str:
@@ -534,6 +731,15 @@ def _disputed_facts(case: dict[str, Any]) -> list[dict[str, Any]]:
     return disputes
 
 
+def _contradiction_issues(disputes: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [{
+        "issue_id": f"ROLE_CONTRADICTION:{item['fact_target']}",
+        "fact_target": item["fact_target"],
+        "status": "OPEN",
+        "source_fact_targets": [item["fact_target"]],
+    } for item in disputes]
+
+
 def _active_preconditions(case: dict[str, Any]) -> set[str]:
     text = " ".join([
         case["intake"].get("summary", ""),
@@ -566,15 +772,52 @@ def _active_preconditions(case: dict[str, Any]) -> set[str]:
 
 def _available_questions(case: dict[str, Any], bank: QuestionBank) -> list[dict[str, Any]]:
     role = case["active_role"]
-    family_ids = sorted({item["family_id"] for item in case["candidates"]})
-    route_ids = [item["candidate_id"] for item in case["candidates"] if item["candidate_id"] != "unclassified"]
+    # Question generation follows the strongest live hypotheses.  Low-score
+    # candidates remain visible in the UI, but their entire family must not
+    # become mandatory questions merely because one noun appeared in the
+    # narrative.  Keep a close second only when it is within the same factual
+    # neighborhood (score delta <= 20).
+    live = [item for item in case["candidates"] if item.get("status") != "UNSUPPORTED_ROUTE"]
+    live = sorted(live, key=lambda item: (-item.get("score", 0), item.get("candidate_id", "")))
+    selected = live[:1]
+    if len(live) > 1 and live[1].get("score", 0) >= live[0].get("score", 0) - 20:
+        selected.append(live[1])
+    family_ids = sorted({item["family_id"] for item in selected})
+    route_ids = [item["candidate_id"] for item in selected if item["candidate_id"] != "unclassified"]
+    question_case = {**case, "candidates": selected}
     template_role = "transfer" if case["intake"]["case_kind"] == "NO_VICTIM" else role
     return bank.template_questions(template_role) + bank.questions(
         role=role,
         family_ids=family_ids,
         route_ids=route_ids,
         active_preconditions=_active_preconditions(case),
-    ) + _route_element_questions(case)
+    ) + _route_element_questions(question_case)
+
+
+def _display_question_text(text: str) -> str:
+    # The company template is hash-locked, but a stale literal date must not be
+    # shown as today's date in the UI or copied into a generated interview.
+    return re.sub(r"今[（(]12[）)]日", "今日", text)
+
+
+def _question_metadata(item: dict[str, Any]) -> dict[str, Any]:
+    route_ids = set(item.get("route_ids", []))
+    if route_ids.intersection({"theft", "embezzlement"}) and len(route_ids.intersection({"theft", "embezzlement"})) > 1:
+        question_type = "DISTINCTION"
+    elif item.get("layer") == "conditional_module":
+        question_type = "FOLLOW_UP"
+    elif item.get("fact_target") in {"evidence", "knowledge_basis", "hearsay_source", "exculpatory_evidence"}:
+        question_type = "EVIDENCE_CHECK"
+    elif item.get("layer") in {"family_skeleton", "element_supplement"}:
+        question_type = "CORE"
+    else:
+        question_type = "CORE"
+    return {
+        "question_type": question_type,
+        "issue_ids": sorted(set(item.get("route_ids", []))),
+        "generation_basis": list(item.get("route_element_keys", [])) or list(item.get("route_ids", [])),
+        "follow_up_condition": "回答為 UNKNOWN、矛盾或涉及相反事實時重新排程" if question_type != "CORE" else "核心事實尚未確認",
+    }
 
 
 def plan_next_batch(case: dict[str, Any], bank: QuestionBank, max_size: int = 5) -> list[dict[str, Any]]:
@@ -626,9 +869,10 @@ def plan_next_batch(case: dict[str, Any], bank: QuestionBank, max_size: int = 5)
     for question in questions:
         if question["question_id"] in answered:
             continue
+        metadata = _question_metadata(question)
         batch.append({
             "question_id": question["question_id"],
-            "text": question["text"],
+            "text": _display_question_text(question["text"]),
             "role": question["role"],
             "family_id": question["family_id"],
             "fact_target": question["fact_target"],
@@ -642,6 +886,7 @@ def plan_next_batch(case: dict[str, Any], bank: QuestionBank, max_size: int = 5)
             "route_ids": list(question.get("route_ids", [])),
             "route_names": list(question.get("route_names", [])),
             "route_priority": question.get("route_priority", 0),
+            **metadata,
             "why": (
                 f"對應候選子路線的具體事實缺口：{question['route_element']}。回答只用於確認或排除候選，不代表罪名成立。"
                 if question.get("route_element_keys")
@@ -658,7 +903,7 @@ def plan_next_batch(case: dict[str, Any], bank: QuestionBank, max_size: int = 5)
 def confirm_gate1(case: dict[str, Any], bank: QuestionBank) -> dict[str, Any]:
     if case["intake"]["case_kind"] == "NO_VICTIM" and not case["intake"].get("initial_route_id"):
         raise ValueError("無被害人／移送案件必須先指定初始罪章／調查路線")
-    analysis_text = " ".join([case["intake"]["summary"], *(fact["value"] for fact in case.get("facts", []))])
+    analysis_text = _analysis_text(case)
     case["candidates"] = analyze_candidates(
         analysis_text, bank, selected_route_id=case["intake"].get("initial_route_id", "")
     )
@@ -695,7 +940,7 @@ def update_gate1_facts(case: dict[str, Any], payload: dict[str, Any], bank: Ques
         changed_count += 1
     if changed_count == 0:
         raise ValueError("沒有可儲存的事實變更")
-    analysis_text = " ".join([case["intake"]["summary"], *(fact["value"] for fact in case["facts"])])
+    analysis_text = _analysis_text(case)
     case["candidates"] = analyze_candidates(
         analysis_text, bank, selected_route_id=case["intake"].get("initial_route_id", "")
     )
@@ -717,6 +962,12 @@ def confirm_answers(case: dict[str, Any], payload: dict[str, Any], bank: Questio
     if not set(incoming).issubset(expected):
         raise ValueError("答案包含目前批次以外的 question_id")
     for question_id, value in incoming.items():
+        assertion_status = "ASSERTED"
+        if isinstance(value, dict):
+            assertion_status = str(value.get("assertion_status", "ASSERTED")).upper()
+            if assertion_status not in {"ASSERTED", "ADMITTED", "DENIED", "INFERRED", "UNKNOWN"}:
+                raise ValueError(f"{question_id} 的 assertion_status 不合法")
+            value = value.get("text", "")
         text = str(value).strip()
         if not text:
             raise ValueError(f"{question_id} 的答案不得空白")
@@ -732,17 +983,16 @@ def confirm_answers(case: dict[str, Any], payload: dict[str, Any], bank: Questio
             "STATEMENT",
             1.0,
         ))
+        _record_assertion(case, role, question_id, fact_id, text, assertion_status)
     case.setdefault("question_batches", []).append({
         "role": role,
         "confirmed": True,
         "questions": deepcopy(case.get("next_question_batch", [])),
         "answered_question_ids": sorted(incoming),
     })
-    combined = case["intake"]["summary"] + " " + " ".join(
-        answer for answers in case["answers"].values() for question_id, answer in answers.items()
-        if not question_id.startswith("T-")
-    )
+    combined = _analysis_text(case)
     case["disputed_facts"] = _disputed_facts(case)
+    case["contradiction_issues"] = _contradiction_issues(case["disputed_facts"])
     case["candidates"] = analyze_candidates(
         combined,
         bank,
@@ -776,6 +1026,12 @@ def update_confirmed_answers(case: dict[str, Any], payload: dict[str, Any], bank
     }
     changed = 0
     for question_id, raw_value in incoming.items():
+        assertion_status = "ASSERTED"
+        if isinstance(raw_value, dict):
+            assertion_status = str(raw_value.get("assertion_status", "ASSERTED")).upper()
+            if assertion_status not in {"ASSERTED", "ADMITTED", "DENIED", "INFERRED", "UNKNOWN"}:
+                raise ValueError(f"{question_id} 的 assertion_status 不合法")
+            raw_value = raw_value.get("text", "")
         value = str(raw_value).strip()
         if not value:
             raise ValueError(f"{question_id} 的答案不得空白")
@@ -795,14 +1051,13 @@ def update_confirmed_answers(case: dict[str, Any], payload: dict[str, Any], bank
             "STATEMENT",
             1.0,
         ))
+        _record_assertion(case, role, question_id, fact_id, value, assertion_status)
         changed += 1
     if changed == 0:
         raise ValueError("沒有可儲存的回答變更")
-    combined = case["intake"]["summary"] + " " + " ".join(
-        answer for role_answers in case["answers"].values() for question_id, answer in role_answers.items()
-        if not question_id.startswith("T-")
-    )
+    combined = _analysis_text(case)
     case["disputed_facts"] = _disputed_facts(case)
+    case["contradiction_issues"] = _contradiction_issues(case["disputed_facts"])
     case["candidates"] = analyze_candidates(
         combined,
         bank,
@@ -877,6 +1132,10 @@ def start_suspect(case: dict[str, Any], bank: QuestionBank, *, transfer: bool = 
     if not transfer and case["intake"]["case_kind"] != "WITH_VICTIM":
         raise ValueError("涉嫌人續辦只適用有被害人案件")
     case["active_role"] = "suspect"
+    case.setdefault("interview_sessions", []).append({
+        "session_id": f"IS-SUSPECT-{len(case.get('interview_sessions', [])) + 1:03d}",
+        "role": "suspect", "party_id": None, "status": "OPEN",
+    })
     case["state"] = "GATE5_QA" if transfer else "GATE4_QA"
     case["next_question_batch"] = plan_next_batch(case, bank)
     case["approvals"].pop("gate4:suspect", None)
@@ -898,6 +1157,18 @@ def update_intake(case: dict[str, Any], raw: dict[str, Any], bank: QuestionBank)
         _validate_initial_route(intake["initial_route_id"])
     case["intake"] = intake
     case["facts"] = extract_facts(intake)
+    case["parties"] = _initial_parties(intake["summary"], intake["case_kind"])
+    case["behavior_events"] = _initial_behavior_events(intake)
+    case["payment_events"] = _initial_payment_events(intake)
+    case["evidence_items"] = _initial_evidence_items(intake)
+    case["fact_assertions"] = []
+    case["fact_evidence_links"] = []
+    case["interview_sessions"] = [{
+        "session_id": "IS-VICTIM-001" if intake["case_kind"] == "WITH_VICTIM" else "IS-SUSPECT-001",
+        "role": "victim" if intake["case_kind"] == "WITH_VICTIM" else "suspect",
+        "party_id": "P-001" if intake["case_kind"] == "WITH_VICTIM" else None,
+        "status": "OPEN",
+    }]
     case["candidates"] = analyze_candidates(
         intake["summary"], bank, selected_route_id=intake.get("initial_route_id", "")
     )

@@ -85,22 +85,22 @@
   "runtime_surfaces": [
     {
       "path": "app/server.py",
-      "sha256": "c3cba3b4d3d0b5effe39e45f99b96c0141d1d0f38784757e8ea6840595f4c0e1",
+      "sha256": "c8a0c4901a9075bf6056747264177045c3678972ff6e2e8ff463a66dec18c4ca",
       "expected_references": 0
     },
     {
       "path": "app/workflow.py",
-      "sha256": "ad70f683d01e99ffa29e693bc7de1f8b566f4b8bfd9702d1ed2808ecb0192232",
+      "sha256": "be721c613c24b28efe11c790743247cc73bc6432e24bc87cf75859da05924232",
       "expected_references": 0
     },
     {
       "path": "app/rules.py",
-      "sha256": "f30aa6795ba37feb74163b6281aac7db6d37d5c3423ae602610e45c43c0a28c8",
+      "sha256": "240bb3bc7aa468ec03bc67ed137713c1eb7278f77ea49044102bacdb44a97aa4",
       "expected_references": 0
     },
     {
       "path": "app/static/app.js",
-      "sha256": "911803468d168f28ab677ff6faba7ddd171de41e9661d0f11fd30578b8d1460a",
+      "sha256": "89ee982e7d58964ac769f03e9252ed6ba916f6054b3ef37ef91d4e26a311f5e6",
       "expected_references": 0
     }
   ],
@@ -117,9 +117,9 @@
       "id": "V01",
       "command": "py -3 -X utf8 -m pytest -q",
       "status": "PASS",
-      "result": "603 passed",
-      "passed": 603,
-      "verified_on": "2026-10-25",
+      "result": "620 passed",
+      "passed": 620,
+      "verified_on": "2026-10-26",
       "note": "Single-run baseline re-verified 2026-10-25 after the document renderer gained Windows soffice.com support, Docker build smoke, startup warmup, health status and a single document-production boundary: 591 -> 603. Legal retrieval remains unreachable. This engineering re-baseline does not approve legal retrieval, legal correctness or production deployment."
     },
     {

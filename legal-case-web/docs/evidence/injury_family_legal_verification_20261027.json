@@ -1,0 +1,68 @@
+{
+  "schema_version": "legal-verification-evidence-v1",
+  "subject": "human_violence/injury_family_template_20261027",
+  "retrieved_on": "2026-10-27",
+  "jurisdiction": "Taiwan",
+  "status": "PARTIAL_OFFICIAL_SOURCE_VERIFIED",
+  "runtime_legal_conclusion": false,
+  "human_review_required": true,
+  "verification_card": {
+    "question": "核對傷害家族樣板直接引用的現行法條、告訴與警詢程序；不核定個案罪名或內部作業程序。",
+    "evidence": "全國法規資料庫現行所有條文頁面與頁面所列修正日期。",
+    "trace": "本檔保存法規代碼、官方 URL、查詢日期、條號、核對結果及仍屬推論或未知的界線。"
+  },
+  "sources": [
+    {
+      "law": "中華民國刑法",
+      "pcode": "C0000001",
+      "official_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+      "observed_revision_date_roc": "115-07-22",
+      "verified_articles": ["10(4)", "271", "277", "278", "283", "284", "287"],
+      "status": "VERIFIED_CURRENT_AT_RETRIEVAL",
+      "findings": [
+        "第10條第4項列出重傷定義；樣板原標示未核的這一項已取得官方現行條文。",
+        "第277、278、283、284條的傷害、重傷、聚眾鬥毆與過失傷害規定存在且與樣板引用方向相符。",
+        "第271條明定殺人未遂處罰，僅證明路由法源存在，不證明任何個案具有殺意。",
+        "第287條列明第277條第1項、第281條及第284條原則上須告訴乃論，並有公務員執行職務犯第277條第1項的例外。"
+      ]
+    },
+    {
+      "law": "刑事訴訟法",
+      "pcode": "C0010001",
+      "official_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0010001",
+      "observed_revision_date_roc": "115-05-13",
+      "verified_articles": ["95", "96", "98", "100-1", "100-2", "100-3", "186", "196-1", "237", "242"],
+      "status": "VERIFIED_CURRENT_AT_RETRIEVAL",
+      "findings": [
+        "第95條列出罪名、緘默、辯護人與有利證據等告知事項；第96條要求給予辯明及連續陳述機會。",
+        "第98、100-1、100-3條分別規範不正訊問禁止、連續錄音錄影及夜間詢問限制；第100-2條使本章準用於司法警察詢問犯罪嫌疑人。",
+        "第237條規定告訴乃論之罪自知悉犯人時起六個月內告訴；第242條要求發現告訴乃論案件而未經告訴時詢問是否告訴並記明筆錄。",
+        "第196-1條的警詢證人準用清單未列第186條。這只證明法條清單內容，不單獨證明所有警詢證人均不得或無須具結。"
+      ]
+    },
+    {
+      "law": "家庭暴力防治法",
+      "pcode": "D0050071",
+      "official_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=D0050071",
+      "observed_revision_date_roc": "112-12-06",
+      "verified_articles": ["2"],
+      "status": "VERIFIED_CURRENT_AT_RETRIEVAL",
+      "findings": [
+        "第2條定義家庭暴力、家庭暴力罪、目睹家庭暴力及騷擾，支持 E1 的分類與事實詢問方向。"
+      ]
+    }
+  ],
+  "verified_scope": [
+    "direct statutory text and amendment date",
+    "existence of cited offense and procedure provisions",
+    "structural consistency of the draft route labels with cited provisions"
+  ],
+  "not_verified": [
+    "individual-case offense conclusion or homicidal intent",
+    "agency internal witness-oath procedure",
+    "complete domestic-violence reporting and protection-order workflow",
+    "child-protection aggravation and special interviewing workflow beyond the cited provisions",
+    "case-time law selection for conduct occurring before the observed revision dates"
+  ],
+  "conclusion": "The template has partial current-law support from official sources, but remains a design draft and requires case-time and internal-procedure Human Gate review."
+}

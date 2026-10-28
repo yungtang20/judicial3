@@ -328,7 +328,11 @@ def check_event_time_against_law(
         return None
     try:
         from datetime import datetime
-        event_date = datetime.fromisoformat(event_time).date()
+        roc = re.search(r"(?:民國\s*)?(\d{2,3})年\s*(\d{1,2})月\s*(\d{1,2})日", event_time)
+        event_date = (
+            datetime(int(roc.group(1)) + 1911, int(roc.group(2)), int(roc.group(3))).date()
+            if roc else datetime.fromisoformat(event_time).date()
+        )
         modified = datetime.strptime(law_modified_date, "%Y-%m-%d").date()
     except (ValueError, TypeError):
         return None

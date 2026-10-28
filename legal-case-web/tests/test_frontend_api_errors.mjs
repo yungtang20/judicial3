@@ -563,8 +563,25 @@ test("M: 法律路由選項只來自目前選取的罪章", () => {
   ] };
   assert.deepEqual(
     JSON.parse(JSON.stringify(context.legalRoutesForOffenses(bank, ["theft"]))),
-    [{ id: "theft_320_1_movable", name: "普通動產竊盜", parent_offense_id: "theft" }],
+    [{ id: "theft_320_1_movable", name: "普通動產竊盜", parent_offense_id: "theft", legal_verification: null }],
   );
+});
+
+test("M2: 法律路由保留法源查證資料供人工覆核", () => {
+  const { context } = createHarness({
+    fetchImpl: async () => ({ ok: true, status: 200, json: async () => ({}), headers: new Headers() }),
+  });
+  const verification = {
+    article_no: "第337條",
+    verified_on: "2026-10-26",
+    verification_status: "HUMAN_REVIEW_REQUIRED",
+    statute_source: { law_url: "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001" },
+  };
+  const routes = context.legalRoutesForOffenses({
+    offenses: [{ id: "lost", legal_routes: [{ id: "embezzlement_337_lost_property", name: "侵占遺失物", legal_verification: verification }] }],
+  }, ["lost"]);
+  assert.equal(routes[0].legal_verification.article_no, "第337條");
+  assert.equal(routes[0].legal_verification.verification_status, "HUMAN_REVIEW_REQUIRED");
 });
 
 test("N: Gate 2 依題目快照動態顯示 enum 選項", () => {

@@ -4,7 +4,7 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
-from .section_questions import read_section_questions
+from .section_questions import build_question_layer_coverage, read_section_questions
 
 
 CATALOG: tuple[dict[str, Any], ...] = (
@@ -109,6 +109,7 @@ def merge_markdown_questions(bank: dict[str, Any], root: Path) -> dict[str, Any]
             "question_source": entry["file"],
         }
         merged["offenses"].append(offense)
+    merged["question_layer_contract"] = build_question_layer_coverage(merged["offenses"])
     return merged
 
 

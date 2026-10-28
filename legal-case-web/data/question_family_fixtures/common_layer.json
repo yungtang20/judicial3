@@ -1,0 +1,94 @@
+{
+  "schema_version": "question-common-fixture-v1-draft",
+  "document_status": "DESIGN_DRAFT",
+  "review_status": "HUMAN_REVIEW_REQUIRED",
+  "source": "data/question_bank.json:common",
+  "compiled_master": "data/question_family_master/common_questions.json",
+  "existing_runtime_roles": ["victim", "suspect", "transfer"],
+  "legal_verification_evidence": [
+    "docs/evidence/injury_family_legal_verification_20261027.json"
+  ],
+  "witness_review_only_questions": [
+    {
+      "id": "W-COM-000",
+      "text": "上述身分資料是否正確？",
+      "priority": 1,
+      "purpose": "identity"
+    },
+    {
+      "id": "W-COM-001",
+      "text": "你與本案當事人各是什麼關係？",
+      "priority": 1,
+      "purpose": "relationship"
+    },
+    {
+      "id": "W-COM-002",
+      "text": "請依照時間順序，用自己的話說明你親自知道的事情經過。",
+      "priority": 1,
+      "purpose": "free_account"
+    },
+    {
+      "id": "W-COM-003",
+      "text": "你剛才所說的內容，哪些是親自看見或聽見，哪些是由他人告知？",
+      "priority": 1,
+      "purpose": "knowledge_basis"
+    },
+    {
+      "id": "W-COM-004",
+      "text": "你有哪些資料或物品可以提供警方查證？",
+      "priority": 2,
+      "purpose": "evidence"
+    },
+    {
+      "id": "W-COM-005",
+      "text": "你是否還有其他想補充或更正的事項？",
+      "priority": 1,
+      "purpose": "closing"
+    }
+  ],
+  "family_common_ownership": {
+    "human_violence": {
+      "V01": ["V-COM-001"],
+      "V04": ["V-COM-002B"],
+      "V12": ["V-COM-003"],
+      "S02": ["S-COM-002B"],
+      "S04": ["S-COM-002"],
+      "S15": ["S-COM-003"],
+      "S18": ["S-COM-005"],
+      "W01": ["W-COM-001"],
+      "W03": ["W-COM-002"],
+      "W05": ["W-COM-003"],
+      "W11": ["W-COM-004"],
+      "W12": ["W-COM-005"]
+    },
+    "property_acquisition_and_damage": {
+      "P-V01": ["V-COM-001"],
+      "P-V12": ["V-COM-003"],
+      "P-V18": ["V-COM-005"],
+      "P-S01": ["S-COM-002"],
+      "P-S14": ["S-COM-005"],
+      "P-W01": ["W-COM-001"],
+      "P-W02": ["W-COM-002"],
+      "P-W09": ["W-COM-004"],
+      "P-W10": ["W-COM-005"]
+    },
+    "public_danger_traffic": {
+      "PD-V01": ["V-COM-001"],
+      "PD-V13": ["V-COM-003"],
+      "PD-V15": ["V-COM-005"],
+      "PD-S01": ["S-COM-002"],
+      "PD-S17": ["S-COM-003"],
+      "PD-S18": ["S-COM-005"],
+      "PD-W01": ["W-COM-001"],
+      "PD-W02": ["W-COM-002"],
+      "PD-W09": ["W-COM-004"],
+      "PD-W10": ["W-COM-005"]
+    }
+  },
+  "ownership_policy": {
+    "REUSE_COMMON_LAYER": "The family source row remains traceable but must not be materialized in addition to its common owner.",
+    "FAMILY_CANDIDATE": "The family row has no approved common owner and remains a family or element-supplement candidate.",
+    "semantic_overlap_requires_explicit_mapping": true,
+    "automatic_similarity_is_not_approval": true
+  }
+}

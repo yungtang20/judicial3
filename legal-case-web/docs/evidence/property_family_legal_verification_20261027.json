@@ -1,0 +1,45 @@
+{
+  "schema_version": "legal-verification-evidence-v1",
+  "subject": "property_acquisition_and_damage/property_family_template_20261027",
+  "retrieved_on": "2026-10-27",
+  "jurisdiction": "Taiwan",
+  "status": "PARTIAL_OFFICIAL_SOURCE_VERIFIED",
+  "runtime_legal_conclusion": false,
+  "human_review_required": true,
+  "verification_card": {
+    "question": "核對財物取得與毀損家族使用的現行刑法條文與內部 child route 結構；不判定個案所有權、持有、授權或罪名。",
+    "evidence": "法務部全國法規資料庫中華民國刑法所有條文頁面，查詢日 2026-10-27。",
+    "trace": "保存官方 URL、頁面修正日期、核對條號、結構結論與未驗證範圍。"
+  },
+  "sources": [
+    {
+      "law": "中華民國刑法",
+      "pcode": "C0000001",
+      "official_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+      "observed_revision_date_roc": "115-07-22",
+      "verified_articles": ["1", "2", "320", "321", "323", "324", "335", "336", "337", "338", "352", "353", "354", "355", "356", "357"],
+      "status": "VERIFIED_CURRENT_AT_RETRIEVAL",
+      "findings": [
+        "第320條分列動產竊取、不動產竊佔及未遂；第323條將電能、熱能及其他能量於本章視為動產。",
+        "第321條列出六款加重事由，支持 P-E2 的侵入、毀越、器械、三人以上、災害及交通場站事實軸。",
+        "第324條規範特定親屬間免刑及告訴條件；個案親屬關係與程序仍須人工審核。",
+        "第335至338條區分自己持有他人之物、公務公益或業務持有、遺失物等離本人持有物及第323、324條準用。",
+        "第352至357條區分文書、建築物、一般物、詐術損害、損害債權及告訴條件。"
+      ]
+    }
+  ],
+  "verified_scope": [
+    "existence and current text structure of the cited statutory provisions",
+    "structural consistency between cited articles and repository child route ids",
+    "source basis for the six aggravated-theft factual branches"
+  ],
+  "not_verified": [
+    "individual-case ownership, possession, control or authorization",
+    "individual-case unlawful appropriation intent",
+    "case-time law for conduct before the observed revision date",
+    "case-law propositions in ../questions/theft.md or review/property-taking-issue-matrix.md",
+    "complaint status or family exception in an individual case",
+    "final distinction from robbery, fraud, civil possession disputes or other adjacent routes"
+  ],
+  "conclusion": "The route and question skeleton has partial current-law support from an official source; individual classification and case-time law remain Human Gate decisions."
+}

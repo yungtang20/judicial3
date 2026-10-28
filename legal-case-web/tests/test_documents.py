@@ -55,6 +55,14 @@ def test_brief_renders_unknown_for_free_text_event_time():
     assert "昨天下午" not in text
 
 
+def test_summary_context_normalizes_explicit_gregorian_event_time():
+    from app.workflow import _summary_context
+
+    context = _summary_context("發生時間：2026年10月20日 14時30分\n發生地點：臺北市中正區虛擬路1號")
+
+    assert context["event_time"] == "2026-10-20T14:30"
+
+
 def test_docx_is_openable_and_contains_all_confirmed_questions():
     case = completed_case()
     data = interview_docx(case, "victim")

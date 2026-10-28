@@ -1,0 +1,142 @@
+{
+  "schema_version": "question-family-fixture-v1-draft",
+  "document_status": "DESIGN_DRAFT",
+  "runtime_enabled": false,
+  "review_status": "HUMAN_REVIEW_REQUIRED",
+  "fixture_id": "injury_family_template_20261027",
+  "family_id": "human_violence",
+  "source_markdown": "docs/family_templates/傷害家族問句樣板.md",
+  "source_provenance": {
+    "kind": "USER_PROVIDED_DESIGN_DRAFT",
+    "original_path": "C:/Users/yungtang/Downloads/傷害家族問句樣板.md",
+    "copied_because_original_path_missing": true,
+    "legal_verification": "PARTIAL_OFFICIAL_SOURCE_VERIFIED",
+    "legal_verification_evidence": "docs/evidence/injury_family_legal_verification_20261027.json"
+  },
+  "role_tables": {
+    "victim": {"prefix": "V", "expected_count": 26, "runtime_role": "victim"},
+    "suspect": {"prefix": "S", "expected_count": 18, "runtime_role": "suspect"},
+    "witness": {"prefix": "W", "expected_count": 12, "runtime_role": "witness_review_only"}
+  },
+  "question_attributes": [
+    "id",
+    "text",
+    "element_type",
+    "layer",
+    "applicability",
+    "preconditions",
+    "target_interview_roles",
+    "review_status"
+  ],
+  "layer_mapping": {
+    "common": "data/question_bank.json:common",
+    "family_skeleton": "role_tables in this fixture",
+    "element_supplement": "E1, E3, E4, E5, E6 modules in source Markdown"
+  },
+  "compiled_master": "data/question_family_master/injury_family_questions.json",
+  "common_ownership_source": "data/question_family_fixtures/common_layer.json",
+  "supplement_modules": ["E1", "E3", "E4", "E5", "E6"],
+  "candidate_parent_routes": [
+    "injury",
+    "homicide",
+    "abortion",
+    "abandonment",
+    "domestic_violence"
+  ],
+  "source_applicability_route_map": {
+    "傷": ["injury_277_general"],
+    "重": ["injury_278_serious"],
+    "鬥": ["injury_283_group_fight"],
+    "過": ["injury_284_negligent"],
+    "殺": ["homicide_271_intentional"],
+    "全": [
+      "injury_277_general",
+      "injury_278_serious",
+      "injury_283_group_fight",
+      "injury_284_negligent",
+      "homicide_271_intentional"
+    ]
+  },
+  "question_route_overrides": {
+    "V23": ["injury_277_general", "injury_284_negligent", "injury_287_complaint"],
+    "V25": ["injury_277_general", "injury_284_negligent", "injury_287_complaint"],
+    "E1-1": ["domestic_2_classification"],
+    "E1-2": ["domestic_2_classification"],
+    "E1-3": ["domestic_2_classification"],
+    "E1-4": ["domestic_2_classification", "domestic_29_42_criminal_safety"],
+    "E1-5": ["domestic_2_classification", "domestic_9_21_protection_order"],
+    "E1-6": ["domestic_2_classification"],
+    "E3-1": ["injury_283_group_fight"],
+    "E3-2": ["injury_283_group_fight"],
+    "E3-3": ["injury_283_group_fight"],
+    "E3-4": ["injury_278_serious", "injury_283_group_fight", "homicide_271_intentional"],
+    "E4-1": ["injury_284_negligent"],
+    "E4-2": ["injury_284_negligent"],
+    "E4-3": ["injury_284_negligent"],
+    "E4-4": ["injury_284_negligent"],
+    "E4-5": ["injury_284_negligent"],
+    "E5-1": ["injury_277_general", "injury_278_serious", "homicide_271_intentional"],
+    "E5-2": ["injury_277_general", "injury_278_serious", "homicide_271_intentional"],
+    "E5-3": ["injury_277_general", "injury_278_serious", "homicide_271_intentional"],
+    "E5-4": ["injury_277_general", "injury_278_serious", "homicide_271_intentional"],
+    "E5-5": ["injury_277_general", "injury_278_serious", "homicide_271_intentional"],
+    "E6-1": ["injury_277_general", "injury_287_complaint"],
+    "E6-2": ["injury_277_general", "injury_287_complaint"]
+  },
+  "route_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+  "precondition_registry": {
+    "family_member_relationship_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "prior_answer_lacks_conduct_method": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "prior_answer_lacks_instrument_detail": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "injury_reported": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "medical_treatment_reported": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "serious_or_persistent_injury_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "complaint_requirement_applicability_review": {"evaluation": "HUMAN_LEGAL_REVIEW"},
+    "suspect_acknowledges_physical_conduct": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "prior_witness_account_lacks_conduct_detail": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "multiple_participants_or_serious_result_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"},
+    "possible_negligence_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"},
+    "possible_homicidal_intent_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"},
+    "alleged_actor_public_official_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"}
+  },
+  "question_precondition_ids": {
+    "V04": ["family_member_relationship_indicated"],
+    "V07": ["prior_answer_lacks_conduct_method"],
+    "V08": ["prior_answer_lacks_instrument_detail"],
+    "V16": ["injury_reported"],
+    "V17": ["medical_treatment_reported"],
+    "V18": ["serious_or_persistent_injury_indicated"],
+    "V25": ["complaint_requirement_applicability_review"],
+    "S02": ["family_member_relationship_indicated"],
+    "S06": ["suspect_acknowledges_physical_conduct"],
+    "S07": ["suspect_acknowledges_physical_conduct"],
+    "S08": ["suspect_acknowledges_physical_conduct"],
+    "W07": ["prior_witness_account_lacks_conduct_detail"]
+  },
+  "module_precondition_ids": {
+    "E1": ["family_member_relationship_indicated"],
+    "E3": ["multiple_participants_or_serious_result_indicated"],
+    "E4": ["possible_negligence_indicated"],
+    "E5": ["possible_homicidal_intent_indicated"],
+    "E6": ["alleged_actor_public_official_indicated"]
+  },
+  "route_mapping_policy": {
+    "allow_parent_route_only": false,
+    "requires_exact_child_route": true,
+    "procedure_and_protection_routes_are_separate": true,
+    "unknown_route_mapping_must_not_be_silently_promoted": true
+  },
+  "human_gate": {
+    "case_acceptance": "REQUIRED",
+    "legal_source_acceptance": "REQUIRED",
+    "witness_procedure_acceptance": "REQUIRED"
+  },
+  "notes": [
+    "Common identity, rights, and closing questions are referenced rather than duplicated.",
+    "The source template explicitly separates free narrative from element supplementation.",
+    "Official statutes were checked on 2026-10-27; case-time law selection and individual legal conclusions remain Human Gate matters.",
+    "The source template does not include witness oath content; Criminal Procedure Code 196-1 does not list article 186, but the agency internal procedure remains UNKNOWN.",
+    "Exact child route ids describe the repository mapping only; legal scope remains HUMAN_REVIEW_REQUIRED.",
+    "This fixture is not a verified legal conclusion and is not consumed by runtime question generation."
+  ]
+}

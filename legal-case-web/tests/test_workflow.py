@@ -27,7 +27,10 @@ def test_auto_prepare_selects_candidate_route_and_questions_from_summary():
         "曹富生、顏大鈞前與羅世亮在法務部矯正署新店戒治所中因抽煙問題生有嫌隙，"
         "共同徒手毆打羅世亮，致羅世亮受有上唇瘀腫及門牙折斷等傷害。"
     )
-    case = create_case(intake(summary=summary), BANK)
+    raw = intake(summary=summary)
+    raw["event_time"] = ""
+    raw["location"] = ""
+    case = create_case(raw, BANK)
 
     prepared = apply_action(case, "auto_prepare", {}, BANK)
 
@@ -210,6 +213,15 @@ def test_brief_dates_are_roc_era():
     assert "2026-10-10" not in text
 
 
+def test_brief_report_hour_is_zero_padded_and_summary_starts_on_next_line():
+    case = completed_case()
+    case["output_context"]["report_time"] = "2026-10-10T09:00"
+    from app.documents import brief_text
+    text = brief_text(case, "victim")
+    assert "四、報案時間：115年10月10日09時00分" in text
+    assert "五、案情摘要：\n" in text
+
+
 def test_ai_analyze_updates_candidates_and_marks_source():
     monkey_data = {
         "candidates": [{
@@ -241,6 +253,35 @@ def test_ai_analyze_updates_candidates_and_marks_source():
         assert fraud_candidate["classification_missing"] == ["交付情形待確認"]
         assert case["candidate_classification_status"]["has_victim"] == "true"
         assert case["candidate_analysis_contract"]["schema_version"] == "case-analysis-v3-contract-v1"
+    finally:
+        wf.analyze_candidates_v3 = original
+
+
+def test_ai_analyze_from_gate1_auto_prepares_without_manual_offense_selection():
+    monkey_data = {
+        "candidates": [{
+            "id": "theft", "reason": "摘要明載未經同意取走物品", "basis_quote": "未經同意拿走店內物品",
+            "basis_start": 0, "basis_end": 10, "missing": [],
+        }],
+        "status": {"subject_identified": "unknown", "has_victim": "true", "is_solved": "unknown"},
+        "model": "test-model",
+        "contract": {
+            "schema_version": "case-analysis-v3-contract-v1", "request_id": "req-gate1",
+            "input_hash": "0" * 64, "source_snapshot_hashes": {"catalog": "1" * 64},
+            "attempt_count": 1,
+        },
+    }
+    monkeypatch_ai = lambda summary, offenses, **kwargs: monkey_data
+    import app.workflow as wf
+    original = wf.analyze_candidates_v3
+    wf.analyze_candidates_v3 = monkeypatch_ai
+    try:
+        case = create_case(intake(), BANK)
+        prepared = apply_action(case, "analyze_candidates", {"external_ai_consent": True}, BANK)
+        assert prepared["state"] == "GATE2_QA"
+        assert prepared["preparation_mode"] == "SYSTEM_AUTO_PREPARED_HUMAN_REVIEW_REQUIRED"
+        assert prepared["selected_offenses"]
+        assert prepared["questions"]
     finally:
         wf.analyze_candidates_v3 = original
 
@@ -495,6 +536,44 @@ def test_brief_summary_follows_gate1_fact_changes():
     assert "修正後的事件描述乙" in updated["brief_summary"]
     assert len(updated["brief_summary"]) <= MAX_SUMMARY_LENGTH
 
+
+def test_property_boundary_brief_is_written_for_supervisor_not_raw_intake():
+    summary = (
+        "發生時間：民國115年10月20日20時30分。發生地點：臺北市中正區忠孝西路1號某咖啡店。"
+        "林雅婷表示，她將皮夾放在座位旁後短暫離席，返回發現皮夾不見；店員看見一名男子拿取後離開，"
+        "男子後來交回皮夾，但現金短少新臺幣1,000元。現有證據包括監視器及店員證詞。"
+    )
+    raw = intake(summary=summary)
+    raw["event_time"] = ""
+    raw["location"] = ""
+    case = create_case(raw, BANK)
+    brief = case["brief_summary"]
+    assert brief.startswith("本案於民國115年10月20日20時30分，在臺北市中正區忠孝西路1號某咖啡店發生。")
+    assert brief.count("115年10月20日20時30分") == 1
+    assert "證詞。" in brief
+    assert "竊盜與侵占遺失物之區辨" not in brief
+    assert "尚非罪名定論" not in brief
+    assert "現有證據包括監視器及店員證詞" in brief
+    assert "發生時間：民國115年10月20日20時30分。發生地點：" not in brief
+
+
+def test_gate1_location_prefers_address_over_indoor_position():
+    raw = intake(
+        summary=(
+            "民國115年10月20日20時30分，林雅婷在臺北市中正區忠孝西路1號某咖啡店，"
+            "將皮夾放在座位旁椅子上後離席。"
+        )
+    )
+    raw["event_time"] = ""
+    raw["location"] = ""
+    case = create_case(raw, BANK)
+    case = apply_action(case, "approve_gate1", {"confirmed": True}, BANK)
+    case = apply_action(case, "update_gate1", {
+        "gate1": {"places": ["座位旁椅子", "臺北市中正區忠孝西路1號"]}
+    }, BANK)
+
+    assert case["intake"]["location"] == "臺北市中正區忠孝西路1號"
+
 def test_case_numbers_correction_after_output_ready():
     """F35：OUTPUT_READY 後承辦人無法更正錯誤案號（只能 reopen 重跑全流程）。
     修：OUTPUT_READY 允許重新 save_case_numbers（新核准取代舊核准，舊值入快照）。"""
@@ -518,3 +597,23 @@ def test_case_numbers_correction_after_output_ready():
     from app.workflow import WorkflowError
     with pytest.raises(WorkflowError, match="缺少必要案號"):
         apply_action(corrected, "save_case_numbers", {"case_numbers": {"proof": ""}}, BANK)
+
+
+def test_output_case_can_return_to_questionnaire_and_edit_only_this_case_question():
+    case = completed_case()
+    question = case["questions"][0]
+    original = question["text"]
+    reopened = apply_action(case, "reopen_questionnaire", {}, BANK)
+
+    assert reopened["state"] == "GATE2_QA"
+    assert reopened["case_numbers"]["proof"]
+    edited = apply_action(reopened, "edit_question", {
+        "question_id": question["id"],
+        "text": "本案修改後問句？",
+    }, BANK)
+
+    edited_question = next(item for item in edited["questions"] if item["id"] == question["id"])
+    assert edited_question["text"] == "本案修改後問句？"
+    assert edited_question["meta"]["original_text"] == original
+    assert edited_question["meta"]["human_edited"] is True
+    assert edited["interviews"] == {}

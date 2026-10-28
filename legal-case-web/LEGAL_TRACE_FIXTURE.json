@@ -1,0 +1,60 @@
+{
+  "fixture_version": "tw-case-trace-v1",
+  "case_id": "fixture:convenience-phone-001",
+  "fixture_only": true,
+  "summary": "甲表示手機為其所有，曾將手機暫放在便利商店櫃檯旁；目前未確認甲是否仍能實際支配手機。乙承認拿取手機離開，表示自己以為手機是他人遺留、不要的物品；尚未確認乙是否具有不法所有意圖。手機目前尚未尋獲。",
+  "sources": [
+    {"source_ref": "statement:complainant:001", "source_type": "PARTY_STATEMENT", "text": "甲表示手機為其所有，曾將手機暫放在便利商店櫃檯旁。", "verification_status": "UNVERIFIED"},
+    {"source_ref": "statement:suspect:001", "source_type": "PARTY_STATEMENT", "text": "乙承認拿取手機離開，表示自己以為手機是他人遺留、不要的物品。", "verification_status": "UNVERIFIED"},
+    {"source_ref": "evidence:cctv:001", "source_type": "EVIDENCE", "text": "監視器資料已取得，待核對乙拿取及離店時間、方向。", "verification_status": "AVAILABLE_UNVERIFIED"}
+  ],
+  "facts": [
+    {"fact_id": "fact:owner-001", "subject": "甲", "predicate": "所有權主張", "object": "手機", "assertion_class": "ASSERTED", "verification_status": "UNVERIFIED", "source_ref": "statement:complainant:001"},
+    {"fact_id": "fact:placement-001", "subject": "甲", "predicate": "放置", "object": "手機於便利商店櫃檯旁", "assertion_class": "ASSERTED", "verification_status": "UNVERIFIED", "source_ref": "statement:complainant:001"},
+    {"fact_id": "fact:possession-unknown-001", "subject": "甲", "predicate": "手機是否仍在持有範圍", "object": "UNKNOWN", "assertion_class": "UNKNOWN", "verification_status": "UNKNOWN", "source_ref": "analysis:unknown"},
+    {"fact_id": "fact:taking-001", "subject": "乙", "predicate": "拿取並離開", "object": "手機", "assertion_class": "ADMITTED", "verification_status": "UNVERIFIED", "source_ref": "statement:suspect:001"},
+    {"fact_id": "fact:belief-001", "subject": "乙", "predicate": "認知為遺留物", "object": "手機", "assertion_class": "ASSERTED", "verification_status": "UNVERIFIED", "source_ref": "statement:suspect:001"},
+    {"fact_id": "fact:intent-unknown-001", "subject": "乙", "predicate": "不法所有意圖", "object": "UNKNOWN", "assertion_class": "UNKNOWN", "verification_status": "UNKNOWN", "source_ref": "analysis:unknown"},
+    {"fact_id": "fact:cctv-001", "subject": "乙", "predicate": "監視器影像", "object": "已取得，內容待核對", "assertion_class": "ASSERTED", "verification_status": "AVAILABLE_UNVERIFIED", "source_ref": "evidence:cctv:001"}
+  ],
+  "candidates": [
+    {
+      "candidate_id": "candidate:theft-320-1",
+      "offense_id": "theft",
+      "legal_citations": ["刑法第320條第1項"],
+      "candidate_status": "UNRESOLVED",
+      "readiness_status": "NEEDS_FACTS",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "elements": [
+        {"element_id": "original_possession", "state": "UNKNOWN", "fact_refs": ["fact:possession-unknown-001"]},
+        {"element_id": "unlawful_intent", "state": "UNKNOWN", "fact_refs": ["fact:intent-unknown-001"]}
+      ]
+    },
+    {
+      "candidate_id": "candidate:lost-property-337",
+      "offense_id": "lost_property",
+      "legal_citations": ["刑法第337條"],
+      "candidate_status": "UNRESOLVED",
+      "readiness_status": "NEEDS_FACTS",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "elements": [
+        {"element_id": "lost_object_status", "state": "UNKNOWN", "fact_refs": ["fact:possession-unknown-001"]},
+        {"element_id": "unlawful_intent", "state": "UNKNOWN", "fact_refs": ["fact:intent-unknown-001"]}
+      ]
+    }
+  ],
+  "questions": [
+    {"question_id": "Q-POSSESSION-001", "question_type": "CORE", "fact_gap": "original_possession", "candidate_ids": ["candidate:theft-320-1", "candidate:lost-property-337"], "text": "手機被拿取前，甲是否仍能立即實際支配或控制？"},
+    {"question_id": "Q-INTENT-001", "question_type": "CORE", "fact_gap": "unlawful_intent", "candidate_ids": ["candidate:theft-320-1", "candidate:lost-property-337"], "text": "乙拿取時如何理解手機狀態，之後有何處分或返還行為？"},
+    {"question_id": "Q-CCTV-001", "question_type": "EVIDENCE_CHECK", "fact_gap": "cctv_sequence", "candidate_ids": ["candidate:theft-320-1", "candidate:lost-property-337"], "text": "請核對監視器時間、乙拿取動作、離店路線及是否看見甲。"}
+  ],
+  "applied_legal_basis": [],
+  "analysis_contract": {
+    "rules_version": "fixture-rules-v1",
+    "normalization_version": "tw-citation-v1",
+    "candidate_generation": "fixture_only",
+    "llm": "NOT_USED",
+    "database": "NOT_USED",
+    "api": "NOT_USED"
+  }
+}

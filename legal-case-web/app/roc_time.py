@@ -22,7 +22,7 @@ def format_roc_time(value: str) -> str:
         return value
     roc_year = moment.year - 1911
     prefix = f"民國前{1911 - moment.year + 1}年" if moment.year < 1912 else f"{roc_year}年"
-    return f"{prefix}{moment.month}月{moment.day}日{moment.hour}時{moment.minute:02d}分"
+    return f"{prefix}{moment.month}月{moment.day}日{moment.hour:02d}時{moment.minute:02d}分"
 
 
 def format_roc_date(value: str) -> str:

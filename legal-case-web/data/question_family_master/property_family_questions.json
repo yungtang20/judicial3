@@ -1,0 +1,3309 @@
+{
+  "schema_version": "question-family-master-v1-draft",
+  "document_status": "DESIGN_DRAFT",
+  "runtime_enabled": false,
+  "review_status": "HUMAN_REVIEW_REQUIRED",
+  "family_id": "property_acquisition_and_damage",
+  "fixture_id": "property_family_template_20261027",
+  "source_markdown": "docs/family_templates/catalog/財物取得與毀損家族.md",
+  "source_sha256": "364459b7ea0111e9cf3ed06c038bf3bb4a9f2d9b1a9c92e1204a6df2151dac0c",
+  "precondition_registry": {
+    "entrustment_or_delivery_indicated": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "prior_lawful_possession_indicated": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "rights_dispute_indicated": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "family_relationship_indicated": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "complaint_requirement_review": {
+      "evaluation": "HUMAN_LEGAL_REVIEW"
+    },
+    "damage_claim_indicated": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "tool_or_forced_entry_indicated": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "multiple_participants_indicated": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "authorization_dispute_indicated": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "post_acquisition_conduct_indicated": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "unauthorized_taking_indicated": {
+      "evaluation": "MANUAL_MODULE_SELECTION"
+    },
+    "aggravated_access_factor_indicated": {
+      "evaluation": "MANUAL_MODULE_SELECTION"
+    },
+    "lawful_possession_then_disposition_indicated": {
+      "evaluation": "MANUAL_MODULE_SELECTION"
+    },
+    "lost_or_uncontrolled_property_indicated": {
+      "evaluation": "MANUAL_MODULE_SELECTION"
+    },
+    "property_damage_indicated": {
+      "evaluation": "MANUAL_MODULE_SELECTION"
+    },
+    "special_property_object_indicated": {
+      "evaluation": "MANUAL_MODULE_SELECTION"
+    }
+  },
+  "record_count": 70,
+  "common_overlap_count": 9,
+  "records": [
+    {
+      "id": "P-V01",
+      "text": "請依時間順序說明財物從事件前到目前的完整經過。",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "event_sequence",
+      "element_type": "context",
+      "element_label": "連續陳述",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "V-COM-001"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 30
+      }
+    },
+    {
+      "id": "P-V02",
+      "text": "涉及的財物有哪些？請逐項說明名稱、數量、特徵、價值及可辨識資料。",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "property_identity_quantity_value",
+      "element_type": "identity_or_relationship",
+      "element_label": "客體、價值",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 31
+      }
+    },
+    {
+      "id": "P-V03",
+      "text": "事件發生前，各項財物由誰實際持有、保管、使用或控制？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "ownership_possession_control",
+      "element_type": "context",
+      "element_label": "所有、持有關係",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 32
+      }
+    },
+    {
+      "id": "P-V04",
+      "text": "你最後一次確認財物仍在原處或由原持有人控制，是何時、何地、以何種方式？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "last_confirmed_control",
+      "element_type": "context",
+      "element_label": "原持有、時間地點",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "竊",
+        "遺",
+        "侵"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "embezzlement_337_lost_property",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 33
+      }
+    },
+    {
+      "id": "P-V05",
+      "text": "你何時、如何發現財物不見、被移動、被占有或受損？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "discovery_and_result",
+      "element_type": "context",
+      "element_label": "發現經過、結果",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 34
+      }
+    },
+    {
+      "id": "P-V06",
+      "text": "你親自知道對方如何接觸、移動、取得或處理該財物嗎？請說明具體動作。",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "acquisition_or_contact_method",
+      "element_type": "context",
+      "element_label": "行為方式",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 35
+      }
+    },
+    {
+      "id": "P-V07",
+      "text": "你或其他持有人是否曾同意對方接觸、使用、保管、攜出或處分財物？範圍為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "authorization_scope",
+      "element_type": "context",
+      "element_label": "授權範圍",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "竊",
+        "侵",
+        "遺"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable",
+        "embezzlement_337_lost_property"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 36
+      }
+    },
+    {
+      "id": "P-V08",
+      "text": "財物後來由誰控制？目前是否返還、尋獲、使用、隱匿、出售、丟棄或交給他人？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "post_acquisition_disposition",
+      "element_type": "context",
+      "element_label": "後續處分",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "竊",
+        "侵",
+        "遺"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable",
+        "embezzlement_337_lost_property"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 37
+      }
+    },
+    {
+      "id": "P-V09",
+      "text": "財物目前有何遺失、損壞或不能使用情形？你如何確認前後差異？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "loss_damage_and_usability",
+      "element_type": "result",
+      "element_label": "損失、毀損結果",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 38
+      }
+    },
+    {
+      "id": "P-V10",
+      "text": "所有權、購買、保管、借用、庫存、估價或修繕資料有哪些可以提供？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "property_rights_and_value_documents",
+      "element_type": "context",
+      "element_label": "權源、價值證據",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 39
+      }
+    },
+    {
+      "id": "P-V11",
+      "text": "現場或附近有無影像、門禁、定位、交易、通訊或其他紀錄？保存情形如何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "property_specific_records",
+      "element_type": "context",
+      "element_label": "特定證據",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 40
+      }
+    },
+    {
+      "id": "P-V12",
+      "text": "哪些人可能親自看見、聽見、經手或管理該財物？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "property_witnesses",
+      "element_type": "context",
+      "element_label": "證人線索",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "V-COM-003"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 41
+      }
+    },
+    {
+      "id": "P-V13",
+      "text": "對方原本是否因借用、保管、委託、業務或公務關係而持有財物？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "prior_lawful_possession",
+      "element_type": "context",
+      "element_label": "原合法持有",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [
+        "有交付或保管關係時"
+      ],
+      "precondition_ids": [
+        "entrustment_or_delivery_indicated"
+      ],
+      "source_applicability_codes": [
+        "侵"
+      ],
+      "legal_targets": [
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 42
+      }
+    },
+    {
+      "id": "P-V14",
+      "text": "你何時、以何種方式要求返還或停止使用？對方如何回應？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "return_demand_and_response",
+      "element_type": "conduct",
+      "element_label": "返還要求、處分",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "P-V13 為是時"
+      ],
+      "precondition_ids": [
+        "prior_lawful_possession_indicated"
+      ],
+      "source_applicability_codes": [
+        "侵"
+      ],
+      "legal_targets": [
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 43
+      }
+    },
+    {
+      "id": "P-V15",
+      "text": "對方曾主張自己有權取得、保留、使用或處分財物嗎？所稱依據為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "claimed_right_or_entitlement",
+      "element_type": "context",
+      "element_label": "權利主張、主觀認知",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "有權利爭議時"
+      ],
+      "precondition_ids": [
+        "rights_dispute_indicated"
+      ],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 44
+      }
+    },
+    {
+      "id": "P-V16",
+      "text": "你與對方是否具有親屬、同財共居或共同管理財產關係？請說明。",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "family_or_shared_property_relationship",
+      "element_type": "identity_or_relationship",
+      "element_label": "親屬與程序",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "雙方可能有親屬關係時"
+      ],
+      "precondition_ids": [
+        "family_relationship_indicated"
+      ],
+      "source_applicability_codes": [
+        "竊",
+        "損"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 45
+      }
+    },
+    {
+      "id": "P-V17",
+      "text": "你是否要就本案提出告訴？你何時知道可能的行為人？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "complaint_intent_and_identification_time",
+      "element_type": "mental_state",
+      "element_label": "告訴與期間",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "須確認告訴條件時；法律適用人工審核"
+      ],
+      "precondition_ids": [
+        "complaint_requirement_review"
+      ],
+      "source_applicability_codes": [
+        "竊",
+        "損"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 46
+      }
+    },
+    {
+      "id": "P-V18",
+      "text": "你是否還有其他想補充或更正的事項？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "additional_information",
+      "element_type": "context",
+      "element_label": "結尾",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "V-COM-005"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 47
+      }
+    },
+    {
+      "id": "P-S01",
+      "text": "請依時間順序說明你所知道的財物經過。",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "event_sequence",
+      "element_type": "context",
+      "element_label": "連續陳述",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "S-COM-002"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 53
+      }
+    },
+    {
+      "id": "P-S02",
+      "text": "你所接觸的財物是什麼？數量、特徵與當時狀態為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "property_identity_quantity_condition",
+      "element_type": "identity_or_relationship",
+      "element_label": "客體",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 54
+      }
+    },
+    {
+      "id": "P-S03",
+      "text": "你接觸財物前，由誰實際持有、保管、使用或控制？你如何知道？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "ownership_possession_control",
+      "element_type": "context",
+      "element_label": "原持有關係",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 55
+      }
+    },
+    {
+      "id": "P-S04",
+      "text": "你如何接觸、取得、移動或處理財物？請說明時間、地點與具體動作。",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "acquisition_or_contact_method",
+      "element_type": "context",
+      "element_label": "行為方式",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 56
+      }
+    },
+    {
+      "id": "P-S05",
+      "text": "是否有人同意或授權你接觸、使用、保管、攜出或處分財物？範圍與依據為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "authorization_scope",
+      "element_type": "context",
+      "element_label": "授權範圍",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "竊",
+        "侵",
+        "遺"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable",
+        "embezzlement_337_lost_property"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 57
+      }
+    },
+    {
+      "id": "P-S06",
+      "text": "你當時認為自己或他人有何權利可以取得、保留、使用或處分財物？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "claimed_right_and_disposition_purpose",
+      "element_type": "context",
+      "element_label": "權利認知、目的",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 58
+      }
+    },
+    {
+      "id": "P-S07",
+      "text": "取得或接觸後，你如何保管、使用、返還、出售、丟棄或交付財物？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "post_acquisition_disposition",
+      "element_type": "context",
+      "element_label": "後續處分",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "竊",
+        "侵",
+        "遺"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable",
+        "embezzlement_337_lost_property"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 59
+      }
+    },
+    {
+      "id": "P-S08",
+      "text": "是否有人要求你返還或停止使用？何時、如何提出，你如何回應？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "return_demand_and_response",
+      "element_type": "conduct",
+      "element_label": "返還要求",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "原本合法持有時"
+      ],
+      "precondition_ids": [
+        "prior_lawful_possession_indicated"
+      ],
+      "source_applicability_codes": [
+        "侵"
+      ],
+      "legal_targets": [
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 60
+      }
+    },
+    {
+      "id": "P-S09",
+      "text": "你接觸財物前後，財物的外觀、功能或使用狀態有何差異？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "damage_before_after_condition",
+      "element_type": "result",
+      "element_label": "毀損結果",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [
+        "有損壞主張時"
+      ],
+      "precondition_ids": [
+        "damage_claim_indicated"
+      ],
+      "source_applicability_codes": [
+        "損"
+      ],
+      "legal_targets": [
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 61
+      }
+    },
+    {
+      "id": "P-S10",
+      "text": "你以何種方式或工具接觸、拆卸、移動、改變或處理財物？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "method_and_tools",
+      "element_type": "context",
+      "element_label": "方法、工具",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "有工具或破壞跡象時"
+      ],
+      "precondition_ids": [
+        "tool_or_forced_entry_indicated"
+      ],
+      "source_applicability_codes": [
+        "加",
+        "損"
+      ],
+      "legal_targets": [
+        "aggravated_theft_321",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 62
+      }
+    },
+    {
+      "id": "P-S11",
+      "text": "當時還有哪些人參與、在場或提供協助？請逐人說明行為。",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "participant_conduct",
+      "element_type": "conduct",
+      "element_label": "共同行為",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "有多人線索時"
+      ],
+      "precondition_ids": [
+        "multiple_participants_indicated"
+      ],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 63
+      }
+    },
+    {
+      "id": "P-S12",
+      "text": "你與財物所有人或持有人有無親屬、同財共居、委託、業務或公務關係？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "family_entrustment_or_official_relationship",
+      "element_type": "identity_or_relationship",
+      "element_label": "身分與程序",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 64
+      }
+    },
+    {
+      "id": "P-S13",
+      "text": "有哪些文件、影像、交易、通訊、定位或其他資料可以核對你的說法？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "property_specific_records",
+      "element_type": "context",
+      "element_label": "特定證據",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 65
+      }
+    },
+    {
+      "id": "P-S14",
+      "text": "你是否還有其他想補充或更正的事項？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "additional_information",
+      "element_type": "context",
+      "element_label": "結尾",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "S-COM-005"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 66
+      }
+    },
+    {
+      "id": "P-W01",
+      "text": "你與財物所有人、持有人及被指訴人各是什麼關係？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "witness_relationship",
+      "element_type": "identity_or_relationship",
+      "element_label": "關係、可信度",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "W-COM-001"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 72
+      }
+    },
+    {
+      "id": "P-W02",
+      "text": "請依時間順序說明你親自看見、聽見或經手的財物經過。",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "event_sequence",
+      "element_type": "context",
+      "element_label": "連續陳述",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "W-COM-002"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 73
+      }
+    },
+    {
+      "id": "P-W03",
+      "text": "你能辨識哪些財物？其數量、特徵及當時狀態為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "property_identity_quantity_condition",
+      "element_type": "identity_or_relationship",
+      "element_label": "客體",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 74
+      }
+    },
+    {
+      "id": "P-W04",
+      "text": "事件前你看到財物由誰持有、保管、使用或控制？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "observed_possession_control",
+      "element_type": "context",
+      "element_label": "原持有關係",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 75
+      }
+    },
+    {
+      "id": "P-W05",
+      "text": "你看到誰以何種方式接觸、取得、移動或處理財物？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "observed_acquisition_or_contact",
+      "element_type": "context",
+      "element_label": "行為方式",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 76
+      }
+    },
+    {
+      "id": "P-W06",
+      "text": "你是否親自知道有人同意或授權？你如何知道範圍與內容？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "authorization_knowledge_basis",
+      "element_type": "context",
+      "element_label": "授權、知識來源",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "有授權爭議時"
+      ],
+      "precondition_ids": [
+        "authorization_dispute_indicated"
+      ],
+      "source_applicability_codes": [
+        "竊",
+        "侵",
+        "遺"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable",
+        "embezzlement_337_lost_property"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 77
+      }
+    },
+    {
+      "id": "P-W07",
+      "text": "你看到財物之後由誰控制，以及如何使用、返還、隱匿、出售或交付嗎？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "observed_post_acquisition_disposition",
+      "element_type": "context",
+      "element_label": "後續處分",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "有後續行為線索時"
+      ],
+      "precondition_ids": [
+        "post_acquisition_conduct_indicated"
+      ],
+      "source_applicability_codes": [
+        "竊",
+        "侵",
+        "遺"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable",
+        "embezzlement_337_lost_property"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 78
+      }
+    },
+    {
+      "id": "P-W08",
+      "text": "你看到財物受損前後的狀態、處理方式及使用影響為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "observed_damage_and_usability",
+      "element_type": "result",
+      "element_label": "毀損結果",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [
+        "有損壞主張時"
+      ],
+      "precondition_ids": [
+        "damage_claim_indicated"
+      ],
+      "source_applicability_codes": [
+        "損"
+      ],
+      "legal_targets": [
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 79
+      }
+    },
+    {
+      "id": "P-W09",
+      "text": "你有哪些資料或物品可以提供警方查證？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "evidence_items",
+      "element_type": "evidence",
+      "element_label": "證據",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "W-COM-004"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 80
+      }
+    },
+    {
+      "id": "P-W10",
+      "text": "你是否還有其他想補充或更正的事項？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "additional_information",
+      "element_type": "context",
+      "element_label": "結尾",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "theft_324_relative",
+        "aggravated_theft_321",
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_337_lost_property",
+        "embezzlement_338_applicable",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "W-COM-005"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 81
+      }
+    },
+    {
+      "id": "P-E1-1",
+      "text": "財物在被取得前的具體位置及控制方式為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "property_location_and_control",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "財物原在他人控制下，且有未經授權取得或移動的主張"
+      ],
+      "precondition_ids": [
+        "unauthorized_taking_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E1"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_324_relative"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 89
+      }
+    },
+    {
+      "id": "P-E1-2",
+      "text": "行為人如何使財物離開原持有人的實際控制？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "removal_from_control",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "財物原在他人控制下，且有未經授權取得或移動的主張"
+      ],
+      "precondition_ids": [
+        "unauthorized_taking_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E1"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_324_relative"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 90
+      }
+    },
+    {
+      "id": "P-E1-3",
+      "text": "行為人取得財物後是否排除原持有人使用或取回？具體情形為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect"
+      ],
+      "fact_target": "exclusion_of_original_holder",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "財物原在他人控制下，且有未經授權取得或移動的主張"
+      ],
+      "precondition_ids": [
+        "unauthorized_taking_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E1"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_324_relative"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 91
+      }
+    },
+    {
+      "id": "P-E1-4",
+      "text": "若主張只是暫時使用，預定何時、如何及在何條件下返還？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "temporary_use_and_return_plan",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "財物原在他人控制下，且有未經授權取得或移動的主張"
+      ],
+      "precondition_ids": [
+        "unauthorized_taking_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E1"
+      ],
+      "legal_targets": [
+        "theft_320_1_movable",
+        "theft_324_relative"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 92
+      }
+    },
+    {
+      "id": "P-E2-1",
+      "text": "行為人如何進入住宅、有人居住的建築、船艦或物品所在空間？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "entry_method",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "有侵入、毀越、器械、多人、災害或交通場站線索"
+      ],
+      "precondition_ids": [
+        "aggravated_access_factor_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E2"
+      ],
+      "legal_targets": [
+        "aggravated_theft_321"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 98
+      }
+    },
+    {
+      "id": "P-E2-2",
+      "text": "門窗、牆垣、鎖具或其他安全設備原本及事後狀態為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_target": "security_device_condition",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "有侵入、毀越、器械、多人、災害或交通場站線索"
+      ],
+      "precondition_ids": [
+        "aggravated_access_factor_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E2"
+      ],
+      "legal_targets": [
+        "aggravated_theft_321"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 99
+      }
+    },
+    {
+      "id": "P-E2-3",
+      "text": "當時攜帶或使用哪些器械？其用途與實際使用方式為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "instrument_carried_or_used",
+      "element_type": "conduct",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "有侵入、毀越、器械、多人、災害或交通場站線索"
+      ],
+      "precondition_ids": [
+        "aggravated_access_factor_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E2"
+      ],
+      "legal_targets": [
+        "aggravated_theft_321"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 100
+      }
+    },
+    {
+      "id": "P-E2-4",
+      "text": "現場共有幾人？各自在事前、現場及事後做了什麼？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "participant_conduct",
+      "element_type": "conduct",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "有侵入、毀越、器械、多人、災害或交通場站線索"
+      ],
+      "precondition_ids": [
+        "aggravated_access_factor_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E2"
+      ],
+      "legal_targets": [
+        "aggravated_theft_321"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 101
+      }
+    },
+    {
+      "id": "P-E2-5",
+      "text": "當時是否發生火災、水災或其他災害？與接觸財物有何時間、地點關係？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "disaster_context",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "有侵入、毀越、器械、多人、災害或交通場站線索"
+      ],
+      "precondition_ids": [
+        "aggravated_access_factor_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E2"
+      ],
+      "legal_targets": [
+        "aggravated_theft_321"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 102
+      }
+    },
+    {
+      "id": "P-E2-6",
+      "text": "事件地點是否在車站、港埠、航空站或公眾運輸工具內？具體位置為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "transport_location_context",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "有侵入、毀越、器械、多人、災害或交通場站線索"
+      ],
+      "precondition_ids": [
+        "aggravated_access_factor_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E2"
+      ],
+      "legal_targets": [
+        "aggravated_theft_321"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 103
+      }
+    },
+    {
+      "id": "P-E3-1",
+      "text": "財物最初如何交付？交付目的、期限、權限及返還約定為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect"
+      ],
+      "fact_target": "entrustment_terms",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "行為人原因保管、借用、委託、業務或公務關係合法持有"
+      ],
+      "precondition_ids": [
+        "lawful_possession_then_disposition_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E3"
+      ],
+      "legal_targets": [
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 109
+      }
+    },
+    {
+      "id": "P-E3-2",
+      "text": "是否因業務、公務或公益關係持有？職務內容及管理權限為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "business_public_or_public_interest_possession",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "行為人原因保管、借用、委託、業務或公務關係合法持有"
+      ],
+      "precondition_ids": [
+        "lawful_possession_then_disposition_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E3"
+      ],
+      "legal_targets": [
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 110
+      }
+    },
+    {
+      "id": "P-E3-3",
+      "text": "何時出現逾越原授權的使用、移轉、出售、隱匿或拒絕返還行為？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "unauthorized_disposition_timing",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "行為人原因保管、借用、委託、業務或公務關係合法持有"
+      ],
+      "precondition_ids": [
+        "lawful_possession_then_disposition_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E3"
+      ],
+      "legal_targets": [
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 111
+      }
+    },
+    {
+      "id": "P-E3-4",
+      "text": "對返還要求、結算或盤點差異，各方當時如何回應？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "return_or_reconciliation_response",
+      "element_type": "conduct",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "行為人原因保管、借用、委託、業務或公務關係合法持有"
+      ],
+      "precondition_ids": [
+        "lawful_possession_then_disposition_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E3"
+      ],
+      "legal_targets": [
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 112
+      }
+    },
+    {
+      "id": "P-E3-5",
+      "text": "有無契約、交付清單、帳冊、盤點、催告或通訊紀錄可核對？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "entrustment_and_accounting_records",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "行為人原因保管、借用、委託、業務或公務關係合法持有"
+      ],
+      "precondition_ids": [
+        "lawful_possession_then_disposition_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E3"
+      ],
+      "legal_targets": [
+        "embezzlement_335_general",
+        "embezzlement_336_1_public",
+        "embezzlement_336_2_business",
+        "embezzlement_338_applicable"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 113
+      }
+    },
+    {
+      "id": "P-E4-1",
+      "text": "財物最後由原持有人放置或使用的位置為何？當時是否仍能返回取回或遠端控制？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_target": "original_holder_control_at_loss",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "行為人主張拾得，或財物曾離開原持有人直接掌握"
+      ],
+      "precondition_ids": [
+        "lost_or_uncontrolled_property_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E4"
+      ],
+      "legal_targets": [
+        "embezzlement_337_lost_property"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 119
+      }
+    },
+    {
+      "id": "P-E4-2",
+      "text": "財物是否由場所管理者、員工或其他人實際看管？有哪些管理措施？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "third_party_or_place_management",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "行為人主張拾得，或財物曾離開原持有人直接掌握"
+      ],
+      "precondition_ids": [
+        "lost_or_uncontrolled_property_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E4"
+      ],
+      "legal_targets": [
+        "embezzlement_337_lost_property"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 120
+      }
+    },
+    {
+      "id": "P-E4-3",
+      "text": "行為人何時、何地、以何種狀態發現財物？當時如何判斷來源與所有人？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "discovery_state_and_source_knowledge",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "行為人主張拾得，或財物曾離開原持有人直接掌握"
+      ],
+      "precondition_ids": [
+        "lost_or_uncontrolled_property_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E4"
+      ],
+      "legal_targets": [
+        "embezzlement_337_lost_property"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 121
+      }
+    },
+    {
+      "id": "P-E4-4",
+      "text": "發現後是否尋找失主、交付管理者或警察，或另行使用、隱匿、出售？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "lost_property_post_discovery_conduct",
+      "element_type": "conduct",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "行為人主張拾得，或財物曾離開原持有人直接掌握"
+      ],
+      "precondition_ids": [
+        "lost_or_uncontrolled_property_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E4"
+      ],
+      "legal_targets": [
+        "embezzlement_337_lost_property"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 122
+      }
+    },
+    {
+      "id": "P-E5-1",
+      "text": "財物受影響前後的外觀、功能、效用與價值差異為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "damage_before_after_condition",
+      "element_type": "result",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "財物仍在但有外觀、功能、效用或價值受損主張"
+      ],
+      "precondition_ids": [
+        "property_damage_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E5"
+      ],
+      "legal_targets": [
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 128
+      }
+    },
+    {
+      "id": "P-E5-2",
+      "text": "何人以何種動作、工具、物質或其他方式使財物發生變化？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "damage_method_and_actor",
+      "element_type": "result",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "財物仍在但有外觀、功能、效用或價值受損主張"
+      ],
+      "precondition_ids": [
+        "property_damage_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E5"
+      ],
+      "legal_targets": [
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 129
+      }
+    },
+    {
+      "id": "P-E5-3",
+      "text": "財物目前能否正常使用？可否修復，修復內容與費用依據為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_target": "usability_repair_and_cost",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "財物仍在但有外觀、功能、效用或價值受損主張"
+      ],
+      "precondition_ids": [
+        "property_damage_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E5"
+      ],
+      "legal_targets": [
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 130
+      }
+    },
+    {
+      "id": "P-E5-4",
+      "text": "行為人當時知道財物屬於誰，以及其行為可能造成何種變化嗎？依據為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "damage_knowledge_and_awareness",
+      "element_type": "mental_state",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "財物仍在但有外觀、功能、效用或價值受損主張"
+      ],
+      "precondition_ids": [
+        "property_damage_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E5"
+      ],
+      "legal_targets": [
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 131
+      }
+    },
+    {
+      "id": "P-E5-5",
+      "text": "若涉及文書、建築物、債權或詐術造成損害，具體標的、權利及損害如何發生？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "special_damage_object_and_harm",
+      "element_type": "result",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "財物仍在但有外觀、功能、效用或價值受損主張"
+      ],
+      "precondition_ids": [
+        "property_damage_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E5"
+      ],
+      "legal_targets": [
+        "damage_352_document",
+        "damage_353_building",
+        "damage_354_property",
+        "damage_355_fraud",
+        "damage_356_creditor",
+        "damage_357_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 132
+      }
+    },
+    {
+      "id": "P-E6-1",
+      "text": "標的是可移動財物、土地建物，還是電能、熱能或其他能量？依據為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "property_object_classification",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "標的是不動產、能量、文書、建築物或債權"
+      ],
+      "precondition_ids": [
+        "special_property_object_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E6"
+      ],
+      "legal_targets": [
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_355_fraud",
+        "damage_356_creditor"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 138
+      }
+    },
+    {
+      "id": "P-E6-2",
+      "text": "若涉及土地或建物，原本使用、占有、界址及排除他人使用的方式為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "real_estate_possession_and_exclusion",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "標的是不動產、能量、文書、建築物或債權"
+      ],
+      "precondition_ids": [
+        "special_property_object_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E6"
+      ],
+      "legal_targets": [
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_355_fraud",
+        "damage_356_creditor"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 139
+      }
+    },
+    {
+      "id": "P-E6-3",
+      "text": "若涉及能量，取得設備、計量方式、使用期間及數量如何確認？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "energy_acquisition_and_measurement",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "標的是不動產、能量、文書、建築物或債權"
+      ],
+      "precondition_ids": [
+        "special_property_object_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E6"
+      ],
+      "legal_targets": [
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_355_fraud",
+        "damage_356_creditor"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 140
+      }
+    },
+    {
+      "id": "P-E6-4",
+      "text": "若涉及文書、建築物或債權，權利內容、原始狀態及受影響結果為何？",
+      "family_id": "property_acquisition_and_damage",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "document_building_or_credit_right_harm",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "標的是不動產、能量、文書、建築物或債權"
+      ],
+      "precondition_ids": [
+        "special_property_object_indicated"
+      ],
+      "source_applicability_codes": [
+        "P-E6"
+      ],
+      "legal_targets": [
+        "theft_320_2_real_estate",
+        "theft_323_energy",
+        "damage_352_document",
+        "damage_353_building",
+        "damage_355_fraud",
+        "damage_356_creditor"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 141
+      }
+    }
+  ],
+  "coverage_requirement_count": 10,
+  "coverage_requirements": [
+    {
+      "id": "property_gap_01",
+      "element_label": "財物特徵與價值",
+      "source_refs": [
+        "P-V02",
+        "P-S02",
+        "P-W03"
+      ],
+      "question_ids": [
+        "P-V02",
+        "P-S02",
+        "P-W03"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "property_identity_quantity_value",
+        "property_identity_quantity_condition"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 147
+      }
+    },
+    {
+      "id": "property_gap_02",
+      "element_label": "所有、持有與控制",
+      "source_refs": [
+        "P-V03",
+        "P-V04",
+        "P-S03",
+        "P-W04"
+      ],
+      "question_ids": [
+        "P-V03",
+        "P-V04",
+        "P-S03",
+        "P-W04"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "ownership_possession_control",
+        "last_confirmed_control",
+        "observed_possession_control"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 148
+      }
+    },
+    {
+      "id": "property_gap_03",
+      "element_label": "取得或接觸方式",
+      "source_refs": [
+        "P-V06",
+        "P-S04",
+        "P-W05"
+      ],
+      "question_ids": [
+        "P-V06",
+        "P-S04",
+        "P-W05"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "acquisition_or_contact_method",
+        "observed_acquisition_or_contact"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 149
+      }
+    },
+    {
+      "id": "property_gap_04",
+      "element_label": "授權範圍",
+      "source_refs": [
+        "P-V07",
+        "P-S05",
+        "P-W06"
+      ],
+      "question_ids": [
+        "P-V07",
+        "P-S05",
+        "P-W06"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "authorization_scope",
+        "authorization_knowledge_basis"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 150
+      }
+    },
+    {
+      "id": "property_gap_05",
+      "element_label": "後續處分與返還",
+      "source_refs": [
+        "P-V08",
+        "P-V14",
+        "P-S07",
+        "P-S08",
+        "P-W07"
+      ],
+      "question_ids": [
+        "P-V08",
+        "P-V14",
+        "P-S07",
+        "P-S08",
+        "P-W07"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "post_acquisition_disposition",
+        "return_demand_and_response",
+        "observed_post_acquisition_disposition"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 151
+      }
+    },
+    {
+      "id": "property_gap_06",
+      "element_label": "權利主張與目的",
+      "source_refs": [
+        "P-V15",
+        "P-S06",
+        "P-E1"
+      ],
+      "question_ids": [
+        "P-V15",
+        "P-S06",
+        "P-E1-1",
+        "P-E1-2",
+        "P-E1-3",
+        "P-E1-4"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "claimed_right_or_entitlement",
+        "claimed_right_and_disposition_purpose",
+        "property_location_and_control",
+        "removal_from_control",
+        "exclusion_of_original_holder",
+        "temporary_use_and_return_plan"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 152
+      }
+    },
+    {
+      "id": "property_gap_07",
+      "element_label": "原合法持有／侵占",
+      "source_refs": [
+        "P-V13",
+        "P-S03",
+        "P-E3"
+      ],
+      "question_ids": [
+        "P-V13",
+        "P-S03",
+        "P-E3-1",
+        "P-E3-2",
+        "P-E3-3",
+        "P-E3-4",
+        "P-E3-5"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "prior_lawful_possession",
+        "ownership_possession_control",
+        "entrustment_terms",
+        "business_public_or_public_interest_possession",
+        "unauthorized_disposition_timing",
+        "return_or_reconciliation_response",
+        "entrustment_and_accounting_records"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 153
+      }
+    },
+    {
+      "id": "property_gap_08",
+      "element_label": "遺失物管領狀態",
+      "source_refs": [
+        "P-V04",
+        "P-E4"
+      ],
+      "question_ids": [
+        "P-V04",
+        "P-E4-1",
+        "P-E4-2",
+        "P-E4-3",
+        "P-E4-4"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "last_confirmed_control",
+        "original_holder_control_at_loss",
+        "third_party_or_place_management",
+        "discovery_state_and_source_knowledge",
+        "lost_property_post_discovery_conduct"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 154
+      }
+    },
+    {
+      "id": "property_gap_09",
+      "element_label": "毀損行為與結果",
+      "source_refs": [
+        "P-V09",
+        "P-S09",
+        "P-W08",
+        "P-E5"
+      ],
+      "question_ids": [
+        "P-V09",
+        "P-S09",
+        "P-W08",
+        "P-E5-1",
+        "P-E5-2",
+        "P-E5-3",
+        "P-E5-4",
+        "P-E5-5"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "loss_damage_and_usability",
+        "damage_before_after_condition",
+        "observed_damage_and_usability",
+        "damage_method_and_actor",
+        "usability_repair_and_cost",
+        "damage_knowledge_and_awareness",
+        "special_damage_object_and_harm"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 155
+      }
+    },
+    {
+      "id": "property_gap_10",
+      "element_label": "特殊客體與加重方式",
+      "source_refs": [
+        "P-E2",
+        "P-E6"
+      ],
+      "question_ids": [
+        "P-E2-1",
+        "P-E2-2",
+        "P-E2-3",
+        "P-E2-4",
+        "P-E2-5",
+        "P-E2-6",
+        "P-E6-1",
+        "P-E6-2",
+        "P-E6-3",
+        "P-E6-4"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "entry_method",
+        "security_device_condition",
+        "instrument_carried_or_used",
+        "participant_conduct",
+        "disaster_context",
+        "transport_location_context",
+        "property_object_classification",
+        "real_estate_possession_and_exclusion",
+        "energy_acquisition_and_measurement",
+        "document_building_or_credit_right_harm"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/catalog/財物取得與毀損家族.md",
+        "line": 156
+      }
+    }
+  ]
+}

@@ -1,0 +1,3131 @@
+{
+  "schema_version": "question-family-master-v1-draft",
+  "document_status": "DESIGN_DRAFT",
+  "runtime_enabled": false,
+  "review_status": "HUMAN_REVIEW_REQUIRED",
+  "family_id": "human_violence",
+  "fixture_id": "injury_family_template_20261027",
+  "source_markdown": "docs/family_templates/傷害家族問句樣板.md",
+  "source_sha256": "853f79bfc82d6bff988a209a3ca180ed84734af94ebb77f6027dd80b8a2814d7",
+  "precondition_registry": {
+    "family_member_relationship_indicated": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "prior_answer_lacks_conduct_method": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "prior_answer_lacks_instrument_detail": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "injury_reported": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "medical_treatment_reported": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "serious_or_persistent_injury_indicated": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "complaint_requirement_applicability_review": {
+      "evaluation": "HUMAN_LEGAL_REVIEW"
+    },
+    "suspect_acknowledges_physical_conduct": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "prior_witness_account_lacks_conduct_detail": {
+      "evaluation": "MANUAL_FACT_SELECTION"
+    },
+    "multiple_participants_or_serious_result_indicated": {
+      "evaluation": "MANUAL_MODULE_SELECTION"
+    },
+    "possible_negligence_indicated": {
+      "evaluation": "MANUAL_MODULE_SELECTION"
+    },
+    "possible_homicidal_intent_indicated": {
+      "evaluation": "MANUAL_MODULE_SELECTION"
+    },
+    "alleged_actor_public_official_indicated": {
+      "evaluation": "MANUAL_MODULE_SELECTION"
+    }
+  },
+  "record_count": 78,
+  "common_overlap_count": 12,
+  "records": [
+    {
+      "id": "V01",
+      "text": "請你說明這次事情發生的經過。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "event_sequence",
+      "element_type": "context",
+      "element_label": "事實全貌（連續陳述）",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "V-COM-001"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 37
+      }
+    },
+    {
+      "id": "V02",
+      "text": "事情發生的時間是何時？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "event_time",
+      "element_type": "context",
+      "element_label": "時間、告訴期間起算",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 38
+      }
+    },
+    {
+      "id": "V03",
+      "text": "事情發生的地點在哪裡？請說明具體位置。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "event_place",
+      "element_type": "context",
+      "element_label": "地點、是否公共場所",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 39
+      }
+    },
+    {
+      "id": "V04",
+      "text": "你與對方認識嗎？彼此是什麼關係？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "party_relationship",
+      "element_type": "identity_or_relationship",
+      "element_label": "關係、家暴判斷",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [
+        "回答為家庭成員時啟動 E1"
+      ],
+      "precondition_ids": [
+        "family_member_relationship_indicated"
+      ],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "V-COM-002B"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 40
+      }
+    },
+    {
+      "id": "V05",
+      "text": "事情發生前，你與對方之間發生過什麼事？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "precipitating_events",
+      "element_type": "context",
+      "element_label": "起因、動機",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 41
+      }
+    },
+    {
+      "id": "V06",
+      "text": "對方當時做了什麼動作？請說明從開始到結束的過程。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "alleged_conduct_sequence",
+      "element_type": "conduct",
+      "element_label": "行為",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "鬥",
+        "殺"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 42
+      }
+    },
+    {
+      "id": "V07",
+      "text": "對方用身體哪個部位或用什麼方式對你施力？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "force_method",
+      "element_type": "conduct",
+      "element_label": "行為方式",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [
+        "V06 未說明時"
+      ],
+      "precondition_ids": [
+        "prior_answer_lacks_conduct_method"
+      ],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "鬥",
+        "殺"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 43
+      }
+    },
+    {
+      "id": "V08",
+      "text": "對方手上有無拿任何物品？是什麼？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "instrument_used",
+      "element_type": "conduct",
+      "element_label": "工具、殺意區辨",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "V06 未提及工具時"
+      ],
+      "precondition_ids": [
+        "prior_answer_lacks_instrument_detail"
+      ],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "鬥",
+        "殺"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 44
+      }
+    },
+    {
+      "id": "V09",
+      "text": "對方攻擊你身體的哪些部位？各幾次？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "targeted_body_area_and_frequency",
+      "element_type": "context",
+      "element_label": "部位、次數",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "鬥",
+        "殺"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 45
+      }
+    },
+    {
+      "id": "V10",
+      "text": "對方動手的過程持續多久？後來是怎麼結束的？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "conduct_duration_and_cessation",
+      "element_type": "conduct",
+      "element_label": "持續時間、停手原因",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "殺"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 46
+      }
+    },
+    {
+      "id": "V11",
+      "text": "當時對方一共幾人？每個人各做了什麼？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "participant_conduct",
+      "element_type": "conduct",
+      "element_label": "共同正犯、聚眾",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "鬥"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 47
+      }
+    },
+    {
+      "id": "V12",
+      "text": "當時還有哪些人在場？他們做了什麼？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "witness_presence",
+      "element_type": "identity_or_relationship",
+      "element_label": "證人線索",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "V-COM-003"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 48
+      }
+    },
+    {
+      "id": "V13",
+      "text": "對方動手時有說什麼話？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "contemporaneous_statements",
+      "element_type": "context",
+      "element_label": "故意、殺意區辨",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "殺"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 49
+      }
+    },
+    {
+      "id": "V14",
+      "text": "你當時有什麼反應或動作？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "victim_response",
+      "element_type": "conduct",
+      "element_label": "反擊、阻卻違法",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "鬥"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 50
+      }
+    },
+    {
+      "id": "V15",
+      "text": "你受傷的情形為何？有哪些部位受傷或不適？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "injury_description",
+      "element_type": "result",
+      "element_label": "結果",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "過"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_284_negligent"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 51
+      }
+    },
+    {
+      "id": "V16",
+      "text": "你有無就醫？何時、在哪家醫院、醫師怎麼說？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "medical_treatment_and_causation",
+      "element_type": "causation",
+      "element_label": "結果、因果",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [
+        "V15 有傷"
+      ],
+      "precondition_ids": [
+        "injury_reported"
+      ],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "過"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_284_negligent"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 52
+      }
+    },
+    {
+      "id": "V17",
+      "text": "你有無診斷證明書？可否提供？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "medical_documentation",
+      "element_type": "evidence",
+      "element_label": "證據",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [
+        "V16 已就醫"
+      ],
+      "precondition_ids": [
+        "medical_treatment_reported"
+      ],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "過"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_284_negligent"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 53
+      }
+    },
+    {
+      "id": "V18",
+      "text": "你的傷勢目前恢復情形如何？還需要治療嗎？對工作或生活有何影響？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "recovery_and_functional_impact",
+      "element_type": "result",
+      "element_label": "重傷判斷、後續",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "診斷顯示嚴重或持續治療時"
+      ],
+      "precondition_ids": [
+        "serious_or_persistent_injury_indicated"
+      ],
+      "source_applicability_codes": [
+        "重",
+        "過"
+      ],
+      "legal_targets": [
+        "injury_278_serious",
+        "injury_284_negligent"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 54
+      }
+    },
+    {
+      "id": "V19",
+      "text": "你有無拍攝傷勢或現場照片？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "injury_or_scene_images",
+      "element_type": "result",
+      "element_label": "證據",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 55
+      }
+    },
+    {
+      "id": "V20",
+      "text": "現場有無監視器？你或他人有無錄音錄影？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "surveillance_or_recordings",
+      "element_type": "evidence",
+      "element_label": "證據",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 56
+      }
+    },
+    {
+      "id": "V21",
+      "text": "過程中你的衣物或隨身物品有無損壞？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "property_damage",
+      "element_type": "result",
+      "element_label": "連結毀損",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 57
+      }
+    },
+    {
+      "id": "V22",
+      "text": "你與對方過去有無類似衝突？有無報警或其他紀錄？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "prior_conflicts",
+      "element_type": "context",
+      "element_label": "起因、家暴線索",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 58
+      }
+    },
+    {
+      "id": "V23",
+      "text": "你是否知道對方是誰？何時知道的？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "suspect_identification_timing",
+      "element_type": "context",
+      "element_label": "告訴期間（刑訴237）",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "過"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_284_negligent",
+        "injury_287_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 59
+      }
+    },
+    {
+      "id": "V24",
+      "text": "事後對方有無聯絡你、道歉或提出賠償？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "post_event_contact_or_compensation",
+      "element_type": "context",
+      "element_label": "和解",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "過"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_284_negligent"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 60
+      }
+    },
+    {
+      "id": "V25",
+      "text": "你是否要對對方提出傷害告訴？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "complaint_intent",
+      "element_type": "mental_state",
+      "element_label": "告訴（刑法287）",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [
+        "法定為告訴乃論者；公務員執行職務犯 277 第 1 項時不限"
+      ],
+      "precondition_ids": [
+        "complaint_requirement_applicability_review"
+      ],
+      "source_applicability_codes": [
+        "傷",
+        "過"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_284_negligent",
+        "injury_287_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 61
+      }
+    },
+    {
+      "id": "V26",
+      "text": "你還有無補充，或其他可提供的證人、證據？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "additional_evidence_or_information",
+      "element_type": "evidence",
+      "element_label": "補充",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 62
+      }
+    },
+    {
+      "id": "S01",
+      "text": "事發當時你在哪裡？做了什麼？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "presence_and_activity",
+      "element_type": "identity_or_relationship",
+      "element_label": "在場、不在場",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 70
+      }
+    },
+    {
+      "id": "S02",
+      "text": "你與被害人認識嗎？關係為何？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "party_relationship",
+      "element_type": "identity_or_relationship",
+      "element_label": "關係、家暴判斷",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [
+        "家庭成員時啟動 E1"
+      ],
+      "precondition_ids": [
+        "family_member_relationship_indicated"
+      ],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "S-COM-002B"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 71
+      }
+    },
+    {
+      "id": "S03",
+      "text": "事發前你與對方之間發生過什麼事？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "precipitating_events",
+      "element_type": "context",
+      "element_label": "起因",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 72
+      }
+    },
+    {
+      "id": "S04",
+      "text": "請就被指訴的事件，連續說明你所知道的經過。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "event_sequence",
+      "element_type": "context",
+      "element_label": "辨明機會（刑訴第 96 條）",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "S-COM-002"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 73
+      }
+    },
+    {
+      "id": "S05",
+      "text": "你有無對對方動手或碰觸對方身體？請說明動作。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "alleged_conduct_sequence",
+      "element_type": "conduct",
+      "element_label": "行為（承認或否認）",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "鬥",
+        "殺"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 74
+      }
+    },
+    {
+      "id": "S06",
+      "text": "你動手時有無使用任何物品？是什麼？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "instrument_used",
+      "element_type": "conduct",
+      "element_label": "工具",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "S05 承認動手"
+      ],
+      "precondition_ids": [
+        "suspect_acknowledges_physical_conduct"
+      ],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "鬥",
+        "殺"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 75
+      }
+    },
+    {
+      "id": "S07",
+      "text": "你動手的部位與次數為何？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "targeted_body_area_and_frequency",
+      "element_type": "context",
+      "element_label": "部位、次數",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "S05 承認動手"
+      ],
+      "precondition_ids": [
+        "suspect_acknowledges_physical_conduct"
+      ],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "鬥",
+        "殺"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 76
+      }
+    },
+    {
+      "id": "S08",
+      "text": "你動手當時是什麼想法？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "intent_at_time",
+      "element_type": "mental_state",
+      "element_label": "故意",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [
+        "S05 承認動手"
+      ],
+      "precondition_ids": [
+        "suspect_acknowledges_physical_conduct"
+      ],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "鬥",
+        "殺"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 77
+      }
+    },
+    {
+      "id": "S09",
+      "text": "你知道對方有無受傷？受傷是怎麼造成的？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "injury_causation_and_knowledge",
+      "element_type": "causation",
+      "element_label": "因果、結果",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "過"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_284_negligent"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 78
+      }
+    },
+    {
+      "id": "S10",
+      "text": "對方有無先對你做什麼行為？你當時如何反應？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "victim_conduct_and_response",
+      "element_type": "conduct",
+      "element_label": "阻卻違法、互毆",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "鬥"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 79
+      }
+    },
+    {
+      "id": "S11",
+      "text": "現場還有誰？他們做了什麼？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "participant_and_witness_presence",
+      "element_type": "identity_or_relationship",
+      "element_label": "共犯、證人",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 80
+      }
+    },
+    {
+      "id": "S12",
+      "text": "當時你有無飲酒或使用藥物？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "intoxication_or_substance_state",
+      "element_type": "mental_state",
+      "element_label": "責任能力、情緒",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "殺"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 81
+      }
+    },
+    {
+      "id": "S13",
+      "text": "事發後你做了什麼？有無離開現場、就醫或報警？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "post_event_actions",
+      "element_type": "context",
+      "element_label": "事後行為",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 82
+      }
+    },
+    {
+      "id": "S14",
+      "text": "被害人指訴你造成其受傷，你的意見為何？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "response_to_allegation",
+      "element_type": "conduct",
+      "element_label": "辨明",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 83
+      }
+    },
+    {
+      "id": "S15",
+      "text": "你有無有利於你的事實？請說明並指出可證明的方法。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "exculpatory_facts_and_evidence",
+      "element_type": "evidence",
+      "element_label": "有利證據（刑訴第 96 條）",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "S-COM-003"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 84
+      }
+    },
+    {
+      "id": "S16",
+      "text": "你有無監視器、照片或對話紀錄可以提供？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "recordings_or_documents",
+      "element_type": "evidence",
+      "element_label": "證據",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 85
+      }
+    },
+    {
+      "id": "S17",
+      "text": "你是否願意與對方和解或賠償？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "settlement_or_compensation_intent",
+      "element_type": "mental_state",
+      "element_label": "和解",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "過"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_284_negligent"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 86
+      }
+    },
+    {
+      "id": "S18",
+      "text": "你還有無補充？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "additional_information",
+      "element_type": "context",
+      "element_label": "補充",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "S-COM-005"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 87
+      }
+    },
+    {
+      "id": "W01",
+      "text": "你與被害人、被指訴人各是什麼關係？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "witness_relationship",
+      "element_type": "identity_or_relationship",
+      "element_label": "關係、證詞可信度",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "W-COM-001"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 97
+      }
+    },
+    {
+      "id": "W02",
+      "text": "事發時你人在哪裡？為什麼在那裡？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "witness_vantage_point",
+      "element_type": "identity_or_relationship",
+      "element_label": "在場、所見位置",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 98
+      }
+    },
+    {
+      "id": "W03",
+      "text": "你當時親眼看到什麼？請依序說明。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "event_sequence",
+      "element_type": "context",
+      "element_label": "行為、經過",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "W-COM-002"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 99
+      }
+    },
+    {
+      "id": "W04",
+      "text": "你當時有聽到什麼？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "heard_statements",
+      "element_type": "context",
+      "element_label": "言語、起因",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 100
+      }
+    },
+    {
+      "id": "W05",
+      "text": "上述內容中，哪些是你自己親眼看到或親耳聽到，哪些是別人告訴你的？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "personal_knowledge_basis",
+      "element_type": "context",
+      "element_label": "區分親見與傳聞（刑訴159）",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "W-COM-003"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 101
+      }
+    },
+    {
+      "id": "W06",
+      "text": "你看到事情是怎麼開始的？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "precipitating_events",
+      "element_type": "context",
+      "element_label": "起因、誰先動手",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "鬥",
+        "殺"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 102
+      }
+    },
+    {
+      "id": "W07",
+      "text": "你看到雙方各做了什麼動作？手上有無拿任何物品？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "observed_conduct_and_instrument",
+      "element_type": "conduct",
+      "element_label": "行為、工具",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [
+        "W03 未說明時"
+      ],
+      "precondition_ids": [
+        "prior_witness_account_lacks_conduct_detail"
+      ],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "鬥",
+        "殺"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 103
+      }
+    },
+    {
+      "id": "W08",
+      "text": "你有無看到被害人的傷勢？是什麼情形？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "observed_injury",
+      "element_type": "result",
+      "element_label": "結果",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "傷",
+        "重",
+        "過"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_284_negligent"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 104
+      }
+    },
+    {
+      "id": "W09",
+      "text": "現場還有哪些人在場？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "participant_and_witness_presence",
+      "element_type": "identity_or_relationship",
+      "element_label": "共犯、其他證人",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 105
+      }
+    },
+    {
+      "id": "W10",
+      "text": "事後有無叫救護車、報警或其他處理？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "post_event_response",
+      "element_type": "conduct",
+      "element_label": "事後經過",
+      "layer": "element_supplement",
+      "required_or_optional": "OPTIONAL",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 106
+      }
+    },
+    {
+      "id": "W11",
+      "text": "你有無拍攝、錄音錄影，或知道哪裡有監視器？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "recordings_or_surveillance",
+      "element_type": "evidence",
+      "element_label": "證據",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "W-COM-004"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 107
+      }
+    },
+    {
+      "id": "W12",
+      "text": "你還有無補充？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "witness_review_only"
+      ],
+      "fact_target": "additional_information",
+      "element_type": "context",
+      "element_label": "補充",
+      "layer": "family_skeleton",
+      "required_or_optional": "REQUIRED",
+      "preconditions": [],
+      "precondition_ids": [],
+      "source_applicability_codes": [
+        "全"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "injury_284_negligent",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [
+        "W-COM-005"
+      ],
+      "materialization_policy": "REUSE_COMMON_LAYER",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 108
+      }
+    },
+    {
+      "id": "E1-1",
+      "text": "你與對方目前是否同住？彼此是什麼關係？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim",
+        "suspect"
+      ],
+      "fact_target": "party_relationship_and_cohabitation",
+      "element_type": "identity_or_relationship",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "雙方為家庭成員"
+      ],
+      "precondition_ids": [
+        "family_member_relationship_indicated"
+      ],
+      "source_applicability_codes": [
+        "E1"
+      ],
+      "legal_targets": [
+        "domestic_2_classification"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 116
+      }
+    },
+    {
+      "id": "E1-2",
+      "text": "過去有無類似的肉體、精神或經濟上的騷擾、控制或脅迫？請說明。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "prior_domestic_abuse_pattern",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "雙方為家庭成員"
+      ],
+      "precondition_ids": [
+        "family_member_relationship_indicated"
+      ],
+      "source_applicability_codes": [
+        "E1"
+      ],
+      "legal_targets": [
+        "domestic_2_classification"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 117
+      }
+    },
+    {
+      "id": "E1-3",
+      "text": "事發時有無未成年子女或其他家人在場？他們看到或聽到什麼？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_target": "child_or_family_witness_presence",
+      "element_type": "identity_or_relationship",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "雙方為家庭成員"
+      ],
+      "precondition_ids": [
+        "family_member_relationship_indicated"
+      ],
+      "source_applicability_codes": [
+        "E1"
+      ],
+      "legal_targets": [
+        "domestic_2_classification"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 118
+      }
+    },
+    {
+      "id": "E1-4",
+      "text": "你目前的安全情形如何？之後打算住在哪裡？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "victim_current_safety",
+      "element_type": "procedure_or_protection",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "雙方為家庭成員"
+      ],
+      "precondition_ids": [
+        "family_member_relationship_indicated"
+      ],
+      "source_applicability_codes": [
+        "E1"
+      ],
+      "legal_targets": [
+        "domestic_2_classification",
+        "domestic_29_42_criminal_safety"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 119
+      }
+    },
+    {
+      "id": "E1-5",
+      "text": "你有無曾申請或有效的保護令？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim",
+        "suspect"
+      ],
+      "fact_target": "protection_order_status",
+      "element_type": "procedure_or_protection",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "雙方為家庭成員"
+      ],
+      "precondition_ids": [
+        "family_member_relationship_indicated"
+      ],
+      "source_applicability_codes": [
+        "E1"
+      ],
+      "legal_targets": [
+        "domestic_2_classification",
+        "domestic_9_21_protection_order"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 120
+      }
+    },
+    {
+      "id": "E1-6",
+      "text": "你與對方過去有無類似衝突？請說明。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "prior_conflicts",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "雙方為家庭成員"
+      ],
+      "precondition_ids": [
+        "family_member_relationship_indicated"
+      ],
+      "source_applicability_codes": [
+        "E1"
+      ],
+      "legal_targets": [
+        "domestic_2_classification"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 121
+      }
+    },
+    {
+      "id": "E3-1",
+      "text": "雙方各有幾人？請說明每人的動作。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "participant_conduct",
+      "element_type": "conduct",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "雙方各有多人動手，或有人重傷或死亡"
+      ],
+      "precondition_ids": [
+        "multiple_participants_or_serious_result_indicated"
+      ],
+      "source_applicability_codes": [
+        "E3"
+      ],
+      "legal_targets": [
+        "injury_283_group_fight"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 129
+      }
+    },
+    {
+      "id": "E3-2",
+      "text": "事前雙方有無約定或聯絡？請說明經過。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim",
+        "suspect"
+      ],
+      "fact_target": "prior_agreement_or_contact",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "雙方各有多人動手，或有人重傷或死亡"
+      ],
+      "precondition_ids": [
+        "multiple_participants_or_serious_result_indicated"
+      ],
+      "source_applicability_codes": [
+        "E3"
+      ],
+      "legal_targets": [
+        "injury_283_group_fight"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 130
+      }
+    },
+    {
+      "id": "E3-3",
+      "text": "現場有哪些人只在旁邊或喊話，沒有動手？各說了什麼？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "witness_review_only",
+        "victim"
+      ],
+      "fact_target": "nonparticipant_or_encouragement_conduct",
+      "element_type": "conduct",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "雙方各有多人動手，或有人重傷或死亡"
+      ],
+      "precondition_ids": [
+        "multiple_participants_or_serious_result_indicated"
+      ],
+      "source_applicability_codes": [
+        "E3"
+      ],
+      "legal_targets": [
+        "injury_283_group_fight"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 131
+      }
+    },
+    {
+      "id": "E3-4",
+      "text": "你知道誰造成重傷或死亡結果嗎？你怎麼看到的？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "serious_injury_or_death_causation",
+      "element_type": "causation",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "雙方各有多人動手，或有人重傷或死亡"
+      ],
+      "precondition_ids": [
+        "multiple_participants_or_serious_result_indicated"
+      ],
+      "source_applicability_codes": [
+        "E3"
+      ],
+      "legal_targets": [
+        "injury_278_serious",
+        "injury_283_group_fight",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 132
+      }
+    },
+    {
+      "id": "E4-1",
+      "text": "事發當時你正在做什麼事？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim",
+        "suspect"
+      ],
+      "fact_target": "activity_at_time",
+      "element_type": "conduct",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "當事人表示不是故意，或情形主要為意外或疏忽"
+      ],
+      "precondition_ids": [
+        "possible_negligence_indicated"
+      ],
+      "source_applicability_codes": [
+        "E4"
+      ],
+      "legal_targets": [
+        "injury_284_negligent"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 138
+      }
+    },
+    {
+      "id": "E4-2",
+      "text": "當時現場是什麼情形？（光線、地面、人流、器具）",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "scene_conditions",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "當事人表示不是故意，或情形主要為意外或疏忽"
+      ],
+      "precondition_ids": [
+        "possible_negligence_indicated"
+      ],
+      "source_applicability_codes": [
+        "E4"
+      ],
+      "legal_targets": [
+        "injury_284_negligent"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 139
+      }
+    },
+    {
+      "id": "E4-3",
+      "text": "傷害是如何發生的？請說明動作與順序。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim",
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "injury_causation_sequence",
+      "element_type": "causation",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "當事人表示不是故意，或情形主要為意外或疏忽"
+      ],
+      "precondition_ids": [
+        "possible_negligence_indicated"
+      ],
+      "source_applicability_codes": [
+        "E4"
+      ],
+      "legal_targets": [
+        "injury_284_negligent"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 140
+      }
+    },
+    {
+      "id": "E4-4",
+      "text": "發生前後你有無注意到什麼，或做了什麼防範？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "precautions_and_attention",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "當事人表示不是故意，或情形主要為意外或疏忽"
+      ],
+      "precondition_ids": [
+        "possible_negligence_indicated"
+      ],
+      "source_applicability_codes": [
+        "E4"
+      ],
+      "legal_targets": [
+        "injury_284_negligent"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 141
+      }
+    },
+    {
+      "id": "E4-5",
+      "text": "對方當時的行為有無影響經過？請說明。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect",
+        "witness_review_only"
+      ],
+      "fact_target": "other_party_contribution",
+      "element_type": "causation",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "當事人表示不是故意，或情形主要為意外或疏忽"
+      ],
+      "precondition_ids": [
+        "possible_negligence_indicated"
+      ],
+      "source_applicability_codes": [
+        "E4"
+      ],
+      "legal_targets": [
+        "injury_284_negligent"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 142
+      }
+    },
+    {
+      "id": "E5-1",
+      "text": "對方攻擊的部位、次數、力道，你怎麼感受？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_target": "attack_location_frequency_force",
+      "element_type": "conduct",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "攻擊頭頸胸腹等要害、持刀械或重物、或有「要殺你」類言語"
+      ],
+      "precondition_ids": [
+        "possible_homicidal_intent_indicated"
+      ],
+      "source_applicability_codes": [
+        "E5"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 150
+      }
+    },
+    {
+      "id": "E5-2",
+      "text": "對方說了什麼話？語氣、表情如何？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_target": "contemporaneous_statements_and_demeanor",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "攻擊頭頸胸腹等要害、持刀械或重物、或有「要殺你」類言語"
+      ],
+      "precondition_ids": [
+        "possible_homicidal_intent_indicated"
+      ],
+      "source_applicability_codes": [
+        "E5"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 151
+      }
+    },
+    {
+      "id": "E5-3",
+      "text": "對方究竟為什麼停手？是自己停手還是他人制止？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_target": "cessation_reason",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "攻擊頭頸胸腹等要害、持刀械或重物、或有「要殺你」類言語"
+      ],
+      "precondition_ids": [
+        "possible_homicidal_intent_indicated"
+      ],
+      "source_applicability_codes": [
+        "E5"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 152
+      }
+    },
+    {
+      "id": "E5-4",
+      "text": "你對於攻擊這個部位或使用這個工具，當時有什麼想法？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "intent_at_time",
+      "element_type": "mental_state",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "攻擊頭頸胸腹等要害、持刀械或重物、或有「要殺你」類言語"
+      ],
+      "precondition_ids": [
+        "possible_homicidal_intent_indicated"
+      ],
+      "source_applicability_codes": [
+        "E5"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 153
+      }
+    },
+    {
+      "id": "E5-5",
+      "text": "你知道這樣的行為可能造成什麼後果嗎？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "suspect"
+      ],
+      "fact_target": "consequence_awareness",
+      "element_type": "mental_state",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "攻擊頭頸胸腹等要害、持刀械或重物、或有「要殺你」類言語"
+      ],
+      "precondition_ids": [
+        "possible_homicidal_intent_indicated"
+      ],
+      "source_applicability_codes": [
+        "E5"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_278_serious",
+        "homicide_271_intentional"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 154
+      }
+    },
+    {
+      "id": "E6-1",
+      "text": "對方當時的身分、職務為何？你怎麼知道？",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_target": "public_official_identity",
+      "element_type": "identity_or_relationship",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "加害人為公務員"
+      ],
+      "precondition_ids": [
+        "alleged_actor_public_official_indicated"
+      ],
+      "source_applicability_codes": [
+        "E6"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_287_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 162
+      }
+    },
+    {
+      "id": "E6-2",
+      "text": "對方當時是否在執行職務？請說明當時負責的事項。",
+      "family_id": "human_violence",
+      "target_interview_roles": [
+        "victim",
+        "witness_review_only",
+        "suspect"
+      ],
+      "fact_target": "official_duty_status",
+      "element_type": "context",
+      "element_label": "條件分支補強",
+      "layer": "conditional_module",
+      "required_or_optional": "CONDITIONAL",
+      "preconditions": [
+        "加害人為公務員"
+      ],
+      "precondition_ids": [
+        "alleged_actor_public_official_indicated"
+      ],
+      "source_applicability_codes": [
+        "E6"
+      ],
+      "legal_targets": [
+        "injury_277_general",
+        "injury_287_complaint"
+      ],
+      "legal_target_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+      "runtime_enabled": false,
+      "common_owner_ids": [],
+      "materialization_policy": "FAMILY_CANDIDATE",
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 163
+      }
+    }
+  ],
+  "coverage_requirement_count": 10,
+  "coverage_requirements": [
+    {
+      "id": "human_violence_gap_01",
+      "element_label": "行為（傷害動作）",
+      "source_refs": [
+        "V06",
+        "V07",
+        "V09",
+        "S05",
+        "W03"
+      ],
+      "question_ids": [
+        "V06",
+        "V07",
+        "V09",
+        "S05",
+        "W03"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "alleged_conduct_sequence",
+        "force_method",
+        "targeted_body_area_and_frequency",
+        "event_sequence"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 171
+      }
+    },
+    {
+      "id": "human_violence_gap_02",
+      "element_label": "結果（傷勢）",
+      "source_refs": [
+        "V15",
+        "V16",
+        "V17",
+        "W08"
+      ],
+      "question_ids": [
+        "V15",
+        "V16",
+        "V17",
+        "W08"
+      ],
+      "target_interview_roles": [
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "injury_description",
+        "medical_treatment_and_causation",
+        "medical_documentation",
+        "observed_injury"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 172
+      }
+    },
+    {
+      "id": "human_violence_gap_03",
+      "element_label": "因果",
+      "source_refs": [
+        "V16",
+        "S09",
+        "W08"
+      ],
+      "question_ids": [
+        "V16",
+        "S09",
+        "W08"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "medical_treatment_and_causation",
+        "injury_causation_and_knowledge",
+        "observed_injury"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 173
+      }
+    },
+    {
+      "id": "human_violence_gap_04",
+      "element_label": "故意",
+      "source_refs": [
+        "V13",
+        "S08"
+      ],
+      "question_ids": [
+        "V13",
+        "S08"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim"
+      ],
+      "fact_targets": [
+        "contemporaneous_statements",
+        "intent_at_time"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 174
+      }
+    },
+    {
+      "id": "human_violence_gap_05",
+      "element_label": "阻卻違法、互毆",
+      "source_refs": [
+        "V14",
+        "S10"
+      ],
+      "question_ids": [
+        "V14",
+        "S10"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim"
+      ],
+      "fact_targets": [
+        "victim_response",
+        "victim_conduct_and_response"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 175
+      }
+    },
+    {
+      "id": "human_violence_gap_06",
+      "element_label": "共犯、聚眾",
+      "source_refs": [
+        "V11",
+        "S11",
+        "W09",
+        "E3"
+      ],
+      "question_ids": [
+        "V11",
+        "S11",
+        "W09",
+        "E3-1",
+        "E3-2",
+        "E3-3",
+        "E3-4"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "participant_conduct",
+        "participant_and_witness_presence",
+        "prior_agreement_or_contact",
+        "nonparticipant_or_encouragement_conduct",
+        "serious_injury_or_death_causation"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 176
+      }
+    },
+    {
+      "id": "human_violence_gap_07",
+      "element_label": "重傷、致死",
+      "source_refs": [
+        "V18",
+        "E3-4"
+      ],
+      "question_ids": [
+        "V18",
+        "E3-4"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "recovery_and_functional_impact",
+        "serious_injury_or_death_causation"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 177
+      }
+    },
+    {
+      "id": "human_violence_gap_08",
+      "element_label": "告訴条件（告訴乃論、六個月）",
+      "source_refs": [
+        "V23",
+        "V25"
+      ],
+      "question_ids": [
+        "V23",
+        "V25"
+      ],
+      "target_interview_roles": [
+        "victim"
+      ],
+      "fact_targets": [
+        "suspect_identification_timing",
+        "complaint_intent"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 178
+      }
+    },
+    {
+      "id": "human_violence_gap_09",
+      "element_label": "證據",
+      "source_refs": [
+        "V17",
+        "V19",
+        "V20",
+        "S16",
+        "W11"
+      ],
+      "question_ids": [
+        "V17",
+        "V19",
+        "V20",
+        "S16",
+        "W11"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "medical_documentation",
+        "injury_or_scene_images",
+        "surveillance_or_recordings",
+        "recordings_or_documents",
+        "recordings_or_surveillance"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 179
+      }
+    },
+    {
+      "id": "human_violence_gap_10",
+      "element_label": "殺意區辨",
+      "source_refs": [
+        "V08",
+        "V10",
+        "V13",
+        "E5"
+      ],
+      "question_ids": [
+        "V08",
+        "V10",
+        "V13",
+        "E5-1",
+        "E5-2",
+        "E5-3",
+        "E5-4",
+        "E5-5"
+      ],
+      "target_interview_roles": [
+        "suspect",
+        "victim",
+        "witness_review_only"
+      ],
+      "fact_targets": [
+        "instrument_used",
+        "conduct_duration_and_cessation",
+        "contemporaneous_statements",
+        "attack_location_frequency_force",
+        "contemporaneous_statements_and_demeanor",
+        "cessation_reason",
+        "intent_at_time",
+        "consequence_awareness"
+      ],
+      "review_status": "HUMAN_REVIEW_REQUIRED",
+      "provenance": {
+        "source": "docs/family_templates/傷害家族問句樣板.md",
+        "line": 180
+      }
+    }
+  ]
+}

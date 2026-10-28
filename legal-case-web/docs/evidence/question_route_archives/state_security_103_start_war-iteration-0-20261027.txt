@@ -1,0 +1,693 @@
+<!-- SUBMISSION_START -->
+
+```yaml
+document_status: CODEX_REVIEWED
+runtime_enabled: false
+review_status: CODEX_REVIEWED
+submission_status: REVIEW_PASS
+handoff_status: CODEX_ROUTE_REVIEW_COMPLETE
+last_completed_section: O
+resume_from_section: ARCHIVE_AND_SELECT_NEXT_ROUTE
+current_blockers: []
+designer_role: TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT
+author_role: TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT
+question_ruleset_version: question-rules-v2-draft
+ruleset_status: QUESTION_DESIGN_ACCEPTED
+ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+runtime_ruleset_status: UNCHANGED_RUNTIME
+task_type: AUTHOR_ROUTE_QUESTIONS
+queue_no: 15
+target_route_id: state_security
+target_child_route_id: state_security_103_start_war
+target_interview_roles: [victim, suspect, transfer, witness_review_only]
+iteration: 0
+allowed_output: WORK_ITEM_FILE_ONLY
+allowed_write_path: docs/QUESTION_WORK_ITEM.md
+automatic_advance: false
+next_route: NOT_AUTHORIZED
+```
+## A. 工作單 Metadata 與法源
+
+```yaml
+artifact_type: CHILD_ROUTE_WORK_ITEM
+iteration: 0
+execution_mode: REVIEWED_PIPELINE
+runtime_enabled: false
+review_status: CODEX_REVIEWED
+submission_status: REVIEW_PASS
+primary_route: state_security
+primary_child_route: state_security_103_start_war
+parent_route_status: SPLIT_REQUIRED
+child_count_in_crosswalk: 21
+question_concept_count: 8
+question_concept_budget: 8
+case_selection_budget: 3-5 core concepts
+evidence_followup_budget: max 2
+output_page_budget: 8
+case_human_gate: REQUIRED
+user_final_acceptance: PENDING
+```
+官方來源查詢卡：
+
+| 欄位 | 結果 |
+|---|---|
+| 問句 | 2026-10-27 台灣，中華民國刑法第103條現行內容，以及通謀外國使開戰目的、強暴脅迫、行為進度、個別角色與證據來源區分 |
+| 證據 | 法務部全國法規資料庫，中華民國刑法，查詢日2026-10-27 |
+| URL | https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001 |
+| 痕跡 | 本工作單僅建立中性事實問句與路由邊界；行為時法與個案法律評價仍須人工逐案確認 |
+| 行為時法 | UNKNOWN；實際案件日期未提供，須由承辦人逐案調閱 |
+
+本工作單不把政治表意、集會、通聯、身分、武器或結果單獨等同第103條成立。
+
+## B. Route Scope
+
+```yaml
+route_scope:
+  primary_route: state_security_103_start_war
+  allowed_comparison_routes:
+    - state_security_100_insurrection
+    - state_security_103_start_war
+    - state_security_103_start_war
+    - state_security_104_territory
+    - state_security_105_enemy_service
+  allowed_alternative_routes: []
+```
+
+第100條、第101條及第104至105條外患路線只作相鄰比較；第102條減免、第107條加重、第115條之1定義、第119條程序不進入本工作單。
+
+## C. Elements 與雙鏈結
+
+| element_id | 中性事實目標 | 法律定位 | Human Gate |
+|---|---|---|---|
+| ST103-E01 | 具體目的及目標 | 第103條目的軸 | REQUIRED |
+| ST103-E02 | 強暴或脅迫行為、對象、工具與時間 | 第103條實行行為軸 | REQUIRED |
+| ST103-E03 | 著手、預備、陰謀或聯絡的外部進度 | 第103條行為進度軸 | REQUIRED |
+| ST103-E04 | 首謀、指揮、實行、協助與個別證據 | 第103條角色軸 | REQUIRED |
+
+## D. 相鄰路由矩陣
+
+| 觀察組合 | 第103條內亂 | 第103條通謀外國使開戰 | 第103條通謀開戰 | 第104條領域 | 第105條敵軍服役 |
+|---|---|---|---|---|---|
+| 僅有集會、政治表意或一般不滿，目的與行為不明 | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+| 有強暴或脅迫主張，但目的、個別行為與時間不明 | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+| 有聯絡、物資或場所資料，但尚未能區分預備、陰謀與實行 | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+| 跨到外患或暴動描述，但沒有獨立、可回查的行為證據 | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+
+任一單一觀察都不足以產生 `ACTIVE` 或法律結論。
+
+## E. 問句方法
+
+- C02至C07分開確認目的、強暴／脅迫、行為進度、個別角色、目標／結果與聯絡資料；不以同一答案跨要件推定。
+- C08只補影像、通聯、文件、現場、證人與數位資料；任何單一答案都不產生 `ACTIVE` 或法律結論。
+- 所有 `UNKNOWN`、`CONFLICT` 與相鄰路線維持 `NEED_REVIEW`。
+
+## F. STANDARD_SET
+
+<!-- STANDARD_SET_START -->
+```json
+[
+  {
+    "question_concept_id": "ST103-C01",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "narrative",
+    "parent_question_id": null,
+    "fact_target": "event_narrative",
+    "distinction_axis": "不預設通謀外國使開戰目的、強暴脅迫或參與角色的完整事件時間線",
+    "answer_mode": "narrative_only",
+    "answer_map": null,
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請依時間順序說明你親自知道的集結、具體強暴或脅迫、目標與後續影響；不確定之處請標明來源。",
+      "suspect": "請依時間順序說明你親自參與或未參與的集結、準備、強暴或脅迫、目的及停止經過；不確定之處請標明來源。",
+      "transfer": "請依卷內資料整理各人實際行為、聯絡與物資、強暴或脅迫方式、目標及時間，區分直接資料與轉述。",
+      "witness_review_only": "請僅說明你親自看到或聽到的集結、準備、強暴或脅迫、參與角色、目標及時間，不以推測代替親自見聞。"
+    },
+    "legal_targets": [
+      "state_security_103_start_war"
+    ],
+    "legal_target_details": [],
+    "alternative_target_details": [],
+    "source_basis": "中華民國刑法第103條之中性事實入口",
+    "rationale": "先取得完整事件敘述，不由政治主張、群聚或單一說法直接推定犯罪成立。",
+    "trigger_condition": "candidate:state_security_103_start_war:present",
+    "existing_question_refs": [],
+    "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "ST103-C02",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "ST103-C01",
+    "fact_target": "insurrection_purpose_status",
+    "distinction_axis": "破壞國體、竊據國土、非法變更國憲或顛覆政府之具體目的與可核對脈絡",
+    "answer_mode": "enum",
+    "answer_map": {
+      "PURPOSE_SUPPORTED": "PURPOSE_SUPPORTED",
+      "PURPOSE_DISPUTED": "PURPOSE_DISPUTED",
+      "PURPOSE_UNKNOWN": "PURPOSE_UNKNOWN",
+      "PURPOSE_EVIDENCE_DISPUTED": "PURPOSE_EVIDENCE_DISPUTED",
+      "CONFLICT": "CONFLICT",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請依時間順序說明你親自知道的集結、具體強暴或脅迫、目標與後續影響；不確定之處請標明來源。",
+      "suspect": "請依時間順序說明你親自參與或未參與的集結、準備、強暴或脅迫、目的及停止經過；不確定之處請標明來源。",
+      "transfer": "請依卷內資料整理各人實際行為、聯絡與物資、強暴或脅迫方式、目標及時間，區分直接資料與轉述。",
+      "witness_review_only": "請僅說明你親自看到或聽到的集結、準備、強暴或脅迫、參與角色、目標及時間，不以推測代替親自見聞。"
+    },
+    "legal_targets": [
+      "state_security_103_start_war"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "state_security_103_start_war",
+        "effects": {
+          "PURPOSE_SUPPORTED": "NEED_REVIEW",
+          "PURPOSE_DISPUTED": "NEED_REVIEW",
+          "PURPOSE_UNKNOWN": "NEED_REVIEW",
+          "PURPOSE_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "中華民國刑法第103條第一項目的要素",
+    "rationale": "目的與一般不滿、政治表意或集會分開確認，不由口號或身分單獨推定。",
+    "trigger_condition": "after:ST103-C01 && fact:insurrection_purpose_status:UNKNOWN && candidate:state_security_103_start_war:present",
+    "existing_question_refs": [],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false,
+    "answer_codes": [
+      "PURPOSE_SUPPORTED",
+      "PURPOSE_DISPUTED",
+      "PURPOSE_UNKNOWN",
+      "PURPOSE_EVIDENCE_DISPUTED",
+      "CONFLICT"
+    ]
+  },
+  {
+    "question_concept_id": "ST103-C03",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "ST103-C01",
+    "fact_target": "force_or_coercion_status",
+    "distinction_axis": "強暴或脅迫的具體行為、對象、工具、強度與開始時間",
+    "answer_mode": "enum",
+    "answer_map": {
+      "FORCE_SUPPORTED": "FORCE_SUPPORTED",
+      "COERCION_SUPPORTED": "COERCION_SUPPORTED",
+      "NO_FORCE_OR_COERCION_SHOWN": "NO_FORCE_OR_COERCION_SHOWN",
+      "FORCE_EVIDENCE_DISPUTED": "FORCE_EVIDENCE_DISPUTED",
+      "CONFLICT": "CONFLICT",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請依時間順序說明你親自知道的集結、具體強暴或脅迫、目標與後續影響；不確定之處請標明來源。",
+      "suspect": "請依時間順序說明你親自參與或未參與的集結、準備、強暴或脅迫、目的及停止經過；不確定之處請標明來源。",
+      "transfer": "請依卷內資料整理各人實際行為、聯絡與物資、強暴或脅迫方式、目標及時間，區分直接資料與轉述。",
+      "witness_review_only": "請僅說明你親自看到或聽到的集結、準備、強暴或脅迫、參與角色、目標及時間，不以推測代替親自見聞。"
+    },
+    "legal_targets": [
+      "state_security_103_start_war"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "state_security_103_start_war",
+        "effects": {
+          "FORCE_SUPPORTED": "NEED_REVIEW",
+          "COERCION_SUPPORTED": "NEED_REVIEW",
+          "NO_FORCE_OR_COERCION_SHOWN": "NEED_REVIEW",
+          "FORCE_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "中華民國刑法第103條第一項實行行為",
+    "rationale": "分開確認強暴與脅迫，不以人數、武器外觀或結果反推實行行為。",
+    "trigger_condition": "after:ST103-C01 && fact:force_or_coercion_status:UNKNOWN && candidate:state_security_103_start_war:present",
+    "existing_question_refs": [],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false,
+    "answer_codes": [
+      "FORCE_SUPPORTED",
+      "COERCION_SUPPORTED",
+      "NO_FORCE_OR_COERCION_SHOWN",
+      "FORCE_EVIDENCE_DISPUTED",
+      "CONFLICT"
+    ]
+  },
+  {
+    "question_concept_id": "ST103-C04",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "ST103-C01",
+    "fact_target": "commencement_status",
+    "distinction_axis": "已著手實行、僅預備或仍屬陰謀／聯絡的外部行為進度",
+    "answer_mode": "enum",
+    "answer_map": {
+      "COMMENCED_ACT": "COMMENCED_ACT",
+      "PREPARATION_ONLY": "PREPARATION_ONLY",
+      "CONSPIRACY_OR_CONTACT_ONLY": "CONSPIRACY_OR_CONTACT_ONLY",
+      "PROGRESS_DISPUTED": "PROGRESS_DISPUTED",
+      "CONFLICT": "CONFLICT",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請依時間順序說明你親自知道的集結、具體強暴或脅迫、目標與後續影響；不確定之處請標明來源。",
+      "suspect": "請依時間順序說明你親自參與或未參與的集結、準備、強暴或脅迫、目的及停止經過；不確定之處請標明來源。",
+      "transfer": "請依卷內資料整理各人實際行為、聯絡與物資、強暴或脅迫方式、目標及時間，區分直接資料與轉述。",
+      "witness_review_only": "請僅說明你親自看到或聽到的集結、準備、強暴或脅迫、參與角色、目標及時間，不以推測代替親自見聞。"
+    },
+    "legal_targets": [
+      "state_security_103_start_war"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "state_security_103_start_war",
+        "effects": {
+          "COMMENCED_ACT": "NEED_REVIEW",
+          "PREPARATION_ONLY": "NEED_REVIEW",
+          "CONSPIRACY_OR_CONTACT_ONLY": "NEED_REVIEW",
+          "PROGRESS_DISPUTED": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "中華民國刑法第103條行為進度區分",
+    "rationale": "只記錄可觀察的行為進度，未把預備、陰謀或聯絡直接升為既遂結論。",
+    "trigger_condition": "after:ST103-C01 && fact:commencement_status:UNKNOWN && candidate:state_security_103_start_war:present",
+    "existing_question_refs": [],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false,
+    "answer_codes": [
+      "COMMENCED_ACT",
+      "PREPARATION_ONLY",
+      "CONSPIRACY_OR_CONTACT_ONLY",
+      "PROGRESS_DISPUTED",
+      "CONFLICT"
+    ]
+  },
+  {
+    "question_concept_id": "ST103-C05",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "ST103-C01",
+    "fact_target": "role_status",
+    "distinction_axis": "首謀、指揮、招募、實行、協助或僅在場等個別角色",
+    "answer_mode": "enum",
+    "answer_map": {
+      "LEADERSHIP_SUPPORTED": "LEADERSHIP_SUPPORTED",
+      "EXECUTION_SUPPORTED": "EXECUTION_SUPPORTED",
+      "ASSISTANCE_SUPPORTED": "ASSISTANCE_SUPPORTED",
+      "ROLE_UNKNOWN": "ROLE_UNKNOWN",
+      "CONFLICT": "CONFLICT",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請依時間順序說明你親自知道的集結、具體強暴或脅迫、目標與後續影響；不確定之處請標明來源。",
+      "suspect": "請依時間順序說明你親自參與或未參與的集結、準備、強暴或脅迫、目的及停止經過；不確定之處請標明來源。",
+      "transfer": "請依卷內資料整理各人實際行為、聯絡與物資、強暴或脅迫方式、目標及時間，區分直接資料與轉述。",
+      "witness_review_only": "請僅說明你親自看到或聽到的集結、準備、強暴或脅迫、參與角色、目標及時間，不以推測代替親自見聞。"
+    },
+    "legal_targets": [
+      "state_security_103_start_war"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "state_security_103_start_war",
+        "effects": {
+          "LEADERSHIP_SUPPORTED": "NEED_REVIEW",
+          "EXECUTION_SUPPORTED": "NEED_REVIEW",
+          "ASSISTANCE_SUPPORTED": "NEED_REVIEW",
+          "ROLE_UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "中華民國刑法第103條首謀與預備角色軸",
+    "rationale": "逐人分開記錄角色與行為，不以同場、親屬或通訊關係推定共同責任。",
+    "trigger_condition": "after:ST103-C01 && fact:role_status:UNKNOWN && candidate:state_security_103_start_war:present",
+    "existing_question_refs": [],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false,
+    "answer_codes": [
+      "LEADERSHIP_SUPPORTED",
+      "EXECUTION_SUPPORTED",
+      "ASSISTANCE_SUPPORTED",
+      "ROLE_UNKNOWN",
+      "CONFLICT"
+    ]
+  },
+  {
+    "question_concept_id": "ST103-C06",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "ST103-C01",
+    "fact_target": "target_and_effect_status",
+    "distinction_axis": "行為目標、政府或國家機關受影響情形、實際結果及因果資料",
+    "answer_mode": "enum",
+    "answer_map": {
+      "TARGET_SUPPORTED": "TARGET_SUPPORTED",
+      "EFFECT_SUPPORTED": "EFFECT_SUPPORTED",
+      "EFFECT_DISPUTED": "EFFECT_DISPUTED",
+      "NO_EFFECT_DATA": "NO_EFFECT_DATA",
+      "CONFLICT": "CONFLICT",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請依時間順序說明你親自知道的集結、具體強暴或脅迫、目標與後續影響；不確定之處請標明來源。",
+      "suspect": "請依時間順序說明你親自參與或未參與的集結、準備、強暴或脅迫、目的及停止經過；不確定之處請標明來源。",
+      "transfer": "請依卷內資料整理各人實際行為、聯絡與物資、強暴或脅迫方式、目標及時間，區分直接資料與轉述。",
+      "witness_review_only": "請僅說明你親自看到或聽到的集結、準備、強暴或脅迫、參與角色、目標及時間，不以推測代替親自見聞。"
+    },
+    "legal_targets": [
+      "state_security_103_start_war"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "state_security_103_start_war",
+        "effects": {
+          "TARGET_SUPPORTED": "NEED_REVIEW",
+          "EFFECT_SUPPORTED": "NEED_REVIEW",
+          "EFFECT_DISPUTED": "NEED_REVIEW",
+          "NO_EFFECT_DATA": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "中華民國刑法第103條目的與外部事實關聯軸",
+    "rationale": "目標、行為與結果分層確認，不由結果倒推目的或個別參與。",
+    "trigger_condition": "after:ST103-C01 && fact:target_and_effect_status:UNKNOWN && candidate:state_security_103_start_war:present",
+    "existing_question_refs": [],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false,
+    "answer_codes": [
+      "TARGET_SUPPORTED",
+      "EFFECT_SUPPORTED",
+      "EFFECT_DISPUTED",
+      "NO_EFFECT_DATA",
+      "CONFLICT"
+    ]
+  },
+  {
+    "question_concept_id": "ST103-C07",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "ST103-C01",
+    "fact_target": "coordination_status",
+    "distinction_axis": "聯絡、分工、物資、場所與時間安排是否有可核對的外部資料",
+    "answer_mode": "enum",
+    "answer_map": {
+      "COORDINATION_DOCUMENTED": "COORDINATION_DOCUMENTED",
+      "COORDINATION_DISPUTED": "COORDINATION_DISPUTED",
+      "NO_COORDINATION_RECORD": "NO_COORDINATION_RECORD",
+      "COORDINATION_UNKNOWN": "COORDINATION_UNKNOWN",
+      "CONFLICT": "CONFLICT",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請依時間順序說明你親自知道的集結、具體強暴或脅迫、目標與後續影響；不確定之處請標明來源。",
+      "suspect": "請依時間順序說明你親自參與或未參與的集結、準備、強暴或脅迫、目的及停止經過；不確定之處請標明來源。",
+      "transfer": "請依卷內資料整理各人實際行為、聯絡與物資、強暴或脅迫方式、目標及時間，區分直接資料與轉述。",
+      "witness_review_only": "請僅說明你親自看到或聽到的集結、準備、強暴或脅迫、參與角色、目標及時間，不以推測代替親自見聞。"
+    },
+    "legal_targets": [
+      "state_security_103_start_war"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "state_security_103_start_war",
+        "effects": {
+          "COORDINATION_DOCUMENTED": "NEED_REVIEW",
+          "COORDINATION_DISPUTED": "NEED_REVIEW",
+          "NO_COORDINATION_RECORD": "NEED_REVIEW",
+          "COORDINATION_UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "中華民國刑法第103條參與與預備脈絡",
+    "rationale": "聯絡資料只作核對入口，不以通訊、轉帳或共同場所單獨產生法律效果。",
+    "trigger_condition": "after:ST103-C01 && fact:coordination_status:UNKNOWN && candidate:state_security_103_start_war:present",
+    "existing_question_refs": [],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false,
+    "answer_codes": [
+      "COORDINATION_DOCUMENTED",
+      "COORDINATION_DISPUTED",
+      "NO_COORDINATION_RECORD",
+      "COORDINATION_UNKNOWN",
+      "CONFLICT"
+    ]
+  },
+  {
+    "question_concept_id": "ST103-C08",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "evidence_followup",
+    "parent_question_id": "ST103-C01",
+    "fact_target": "evidence_source",
+    "distinction_axis": "影像、通聯、文件、現場、證人與數位資料各自支持哪一段事實",
+    "answer_mode": "enum",
+    "answer_map": {
+      "DOCUMENTED_EVIDENCE": "DOCUMENTED_EVIDENCE",
+      "DIRECT_WITNESS_ONLY": "DIRECT_WITNESS_ONLY",
+      "THIRD_PARTY_ONLY": "THIRD_PARTY_ONLY",
+      "EVIDENCE_DISPUTED": "EVIDENCE_DISPUTED",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請依時間順序說明你親自知道的集結、具體強暴或脅迫、目標與後續影響；不確定之處請標明來源。",
+      "suspect": "請依時間順序說明你親自參與或未參與的集結、準備、強暴或脅迫、目的及停止經過；不確定之處請標明來源。",
+      "transfer": "請依卷內資料整理各人實際行為、聯絡與物資、強暴或脅迫方式、目標及時間，區分直接資料與轉述。",
+      "witness_review_only": "請僅說明你親自看到或聽到的集結、準備、強暴或脅迫、參與角色、目標及時間，不以推測代替親自見聞。"
+    },
+    "legal_targets": [
+      "state_security_103_start_war"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "state_security_103_start_war",
+        "effects": {
+          "DOCUMENTED_EVIDENCE": "NEED_REVIEW",
+          "DIRECT_WITNESS_ONLY": "NEED_REVIEW",
+          "THIRD_PARTY_ONLY": "NEED_REVIEW",
+          "EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "中華民國刑法第103條各事實軸證據來源",
+    "rationale": "證據追問只補可回查資料，不把資料存在等同要件成立。",
+    "trigger_condition": "after:ST103-C01 && fact:evidence_source:UNKNOWN && candidate:state_security_103_start_war:present",
+    "existing_question_refs": [],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false,
+    "answer_codes": [
+      "DOCUMENTED_EVIDENCE",
+      "DIRECT_WITNESS_ONLY",
+      "THIRD_PARTY_ONLY",
+      "EVIDENCE_DISPUTED"
+    ]
+  }
+]
+```
+<!-- STANDARD_SET_END -->
+
+## G. 角色實體化規則
+
+- ID為 `<concept_id>-<V|S|T|W>`；`witness_review_only` 永遠 `runtime_enabled: false`。
+- C01先問；C02至C08只在既有 fact 為 `UNKNOWN` 或 `CONFLICT` 時追問。既有資料完整時只引用；衝突時保留新舊版本，不得靜默覆蓋。
+- 刑事訴訟法第95條權利告知與既有筆錄為程序題，不納入八個 offense concepts。
+
+## H. 回答效果與聚合
+
+- 所有單題均不得產生 `ACTIVE` 或 `EXCLUDED`。
+- `UNKNOWN`、`CONFLICT` 及未列入 scope 的相鄰 route 全部為 `NEED_REVIEW`，不得直接排除。
+- 即使資料一致，本階段最高仍為 `CANDIDATE_NEED_REVIEW`，個案須經 `CASE_HUMAN_GATE`。
+
+## I. 去重與既有題處理
+
+| concept | 既有來源 | 處理 |
+|---|---|---|
+| C01 | 無可安全共同重用的完整內亂事件題 | 自由敘述，不共同出題 |
+| C02-C07 | 無跨路線語意等同題 | 依缺漏／衝突追問，不共同出題 |
+| C08 | 證據來源欄位 | 只補證據來源，不把資料存在等同要件成立 |
+
+## J. 不採用問句
+
+- 「你們人很多，所以就是通謀外國使開戰？」：把人數直接等同犯罪成立。
+- 「你在現場，所以一定是首謀或共犯？」：把同場直接等同角色。
+- 「有政治口號，所以一定有通謀外國使開戰目的？」：把表意直接等同法定目的。
+- 「結果嚴重，所以一定是你造成的？」：把結果直接等同行為與因果。
+
+## K. 最低校準案例
+
+| 案例 | 期望輸出 |
+|---|---|
+| 僅有集會或政治表意，目的與行為不明 | C02、C03需外部資料；不得單題升ACTIVE |
+| 有聯絡或物資，但未區分預備與實行 | C04、C07維持NEED_REVIEW |
+| 有強暴或脅迫結果，但個別行為不明 | C03、C05、C06分開保留 |
+| 僅有事後說法、無可核對資料 | C08為NEED_REVIEW |
+| 跨到外患或暴動描述 | 保留相鄰路由，不靜默轉入 |
+
+## L. 題數與輸出預算
+
+```yaml
+new_concepts: 8
+concept_budget: 8
+case_core_selection: 3-5
+evidence_followup_max: 2
+single_case_total_max: 8
+output_page_budget: 8
+company_question_protection: PRESERVED
+xlsm_question_protection: PRESERVED
+common_question_protection: PRESERVED
+budget_exceeded_policy: OUTPUT_BUDGET_EXCEEDED
+```
+
+## M. 法律與安全邊界
+
+- 官方法源查詢已於2026-10-27完成；行為時法仍為 `UNKNOWN`。
+- 第103條及第103至105條僅為相鄰路由；第102條、第107條、第115條之1與第119條分別為減免、加重、定義及程序，不在本 route scope。
+- 本工作單只核准問句設計；個案由承辦人執行 `CASE_HUMAN_GATE`。
+
+## N. 自我檢查
+
+```yaml
+self_check:
+  structural_review: PASS
+  route_id_exactness: PASS
+  official_article_check: PASS
+  schema: PASS
+  static_dedupe_contract: PASS_ZERO_EXACT_DUPLICATES
+  runtime_semantic_dedupe: PASS_DECLARED_REUSE_CONTRACT
+  question_method_review: PASS
+  role_boundary: PASS
+  legal_effect_review: PASS_NO_SINGLE_ANSWER_ACTIVE
+  unknown_and_conflict_handling: PASS
+  calibration_review: PASS
+  concept_budget: PASS
+  output_page_budget_validation: PASS_SYNTHETIC_20_QUESTION_LIBREOFFICE
+  case_human_gate: REQUIRED
+```
+
+## O. Gate 與 Handoff
+
+```yaml
+route_review_gate: PASS
+case_human_gate: REQUIRED
+user_final_acceptance: PENDING
+runtime_enabled: false
+runtime_auto_advance: false
+deployment_status: NOT_DEPLOYED
+automatic_advance: false
+next_route: NOT_AUTHORIZED
+next_action: ARCHIVE_AND_SELECT_NEXT
+```
+
+<!-- SUBMISSION_END -->
+
+## Reviewer Decision
+
+```yaml
+gate_id: GATE-ST103-20261027-01
+current_route_id: state_security_103_start_war
+iteration: 0
+ruleset_version: question-rules-v2-draft
+ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+official_source_status: VERIFIED_CURRENT_BEHAVIOR_TIME_UNKNOWN
+schema_validation: PASS
+exact_dedupe_validation: PASS_ZERO_DUPLICATES
+semantic_dedupe_validation: PASS_DECLARED_REUSE_AND_GAP_CONTRACT
+budget_validation: PASS_8_CONCEPTS
+output_page_budget_validation: PASS_SYNTHETIC_20_QUESTION_LIBREOFFICE
+calibration_review: PASS
+reviewer_decision: PASS
+review_execution_mode: REVIEWED_PIPELINE
+reviewer_identity: Codex (model identity UNVERIFIED)
+independent_review_model_requested: gpt-5.6-sol
+independent_model_identity: UNVERIFIED
+independent_review_decision: NOT_AVAILABLE_CURRENT_TOOL_SURFACE
+hash_scope: UTF8_LF_BYTES_BETWEEN_SUBMISSION_MARKERS
+submission_sha256: 4303FC4653630E58BA381072DEA149E5D3CD96A3DCCE58CAEDE9B8230429C819
+test_results:
+  - "question work item and offense linkage contracts: 15 passed"
+open_blockers: []
+legal_conclusion: false
+runtime_enabled: false
+runtime_auto_advance: false
+deployment_status: NOT_DEPLOYED
+reviewed_at: PENDING
+decision_reason: "第103條的目的、強暴或脅迫、行為進度、個別角色與證據來源必須分開確認；任何單一問句只保留人工審核入口，不產生ACTIVE。"
+route_review_gate: PASS
+case_human_gate: REQUIRED
+next_route: NOT_AUTHORIZED
+```

@@ -1,0 +1,93 @@
+{
+  "schema_version": "question-family-fixture-v1-draft",
+  "document_status": "DESIGN_DRAFT",
+  "runtime_enabled": false,
+  "review_status": "HUMAN_REVIEW_REQUIRED",
+  "fixture_id": "public_danger_traffic_family_20261027",
+  "family_id": "public_danger_traffic",
+  "coverage_id_prefix": "public_danger_traffic_gap",
+  "source_markdown": "docs/family_templates/catalog/公共危險交通家族.md",
+  "source_provenance": {
+    "kind": "REPOSITORY_RECONSTRUCTION_DRAFT",
+    "inputs": [
+      "../questions/drink-driving.md",
+      "docs/evidence/question_route_archives/public_danger_185_3_impaired_driving-iteration-0-20261027.txt",
+      "docs/evidence/question_route_archives/public_danger_185_4_hit_and_run-iteration-0-20261027.txt",
+      "data/question_bank.json"
+    ],
+    "legal_verification": "PARTIAL_REPOSITORY_SOURCE_VERIFIED"
+  },
+  "role_tables": {
+    "victim": {"prefix": "PD-V", "expected_count": 15, "runtime_role": "victim"},
+    "suspect": {"prefix": "PD-S", "expected_count": 18, "runtime_role": "suspect"},
+    "witness": {"prefix": "PD-W", "expected_count": 10, "runtime_role": "witness_review_only"}
+  },
+  "fact_target_by_id": {
+    "PD-V01": "event_sequence", "PD-V02": "event_time_place_environment", "PD-V03": "vehicle_and_driver_identity", "PD-V04": "observed_driving_behavior", "PD-V05": "substance_use_knowledge_basis", "PD-V06": "traffic_accident_sequence", "PD-V07": "injury_death_and_medical_evidence", "PD-V08": "driver_accident_injury_awareness", "PD-V09": "departure_from_scene", "PD-V10": "rescue_reporting_and_identification", "PD-V11": "collision_and_scene_traces", "PD-V12": "traffic_specific_records", "PD-V13": "event_witnesses", "PD-V14": "party_relationship", "PD-V15": "additional_information",
+    "PD-S01": "event_sequence", "PD-S02": "vehicle_operation_route_and_time", "PD-S03": "substance_use_timeline", "PD-S04": "substance_quantity_and_basis", "PD-S05": "physical_and_operational_state", "PD-S06": "test_procedure_result_and_unit", "PD-S07": "test_context_and_interference", "PD-S08": "traffic_accident_sequence", "PD-S09": "accident_and_injury_awareness", "PD-S10": "post_accident_rescue_and_reporting", "PD-S11": "departure_details_and_reason", "PD-S12": "post_departure_return_or_contact", "PD-S13": "prior_case_final_status", "PD-S14": "vehicle_ownership_and_use_basis", "PD-S15": "passengers_and_witnesses", "PD-S16": "traffic_specific_records", "PD-S17": "exculpatory_facts_and_evidence", "PD-S18": "additional_information",
+    "PD-W01": "witness_relationship", "PD-W02": "event_sequence", "PD-W03": "driver_vehicle_and_vantage_point", "PD-W04": "observed_substance_use", "PD-W05": "observed_driving_and_physical_state", "PD-W06": "observed_accident_sequence", "PD-W07": "observed_injury_and_driver_awareness", "PD-W08": "observed_post_accident_conduct", "PD-W09": "evidence_items", "PD-W10": "additional_information",
+    "PD-E1-1": "alcohol_item_quantity_and_time", "PD-E1-2": "drink_drive_stop_test_timeline", "PD-E1-3": "alcohol_test_device_result_and_unit", "PD-E1-4": "alcohol_test_notice_wait_and_retest", "PD-E1-5": "post_alcohol_observed_state", "PD-E1-6": "alcohol_test_alternative_factors",
+    "PD-E2-1": "drug_or_medication_details", "PD-E2-2": "prescription_and_medical_use", "PD-E2-3": "specimen_chain_test_item_concentration", "PD-E2-4": "post_drug_observed_state", "PD-E2-5": "drug_test_alternative_factors",
+    "PD-E3-1": "actual_vehicle_operation", "PD-E3-2": "abnormal_driving_behavior", "PD-E3-3": "observed_impairment_indicators", "PD-E3-4": "road_weather_vehicle_alternative_factors", "PD-E3-5": "impairment_evidence_sources",
+    "PD-E4-1": "collision_and_contact_sequence", "PD-E4-2": "injury_death_diagnosis_and_cause", "PD-E4-3": "result_causation_basis", "PD-E4-4": "result_contributing_factors", "PD-E4-5": "rescue_medical_and_result_change",
+    "PD-E5-1": "driver_accident_injury_awareness", "PD-E5-2": "accident_awareness_indicators", "PD-E5-3": "stop_and_inspection_before_departure", "PD-E5-4": "departure_distance_duration_and_conduct", "PD-E5-5": "rescue_reporting_contact_or_return", "PD-E5-6": "departure_reason_and_evidence", "PD-E5-7": "accident_negligence_context",
+    "PD-E6-1": "prior_case_identity_and_date", "PD-E6-2": "prior_judgment_or_deferred_prosecution_finality", "PD-E6-3": "ten_year_interval_evidence"
+  },
+  "source_applicability_route_map": {
+    "酒毒": ["public_danger_185_3_impaired_driving"],
+    "肇逃": ["public_danger_185_4_hit_and_run"],
+    "全": ["public_danger_185_3_impaired_driving", "public_danger_185_4_hit_and_run"],
+    "PD-E1": ["public_danger_185_3_impaired_driving"],
+    "PD-E2": ["public_danger_185_3_impaired_driving"],
+    "PD-E3": ["public_danger_185_3_impaired_driving"],
+    "PD-E4": ["public_danger_185_3_impaired_driving", "public_danger_185_4_hit_and_run"],
+    "PD-E5": ["public_danger_185_4_hit_and_run"],
+    "PD-E6": ["public_danger_185_3_impaired_driving"]
+  },
+  "route_mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING",
+  "precondition_registry": {
+    "observed_driving_available": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "substance_use_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "traffic_accident_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "injury_or_death_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "driver_departed_scene_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "test_performed_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "state_dispute_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "prior_case_indicated": {"evaluation": "HUMAN_LEGAL_REVIEW"},
+    "tool_or_substance_observation_available": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "post_accident_conduct_indicated": {"evaluation": "MANUAL_FACT_SELECTION"},
+    "alcohol_signal_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"},
+    "drug_or_medication_signal_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"},
+    "impairment_without_threshold_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"},
+    "serious_result_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"},
+    "injury_accident_departure_indicated": {"evaluation": "MANUAL_MODULE_SELECTION"},
+    "prior_case_and_serious_result_indicated": {"evaluation": "HUMAN_LEGAL_REVIEW"}
+  },
+  "question_precondition_ids": {
+    "PD-V04": ["observed_driving_available"], "PD-V05": ["substance_use_indicated"], "PD-V06": ["traffic_accident_indicated"], "PD-V07": ["injury_or_death_indicated"], "PD-V08": ["traffic_accident_indicated"], "PD-V09": ["driver_departed_scene_indicated"], "PD-V10": ["traffic_accident_indicated"], "PD-V11": ["traffic_accident_indicated"],
+    "PD-S03": ["substance_use_indicated"], "PD-S04": ["substance_use_indicated"], "PD-S05": ["state_dispute_indicated"], "PD-S06": ["test_performed_indicated"], "PD-S07": ["test_performed_indicated"], "PD-S08": ["traffic_accident_indicated"], "PD-S09": ["traffic_accident_indicated"], "PD-S10": ["traffic_accident_indicated"], "PD-S11": ["driver_departed_scene_indicated"], "PD-S12": ["driver_departed_scene_indicated"], "PD-S13": ["prior_case_indicated"],
+    "PD-W04": ["tool_or_substance_observation_available"], "PD-W05": ["observed_driving_available"], "PD-W06": ["traffic_accident_indicated"], "PD-W07": ["injury_or_death_indicated"], "PD-W08": ["post_accident_conduct_indicated"]
+  },
+  "module_precondition_ids": {
+    "PD-E1": ["alcohol_signal_indicated"],
+    "PD-E2": ["drug_or_medication_signal_indicated"],
+    "PD-E3": ["impairment_without_threshold_indicated"],
+    "PD-E4": ["serious_result_indicated"],
+    "PD-E5": ["injury_accident_departure_indicated"],
+    "PD-E6": ["prior_case_and_serious_result_indicated"]
+  },
+  "route_mapping_policy": {
+    "allow_parent_route_only": false,
+    "requires_exact_child_route": true,
+    "special_form_required": true,
+    "unknown_route_mapping_must_not_be_silently_promoted": true
+  },
+  "human_gate": {
+    "case_acceptance": "REQUIRED",
+    "legal_source_acceptance": "REQUIRED",
+    "test_procedure_and_units": "REQUIRED",
+    "impairment_and_causation": "REQUIRED",
+    "accident_knowledge_departure_and_no_fault": "REQUIRED",
+    "prior_case_finality_and_case_time_law": "REQUIRED"
+  }
+}

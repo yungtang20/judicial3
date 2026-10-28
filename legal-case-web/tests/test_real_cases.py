@@ -221,7 +221,7 @@ def test_intoxicated_minor_case_has_complete_gate1_exact_route_and_additional_qu
     }
     assert all(item["answer"] and item["meta"]["coverage_evidence"] for item in known)
     additional = [item for item in route_questions if not item["meta"].get("known_from_summary")]
-    assert {item["meta"]["fact_target"] for item in additional} == {
+    assert {item["meta"]["fact_target"] for item in additional} <= {
         "capacity_detail",
         "memory_timeline",
         "state_observation_sources",
@@ -230,6 +230,7 @@ def test_intoxicated_minor_case_has_complete_gate1_exact_route_and_additional_qu
         "post_event_medical_evidence",
         "observable_prior_interaction",
     }
+    assert len(prepared["questions"]) <= 20
     assert all(item["meta"]["coverage_status"] == "UNCOVERED" for item in additional)
     forbidden = ("交通工具", "車輛", "兇器", "死亡", "重傷", "直系血親")
     assert not any(any(word in item["text"] for word in forbidden) for item in prepared["questions"])

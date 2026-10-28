@@ -1,0 +1,1521 @@
+{
+  "schema_version": "legal-trace-replay.v1",
+  "generated_at": "2026-10-28T11:23:11.448238+00:00",
+  "safety": {
+    "external_network": "NOT_USED",
+    "llm": "NOT_RUN",
+    "database": "NOT_RUN",
+    "http_server": "NOT_RUN",
+    "formal_logic_modified": false
+  },
+  "input": {
+    "intake": {
+      "event_time": "2026-10-28T10:00:00+08:00",
+      "location": "便利商店櫃檯旁",
+      "summary": "甲將手機放在便利商店櫃檯旁，乙拿取手機離開。乙表示原本以為是他人遺留、不要的手機。現有資料尚不能確定手機當時是否仍在甲的持有範圍，以及乙是否具有不法所有意圖。",
+      "case_kind": "WITH_VICTIM"
+    },
+    "input_id": "F2_exact_take_variant"
+  },
+  "projects": {
+    "criminal_investigation_assistant": {
+      "metadata": {
+        "path": "D:\\工作用\\judicial1\\criminal-investigation-assistant",
+        "git_head": "e5d8e95ea59292e5464114ba6b804165e9511ce8",
+        "git_branch": "codex/sim-case-remediation",
+        "git_status_porcelain": "M app/domain.py\n M app/static/app.js\n M app/static/index.html\n M app/static/styles.css\n M app/storage.py\n M ../legal-case-web/README.md\n M ../legal-case-web/app/case_identity.py\n M ../legal-case-web/app/documents.py\n M ../legal-case-web/app/law_reference.py\n M ../legal-case-web/app/law_version.py\n M ../legal-case-web/app/markdown_questions.py\n M ../legal-case-web/app/questions.py\n M ../legal-case-web/app/roc_time.py\n M ../legal-case-web/app/rules.py\n M ../legal-case-web/app/section_questions.py\n M ../legal-case-web/app/server.py\n M ../legal-case-web/app/static/app.js\n M ../legal-case-web/app/static/index.html\n M ../legal-case-web/app/static/styles.css\n M ../legal-case-web/app/workflow.py\n M ../legal-case-web/data/source_manifest.json\n M ../legal-case-web/docs/AI_EXECUTION_PROTOCOL.md\n M ../legal-case-web/docs/LIFECYCLE_RECORD.md\n M ../legal-case-web/docs/OFFENSE_QUESTION_WORK_QUEUE.md\n M ../legal-case-web/docs/QUESTION_DESIGN_AND_USE.md\n M ../legal-case-web/docs/QUESTION_WORK_ITEM.md\n M ../legal-case-web/docs/REFERENCE_STANDARD_LIBRARY.md\n M ../legal-case-web/docs/evidence/hg_lr_01_provider_contract_review.json\n M ../legal-case-web/docs/evidence/hg_lr_02_privacy_security_review.json\n M ../legal-case-web/docs/evidence/legal_retrieval_human_gate_packet.json\n M ../legal-case-web/review/xlsm_review_draft.md\n M ../legal-case-web/tests/test_candidate_semantic_safety.py\n M ../legal-case-web/tests/test_case_identity_and_brief_template.py\n M ../legal-case-web/tests/test_documents.py\n M ../legal-case-web/tests/test_e2e_flow.py\n M ../legal-case-web/tests/test_frontend_api_errors.mjs\n M ../legal-case-web/tests/test_gate2_legal_route_selection.py\n M ../legal-case-web/tests/test_legal_retrieval_human_gate_packet.py\n M ../legal-case-web/tests/test_offense_linkage_poc.py\n M ../legal-case-web/tests/test_p0_confirmed_rules.py\n M ../legal-case-web/tests/test_question_logic.py\n M ../legal-case-web/tests/test_question_work_item_contract.py\n M ../legal-case-web/tests/test_real_cases.py\n M ../legal-case-web/tests/test_rules.py\n M ../legal-case-web/tests/test_virtual_case_wallet_atm.py\n M ../legal-case-web/tests/test_workflow.py\n M ../questions/index.md\n M ../questions/robbery.md\n M ../questions/theft.md\n M ../新套表.xlsm\n?? ../._verify_render_20261026_2/\n?? ../._verify_render_20261026_3/\n?? ../LEGAL_ROOT_CAUSE_AUDIT.md\n?? ../LEGAL_ROOT_CAUSE_TRACE.md\n?? docs/audit/IMPLEMENTATION_REPORT.md\n?? docs/audit/LEGAL_REASONING_AUDIT.md\n?? docs/audit/OPEN_ISSUES.md\n?? docs/audit/TEST_RESULTS.md\n?? tests/test_sim_case_remediation.py\n?? tools/legal_reasoning_audit.py\n?? ../legal-case-web/data/question_family_catalog.json\n?? ../legal-case-web/data/question_family_fixtures/\n?? ../legal-case-web/data/question_family_master/\n?? ../legal-case-web/docs/CURRENT_HANDOFF_2026-10-26.md\n?? ../legal-case-web/docs/QUESTION_FAMILY_ARCHITECTURE_DRAFT.md\n?? ../legal-case-web/docs/QUESTION_FAMILY_TODO.md\n?? ../legal-case-web/docs/evidence/injury_family_legal_verification_20261027.json\n?? ../legal-case-web/docs/evidence/property_family_legal_verification_20261027.json\n?? ../legal-case-web/docs/evidence/property_offense_legal_verification_20261026.json\n?? ../legal-case-web/docs/evidence/question_route_archive_manifest.json\n?? ../legal-case-web/docs/evidence/question_route_archives/\n?? ../legal-case-web/docs/family_templates/\n?? ../legal-case-web/review/property-taking-issue-matrix.md\n?? ../legal-case-web/tests/test_question_family_catalog.py\n?? ../legal-case-web/tools/question_common_compiler.py\n?? ../legal-case-web/tools/question_family_compiler.py\n?? ../legal-case-web/tools/question_family_docs.py\n?? ../tools/\n?? ../傷害家族問句樣板.md\n?? ../常用法條.txt\n?? ../新套表_補齊罪名筆錄_20261026.xlsm",
+        "files": {
+          "app/domain.py": {
+            "sha256": "71d3cdc0e016c5782768e782bd2e4961a875de5b07ed1e5395c5cca8896c1dad"
+          },
+          "app/question_bank.py": {
+            "sha256": "fe6ec03dc3dd12d323036be195ef3e27c871d93f7991da83a08851a52e9e84f8"
+          },
+          "data/runtime/question_bank.json": {
+            "sha256": "0ac9e0cd5c3a1a7796b285ac25d1056fb00a8aff2a2d67302aa6114e9bcbfdb6"
+          }
+        }
+      },
+      "replay": {
+        "execution": "PASS",
+        "entry": "app.domain.make_case",
+        "facts": [
+          {
+            "fact_id": "F-TIME",
+            "category": "time",
+            "value": "2026-10-28T10:00:00+08:00",
+            "provenance": "INTAKE:event_time",
+            "status": "FACT",
+            "confidence": 1.0
+          },
+          {
+            "fact_id": "F-PLACE",
+            "category": "place",
+            "value": "�K�Q�ө��d�i��",
+            "provenance": "INTAKE:location",
+            "status": "FACT",
+            "confidence": 1.0
+          },
+          {
+            "fact_id": "F-NARRATIVE",
+            "category": "event",
+            "value": "�ұN�����b�K�Q�ө��d�i�ǡA�A����������}�C�A���ܭ쥻�H���O�L�H��d�B���n������C�{����Ʃ|����T�w������ɬO�_���b�Ҫ������d��A�H�ΤA�O�_�㦳���k�Ҧ��N�ϡC",
+            "provenance": "INTAKE:summary",
+            "status": "NARRATIVE",
+            "confidence": 1.0
+          },
+          {
+            "fact_id": "F-PERSON-1",
+            "category": "person",
+            "value": "��",
+            "provenance": "INFERENCE:summary-token",
+            "status": "INFERENCE",
+            "confidence": 0.6
+          },
+          {
+            "fact_id": "F-PERSON-2",
+            "category": "person",
+            "value": "�A",
+            "provenance": "INFERENCE:summary-token",
+            "status": "INFERENCE",
+            "confidence": 0.6
+          },
+          {
+            "fact_id": "F-OBJECT-1",
+            "category": "object",
+            "value": "�K�n�O�������~�A�ݳv���T�{",
+            "provenance": "INFERENCE:summary-keyword",
+            "status": "UNKNOWN",
+            "confidence": 0.4
+          },
+          {
+            "fact_id": "F-CONDUCT",
+            "category": "conduct",
+            "value": "�ݰݵ��T�{����欰�B�覡�Ϋe�ᶶ��",
+            "provenance": "SYSTEM:GATE1",
+            "status": "UNKNOWN",
+            "confidence": 0.0
+          },
+          {
+            "fact_id": "F-MENTAL-STATE",
+            "category": "mental_state",
+            "value": "�ݰݵ��T�{�欰�ɻ{���B�ت��Υi�o���ƶ�",
+            "provenance": "SYSTEM:GATE1",
+            "status": "UNKNOWN",
+            "confidence": 0.0
+          },
+          {
+            "fact_id": "F-RESULT",
+            "category": "result",
+            "value": "�ݰݵ��T�{��ڵ��G�B�l�`�μv�T",
+            "provenance": "SYSTEM:GATE1",
+            "status": "UNKNOWN",
+            "confidence": 0.0
+          },
+          {
+            "fact_id": "F-RIGHTS",
+            "category": "property_or_rights",
+            "value": "�ݰݵ��T�{�Ҧ��B�����B���v�Ψ�L�v�Q���Y",
+            "provenance": "SYSTEM:GATE1",
+            "status": "UNKNOWN",
+            "confidence": 0.0
+          },
+          {
+            "fact_id": "F-CAUSATION",
+            "category": "causation",
+            "value": "�ݰݵ��T�{",
+            "provenance": "SYSTEM:GATE1",
+            "status": "UNKNOWN",
+            "confidence": 0.0
+          },
+          {
+            "fact_id": "F-EVIDENCE",
+            "category": "evidence",
+            "value": "�ݰݵ��T�{",
+            "provenance": "SYSTEM:GATE1",
+            "status": "UNKNOWN",
+            "confidence": 0.0
+          }
+        ],
+        "parties": [
+          {
+            "party_id": "P-001",
+            "display_name": "��",
+            "role": "VICTIM_OR_REPORTER",
+            "identity_status": "INFERRED_TOKEN",
+            "source": "INTAKE:summary-token"
+          },
+          {
+            "party_id": "P-002",
+            "display_name": "�A",
+            "role": "UNKNOWN",
+            "identity_status": "INFERRED_TOKEN",
+            "source": "INTAKE:summary-token"
+          }
+        ],
+        "events": [],
+        "candidates": [
+          {
+            "candidate_id": "embezzlement",
+            "family_id": "property_possession_taking",
+            "label": "�I�e�]�t�I�e�򥢪��^",
+            "status": "NEEDS_FACTS",
+            "score": 50,
+            "supporting_facts": [
+              "��r�u���G��d"
+            ],
+            "supporting_fact_ids": [],
+            "contrary_facts": [],
+            "contrary_fact_ids": [],
+            "missing_elements": [
+              "�]�X�k��]�����L�H����",
+              "�����������k�Ҧ����I�e�欰",
+              "���ۤv�βĤT�H���k�Ҧ����N��",
+              "���E�άJ�E",
+              "���ȤW�Φ]���q�����L�H����",
+              "�I�e�欰",
+              "���k�Ҧ��N��",
+              "�~�ȤW�����L�H����",
+              "�����P�~�Ȥ����p",
+              "�I�e�欰�Τ��k�Ҧ��N��",
+              "�򥢪��B�}�y���Ψ�L�����H��������",
+              "���o�P����B���欰",
+              "�I�e����¦�欰",
+              "��323����q�ǰʲ��A�α���",
+              "��324���������Y�B�K�D�Χi�D����"
+            ],
+            "child_routes": [
+              {
+                "route_id": "embezzlement_335_general",
+                "name": "���q�I�e",
+                "route_kind": "offense",
+                "route_resolution_status": "SNAPSHOT_CHILD_ROUTE",
+                "law_name": "���إ���D�k",
+                "article_no": "��335��",
+                "law_pcode": "C0000001",
+                "law_last_amended": "2026-07-22",
+                "law_effective_date": "NOT_SEPARATELY_REPORTED",
+                "law_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                "law_version_checked_at": "2026-10-28T00:00:00+08:00",
+                "article_verification_status": "OFFICIAL_CURRENT_ARTICLE_EXISTS",
+                "article_verified_at": "2026-10-28T00:00:00+08:00",
+                "source_version": "5e3de59047857e1a",
+                "fact_elements": [
+                  "�]�X�k��]�����L�H����",
+                  "�����������k�Ҧ����I�e�欰",
+                  "���ۤv�βĤT�H���k�Ҧ����N��",
+                  "���E�άJ�E"
+                ],
+                "correction_status": "UNCHANGED_SNAPSHOT",
+                "correction_reason": "",
+                "constitutional_status": "NOT_APPLICABLE",
+                "constitutional_decision": "",
+                "constitutional_source_url": "",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "status": "NEEDS_FACTS",
+                "element_gaps": [
+                  {
+                    "element": "�]�X�k��]�����L�H����",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_335_general:802e5ec7b2ce88bc",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "�����������k�Ҧ����I�e�欰",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_335_general:69d167fbe1dca46a",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "���ۤv�βĤT�H���k�Ҧ����N��",
+                    "element_type": "mental_state",
+                    "route_element_key": "embezzlement_335_general:c4a7d001a9013d20",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "���E�άJ�E",
+                    "element_type": "result",
+                    "route_element_key": "embezzlement_335_general:0c3c1a676d09ff08",
+                    "status": "UNKNOWN"
+                  }
+                ]
+              },
+              {
+                "route_id": "embezzlement_336_1_public",
+                "name": "�I�e���ȩΤ��q������",
+                "route_kind": "offense",
+                "route_resolution_status": "SNAPSHOT_CHILD_ROUTE",
+                "law_name": "���إ���D�k",
+                "article_no": "��336����1��",
+                "law_pcode": "C0000001",
+                "law_last_amended": "2026-07-22",
+                "law_effective_date": "NOT_SEPARATELY_REPORTED",
+                "law_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                "law_version_checked_at": "2026-10-28T00:00:00+08:00",
+                "article_verification_status": "OFFICIAL_CURRENT_ARTICLE_EXISTS",
+                "article_verified_at": "2026-10-28T00:00:00+08:00",
+                "source_version": "5e3de59047857e1a",
+                "fact_elements": [
+                  "���ȤW�Φ]���q�����L�H����",
+                  "�I�e�欰",
+                  "���k�Ҧ��N��",
+                  "���E�άJ�E"
+                ],
+                "correction_status": "UNCHANGED_SNAPSHOT",
+                "correction_reason": "",
+                "constitutional_status": "NOT_APPLICABLE",
+                "constitutional_decision": "",
+                "constitutional_source_url": "",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "status": "NEEDS_FACTS",
+                "element_gaps": [
+                  {
+                    "element": "���ȤW�Φ]���q�����L�H����",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_336_1_public:cc688ae6021263c2",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "�I�e�欰",
+                    "element_type": "conduct",
+                    "route_element_key": "embezzlement_336_1_public:2da3b7abe0fd61f8",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "���k�Ҧ��N��",
+                    "element_type": "mental_state",
+                    "route_element_key": "embezzlement_336_1_public:78927d8ee56d57fb",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "���E�άJ�E",
+                    "element_type": "result",
+                    "route_element_key": "embezzlement_336_1_public:0c3c1a676d09ff08",
+                    "status": "UNKNOWN"
+                  }
+                ]
+              },
+              {
+                "route_id": "embezzlement_336_2_business",
+                "name": "�~�ȫI�e",
+                "route_kind": "offense",
+                "route_resolution_status": "SNAPSHOT_CHILD_ROUTE",
+                "law_name": "���إ���D�k",
+                "article_no": "��336����2��",
+                "law_pcode": "C0000001",
+                "law_last_amended": "2026-07-22",
+                "law_effective_date": "NOT_SEPARATELY_REPORTED",
+                "law_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                "law_version_checked_at": "2026-10-28T00:00:00+08:00",
+                "article_verification_status": "OFFICIAL_CURRENT_ARTICLE_EXISTS",
+                "article_verified_at": "2026-10-28T00:00:00+08:00",
+                "source_version": "5e3de59047857e1a",
+                "fact_elements": [
+                  "�~�ȤW�����L�H����",
+                  "�����P�~�Ȥ����p",
+                  "�I�e�欰�Τ��k�Ҧ��N��",
+                  "���E�άJ�E"
+                ],
+                "correction_status": "UNCHANGED_SNAPSHOT",
+                "correction_reason": "",
+                "constitutional_status": "NOT_APPLICABLE",
+                "constitutional_decision": "",
+                "constitutional_source_url": "",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "status": "NEEDS_FACTS",
+                "element_gaps": [
+                  {
+                    "element": "�~�ȤW�����L�H����",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_336_2_business:b7b32dad284bfa65",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "�����P�~�Ȥ����p",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_336_2_business:19d7e5200e896bb3",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "�I�e�欰�Τ��k�Ҧ��N��",
+                    "element_type": "mental_state",
+                    "route_element_key": "embezzlement_336_2_business:2ca35b2322a8575b",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "���E�άJ�E",
+                    "element_type": "result",
+                    "route_element_key": "embezzlement_336_2_business:0c3c1a676d09ff08",
+                    "status": "UNKNOWN"
+                  }
+                ]
+              },
+              {
+                "route_id": "embezzlement_337_lost_property",
+                "name": "�I�e�򥢪��������H��������",
+                "route_kind": "offense",
+                "route_resolution_status": "SNAPSHOT_CHILD_ROUTE",
+                "law_name": "���إ���D�k",
+                "article_no": "��337��",
+                "law_pcode": "C0000001",
+                "law_last_amended": "2026-07-22",
+                "law_effective_date": "NOT_SEPARATELY_REPORTED",
+                "law_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                "law_version_checked_at": "2026-10-28T00:00:00+08:00",
+                "article_verification_status": "OFFICIAL_CURRENT_ARTICLE_EXISTS",
+                "article_verified_at": "2026-10-28T00:00:00+08:00",
+                "source_version": "5e3de59047857e1a",
+                "fact_elements": [
+                  "�򥢪��B�}�y���Ψ�L�����H��������",
+                  "���o�P����B���欰",
+                  "���ۤv�βĤT�H���k�Ҧ����N��"
+                ],
+                "correction_status": "UNCHANGED_SNAPSHOT",
+                "correction_reason": "",
+                "constitutional_status": "NOT_APPLICABLE",
+                "constitutional_decision": "",
+                "constitutional_source_url": "",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "status": "NEEDS_FACTS",
+                "element_gaps": [
+                  {
+                    "element": "�򥢪��B�}�y���Ψ�L�����H��������",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_337_lost_property:93a4de557ede1d0e",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "���o�P����B���欰",
+                    "element_type": "conduct",
+                    "route_element_key": "embezzlement_337_lost_property:a0a5e9100bfe1fe1",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "���ۤv�βĤT�H���k�Ҧ����N��",
+                    "element_type": "mental_state",
+                    "route_element_key": "embezzlement_337_lost_property:c4a7d001a9013d20",
+                    "status": "UNKNOWN"
+                  }
+                ]
+              },
+              {
+                "route_id": "embezzlement_338_applicable",
+                "name": "��q�ǥΤο��ݴ�K�i�D����",
+                "route_kind": "procedure",
+                "route_resolution_status": "SNAPSHOT_CHILD_ROUTE",
+                "law_name": "���إ���D�k",
+                "article_no": "��338��",
+                "law_pcode": "C0000001",
+                "law_last_amended": "2026-07-22",
+                "law_effective_date": "NOT_SEPARATELY_REPORTED",
+                "law_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                "law_version_checked_at": "2026-10-28T00:00:00+08:00",
+                "article_verification_status": "OFFICIAL_CURRENT_ARTICLE_EXISTS",
+                "article_verified_at": "2026-10-28T00:00:00+08:00",
+                "source_version": "5e3de59047857e1a",
+                "fact_elements": [
+                  "�I�e����¦�欰",
+                  "��323����q�ǰʲ��A�α���",
+                  "��324���������Y�B�K�D�Χi�D����"
+                ],
+                "correction_status": "UNCHANGED_SNAPSHOT",
+                "correction_reason": "",
+                "constitutional_status": "NOT_APPLICABLE",
+                "constitutional_decision": "",
+                "constitutional_source_url": "",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "status": "NEEDS_FACTS",
+                "element_gaps": [
+                  {
+                    "element": "�I�e����¦�欰",
+                    "element_type": "conduct",
+                    "route_element_key": "embezzlement_338_applicable:67f5b71495a69661",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "��323����q�ǰʲ��A�α���",
+                    "element_type": "object",
+                    "route_element_key": "embezzlement_338_applicable:6b0fdd79b579f200",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "��324���������Y�B�K�D�Χi�D����",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_338_applicable:2c1ab988065e6c45",
+                    "status": "UNKNOWN"
+                  }
+                ]
+              }
+            ],
+            "source_status": "HUMAN_REVIEW_REQUIRED",
+            "candidate_role": "UNRESOLVED",
+            "legal_basis": {
+              "law_name": "���إ���D�k",
+              "article_no": "��335��",
+              "source_url": "",
+              "source_version": "5e3de59047857e1a",
+              "verification_status": "OFFICIAL_CURRENT_ARTICLE_EXISTS"
+            },
+            "core_issue_ids": [
+              "LOST_OR_OUT_OF_POSSESSION",
+              "UNLAWFUL_OWNERSHIP_INTENT",
+              "POST_TAKING_HANDLING"
+            ],
+            "element_assessments": [
+              {
+                "element_id": "embezzlement_335_general:802e5ec7b2ce88bc",
+                "element_text": "�]�X�k��]�����L�H����",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_335_general:69d167fbe1dca46a",
+                "element_text": "�����������k�Ҧ����I�e�欰",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_335_general:c4a7d001a9013d20",
+                "element_text": "���ۤv�βĤT�H���k�Ҧ����N��",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_335_general:0c3c1a676d09ff08",
+                "element_text": "���E�άJ�E",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_1_public:cc688ae6021263c2",
+                "element_text": "���ȤW�Φ]���q�����L�H����",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_1_public:2da3b7abe0fd61f8",
+                "element_text": "�I�e�欰",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_1_public:78927d8ee56d57fb",
+                "element_text": "���k�Ҧ��N��",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_1_public:0c3c1a676d09ff08",
+                "element_text": "���E�άJ�E",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_2_business:b7b32dad284bfa65",
+                "element_text": "�~�ȤW�����L�H����",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_2_business:19d7e5200e896bb3",
+                "element_text": "�����P�~�Ȥ����p",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_2_business:2ca35b2322a8575b",
+                "element_text": "�I�e�欰�Τ��k�Ҧ��N��",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_2_business:0c3c1a676d09ff08",
+                "element_text": "���E�άJ�E",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_337_lost_property:93a4de557ede1d0e",
+                "element_text": "�򥢪��B�}�y���Ψ�L�����H��������",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_337_lost_property:a0a5e9100bfe1fe1",
+                "element_text": "���o�P����B���欰",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_337_lost_property:c4a7d001a9013d20",
+                "element_text": "���ۤv�βĤT�H���k�Ҧ����N��",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_338_applicable:67f5b71495a69661",
+                "element_text": "�I�e����¦�欰",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_338_applicable:6b0fdd79b579f200",
+                "element_text": "��323����q�ǰʲ��A�α���",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_338_applicable:2c1ab988065e6c45",
+                "element_text": "��324���������Y�B�K�D�Χi�D����",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              }
+            ],
+            "explanation": "�̤w�T�{��r�u���ȦC�A���ѫ��򤤩ʰݥy�T�{�αư��C",
+            "selected_by_user": false
+          }
+        ],
+        "case_state": "GATE1_REVIEW",
+        "revision": null,
+        "llm": {
+          "status": "NOT_RUN",
+          "reason": "make_case path has no LLM call"
+        },
+        "database": {
+          "status": "NOT_RUN",
+          "reason": "no store invocation"
+        }
+      },
+      "source_entry": {
+        "http": "app/server.py:165-170 Handler.do_POST",
+        "case": "app/domain.py make_case",
+        "candidates": "app/domain.py analyze_candidates",
+        "child_routes": "app/question_bank.py QuestionBank.child_routes",
+        "output": "app/server.py:48-61 public_case"
+      }
+    },
+    "legal_case_web": {
+      "metadata": {
+        "path": "D:\\工作用\\judicial1\\legal-case-web",
+        "git_head": "e5d8e95ea59292e5464114ba6b804165e9511ce8",
+        "git_branch": "codex/sim-case-remediation",
+        "git_status_porcelain": "M ../criminal-investigation-assistant/app/domain.py\n M ../criminal-investigation-assistant/app/static/app.js\n M ../criminal-investigation-assistant/app/static/index.html\n M ../criminal-investigation-assistant/app/static/styles.css\n M ../criminal-investigation-assistant/app/storage.py\n M README.md\n M app/case_identity.py\n M app/documents.py\n M app/law_reference.py\n M app/law_version.py\n M app/markdown_questions.py\n M app/questions.py\n M app/roc_time.py\n M app/rules.py\n M app/section_questions.py\n M app/server.py\n M app/static/app.js\n M app/static/index.html\n M app/static/styles.css\n M app/workflow.py\n M data/source_manifest.json\n M docs/AI_EXECUTION_PROTOCOL.md\n M docs/LIFECYCLE_RECORD.md\n M docs/OFFENSE_QUESTION_WORK_QUEUE.md\n M docs/QUESTION_DESIGN_AND_USE.md\n M docs/QUESTION_WORK_ITEM.md\n M docs/REFERENCE_STANDARD_LIBRARY.md\n M docs/evidence/hg_lr_01_provider_contract_review.json\n M docs/evidence/hg_lr_02_privacy_security_review.json\n M docs/evidence/legal_retrieval_human_gate_packet.json\n M review/xlsm_review_draft.md\n M tests/test_candidate_semantic_safety.py\n M tests/test_case_identity_and_brief_template.py\n M tests/test_documents.py\n M tests/test_e2e_flow.py\n M tests/test_frontend_api_errors.mjs\n M tests/test_gate2_legal_route_selection.py\n M tests/test_legal_retrieval_human_gate_packet.py\n M tests/test_offense_linkage_poc.py\n M tests/test_p0_confirmed_rules.py\n M tests/test_question_logic.py\n M tests/test_question_work_item_contract.py\n M tests/test_real_cases.py\n M tests/test_rules.py\n M tests/test_virtual_case_wallet_atm.py\n M tests/test_workflow.py\n M ../questions/index.md\n M ../questions/robbery.md\n M ../questions/theft.md\n M ../新套表.xlsm\n?? ../._verify_render_20261026_2/\n?? ../._verify_render_20261026_3/\n?? ../LEGAL_ROOT_CAUSE_AUDIT.md\n?? ../LEGAL_ROOT_CAUSE_TRACE.md\n?? ../criminal-investigation-assistant/docs/audit/IMPLEMENTATION_REPORT.md\n?? ../criminal-investigation-assistant/docs/audit/LEGAL_REASONING_AUDIT.md\n?? ../criminal-investigation-assistant/docs/audit/OPEN_ISSUES.md\n?? ../criminal-investigation-assistant/docs/audit/TEST_RESULTS.md\n?? ../criminal-investigation-assistant/tests/test_sim_case_remediation.py\n?? ../criminal-investigation-assistant/tools/legal_reasoning_audit.py\n?? data/question_family_catalog.json\n?? data/question_family_fixtures/\n?? data/question_family_master/\n?? docs/CURRENT_HANDOFF_2026-10-26.md\n?? docs/QUESTION_FAMILY_ARCHITECTURE_DRAFT.md\n?? docs/QUESTION_FAMILY_TODO.md\n?? docs/evidence/injury_family_legal_verification_20261027.json\n?? docs/evidence/property_family_legal_verification_20261027.json\n?? docs/evidence/property_offense_legal_verification_20261026.json\n?? docs/evidence/question_route_archive_manifest.json\n?? docs/evidence/question_route_archives/\n?? docs/family_templates/\n?? review/property-taking-issue-matrix.md\n?? tests/test_question_family_catalog.py\n?? tools/question_common_compiler.py\n?? tools/question_family_compiler.py\n?? tools/question_family_docs.py\n?? ../tools/\n?? ../傷害家族問句樣板.md\n?? ../常用法條.txt\n?? ../新套表_補齊罪名筆錄_20261026.xlsm",
+        "files": {
+          "app/rules.py": {
+            "sha256": "240bb3bc7aa468ec03bc67ed137713c1eb7278f77ea49044102bacdb44a97aa4"
+          },
+          "app/workflow.py": {
+            "sha256": "be721c613c24b28efe11c790743247cc73bc6432e24bc87cf75859da05924232"
+          },
+          "data/question_bank.json": {
+            "sha256": "d16c2d95dbab2fc89647c115720ebae74ca8e1c086b4cfa096de4d9246d179f4"
+          }
+        }
+      },
+      "replay": {
+        "execution": "PASS",
+        "entry": "app.rules.candidate_offenses -> app.rules.classify_candidates",
+        "raw_candidates": [
+          {
+            "id": "theft",
+            "candidate_id": "candidate:theft",
+            "name": "�ѵs",
+            "matched_terms": [
+              "�����L�H�ʲ�����"
+            ],
+            "status": "NEED_REVIEW",
+            "notice": "�Ȭ��W�h���Կ�A���N���Ǹo���ߡC",
+            "inclusion_reason": "��������ܡG�����L�H�ʲ����ҡF�K�n��u�Ѩ��L�H�ʲ��v3/4 �Ӻc���n�󦳥i�^�d���F���Ȭ��Կ���R��V�C",
+            "reservation_reason": "���c�ƨƹ�|�ݸɰݡG���E�άJ�E",
+            "supporting_fact_refs": [
+              "intake.summary"
+            ],
+            "contradicting_fact_refs": [],
+            "unknown_elements": [
+              "���E�άJ�E"
+            ],
+            "element_model_status": "SOURCE_EVIDENCE_MATRIX",
+            "route_type": "substantive",
+            "crosswalk_status": "PARTIAL_SCOPE",
+            "legal_routes": [
+              {
+                "id": "theft_320_1_movable",
+                "route_kind": "offense",
+                "law_name": "���إ���D�k",
+                "article_no": "��320����1��",
+                "name": "�Ѩ��L�H�ʲ�",
+                "fact_elements": [
+                  "�L�H�ʲ��έ�������A",
+                  "���g�P�N�Ѩ��ï}�a�����",
+                  "���ۤv�βĤT�H���k�Ҧ����N��",
+                  "���E�άJ�E"
+                ],
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "legal_verification": {
+                  "evidence_file": "property_offense_legal_verification_20261026.json",
+                  "verification_status": "HUMAN_REVIEW_REQUIRED",
+                  "verified_on": "2026-10-26",
+                  "article_no": "��320����1��",
+                  "verified_rule": "�N�Ϭ��ۤv�βĤT�H���k�Ҧ��A�Ѩ��L�H�ʲ��F�t���Ϥ����E�άJ�E�C",
+                  "question_focus": [
+                    "������H�O�_����t�޻�",
+                    "�O�_���g�P�N����",
+                    "���k�Ҧ��N��",
+                    "���o�Υ��E�J�E�g�L"
+                  ],
+                  "judicial_reference": null,
+                  "statute_source": {
+                    "law_name": "���إ���D�k",
+                    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                    "official_web_checked": true,
+                    "legal_mcp_checked": true,
+                    "mcp_dataset_version": "2026-10-16",
+                    "law_modified_date": "2026-07-22",
+                    "historical_law_warning": "�H�W���{�����F�欰�ɪk�����̩x��u���v�׬d��C"
+                  }
+                }
+              },
+              {
+                "id": "theft_320_2_real_estate",
+                "route_kind": "offense",
+                "law_name": "���إ���D�k",
+                "article_no": "��320����2��",
+                "name": "�Ѧ��L�H���ʲ�",
+                "fact_elements": [
+                  "�L�H���ʲ����v�Q�ϥΪ��A",
+                  "�ư��v�Q�H�ӫإߥe����t���欰",
+                  "���ۤv�βĤT�H���k�Q�q���N��",
+                  "���E�άJ�E"
+                ],
+                "review_status": "HUMAN_REVIEW_REQUIRED"
+              },
+              {
+                "id": "theft_323_energy",
+                "route_kind": "definition",
+                "law_name": "���إ���D�k",
+                "article_no": "��323��",
+                "name": "�q����൥��q�ǰʲ�",
+                "fact_elements": [
+                  "�q��B����Ψ�L��q",
+                  "�P�ѵs����¦�欰�����p",
+                  "�p�q�B�ӷ��α���覡"
+                ],
+                "review_status": "HUMAN_REVIEW_REQUIRED"
+              },
+              {
+                "id": "theft_324_relative",
+                "route_kind": "procedure",
+                "law_name": "���إ���D�k",
+                "article_no": "��324��",
+                "name": "���ݶ��ѵs��K�P�i�D����",
+                "fact_elements": [
+                  "�ѵs����¦�欰",
+                  "���t��ˡB�t���B�P�]�@�~�Ψ�L�k�w�������Y",
+                  "�K�D�Χi�D�N��P���X����"
+                ],
+                "review_status": "HUMAN_REVIEW_REQUIRED"
+              }
+            ],
+            "excluded_legal_routes": [
+              {
+                "id": "theft_322_deleted",
+                "article_no": "��322��",
+                "status": "DELETED",
+                "reason": "����w�R���A���o�إ߲{��Կ�C",
+                "source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001"
+              }
+            ],
+            "legal_route_selection_status": "OPTIONAL",
+            "source": {
+              "label": "���إ���D�k��320���B��323���ܲ�324���]2026-10-13 �x������Ʈ֡F���u dataset 2026-10-02�^",
+              "status": "VERIFIED_CURRENT",
+              "law_name": "���إ���D�k",
+              "article_no": "��320��",
+              "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+              "law_modified_date": "2026-07-22",
+              "dataset_version": "2026-10-02",
+              "verified_at": "2026-10-12T01:13:23.119734+00:00",
+              "verification_note": "�{��k�ֹ�F�欰�ɪk�]���v�����^�����ѩӿ�H�̩x��ץ����{�T�{�C"
+            },
+            "distinguishing_question_ids": [
+              "T-D-01",
+              "T-D-02",
+              "T-D-03",
+              "T-D-04",
+              "T-D-05"
+            ],
+            "required_evidence_question_ids": [
+              "T-R-01",
+              "T-R-02",
+              "T-R-03",
+              "T-R-04",
+              "T-R-05"
+            ],
+            "competition_analysis": "NOT_ASSESSED",
+            "prohibited_conclusions": [
+              "�Ǹo����",
+              "�G�N����",
+              "�]�G���Y����",
+              "�v�X����"
+            ],
+            "version": "VERIFIED_CURRENT",
+            "selection_origin": "keyword_hint",
+            "machine_effects": [],
+            "route_element_matrix": [
+              {
+                "route_id": "theft_320_1_movable",
+                "route_name": "�Ѩ��L�H�ʲ�",
+                "route_kind": "offense",
+                "law_name": "���إ���D�k",
+                "article_no": "��320����1��",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "supported_count": 3,
+                "not_checkable_count": 0,
+                "total_count": 4,
+                "supporting_fact_refs": [
+                  "intake.summary"
+                ],
+                "event_ids": [],
+                "unknown_elements": [
+                  "���E�άJ�E"
+                ],
+                "elements": [
+                  {
+                    "element": "�L�H�ʲ��έ�������A",
+                    "status": "SOURCE_SUPPORTED",
+                    "supporting_fact_refs": [
+                      "intake.summary"
+                    ],
+                    "source_excerpts": [
+                      "�ұN�����b�K�Q�ө��d�i�ǡA�A����������}�C",
+                      "�A���ܭ쥻�H���O�L�H��d�B���n������C",
+                      "�{����Ʃ|����T�w������ɬO�_���b�Ҫ������d��A�H�ΤA�O�_�㦳���k�Ҧ��N�ϡC"
+                    ],
+                    "matched_signals": [
+                      "���",
+                      "�Ҧ�"
+                    ]
+                  },
+                  {
+                    "element": "���g�P�N�Ѩ��ï}�a�����",
+                    "status": "SOURCE_SUPPORTED",
+                    "supporting_fact_refs": [
+                      "intake.summary"
+                    ],
+                    "source_excerpts": [
+                      "�ұN�����b�K�Q�ө��d�i�ǡA�A����������}�C"
+                    ],
+                    "matched_signals": [
+                      "����"
+                    ]
+                  },
+                  {
+                    "element": "���ۤv�βĤT�H���k�Ҧ����N��",
+                    "status": "SOURCE_SUPPORTED",
+                    "supporting_fact_refs": [
+                      "intake.summary"
+                    ],
+                    "source_excerpts": [
+                      "�{����Ʃ|����T�w������ɬO�_���b�Ҫ������d��A�H�ΤA�O�_�㦳���k�Ҧ��N�ϡC"
+                    ],
+                    "matched_signals": [
+                      "���k�Ҧ�"
+                    ]
+                  },
+                  {
+                    "element": "���E�άJ�E",
+                    "status": "ABSENT",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  }
+                ]
+              },
+              {
+                "route_id": "theft_323_energy",
+                "route_name": "�q����൥��q�ǰʲ�",
+                "route_kind": "definition",
+                "law_name": "���إ���D�k",
+                "article_no": "��323��",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "supported_count": 0,
+                "not_checkable_count": 3,
+                "total_count": 3,
+                "supporting_fact_refs": [],
+                "event_ids": [],
+                "unknown_elements": [
+                  "�q��B����Ψ�L��q",
+                  "�P�ѵs����¦�欰�����p",
+                  "�p�q�B�ӷ��α���覡"
+                ],
+                "elements": [
+                  {
+                    "element": "�q��B����Ψ�L��q",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "�P�ѵs����¦�欰�����p",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "�p�q�B�ӷ��α���覡",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  }
+                ]
+              },
+              {
+                "route_id": "theft_324_relative",
+                "route_name": "���ݶ��ѵs��K�P�i�D����",
+                "route_kind": "procedure",
+                "law_name": "���إ���D�k",
+                "article_no": "��324��",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "supported_count": 0,
+                "not_checkable_count": 3,
+                "total_count": 3,
+                "supporting_fact_refs": [],
+                "event_ids": [],
+                "unknown_elements": [
+                  "�ѵs����¦�欰",
+                  "���t��ˡB�t���B�P�]�@�~�Ψ�L�k�w�������Y",
+                  "�K�D�Χi�D�N��P���X����"
+                ],
+                "elements": [
+                  {
+                    "element": "�ѵs����¦�欰",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "���t��ˡB�t���B�P�]�@�~�Ψ�L�k�w�������Y",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "�K�D�Χi�D�N��P���X����",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  }
+                ]
+              },
+              {
+                "route_id": "theft_320_2_real_estate",
+                "route_name": "�Ѧ��L�H���ʲ�",
+                "route_kind": "offense",
+                "law_name": "���إ���D�k",
+                "article_no": "��320����2��",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "supported_count": 0,
+                "not_checkable_count": 3,
+                "total_count": 4,
+                "supporting_fact_refs": [],
+                "event_ids": [],
+                "unknown_elements": [
+                  "�L�H���ʲ����v�Q�ϥΪ��A",
+                  "�ư��v�Q�H�ӫإߥe����t���欰",
+                  "���ۤv�βĤT�H���k�Q�q���N��",
+                  "���E�άJ�E"
+                ],
+                "elements": [
+                  {
+                    "element": "�L�H���ʲ����v�Q�ϥΪ��A",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "�ư��v�Q�H�ӫإߥe����t���欰",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "���ۤv�βĤT�H���k�Q�q���N��",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "���E�άJ�E",
+                    "status": "ABSENT",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  }
+                ]
+              }
+            ],
+            "suggested_legal_route_ids": [
+              "theft_320_1_movable"
+            ],
+            "missing": [
+              "���E�άJ�E"
+            ],
+            "candidate_eligibility": "ELIGIBLE_CANDIDATE",
+            "legal_route_states": {
+              "theft_320_1_movable": "ELIGIBLE_CANDIDATE",
+              "theft_323_energy": "HINT_ONLY",
+              "theft_324_relative": "HINT_ONLY",
+              "theft_320_2_real_estate": "HINT_ONLY"
+            },
+            "candidate_state": "NEED_REVIEW",
+            "unknown_fact_keys": [
+              "original_possession",
+              "consent",
+              "intent"
+            ],
+            "status_reasons": []
+          }
+        ],
+        "classified": {
+          "candidates": [
+            {
+              "id": "theft",
+              "candidate_id": "candidate:theft",
+              "name": "�ѵs",
+              "matched_terms": [
+                "�����L�H�ʲ�����"
+              ],
+              "status": "NEED_REVIEW",
+              "notice": "�Ȭ��W�h���Կ�A���N���Ǹo���ߡC",
+              "inclusion_reason": "��������ܡG�����L�H�ʲ����ҡF�K�n��u�Ѩ��L�H�ʲ��v3/4 �Ӻc���n�󦳥i�^�d���F���Ȭ��Կ���R��V�C",
+              "reservation_reason": "���c�ƨƹ�|�ݸɰݡG���E�άJ�E",
+              "supporting_fact_refs": [
+                "intake.summary"
+              ],
+              "contradicting_fact_refs": [],
+              "unknown_elements": [
+                "���E�άJ�E"
+              ],
+              "element_model_status": "SOURCE_EVIDENCE_MATRIX",
+              "route_type": "substantive",
+              "crosswalk_status": "PARTIAL_SCOPE",
+              "legal_routes": [
+                {
+                  "id": "theft_320_1_movable",
+                  "route_kind": "offense",
+                  "law_name": "���إ���D�k",
+                  "article_no": "��320����1��",
+                  "name": "�Ѩ��L�H�ʲ�",
+                  "fact_elements": [
+                    "�L�H�ʲ��έ�������A",
+                    "���g�P�N�Ѩ��ï}�a�����",
+                    "���ۤv�βĤT�H���k�Ҧ����N��",
+                    "���E�άJ�E"
+                  ],
+                  "review_status": "HUMAN_REVIEW_REQUIRED",
+                  "legal_verification": {
+                    "evidence_file": "property_offense_legal_verification_20261026.json",
+                    "verification_status": "HUMAN_REVIEW_REQUIRED",
+                    "verified_on": "2026-10-26",
+                    "article_no": "��320����1��",
+                    "verified_rule": "�N�Ϭ��ۤv�βĤT�H���k�Ҧ��A�Ѩ��L�H�ʲ��F�t���Ϥ����E�άJ�E�C",
+                    "question_focus": [
+                      "������H�O�_����t�޻�",
+                      "�O�_���g�P�N����",
+                      "���k�Ҧ��N��",
+                      "���o�Υ��E�J�E�g�L"
+                    ],
+                    "judicial_reference": null,
+                    "statute_source": {
+                      "law_name": "���إ���D�k",
+                      "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                      "official_web_checked": true,
+                      "legal_mcp_checked": true,
+                      "mcp_dataset_version": "2026-10-16",
+                      "law_modified_date": "2026-07-22",
+                      "historical_law_warning": "�H�W���{�����F�欰�ɪk�����̩x��u���v�׬d��C"
+                    }
+                  }
+                },
+                {
+                  "id": "theft_320_2_real_estate",
+                  "route_kind": "offense",
+                  "law_name": "���إ���D�k",
+                  "article_no": "��320����2��",
+                  "name": "�Ѧ��L�H���ʲ�",
+                  "fact_elements": [
+                    "�L�H���ʲ����v�Q�ϥΪ��A",
+                    "�ư��v�Q�H�ӫإߥe����t���欰",
+                    "���ۤv�βĤT�H���k�Q�q���N��",
+                    "���E�άJ�E"
+                  ],
+                  "review_status": "HUMAN_REVIEW_REQUIRED"
+                },
+                {
+                  "id": "theft_323_energy",
+                  "route_kind": "definition",
+                  "law_name": "���إ���D�k",
+                  "article_no": "��323��",
+                  "name": "�q����൥��q�ǰʲ�",
+                  "fact_elements": [
+                    "�q��B����Ψ�L��q",
+                    "�P�ѵs����¦�欰�����p",
+                    "�p�q�B�ӷ��α���覡"
+                  ],
+                  "review_status": "HUMAN_REVIEW_REQUIRED"
+                },
+                {
+                  "id": "theft_324_relative",
+                  "route_kind": "procedure",
+                  "law_name": "���إ���D�k",
+                  "article_no": "��324��",
+                  "name": "���ݶ��ѵs��K�P�i�D����",
+                  "fact_elements": [
+                    "�ѵs����¦�欰",
+                    "���t��ˡB�t���B�P�]�@�~�Ψ�L�k�w�������Y",
+                    "�K�D�Χi�D�N��P���X����"
+                  ],
+                  "review_status": "HUMAN_REVIEW_REQUIRED"
+                }
+              ],
+              "excluded_legal_routes": [
+                {
+                  "id": "theft_322_deleted",
+                  "article_no": "��322��",
+                  "status": "DELETED",
+                  "reason": "����w�R���A���o�إ߲{��Կ�C",
+                  "source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001"
+                }
+              ],
+              "legal_route_selection_status": "OPTIONAL",
+              "source": {
+                "label": "���إ���D�k��320���B��323���ܲ�324���]2026-10-13 �x������Ʈ֡F���u dataset 2026-10-02�^",
+                "status": "VERIFIED_CURRENT",
+                "law_name": "���إ���D�k",
+                "article_no": "��320��",
+                "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                "law_modified_date": "2026-07-22",
+                "dataset_version": "2026-10-02",
+                "verified_at": "2026-10-12T01:13:23.119734+00:00",
+                "verification_note": "�{��k�ֹ�F�欰�ɪk�]���v�����^�����ѩӿ�H�̩x��ץ����{�T�{�C"
+              },
+              "distinguishing_question_ids": [
+                "T-D-01",
+                "T-D-02",
+                "T-D-03",
+                "T-D-04",
+                "T-D-05"
+              ],
+              "required_evidence_question_ids": [
+                "T-R-01",
+                "T-R-02",
+                "T-R-03",
+                "T-R-04",
+                "T-R-05"
+              ],
+              "competition_analysis": "NOT_ASSESSED",
+              "prohibited_conclusions": [
+                "�Ǹo����",
+                "�G�N����",
+                "�]�G���Y����",
+                "�v�X����"
+              ],
+              "version": "VERIFIED_CURRENT",
+              "selection_origin": "keyword_hint",
+              "machine_effects": [],
+              "route_element_matrix": [
+                {
+                  "route_id": "theft_320_1_movable",
+                  "route_name": "�Ѩ��L�H�ʲ�",
+                  "route_kind": "offense",
+                  "law_name": "���إ���D�k",
+                  "article_no": "��320����1��",
+                  "review_status": "HUMAN_REVIEW_REQUIRED",
+                  "supported_count": 3,
+                  "not_checkable_count": 0,
+                  "total_count": 4,
+                  "supporting_fact_refs": [
+                    "intake.summary"
+                  ],
+                  "event_ids": [],
+                  "unknown_elements": [
+                    "���E�άJ�E"
+                  ],
+                  "elements": [
+                    {
+                      "element": "�L�H�ʲ��έ�������A",
+                      "status": "SOURCE_SUPPORTED",
+                      "supporting_fact_refs": [
+                        "intake.summary"
+                      ],
+                      "source_excerpts": [
+                        "�ұN�����b�K�Q�ө��d�i�ǡA�A����������}�C",
+                        "�A���ܭ쥻�H���O�L�H��d�B���n������C",
+                        "�{����Ʃ|����T�w������ɬO�_���b�Ҫ������d��A�H�ΤA�O�_�㦳���k�Ҧ��N�ϡC"
+                      ],
+                      "matched_signals": [
+                        "���",
+                        "�Ҧ�"
+                      ]
+                    },
+                    {
+                      "element": "���g�P�N�Ѩ��ï}�a�����",
+                      "status": "SOURCE_SUPPORTED",
+                      "supporting_fact_refs": [
+                        "intake.summary"
+                      ],
+                      "source_excerpts": [
+                        "�ұN�����b�K�Q�ө��d�i�ǡA�A����������}�C"
+                      ],
+                      "matched_signals": [
+                        "����"
+                      ]
+                    },
+                    {
+                      "element": "���ۤv�βĤT�H���k�Ҧ����N��",
+                      "status": "SOURCE_SUPPORTED",
+                      "supporting_fact_refs": [
+                        "intake.summary"
+                      ],
+                      "source_excerpts": [
+                        "�{����Ʃ|����T�w������ɬO�_���b�Ҫ������d��A�H�ΤA�O�_�㦳���k�Ҧ��N�ϡC"
+                      ],
+                      "matched_signals": [
+                        "���k�Ҧ�"
+                      ]
+                    },
+                    {
+                      "element": "���E�άJ�E",
+                      "status": "ABSENT",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    }
+                  ]
+                },
+                {
+                  "route_id": "theft_323_energy",
+                  "route_name": "�q����൥��q�ǰʲ�",
+                  "route_kind": "definition",
+                  "law_name": "���إ���D�k",
+                  "article_no": "��323��",
+                  "review_status": "HUMAN_REVIEW_REQUIRED",
+                  "supported_count": 0,
+                  "not_checkable_count": 3,
+                  "total_count": 3,
+                  "supporting_fact_refs": [],
+                  "event_ids": [],
+                  "unknown_elements": [
+                    "�q��B����Ψ�L��q",
+                    "�P�ѵs����¦�欰�����p",
+                    "�p�q�B�ӷ��α���覡"
+                  ],
+                  "elements": [
+                    {
+                      "element": "�q��B����Ψ�L��q",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "�P�ѵs����¦�欰�����p",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "�p�q�B�ӷ��α���覡",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    }
+                  ]
+                },
+                {
+                  "route_id": "theft_324_relative",
+                  "route_name": "���ݶ��ѵs��K�P�i�D����",
+                  "route_kind": "procedure",
+                  "law_name": "���إ���D�k",
+                  "article_no": "��324��",
+                  "review_status": "HUMAN_REVIEW_REQUIRED",
+                  "supported_count": 0,
+                  "not_checkable_count": 3,
+                  "total_count": 3,
+                  "supporting_fact_refs": [],
+                  "event_ids": [],
+                  "unknown_elements": [
+                    "�ѵs����¦�欰",
+                    "���t��ˡB�t���B�P�]�@�~�Ψ�L�k�w�������Y",
+                    "�K�D�Χi�D�N��P���X����"
+                  ],
+                  "elements": [
+                    {
+                      "element": "�ѵs����¦�欰",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "���t��ˡB�t���B�P�]�@�~�Ψ�L�k�w�������Y",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "�K�D�Χi�D�N��P���X����",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    }
+                  ]
+                },
+                {
+                  "route_id": "theft_320_2_real_estate",
+                  "route_name": "�Ѧ��L�H���ʲ�",
+                  "route_kind": "offense",
+                  "law_name": "���إ���D�k",
+                  "article_no": "��320����2��",
+                  "review_status": "HUMAN_REVIEW_REQUIRED",
+                  "supported_count": 0,
+                  "not_checkable_count": 3,
+                  "total_count": 4,
+                  "supporting_fact_refs": [],
+                  "event_ids": [],
+                  "unknown_elements": [
+                    "�L�H���ʲ����v�Q�ϥΪ��A",
+                    "�ư��v�Q�H�ӫإߥe����t���欰",
+                    "���ۤv�βĤT�H���k�Q�q���N��",
+                    "���E�άJ�E"
+                  ],
+                  "elements": [
+                    {
+                      "element": "�L�H���ʲ����v�Q�ϥΪ��A",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "�ư��v�Q�H�ӫإߥe����t���欰",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "���ۤv�βĤT�H���k�Q�q���N��",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "���E�άJ�E",
+                      "status": "ABSENT",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    }
+                  ]
+                }
+              ],
+              "suggested_legal_route_ids": [
+                "theft_320_1_movable"
+              ],
+              "missing": [
+                "���E�άJ�E"
+              ],
+              "candidate_eligibility": "ELIGIBLE_CANDIDATE",
+              "legal_route_states": {
+                "theft_320_1_movable": "ELIGIBLE_CANDIDATE",
+                "theft_323_energy": "HINT_ONLY",
+                "theft_324_relative": "HINT_ONLY",
+                "theft_320_2_real_estate": "HINT_ONLY"
+              },
+              "candidate_state": "NEED_REVIEW",
+              "unknown_fact_keys": [
+                "original_possession",
+                "consent",
+                "intent"
+              ],
+              "status_reasons": [],
+              "classification_missing": [
+                "���E�άJ�E"
+              ]
+            }
+          ],
+          "status": {
+            "subject_identified": "true",
+            "has_victim": "true",
+            "is_solved": "unknown"
+          },
+          "source": "rules"
+        },
+        "llm": {
+          "status": "NOT_RUN",
+          "reason": "rules-only isolated replay"
+        },
+        "database": {
+          "status": "NOT_RUN",
+          "reason": "no store invocation"
+        }
+      },
+      "source_entry": {
+        "http": "app/server.py:793-800 ANALYZE_ROUTE",
+        "candidates": "app/rules.py:2033 candidate_offenses",
+        "classification": "app/rules.py:2463 classify_candidates",
+        "merge": "app/workflow.py:1138-1217",
+        "output": "app/workflow.py:1285-1299 public_case"
+      }
+    }
+  },
+  "not_observed": {
+    "original_request_id": true,
+    "original_api_response": true,
+    "original_revision_payload": true,
+    "original_prompt_and_model_response": true,
+    "original_retrieval_result": true,
+    "original_ui_trace": true
+  }
+}

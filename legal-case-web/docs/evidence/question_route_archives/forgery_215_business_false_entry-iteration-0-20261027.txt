@@ -1,0 +1,1086 @@
+<!-- SUBMISSION_START -->
+
+```yaml
+document_status: CODEX_REVIEWED
+runtime_enabled: false
+review_status: CODEX_REVIEWED
+submission_status: REVIEW_PASS
+handoff_status: CODEX_ROUTE_REVIEW_COMPLETE
+last_completed_section: O
+resume_from_section: ARCHIVE_AND_SELECT_NEXT_ROUTE
+current_blockers: []
+designer_role: TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT
+author_role: TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT
+question_ruleset_version: question-rules-v2-draft
+ruleset_status: QUESTION_DESIGN_ACCEPTED
+ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+runtime_ruleset_status: UNCHANGED_RUNTIME
+task_type: AUTHOR_ROUTE_QUESTIONS
+queue_no: 4
+target_route_id: forgery
+target_child_route_id: forgery_215_business_false_entry
+target_interview_roles: [victim, suspect, transfer, witness_review_only]
+iteration: 0
+allowed_output: WORK_ITEM_FILE_ONLY
+allowed_write_path: docs/QUESTION_WORK_ITEM.md
+automatic_advance: false
+next_route: NOT_AUTHORIZED
+```
+
+## A. 工作單 Metadata 與法源
+
+```yaml
+artifact_type: CHILD_ROUTE_WORK_ITEM
+iteration: 0
+execution_mode: REVIEWED_PIPELINE
+runtime_enabled: false
+review_status: CODEX_REVIEWED
+submission_status: REVIEW_PASS
+primary_route: forgery
+primary_child_route: forgery_215_business_false_entry
+parent_route_status: PARTIAL_SCOPE
+child_count_in_crosswalk: 11
+question_concept_count: 8
+question_concept_budget: 8
+case_selection_budget: 3-5 core concepts
+evidence_followup_budget: max 2
+output_page_budget: 8
+case_human_gate: REQUIRED
+user_final_acceptance: PENDING
+```
+
+官方來源查詢卡：
+
+| 欄位 | 結果 |
+|---|---|
+| 問句 | 2026-10-27 台灣，中華民國刑法第215條現行內容及業務上文書不實登載之製作身分、業務關聯、內容與損害風險區分 |
+| 證據 | 法務部全國法規資料庫，中華民國刑法，修正日期民國115年7月22日，查詢日2026-10-27 |
+| URL | https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001 |
+| 痕跡 | 第215條對象為已死之人、公然侮辱或偽造變造公文書行為、表意內容及傳播情形；行為時法由人工逐案確認 |
+| 行為時法 | UNKNOWN；實際案件日期未提供，須由承辦人逐案調閱 |
+
+本工作單不把業務身分、業務上文書內容及不實登載方式直接等同第215條成立。
+
+## B. Route Scope
+
+```yaml
+route_scope:
+  primary_route: forgery_215_business_false_entry
+  allowed_comparison_routes:
+    - forgery_215_business_false_entry
+    - damage_355_fraud
+    - injury_277_general
+    - damage_354_property
+  allowed_alternative_routes: []
+```
+
+恐嚇取財、詐術損害、傷害、一般物毀損及第357條程序只作相鄰或程序比較，不得靜默加入候選。
+
+## C. Elements 與雙鏈結
+
+| element_id | 中性事實目標 | 法律定位 | Human Gate |
+|---|---|---|---|
+| FOR215-E01 | 對公文書公務員身分、職務掌管與製作機關、名義、偽造變造故意與內容、被害人及財物處分關係 | 第215條主觀及主體軸 | REQUIRED |
+| FOR215-E02 | 業務上文書種類、不實登載內容、製作方式、時間與相關業務 | 第215條詐術及處分軸 | REQUIRED |
+| FOR215-E03 | 損害風險、文書來源、製作資料及外部佐證 | 第215條結果軸 | REQUIRED |
+| FOR215-E04 | 業務上文書不實登載與損害風險間的關聯 | 第215條因果軸 | REQUIRED |
+
+## D. 相鄰路由矩陣
+
+| 觀察組合 | 305偽造變造公文書 | 346恐嚇取財 | 355詐術損害 | 277傷害 | 357程序 |
+|---|---|---|---|---|---|
+| 對公文書公務員身分、職務掌管與製作機關、名義、偽造變造故意與內容或文書製作、變造或使用方式人身分尚不明 | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+| 有對公文書公務員身分、職務掌管與製作機關、名義、偽造變造故意與內容或傳達主張但具體行為尚不明 | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+| 有文書不實登載及損害風險主張但具體危害尚不明 | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+| 對公文書公務員身分、職務掌管與製作機關、名義、偽造變造故意與內容、傳達與業務關聯及損害風險尚不明 | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+
+任一單一觀察都不足以產生 `ACTIVE` 或法律結論。
+
+## E. 問句方法
+
+- C02至C07分開確認行為人業務身分、業務上文書範圍、不實登載內容、製作方式、業務關聯、損害風險及證據；不以同一答案跨要件推定。
+- C08只補偽造、行使、業務外文書及程序路由的外部脈絡；任何單一答案都不產生 `ACTIVE` 或法律結論。
+- 所有 `UNKNOWN`、`CONFLICT` 與替代方向維持 `NEED_REVIEW`。
+
+## F. STANDARD_SET
+
+<!-- STANDARD_SET_START -->
+```json
+[
+  {
+    "question_concept_id": "FOR215-C01",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "narrative",
+    "parent_question_id": null,
+    "fact_target": "event_narrative",
+    "distinction_axis": "不預設偽造變造公文書或結果責任的自由敘述",
+    "answer_mode": "narrative_only",
+    "answer_map": null,
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請依時間順序說明被害人的年齡、照顧或接觸關係、具體行為、身心狀況及後續結果。",
+      "suspect": "請依時間順序說明你與文書製作、變造或使用方式人或受損害人之關係、接觸情形、採取的行為及損害如何發生。",
+      "transfer": "請依卷內資料整理傳達對象與安全脈絡、具體行為、損害程度與資料來源的時間順序。",
+      "witness_review_only": "請依時間順序說明你親自看到或聽到的傳達對象與安全脈絡、恐嚇行為、損害或資料來源。"
+    },
+    "legal_targets": [
+      "forgery_215_business_false_entry",
+      "forgery_210_private_document",
+      "forgery_211_public_document",
+      "forgery_212_certificate",
+      "forgery_213_official_false_entry"
+    ],
+    "legal_target_details": [],
+    "alternative_target_details": [],
+    "source_basis": "刑法第215條之中性事實入口",
+    "rationale": "先取得完整時間線，不以恐嚇取財成立或名譽毀損結論預設引導。",
+    "trigger_condition": "candidate:forgery_215_business_false_entry:present",
+    "existing_question_refs": [
+      "INJURY-N-01"
+    ],
+    "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "FOR215-C02",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "FOR215-C01",
+    "fact_target": "business_status",
+    "distinction_axis": "對公文書公務員身分、職務掌管與製作機關、名義、偽造變造故意與內容、文書製作、變造或使用方式人及可核對資料",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "BUSINESS_STATUS_SUPPORTED",
+      "BUSINESS_STATUS_DISPUTED",
+      "BUSINESS_STATUS_UNKNOWN",
+      "BUSINESS_STATUS_EVIDENCE_DISPUTED",
+      "UNKNOWN",
+      "CONFLICT"
+    ],
+    "answer_map": {
+      "BUSINESS_STATUS_SUPPORTED": "BUSINESS_STATUS_SUPPORTED",
+      "BUSINESS_STATUS_DISPUTED": "BUSINESS_STATUS_DISPUTED",
+      "BUSINESS_STATUS_UNKNOWN": "BUSINESS_STATUS_UNKNOWN",
+      "BUSINESS_STATUS_EVIDENCE_DISPUTED": "BUSINESS_STATUS_EVIDENCE_DISPUTED",
+      "UNKNOWN": "UNKNOWN",
+      "CONFLICT": "CONFLICT"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請說明被害人當時的年齡、出生或身分資料，以及哪些資料可以核對？",
+      "suspect": "請說明你知道或如何得知是否有詐術及文書製作、變造或使用方式資料來源？",
+      "transfer": "哪些影像、通聯、現場紀錄或其他資料可確認財產客體身分及參與人數？",
+      "witness_review_only": "你親自見聞哪些與文書製作、變造或使用方式與受損害狀態及資料來源有關的事實？"
+    },
+    "legal_targets": [
+      "forgery_215_business_false_entry",
+      "forgery_210_private_document",
+      "forgery_211_public_document",
+      "forgery_212_certificate",
+      "forgery_213_official_false_entry"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "forgery_215_business_false_entry",
+        "effects": {
+          "BUSINESS_STATUS_SUPPORTED": "NEED_REVIEW",
+          "BUSINESS_STATUS_DISPUTED": "NEED_REVIEW",
+          "BUSINESS_STATUS_UNKNOWN": "NEED_REVIEW",
+          "BUSINESS_STATUS_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_210_private_document",
+        "effects": {
+          "BUSINESS_STATUS_SUPPORTED": "NEED_REVIEW",
+          "BUSINESS_STATUS_DISPUTED": "NEED_REVIEW",
+          "BUSINESS_STATUS_UNKNOWN": "NEED_REVIEW",
+          "BUSINESS_STATUS_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_211_public_document",
+        "effects": {
+          "BUSINESS_STATUS_SUPPORTED": "NEED_REVIEW",
+          "BUSINESS_STATUS_DISPUTED": "NEED_REVIEW",
+          "BUSINESS_STATUS_UNKNOWN": "NEED_REVIEW",
+          "BUSINESS_STATUS_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_212_certificate",
+        "effects": {
+          "BUSINESS_STATUS_SUPPORTED": "NEED_REVIEW",
+          "BUSINESS_STATUS_DISPUTED": "NEED_REVIEW",
+          "BUSINESS_STATUS_UNKNOWN": "NEED_REVIEW",
+          "BUSINESS_STATUS_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_213_official_false_entry",
+        "effects": {
+          "BUSINESS_STATUS_SUPPORTED": "NEED_REVIEW",
+          "BUSINESS_STATUS_DISPUTED": "NEED_REVIEW",
+          "BUSINESS_STATUS_UNKNOWN": "NEED_REVIEW",
+          "BUSINESS_STATUS_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第215條財產客體身分軸",
+    "rationale": "先確認是否存在具體財產客體身分，不由多人出現或單一衝突說法直接推定。",
+    "trigger_condition": "after:FOR215-C01 && fact:business_status:UNKNOWN && candidate:forgery_215_business_false_entry:present",
+    "existing_question_refs": [
+      "FOR215-C02"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "FOR215-C03",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "FOR215-C01",
+    "fact_target": "business_false_entry",
+    "distinction_axis": "毀壞他人之物行為、持續時間及可行替代措施",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "BUSINESS_FALSE_ENTRY_SUPPORTED",
+      "BUSINESS_FALSE_ENTRY_INCOMPLETE",
+      "BUSINESS_FALSE_ENTRY_DISPUTED",
+      "NO_BUSINESS_FALSE_ENTRY_SHOWN",
+      "UNKNOWN",
+      "CONFLICT"
+    ],
+    "answer_map": {
+      "BUSINESS_FALSE_ENTRY_SUPPORTED": "BUSINESS_FALSE_ENTRY_SUPPORTED",
+      "BUSINESS_FALSE_ENTRY_INCOMPLETE": "BUSINESS_FALSE_ENTRY_INCOMPLETE",
+      "BUSINESS_FALSE_ENTRY_DISPUTED": "BUSINESS_FALSE_ENTRY_DISPUTED",
+      "NO_BUSINESS_FALSE_ENTRY_SHOWN": "NO_BUSINESS_FALSE_ENTRY_SHOWN",
+      "UNKNOWN": "UNKNOWN",
+      "CONFLICT": "CONFLICT"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請說明你看到或感受到哪些人如何聚集、衝突、攻擊或毀壞他人之物，以及各人的位置與動作？",
+      "suspect": "請說明你在現場的位置、與其他人的互動，以及是否有鼓動、圍堵或協助攻擊？",
+      "transfer": "哪些影像、通聯、現場紀錄或證詞可分別確認在場者的位置、動作與毀壞他人之物角色？",
+      "witness_review_only": "你親自見聞哪些與在場位置、鼓動、圍堵、協助攻擊或其他毀壞他人之物有關的事實？"
+    },
+    "legal_targets": [
+      "forgery_215_business_false_entry",
+      "forgery_210_private_document",
+      "forgery_211_public_document",
+      "forgery_212_certificate",
+      "forgery_213_official_false_entry"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "forgery_215_business_false_entry",
+        "effects": {
+          "BUSINESS_FALSE_ENTRY_SUPPORTED": "NEED_REVIEW",
+          "BUSINESS_FALSE_ENTRY_INCOMPLETE": "NEED_REVIEW",
+          "BUSINESS_FALSE_ENTRY_DISPUTED": "NEED_REVIEW",
+          "NO_BUSINESS_FALSE_ENTRY_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_210_private_document",
+        "effects": {
+          "BUSINESS_FALSE_ENTRY_SUPPORTED": "NEED_REVIEW",
+          "BUSINESS_FALSE_ENTRY_INCOMPLETE": "NEED_REVIEW",
+          "BUSINESS_FALSE_ENTRY_DISPUTED": "NEED_REVIEW",
+          "NO_BUSINESS_FALSE_ENTRY_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_211_public_document",
+        "effects": {
+          "BUSINESS_FALSE_ENTRY_SUPPORTED": "NEED_REVIEW",
+          "BUSINESS_FALSE_ENTRY_INCOMPLETE": "NEED_REVIEW",
+          "BUSINESS_FALSE_ENTRY_DISPUTED": "NEED_REVIEW",
+          "NO_BUSINESS_FALSE_ENTRY_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_212_certificate",
+        "effects": {
+          "BUSINESS_FALSE_ENTRY_SUPPORTED": "NEED_REVIEW",
+          "BUSINESS_FALSE_ENTRY_INCOMPLETE": "NEED_REVIEW",
+          "BUSINESS_FALSE_ENTRY_DISPUTED": "NEED_REVIEW",
+          "NO_BUSINESS_FALSE_ENTRY_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_213_official_false_entry",
+        "effects": {
+          "BUSINESS_FALSE_ENTRY_SUPPORTED": "NEED_REVIEW",
+          "BUSINESS_FALSE_ENTRY_INCOMPLETE": "NEED_REVIEW",
+          "BUSINESS_FALSE_ENTRY_DISPUTED": "NEED_REVIEW",
+          "NO_BUSINESS_FALSE_ENTRY_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第215條毀壞他人之物行為軸",
+    "rationale": "恐嚇行為與傳達對象與安全脈絡分開確認，不由物品名稱、外觀或事後說法直接推定成立。",
+    "trigger_condition": "after:FOR215-C01 && fact:business_false_entry:UNKNOWN && candidate:forgery_215_business_false_entry:present",
+    "existing_question_refs": [
+      "FOR215-C03"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "FOR215-C04",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "FOR215-C01",
+    "fact_target": "document_harm_risk",
+    "distinction_axis": "損害結果、損害程度、時間與估價或修復資料",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "DOCUMENT_HARM_SUPPORTED",
+      "DOCUMENT_HARM_DISPUTED",
+      "DOCUMENT_HARM_UNKNOWN",
+      "DOCUMENT_HARM_EVIDENCE_DISPUTED",
+      "UNKNOWN",
+      "CONFLICT"
+    ],
+    "answer_map": {
+      "DOCUMENT_HARM_SUPPORTED": "DOCUMENT_HARM_SUPPORTED",
+      "DOCUMENT_HARM_DISPUTED": "DOCUMENT_HARM_DISPUTED",
+      "DOCUMENT_HARM_UNKNOWN": "DOCUMENT_HARM_UNKNOWN",
+      "DOCUMENT_HARM_EVIDENCE_DISPUTED": "DOCUMENT_HARM_EVIDENCE_DISPUTED",
+      "UNKNOWN": "UNKNOWN",
+      "CONFLICT": "CONFLICT"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "本人或第三人為哪些文書製作、變造或使用方式？發生時間、損害金額、訊息、通聯或現場傳達紀錄及受損資料為何？",
+      "suspect": "你所知的損害結果是何時如何發生？有哪些醫療、鑑定或其他資料？",
+      "transfer": "哪些估價、修復、影像或現場或其他資料可確認損害結果？",
+      "witness_review_only": "你親自看到或聽到哪些詐術、文書製作、變造或使用方式、訊息、通聯或現場傳達紀錄或損害結果發生經過？"
+    },
+    "legal_targets": [
+      "forgery_215_business_false_entry",
+      "forgery_210_private_document",
+      "forgery_211_public_document",
+      "forgery_212_certificate",
+      "forgery_213_official_false_entry"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "forgery_215_business_false_entry",
+        "effects": {
+          "DOCUMENT_HARM_SUPPORTED": "NEED_REVIEW",
+          "DOCUMENT_HARM_UNKNOWN": "NEED_REVIEW",
+          "DOCUMENT_HARM_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "DOCUMENT_HARM_DISPUTED": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_210_private_document",
+        "effects": {
+          "DOCUMENT_HARM_SUPPORTED": "NEED_REVIEW",
+          "DOCUMENT_HARM_UNKNOWN": "NEED_REVIEW",
+          "DOCUMENT_HARM_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "DOCUMENT_HARM_DISPUTED": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_211_public_document",
+        "effects": {
+          "DOCUMENT_HARM_SUPPORTED": "NEED_REVIEW",
+          "DOCUMENT_HARM_UNKNOWN": "NEED_REVIEW",
+          "DOCUMENT_HARM_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "DOCUMENT_HARM_DISPUTED": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_212_certificate",
+        "effects": {
+          "DOCUMENT_HARM_SUPPORTED": "NEED_REVIEW",
+          "DOCUMENT_HARM_UNKNOWN": "NEED_REVIEW",
+          "DOCUMENT_HARM_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "DOCUMENT_HARM_DISPUTED": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_213_official_false_entry",
+        "effects": {
+          "DOCUMENT_HARM_SUPPORTED": "NEED_REVIEW",
+          "DOCUMENT_HARM_UNKNOWN": "NEED_REVIEW",
+          "DOCUMENT_HARM_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "DOCUMENT_HARM_DISPUTED": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第215條文書製作、變造或使用方式與損害軸",
+    "rationale": "結果本身不等於第215條成立，仍須與過失行為與具體結果分開核對。",
+    "trigger_condition": "after:FOR215-C01 && fact:document_harm_risk:UNKNOWN && candidate:forgery_215_business_false_entry:present",
+    "existing_question_refs": [
+      "FOR215-C04"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "FOR215-C05",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "FOR215-C01",
+    "fact_target": "business_entry_linkage",
+    "distinction_axis": "恐嚇行為與損害結果的時間、空間及證據關聯",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "BUSINESS_ENTRY_SUPPORTED",
+      "BUSINESS_ENTRY_DISPUTED",
+      "BUSINESS_ENTRY_UNKNOWN",
+      "LINKAGE_EVIDENCE_DISPUTED",
+      "UNKNOWN",
+      "CONFLICT"
+    ],
+    "answer_map": {
+      "BUSINESS_ENTRY_SUPPORTED": "BUSINESS_ENTRY_SUPPORTED",
+      "BUSINESS_ENTRY_DISPUTED": "BUSINESS_ENTRY_DISPUTED",
+      "BUSINESS_ENTRY_UNKNOWN": "BUSINESS_ENTRY_UNKNOWN",
+      "LINKAGE_EVIDENCE_DISPUTED": "LINKAGE_EVIDENCE_DISPUTED",
+      "UNKNOWN": "UNKNOWN",
+      "CONFLICT": "CONFLICT"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "你看到哪些具體恐嚇行為與損害結果相連？時間、位置與中間經過為何？",
+      "suspect": "你所知的具體恐嚇行為與損害結果有何時間、位置或因果關聯？",
+      "transfer": "哪些影像、鑑定、病歷、現場勘驗或證詞可核對行為與結果的連結？",
+      "witness_review_only": "你親自見聞哪些行為先後、位置、傷勢或其他可供因果判斷的事實？"
+    },
+    "legal_targets": [
+      "forgery_215_business_false_entry",
+      "forgery_210_private_document",
+      "forgery_211_public_document",
+      "forgery_212_certificate",
+      "forgery_213_official_false_entry"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "forgery_215_business_false_entry",
+        "effects": {
+          "BUSINESS_ENTRY_SUPPORTED": "NEED_REVIEW",
+          "LINKAGE_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "BUSINESS_ENTRY_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "BUSINESS_ENTRY_DISPUTED": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_210_private_document",
+        "effects": {
+          "BUSINESS_ENTRY_SUPPORTED": "NEED_REVIEW",
+          "LINKAGE_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "BUSINESS_ENTRY_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "BUSINESS_ENTRY_DISPUTED": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_211_public_document",
+        "effects": {
+          "BUSINESS_ENTRY_SUPPORTED": "NEED_REVIEW",
+          "LINKAGE_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "BUSINESS_ENTRY_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "BUSINESS_ENTRY_DISPUTED": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_212_certificate",
+        "effects": {
+          "BUSINESS_ENTRY_SUPPORTED": "NEED_REVIEW",
+          "LINKAGE_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "BUSINESS_ENTRY_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "BUSINESS_ENTRY_DISPUTED": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_213_official_false_entry",
+        "effects": {
+          "BUSINESS_ENTRY_SUPPORTED": "NEED_REVIEW",
+          "LINKAGE_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "BUSINESS_ENTRY_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW",
+          "BUSINESS_ENTRY_DISPUTED": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第215條行為與結果因果軸",
+    "rationale": "因果關聯須與財產客體身分、違反行為及結果分開核對，不由傷勢或事後說法單獨推出。",
+    "trigger_condition": "after:FOR215-C01 && fact:business_entry_linkage:UNKNOWN && candidate:forgery_215_business_false_entry:present",
+    "existing_question_refs": [
+      "FOR215-C05"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "FOR215-C06",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "FOR215-C01",
+    "fact_target": "conduct_context",
+    "distinction_axis": "行為人、風險、措施與替代行為的具體情境資料",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "ROLE_EVIDENCE_SUPPORTED",
+      "NO_ROLE_EVIDENCE",
+      "ROLE_EVIDENCE_DISPUTED",
+      "ROLE_UNKNOWN"
+    ],
+    "answer_map": {
+      "ROLE_EVIDENCE_SUPPORTED": "ROLE_EVIDENCE_SUPPORTED",
+      "NO_ROLE_EVIDENCE": "NO_ROLE_EVIDENCE",
+      "ROLE_EVIDENCE_DISPUTED": "ROLE_EVIDENCE_DISPUTED",
+      "ROLE_UNKNOWN": "ROLE_UNKNOWN",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "哪些具體行為使你認為對方在場是不作為或替代措施、鼓動、圍堵或協助攻擊？哪些資料可核對？",
+      "suspect": "你在場時的目的、與其他人的分工及實際動作為何？有哪些資料可核對？",
+      "transfer": "哪些位置圖、影像、通聯、證詞或後續資料可供人工評價個別角色？",
+      "witness_review_only": "你親自見聞哪些與個別角色、互動或不作為或替代措施行為有關的外部事實？"
+    },
+    "legal_targets": [
+      "forgery_215_business_false_entry",
+      "forgery_210_private_document",
+      "forgery_211_public_document",
+      "forgery_212_certificate",
+      "forgery_213_official_false_entry"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "forgery_215_business_false_entry",
+        "effects": {
+          "ROLE_EVIDENCE_SUPPORTED": "NEED_REVIEW",
+          "NO_ROLE_EVIDENCE": "NEED_REVIEW",
+          "ROLE_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "ROLE_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_210_private_document",
+        "effects": {
+          "ROLE_EVIDENCE_SUPPORTED": "NEED_REVIEW",
+          "NO_ROLE_EVIDENCE": "NEED_REVIEW",
+          "ROLE_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "ROLE_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_211_public_document",
+        "effects": {
+          "ROLE_EVIDENCE_SUPPORTED": "NEED_REVIEW",
+          "NO_ROLE_EVIDENCE": "NEED_REVIEW",
+          "ROLE_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "ROLE_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_212_certificate",
+        "effects": {
+          "ROLE_EVIDENCE_SUPPORTED": "NEED_REVIEW",
+          "NO_ROLE_EVIDENCE": "NEED_REVIEW",
+          "ROLE_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "ROLE_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_213_official_false_entry",
+        "effects": {
+          "ROLE_EVIDENCE_SUPPORTED": "NEED_REVIEW",
+          "NO_ROLE_EVIDENCE": "NEED_REVIEW",
+          "ROLE_EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "ROLE_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第215條照顧與行為脈絡",
+    "rationale": "個別角色不由同場、關係或事後結果直接認定，須保留可核對的互動資料。",
+    "trigger_condition": "after:FOR215-C01 && fact:conduct_context:UNKNOWN && candidate:forgery_215_business_false_entry:present",
+    "existing_question_refs": [
+      "FOR215-C06"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "FOR215-C07",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "FOR215-C01",
+    "fact_target": "attempt_or_completion_status",
+    "distinction_axis": "過失行為、傷害結果與因果資料的發生進度及爭議狀態",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "RESULT_OCCURRED",
+      "ATTEMPTED_ACT_ONLY",
+      "RESULT_STATUS_DISPUTED",
+      "NO_RESULT_DATA"
+    ],
+    "answer_map": {
+      "RESULT_OCCURRED": "RESULT_OCCURRED",
+      "ATTEMPTED_ACT_ONLY": "ATTEMPTED_ACT_ONLY",
+      "RESULT_STATUS_DISPUTED": "RESULT_STATUS_DISPUTED",
+      "NO_RESULT_DATA": "NO_RESULT_DATA",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請依時間說明聚集、過失行為、不作為或替代措施、停止行為及損害結果各在何時發生？",
+      "suspect": "請依時間說明你到場、離場、參與或停止各項行為，以及結果何時發生？",
+      "transfer": "哪些客觀紀錄可確認行為進度、結果及時間序列？",
+      "witness_review_only": "你親自看到哪些已發生或尚未能確認的聚集、過失行為、不作為或替代措施或結果？"
+    },
+    "legal_targets": [
+      "forgery_215_business_false_entry",
+      "forgery_210_private_document",
+      "forgery_211_public_document",
+      "forgery_212_certificate",
+      "forgery_213_official_false_entry"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "forgery_215_business_false_entry",
+        "effects": {
+          "RESULT_OCCURRED": "NEED_REVIEW",
+          "ATTEMPTED_ACT_ONLY": "NEED_REVIEW",
+          "RESULT_STATUS_DISPUTED": "NEED_REVIEW",
+          "NO_RESULT_DATA": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_210_private_document",
+        "effects": {
+          "RESULT_OCCURRED": "NEED_REVIEW",
+          "ATTEMPTED_ACT_ONLY": "NEED_REVIEW",
+          "RESULT_STATUS_DISPUTED": "NEED_REVIEW",
+          "NO_RESULT_DATA": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_211_public_document",
+        "effects": {
+          "RESULT_OCCURRED": "NEED_REVIEW",
+          "ATTEMPTED_ACT_ONLY": "NEED_REVIEW",
+          "RESULT_STATUS_DISPUTED": "NEED_REVIEW",
+          "NO_RESULT_DATA": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_212_certificate",
+        "effects": {
+          "RESULT_OCCURRED": "NEED_REVIEW",
+          "ATTEMPTED_ACT_ONLY": "NEED_REVIEW",
+          "RESULT_STATUS_DISPUTED": "NEED_REVIEW",
+          "NO_RESULT_DATA": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_213_official_false_entry",
+        "effects": {
+          "RESULT_OCCURRED": "NEED_REVIEW",
+          "ATTEMPTED_ACT_ONLY": "NEED_REVIEW",
+          "RESULT_STATUS_DISPUTED": "NEED_REVIEW",
+          "NO_RESULT_DATA": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第215條事件進度事實軸",
+    "rationale": "只記錄外部進度，不在問句階段直接作法律結論。",
+    "trigger_condition": "after:FOR215-C01 && fact:attempt_or_completion_status:UNKNOWN && candidate:forgery_215_business_false_entry:present",
+    "existing_question_refs": [
+      "FOR215-C07"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "FOR215-C08",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "evidence_followup",
+    "parent_question_id": "FOR215-C01",
+    "fact_target": "evidence_source",
+    "distinction_axis": "財產客體身分、違反行為、結果與因果的可核對資料",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "DOCUMENTED_EVIDENCE",
+      "THIRD_PARTY_ONLY",
+      "NO_SUPPORTING_RECORD",
+      "EVIDENCE_DISPUTED"
+    ],
+    "answer_map": {
+      "DOCUMENTED_EVIDENCE": "DOCUMENTED_EVIDENCE",
+      "THIRD_PARTY_ONLY": "THIRD_PARTY_ONLY",
+      "NO_SUPPORTING_RECORD": "NO_SUPPORTING_RECORD",
+      "EVIDENCE_DISPUTED": "EVIDENCE_DISPUTED",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請指出可核對的影像、病歷、鑑定、通聯、位置或其他資料，並說明各自支持哪一段事實。",
+      "suspect": "你主張的在場、互動、不作為或替代措施或結果，有哪些影像、訊息、證人或其他資料可核對？",
+      "transfer": "請依資料來源列出哪些證據支持聚集、在場、不作為或替代措施、結果及因果關聯。",
+      "witness_review_only": "你親自看到或聽到哪些資料？哪些只是他人轉述？"
+    },
+    "legal_targets": [
+      "forgery_215_business_false_entry",
+      "forgery_210_private_document",
+      "forgery_211_public_document",
+      "forgery_212_certificate",
+      "forgery_213_official_false_entry"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "forgery_215_business_false_entry",
+        "effects": {
+          "DOCUMENTED_EVIDENCE": "NEED_REVIEW",
+          "THIRD_PARTY_ONLY": "NEED_REVIEW",
+          "NO_SUPPORTING_RECORD": "NEED_REVIEW",
+          "EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_210_private_document",
+        "effects": {
+          "DOCUMENTED_EVIDENCE": "NEED_REVIEW",
+          "THIRD_PARTY_ONLY": "NEED_REVIEW",
+          "NO_SUPPORTING_RECORD": "NEED_REVIEW",
+          "EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_211_public_document",
+        "effects": {
+          "DOCUMENTED_EVIDENCE": "NEED_REVIEW",
+          "THIRD_PARTY_ONLY": "NEED_REVIEW",
+          "NO_SUPPORTING_RECORD": "NEED_REVIEW",
+          "EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_212_certificate",
+        "effects": {
+          "DOCUMENTED_EVIDENCE": "NEED_REVIEW",
+          "THIRD_PARTY_ONLY": "NEED_REVIEW",
+          "NO_SUPPORTING_RECORD": "NEED_REVIEW",
+          "EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "forgery_213_official_false_entry",
+        "effects": {
+          "DOCUMENTED_EVIDENCE": "NEED_REVIEW",
+          "THIRD_PARTY_ONLY": "NEED_REVIEW",
+          "NO_SUPPORTING_RECORD": "NEED_REVIEW",
+          "EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第215條各事實軸的證據來源整理",
+    "rationale": "證據追問只補資料來源，不把資料存在直接等同要件成立。",
+    "trigger_condition": "after:FOR215-C01 && fact:evidence_source:UNKNOWN && candidate:forgery_215_business_false_entry:present",
+    "existing_question_refs": [
+      "FOR215-C08"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  }
+]
+```
+<!-- STANDARD_SET_END -->
+
+## G. 角色實體化規則
+
+- ID為 `<concept_id>-<V|S|T|W>`；`witness_review_only` 永遠 `runtime_enabled: false`。
+- C01先問；C03、C04、C07只在既有 fact 為 `UNKNOWN` 或 `CONFLICT` 時追問。既有資料完整時只引用；衝突時保留新舊版本，不得靜默覆蓋。
+- 刑事訴訟法第95條權利告知與既有筆錄為程序題，不納入八個 offense concepts。
+
+## H. 回答效果與聚合
+
+- 所有單題均不得產生 `ACTIVE` 或 `EXCLUDED`。
+- `LOWERED` 只表示該軸較不支持某 route；多要件與相反資料仍由 Human Gate 聚合。
+- 財產客體身分、違反行為、結果、因果及證據來源均須由不同資料共同供人工評價；即使一致，本階段最高仍為 `CANDIDATE_NEED_REVIEW`。
+- `UNKNOWN`、`CONFLICT` 及未列入 scope 的相鄰 route 全部為 `NEED_REVIEW`，不得直接排除。
+
+## I. 去重與既有題處理
+
+| concept | 既有來源 | 處理 |
+|---|---|---|
+| C01 | 無可安全共同重用的傷害路由題 | 自由敘述重用，不共同出題 |
+| C02-C07 | 無或跨 route 語意不等同 | 依缺漏／衝突追問，不共同出題 |
+| C08 | 既有證據來源欄位 | 只補證據來源，不把資料存在等同要件成立 |
+
+## J. 不採用問句
+
+- 「你們人很多，所以就是過失？」：把人數印象直接等同事件成立。
+- 「你在現場，所以一定是不作為或替代措施？」：把在場直接等同個別角色。
+- 「有人受傷，所以一定是你造成的？」：把結果直接等同行為與因果。
+- 「影像看起來像過失行為，所以每個人都要負責？」：未分開個別行為與證據來源。
+
+## K. 最低校準案例
+
+| 案例 | 期望輸出 |
+|---|---|
+| 僅有多人同場、過失行為事件未明 | C02需外部資料；不得單題升ACTIVE |
+| 在場但不作為或替代措施角色不明 | C03、C06分開保留，最高 `CANDIDATE_NEED_REVIEW` |
+| 有損害但行為與因果不明 | C04-C05均為 `NEED_REVIEW`，不得補推因果 |
+| 僅有事後說法、無可核對資料 | C08 `NEED_REVIEW` |
+| 僅有影像片段、個別角色未明 | C03、C06保留外部進度；不直接作法律結論 |
+| 跨角色說法衝突 | 對應 fact 為 `CONFLICT`，全部 `NEED_REVIEW` |
+
+## L. 題數與輸出預算
+
+```yaml
+new_concepts: 8
+concept_budget: 8
+case_core_selection: 3-5
+evidence_followup_max: 2
+single_case_total_max: 8
+output_page_budget: 8
+company_question_protection: PRESERVED
+xlsm_question_protection: PRESERVED
+common_question_protection: PRESERVED
+budget_exceeded_policy: OUTPUT_BUDGET_EXCEEDED
+```
+
+## M. 法律與安全邊界
+
+- 官方法源已於2026-10-27回查；行為時法仍為 `UNKNOWN`。
+- 普通傷害、重傷害、過失傷害、聚眾鬥毆及第287條程序路線不在本 route scope；本工作單只處理第215條對公文書公務員身分、職務掌管與製作機關、名義、偽造變造故意與內容、傳達與業務關聯及損害風險的題目設計。
+- 本工作單只核准問句設計；個案由承辦人執行 `CASE_HUMAN_GATE`。
+
+## N. 自我檢查
+
+```yaml
+self_check:
+  structural_review: PASS
+  route_id_exactness: PASS
+  official_article_check: PASS
+  schema: PASS
+  static_dedupe_contract: PASS_ZERO_EXACT_DUPLICATES
+  runtime_semantic_dedupe: PASS_DECLARED_REUSE_CONTRACT
+  question_method_review: PASS
+  role_boundary: PASS
+  legal_effect_review: PASS_NO_SINGLE_ANSWER_ACTIVE
+  unknown_and_conflict_handling: PASS
+  calibration_review: PASS
+  concept_budget: PASS
+  output_page_budget_validation: PASS_SYNTHETIC_20_QUESTION_LIBREOFFICE
+  case_human_gate: REQUIRED
+```
+
+## O. Gate 與 Handoff
+
+```yaml
+  route_review_gate: PASS
+case_human_gate: REQUIRED
+user_final_acceptance: PENDING
+runtime_enabled: false
+runtime_auto_advance: false
+deployment_status: NOT_DEPLOYED
+automatic_advance: false
+next_route: NOT_AUTHORIZED
+next_action: ARCHIVE_AND_SELECT_NEXT
+```
+
+<!-- SUBMISSION_END -->
+
+## Reviewer Decision
+
+```yaml
+  gate_id: GATE-FOR215-20261027-01
+  current_route_id: forgery_215_business_false_entry
+iteration: 0
+ruleset_version: question-rules-v2-draft
+ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+official_source_status: VERIFIED_CURRENT_BEHAVIOR_TIME_UNKNOWN
+schema_validation: PASS
+exact_dedupe_validation: PASS_ZERO_DUPLICATES
+semantic_dedupe_validation: PASS_DECLARED_REUSE_AND_GAP_CONTRACT
+budget_validation: PASS_8_CONCEPTS
+output_page_budget_validation: PASS_SYNTHETIC_20_QUESTION_LIBREOFFICE
+calibration_review: PASS
+  reviewer_decision: PASS
+review_execution_mode: REVIEWED_PIPELINE
+reviewer_identity: Codex (model identity UNVERIFIED)
+independent_review_model_requested: gpt-5.6-sol
+independent_model_identity: UNVERIFIED
+independent_review_decision: NOT_AVAILABLE_CURRENT_TOOL_SURFACE
+hash_scope: UTF8_LF_BYTES_BETWEEN_SUBMISSION_MARKERS
+  submission_sha256: D5C5D9A19E709285ED20C54AB74A1222C3E970FA7D0EA74947B727768BE49B2A
+test_results:
+  - "question work item and offense linkage contracts: 15 passed"
+  - "py -3 -X utf8 -m pytest -q: 630 passed"
+  - "node tests/test_frontend_api_errors.mjs: 31 passed"
+  - "node --check app/static/app.js: PASS"
+  - "GET /api/health: HTTP 200"
+  - "exact duplicate counts: internal 0; existing sources 0"
+  - "synthetic 20-question LibreOffice: victim 2 pages; suspect 3 pages; transfer 3 pages"
+open_blockers: []
+legal_conclusion: false
+runtime_enabled: false
+runtime_auto_advance: false
+deployment_status: NOT_DEPLOYED
+  reviewed_at: PENDING
+  decision_reason: "第215條先分開確認對公文書公務員身分、職務掌管與製作機關、名義、偽造變造故意與內容、傳達對象、名譽毀損、行為與危害的關聯及證據來源；不由單一業務身分、業務上文書內容及不實登載方式直接產生ACTIVE。"
+  route_review_gate: PASS
+case_human_gate: REQUIRED
+next_route: NOT_AUTHORIZED
+```

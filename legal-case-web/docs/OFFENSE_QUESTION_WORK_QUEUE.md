@@ -9,10 +9,15 @@ source_of_truth:
   - data/legal_route_crosswalk.json
 law_identity_index: docs/LAW_REGISTRY.md
 current_target: NONE_SELECTED
-queue_status: BLOCKED_PENDING_BASELINE_RECOVERY
+current_parent_route: obstruction
+queue_status: READY_FOR_CONTROLLER_AUTO_SELECTION
+last_archived_target: obstruction_138_official_property
+next_locked_target: obstruction_139_seal_seizure
 active_question_ruleset: UNCHANGED_RUNTIME
 candidate_question_ruleset: question-rules-v2-draft
-candidate_ruleset_status: CODEX_REVIEW_REQUIRED
+candidate_ruleset_status: QUESTION_DESIGN_ACCEPTED
+candidate_ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+runtime_ruleset_status: UNCHANGED_RUNTIME
 route_auto_advance: true
 runtime_auto_advance: false
 user_review_mode: FINAL_BATCH_ONLY
@@ -59,23 +64,23 @@ active_work_item: docs/QUESTION_WORK_ITEM.md
 
 | queue_no | route_id | 顯示名稱 | route_type | crosswalk_status | child routes | 初始工作狀態 | 必要動作 |
 |---:|---|---|---|---|---:|---|---|
-| 1 | `theft` | 竊盜 | substantive | `PARTIAL_SCOPE` | 4 | `BASELINE_RECOVERY_REQUIRED` | 原完整工作單遭覆寫；須重建後由 Codex route review，不要求使用者逐題核准 |
-| 2 | `aggravated_theft` | 加重竊盜 | substantive | `PARTIAL_SCOPE` | 1 | `NOT_AUTHORIZED` | 等待基準恢復及 Codex 通過後由 controller 依序選取 |
-| 3 | `embezzlement` | 侵占 | substantive | `PARTIAL_SCOPE` | 5 | `EXISTING_REVIEW_REQUIRED` | 逐一處理普通、公務公益、業務、離本人持有物及程序準用 |
-| 4 | `fraud` | 詐欺 | substantive | `SPLIT_REQUIRED` | 10 | `CHILD_SELECTION_REQUIRED` | 一般詐欺、設備、電腦、加重、乘機、背信、重利及程序規定不得共用一套問卷 |
-| 5 | `injury` | 傷害 | substantive | `SPLIT_REQUIRED` | 10 | `CHILD_SELECTION_REQUIRED` | 逐一選取普通、重傷、過失、兒少凌虐、身分加重及告訴程序等 child route |
-| 6 | `damage` | 毀損 | substantive | `PARTIAL_SCOPE` | 6 | `READY_FOR_CHILD_SELECTION` | 分開文書、建築物、一般物、詐術損害、損害債權及程序 |
-| 7 | `intimidation` | 恐嚇／妨害自由 | substantive | `SPLIT_REQUIRED` | 2 | `CHILD_SELECTION_REQUIRED` | 恐嚇危害安全與恐嚇取財分開 |
-| 8 | `defamation` | 妨害名譽 | substantive | `SPLIT_REQUIRED` | 6 | `CHILD_SELECTION_REQUIRED` | 公然侮辱、誹謗、信用、死者、阻卻事由及告訴程序分開 |
-| 9 | `forgery` | 偽造文書 | substantive | `SPLIT_REQUIRED` | 11 | `CHILD_SELECTION_REQUIRED` | 依文書、印章、身分、電磁紀錄、行使及程序 child route 分開 |
-| 10 | `computer` | 妨害電腦使用 | substantive | `SPLIT_REQUIRED` | 6 | `CHILD_SELECTION_REQUIRED` | 無故入侵、取得刪改紀錄、干擾設備、製作程式及告訴程序分開 |
-| 11 | `sexual_harassment` | 性騷擾 | mixed | `SPLIT_REQUIRED` | 5 | `CHILD_SELECTION_REQUIRED` | 刑事、行政、雇用／校園與保護流程不得混為同一罪名 |
-| 12 | `stalking` | 跟蹤騷擾／違反保護令 | mixed | `PARTIAL_SCOPE` | 5 | `READY_FOR_CHILD_SELECTION` | 跟騷行為、保護令與程序效果分開 |
-| 13 | `public_danger` | 公共危險／酒駕 | substantive | `PARTIAL_SCOPE` | 2 | `READY_FOR_CHILD_SELECTION` | 目前只涵蓋酒毒駕及交通事故逃逸，不得宣稱公共危險章完整 |
-| 14 | `drugs` | 毒品案件 | substantive | `SPLIT_REQUIRED` | 8 | `CHILD_SELECTION_REQUIRED` | 製造運輸販賣、持有、施用、轉讓等不同 child route 分開 |
-| 15 | `state_security` | 內亂／外患／妨害國交 | substantive | `SPLIT_REQUIRED` | 21 | `CHILD_SELECTION_REQUIRED` | 依 individual child route 製作，禁止整章展開 |
-| 16 | `duty` | 瀆職 | substantive | `SPLIT_REQUIRED` | 15 | `CHILD_SELECTION_REQUIRED` | 依公務員身分、行為態樣與利益／損害 child route 分開 |
-| 17 | `obstruction` | 妨害公務 | substantive | `SPLIT_REQUIRED` | 7 | `CHILD_SELECTION_REQUIRED` | 依法執行職務、強暴脅迫、聚眾及其他章內路由分開 |
+| 1 | `theft` | 竊盜 | substantive | `PARTIAL_SCOPE` | 4 | `ARCHIVED_REVIEW_PASS` | 基準 child route 已完成 Codex review 並存入受控 archive；其餘 child routes 仍須逐一處理 |
+| 2 | `aggravated_theft` | 加重竊盜 | substantive | `PARTIAL_SCOPE` | 1 | `ARCHIVED_REVIEW_PASS` | `aggravated_theft_321` 已完成 Codex review 並存入受控 archive |
+| 3 | `embezzlement` | 侵占 | substantive | `PARTIAL_SCOPE` | 5 | `PROCEDURAL_ROUTE_SEPARATE_WORKFLOW` | `embezzlement_335_general`、`embezzlement_336_1_public`、`embezzlement_336_2_business`、`embezzlement_337_lost_property` 已歸檔；下一鎖定 `embezzlement_338_applicable` 為程序路線，須另行處理，不進犯罪構成要件題組 |
+| 4 | `fraud` | 詐欺 | substantive | `SPLIT_REQUIRED` | 10 | `SUBSTANTIVE_CHILD_ROUTES_PROCESSED_WITH_PROCEDURAL_REMAINING` | `fraud_339_general`、`fraud_339_1_charge_device`、`fraud_339_2_payment_device`、`fraud_339_3_computer`、`fraud_339_4_aggravated`、`fraud_341_exploitation`、`fraud_342_breach_of_trust`、`fraud_344_usury`、`fraud_344_1_aggravated_usury` 已歸檔；`fraud_343_property_family_rules` 為程序分流，尚未建立程序工作單 |
+| 5 | `injury` | 傷害 | substantive | `SPLIT_REQUIRED` | 10 | `READY_FOR_CONTROLLER_AUTO_SELECTION` | `injury_277_general` 至 `injury_286_child_abuse` 已歸檔；下一鎖定 `injury_287_complaint` 為程序路線，須另行處理 |
+| 6 | `damage` | 毀損 | substantive | `PARTIAL_SCOPE` | 6 | `READY_FOR_CONTROLLER_AUTO_SELECTION` | `damage_352_document`、`damage_353_building`、`damage_354_property`、`damage_355_fraud` 已歸檔；第357條程序路線另行保留 |
+| 7 | `intimidation` | 恐嚇／妨害自由 | substantive | `SPLIT_REQUIRED` | 2 | `READY_FOR_CONTROLLER_AUTO_SELECTION` | `intimidation_305_safety`、`intimidation_346_property` 已歸檔 |
+| 8 | `defamation` | 妨害名譽 | substantive | `SPLIT_REQUIRED` | 6 | `READY_FOR_CONTROLLER_AUTO_SELECTION` | `defamation_309_public_insult`、`defamation_310_defamation`、`defamation_312_deceased`、`defamation_313_credit` 已歸檔；第311條例外與第314條程序分開 |
+| 9 | `forgery` | 偽造文書 | substantive | `SPLIT_REQUIRED` | 11 | `READY_FOR_CONTROLLER_AUTO_SELECTION` | `forgery_210_private_document` 至 `forgery_218_official_seal` 已歸檔（含補列 `forgery_215_business_false_entry`）；第219條 collateral 與第220條 definition 已留下邊界紀錄、不進 offense-core；下一個可製作 parent route 為 `computer` |
+| 10 | `computer` | 妨害電腦使用 | substantive | `SPLIT_REQUIRED` | 6 | `READY_FOR_CONTROLLER_AUTO_SELECTION` | `computer_358_intrusion`、`computer_359_data_change`、`computer_360_interference`、`computer_362_malware` 已歸檔；第361條 aggravation 與第363條 procedure 已留下邊界紀錄；下一個 parent route 為 `sexual_harassment` |
+| 11 | `sexual_harassment` | 性騷擾 | mixed | `SPLIT_REQUIRED` | 5 | `READY_FOR_CONTROLLER_AUTO_SELECTION` | offense route `sexual_harassment_25_unwanted_touch` 已歸檔；第2條 classification、第7至17條 procedure、第26至30條 administrative 已留下邊界紀錄；下一個 parent route 為 `stalking` |
+| 12 | `stalking` | 跟蹤騷擾／違反保護令 | mixed | `PARTIAL_SCOPE` | 5 | `READY_FOR_CONTROLLER_AUTO_SELECTION` | offense routes `stalking_18_offense`、`stalking_19_protection_order` 已歸檔；第3、4至17、20至21條分類／保護／程序已留下邊界紀錄；下一個 parent route 為 `public_danger` |
+| 13 | `public_danger` | 公共危險／酒駕 | substantive | `PARTIAL_SCOPE` | 2 | `READY_FOR_CONTROLLER_AUTO_SELECTION` | `public_danger_185_3_impaired_driving`、`public_danger_185_4_hit_and_run` 已歸檔；下一個 parent route 為 `drugs`，不宣稱公共危險章完整 |
+| 14 | `drugs` | 毒品案件 | substantive | `SPLIT_REQUIRED` | 8 | `READY_FOR_CONTROLLER_AUTO_SELECTION` | `drugs_4_manufacture_transport_sale` 至 `drugs_8_transfer`、`drugs_10_use`、`drugs_11_possession` 已歸檔；第9條 aggravation 已保留邊界；下一個 parent route 為 `state_security` |
+| 15 | `state_security` | 內亂／外患／妨害國交 | substantive | `SPLIT_REQUIRED` | 21 | `READY_FOR_CONTROLLER_AUTO_SELECTION` | `state_security_100_insurrection` 至 `state_security_118_foreign_symbol` 已依 child route 逐一歸檔；第102、107、115之1、116、119 等邊界路線分開處理；下一個 parent route 為 `duty` |
+| 16 | `duty` | 瀆職 | substantive | `SPLIT_REQUIRED` | 15 | `READY_FOR_CONTROLLER_AUTO_SELECTION` | `duty_120_abandon_post` 至 `duty_134_official_aggravation` 已歸檔；瀆職罪章 child routes 已完成，下一個 parent route 為 `obstruction` |
+| 17 | `obstruction` | 妨害公務 | substantive | `SPLIT_REQUIRED` | 7 | `READY_FOR_CONTROLLER_AUTO_SELECTION` | `obstruction_135_violence_threat` 至 `obstruction_138_official_property` 已歸檔；下一鎖定 `obstruction_139_seal_seizure`；第140條部分與第141條之1維持失效／排除邊界 |
 | 18 | `judicial_integrity` | 妨害司法公正 | substantive | `SPLIT_REQUIRED` | 3 | `CHILD_SELECTION_REQUIRED` | 依現行 child route 分開；不得使用失效或未生效規範 |
 | 19 | `voting` | 妨害投票 | substantive | `SPLIT_REQUIRED` | 7 | `CHILD_SELECTION_REQUIRED` | 賄選、強暴脅迫、投票秘密及其他 child route 分開 |
 | 20 | `disorder` | 妨害秩序 | substantive | `SPLIT_REQUIRED` | 12 | `CHILD_SELECTION_REQUIRED` | 聚眾、公然聚集、結社等不同 child route 分開 |

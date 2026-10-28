@@ -155,7 +155,7 @@ def test_e2e_full_gate_flow_with_question_metadata_and_document(e2e_server):
     assert status == 200
     brief = json.loads(body)
     assert len(case["brief_summary"]) <= 500
-    assert f"案情摘要：{case['brief_summary']}" in brief["text"]
+    assert f"案情摘要：\n{case['brief_summary']}" in brief["text"]
 
 
 def test_e2e_incomplete_case_blocks_document(e2e_server):

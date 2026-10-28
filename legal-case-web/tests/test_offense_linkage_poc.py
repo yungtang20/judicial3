@@ -1,3 +1,4 @@
+import hashlib
 import json
 from pathlib import Path
 
@@ -36,8 +37,21 @@ def test_poc_routes_exist_in_current_crosswalk():
     assert {profile["route_id"] for profile in load_pack()["route_profiles"]} <= route_ids
 
 
-def test_poc_reuses_current_theft_work_item_axis_instead_of_replacing_it():
-    work_item = (ROOT / "docs" / "QUESTION_WORK_ITEM.md").read_text(encoding="utf-8")
+def test_poc_reuses_archived_theft_standard_axis_instead_of_replacing_it():
+    manifest = json.loads(
+        (ROOT / "docs" / "evidence" / "question_route_archive_manifest.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    record = next(
+        item for item in manifest["records"]
+        if item["route_id"] == "theft_320_1_movable" and item["iteration"] == 4
+    )
+    archive_path = (ROOT / record["archive_path"]).resolve()
+    archive_path.relative_to(ROOT.resolve())
+    archive_bytes = archive_path.read_bytes()
+    assert hashlib.sha256(archive_bytes).hexdigest().upper() == record["archive_file_sha256"]
+    work_item = archive_bytes.decode("utf-8")
     axis = next(
         item for item in load_pack()["question_axes"]
         if item["axis_id"] == "AXIS-PRIOR-POSSESSION"

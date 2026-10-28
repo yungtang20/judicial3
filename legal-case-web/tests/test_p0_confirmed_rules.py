@@ -46,7 +46,7 @@ def test_500_character_summary_is_complete_in_brief_text_and_docx():
     summary = "字" * 500
     case = completed_case()
     case["brief_summary"] = summary
-    assert f"案情摘要：{summary}" in brief_text(case, "victim")
+    assert f"案情摘要：\n{summary}" in brief_text(case, "victim")
     document = Document(io.BytesIO(brief_docx(case, "victim")))
     assert summary in "\n".join(paragraph.text for paragraph in document.paragraphs)
 

@@ -13,6 +13,9 @@ from typing import Any
 # ── 1. 問句 metadata 擴充 ──
 
 DEFAULT_QUESTION_META = {
+    "question_layer": "",       # core/evidence_gap/reinforce/distinguishing/aggravating/precedent
+    "source_citation": "",      # 題目內明示的判決／函示／固定資料來源
+    "human_review_required": True,
     "fact_target": "",          # 本題要確認的中性事實（例：是否經同意）
     "legal_targets": [],        # 該事實會支持/排除/區分哪些法律路由（例：["theft","robbery"]）
     "alternative_targets": [],  # 非罪章審查議題；不得參與候選、路由或法律效果
@@ -356,7 +359,9 @@ def build_property_taking_questions(
     materialized_at: str | None = None,
 ) -> list[dict[str, Any]]:
     fact_keys = {item.get("fact_key") for item in gate1.get("facts", [])}
-    if not {"action", "object"}.issubset(fact_keys) or not candidate_ids.intersection({"theft", "embezzlement", "robbery"}):
+    # 即使 Gate 1 尚未抽出 action/object，也先保留中性的財物持有／同意／
+    # 控制範圍澄清題；不得因抽取缺漏而讓竊盜、侵占、搶奪的核心區分消失。
+    if not candidate_ids.intersection({"theft", "embezzlement", "robbery"}):
         return []
     prefix = {"victim": "V", "suspect": "S", "transfer": "T"}[role]
     selected_route_ids = legal_route_ids or set()
@@ -523,6 +528,7 @@ def enrich_question_metadata(
     - core/補充/補強：通常 "always"，目的=確認構成要件/補齊事實
     - distinguishing：trigger_condition 依候選；purpose="區分競爭假設"
     - aggravating：若無加重條件可略過
+    - precedent：候選確認後最後呈現，保留來源文字並只查問判決爭點事實
     """
     enriched: list[dict[str, Any]] = []
     for q in questions:
@@ -532,6 +538,12 @@ def enrich_question_metadata(
 
         meta = deepcopy(DEFAULT_QUESTION_META)
         meta.update(deepcopy(eq.get("meta", {})))
+        if not meta.get("question_layer"):
+            meta["question_layer"] = {
+                "supplemental": "evidence_gap",
+            }.get(kind, kind)
+        if not meta.get("source_citation"):
+            meta["source_citation"] = eq.get("source_citation", "")
 
         element_ref = eq.get("element_id") or eq.get("element_label")
         if meta.get("fact_target"):
@@ -573,6 +585,15 @@ def enrich_question_metadata(
             meta["trigger_condition"] = f"candidate:{offense_id}:present"
             meta["purpose"] = "確認加重情節"
 
+        elif kind == "precedent":
+            others = sorted({c.get("id") or c.get("offense_id") for c in candidates} - {offense_id})
+            if not meta.get("legal_targets"):
+                meta["legal_targets"] = ([offense_id] if offense_id else []) + others
+            meta["trigger_condition"] = f"candidate:{offense_id}:present"
+            meta["purpose"] = "確認判決或函示爭點事實"
+            meta["expected_distinction"] = "依題目所載來源核對具體事實，不直接作成罪名結論"
+            meta["human_review_required"] = True
+
         elif kind == "company_offense":
             # 公司固定題逐字保留，但回答預設只作筆錄內容，不直接改變
             # fact、candidate 或 legal route。只有後續人工核准的 answer_map
@@ -599,6 +620,9 @@ def enrich_question_metadata(
 def apply_question_budget(
     questions: list[dict[str, Any]],
     max_offense_questions: int = 30,
+    *,
+    protect_company_offense: bool = True,
+    allow_core_pruning: bool = False,
 ) -> list[dict[str, Any]]:
     """依 spec §7.5 裁切：company/common 全保護；罪章間公平分配預算。
 
@@ -608,12 +632,23 @@ def apply_question_budget(
     """
     offense_questions = [q for q in questions if q.get("kind") not in {"company", "common"}]
     if len(offense_questions) <= max_offense_questions:
-        return questions
+        if allow_core_pruning:
+            return questions
+        order = {"core": 0, "company_offense": 1, "supplemental": 2, "reinforce": 3, "distinguishing": 4, "aggravating": 5, "precedent": 6}
+        return [
+            q for q in questions if q.get("kind") in {"company", "common"}
+        ] + sorted(
+            offense_questions,
+            key=lambda q: order.get(q.get("kind", ""), 99),
+        )
 
     core_questions = [q for q in offense_questions if q.get("kind") == "core"]
     company_offense = [q for q in offense_questions if q.get("kind") == "company_offense"]
-    required_questions = core_questions + company_offense
-    if len(required_questions) > max_offense_questions:
+    pack_questions = [q for q in offense_questions if q.get("meta", {}).get("pack_id")]
+    required_questions = core_questions + [
+        q for q in pack_questions if q not in core_questions
+    ] + (company_offense if protect_company_offense else [])
+    if len(required_questions) > max_offense_questions and not allow_core_pruning:
         apply_question_budget.last_prune_info = {
             "pruned_core": 0,
             "pruned_company_offense": 0,
@@ -629,9 +664,31 @@ def apply_question_budget(
         )
 
     # 選配題才可裁切。保留順序與裁切順序相反：補強、補充、區分、加重。
-    kind_priority = {"reinforce": 0, "supplemental": 1, "distinguishing": 2, "aggravating": 3}
+    # 題數不足時，最後加入的判決爭點先裁切；裁切結果仍會被記錄，
+    # 不得因此宣稱已完整涵蓋該路由。
+    kind_priority = (
+        {
+            # 精簡訪談仍應留下區分題與判決爭點，避免只剩抽象構成要件。
+            "distinguishing": 0, "precedent": 1, "reinforce": 2,
+            "supplemental": 3, "aggravating": 4,
+        }
+        if allow_core_pruning else
+        {
+            "reinforce": 0, "supplemental": 1, "distinguishing": 2,
+            "aggravating": 3, "precedent": 4,
+        }
+    )
+    if not protect_company_offense:
+        kind_priority["company_offense"] = 5
     removable = [q for q in offense_questions if q.get("kind") in kind_priority]
-    removable.sort(key=lambda q: kind_priority.get(q.get("kind", ""), 99))
+    removable.sort(key=lambda q: (
+        kind_priority.get(q.get("kind", ""), 99),
+        # 公司套表第 6 列通常是必要的外部協助／專線資訊；若額度只剩
+        # 少數公司罪章題，優先保留該固定題而非任意截斷。
+        0 if q.get("kind") == "company_offense" and q.get("meta", {}).get("source_cell", {}).get("row") == (
+            6 if q.get("offense_id") == "fraud" else 2
+        ) else 1,
+    ))
 
     def _round_robin(items: list[dict[str, Any]], budget: int) -> list[dict[str, Any]]:
         """依 offense_id 分組輪流保留，確保每罪章公平。"""
@@ -657,17 +714,43 @@ def apply_question_budget(
             round_idx += 1
         return kept
 
-    kept_core = list(core_questions)
-    kept_co = list(company_offense)
-    removable_budget = max_offense_questions - len(kept_core) - len(kept_co)
+    kept_co = list(company_offense) if protect_company_offense else []
+    if allow_core_pruning and pack_questions:
+        kept_pack = pack_questions[:max(0, max_offense_questions - len(kept_co))]
+    else:
+        kept_pack = list(pack_questions)
+    kept_pack_ids = {id(q) for q in kept_pack}
+    non_pack_core = [q for q in core_questions if id(q) not in kept_pack_ids]
+    # 精簡模式若核心題本身已超過剩餘額度，仍保留前段核心題並記錄裁切；
+    # 完整題庫審查模式則維持 fail closed，不得裁除核心題。
+    core_budget = max_offense_questions - len(kept_co) - len(kept_pack) if allow_core_pruning else len(non_pack_core)
+    if allow_core_pruning:
+        # 已由 Gate 1 觸發的中性事實題，優先於尚未命中的整套罪章核心題；
+        # 這能讓 20 題內仍保留竊盜／侵占／強盜的關鍵區分事實。
+        prioritized_core = sorted(
+            non_pack_core,
+            key=lambda q: 0 if q.get("meta", {}).get("mapping_version") == "property-taking-v1" else 1,
+        )
+        kept_core = _round_robin(prioritized_core, max(0, core_budget))
+    else:
+        kept_core = list(non_pack_core)
+    removable_budget = max_offense_questions - len(kept_core) - len(kept_co) - len(kept_pack)
     kept_removable = _round_robin(removable, removable_budget) if removable_budget > 0 else []
 
-    pruned_core_count = 0
+    pruned_core_count = len(non_pack_core) - len(kept_core)
     pruned_co_count = 0
 
-    kept_ids = {id(q) for q in kept_removable} | {id(q) for q in kept_core} | {id(q) for q in kept_co}
+    kept_ids = (
+        {id(q) for q in kept_removable}
+        | {id(q) for q in kept_core}
+        | {id(q) for q in kept_pack}
+        | {id(q) for q in kept_co}
+    )
     protected = [q for q in questions if q.get("kind") in {"company", "common"}]
     kept_offense = [q for q in offense_questions if id(q) in kept_ids]
+    if not allow_core_pruning:
+        order = {"core": 0, "company_offense": 1, "supplemental": 2, "reinforce": 3, "distinguishing": 4, "aggravating": 5, "precedent": 6}
+        kept_offense.sort(key=lambda q: order.get(q.get("kind", ""), 99))
     # 裁切透明化（spec §7.5 不得假裝完成）：附加 pruned 統計屬性供呼叫端記錄
     apply_question_budget.last_prune_info = {
         "pruned_core": pruned_core_count,
@@ -1104,8 +1187,11 @@ def deduplicate_questions(
 def sort_questions_by_priority(
     questions: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
-    """依 kind 優先序排序：company > common > core > supplemental > reinforce > distinguishing > aggravating"""
-    kind_order = {"company": 0, "common": 1, "core": 2, "supplemental": 3, "reinforce": 4, "distinguishing": 5, "aggravating": 6}
+    """依 kind 優先序排序，判決／函示爭點最後呈現。"""
+    kind_order = {
+        "company": 0, "common": 1, "core": 2, "supplemental": 3,
+        "reinforce": 4, "distinguishing": 5, "aggravating": 6, "precedent": 7,
+    }
     return sorted(questions, key=lambda q: (kind_order.get(q.get("kind", ""), 99), q.get("priority", 99)))
 
 # ── 6. 生成時程式化品質檢核（docs/QUESTION_DESIGN_AND_USE.md §8，Q1–Q10）──

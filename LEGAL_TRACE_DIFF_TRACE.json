@@ -1,0 +1,1937 @@
+{
+  "schema_version": "legal-trace-diff.v1",
+  "generated_at": "2026-10-28T11:28:30.135379+00:00",
+  "input": {
+    "id": "STANDARD_SEMANTIC_FACTS_V1",
+    "facts": [
+      {
+        "id": "F-OWNERSHIP",
+        "text": "甲表示手機為其所有",
+        "source": "甲陳述",
+        "status": "ASSERTED_NOT_VERIFIED"
+      },
+      {
+        "id": "F-PLACEMENT",
+        "text": "甲表示曾將手機暫放在便利商店櫃檯旁",
+        "source": "甲陳述",
+        "status": "ASSERTED_NOT_VERIFIED"
+      },
+      {
+        "id": "F-POSSESSION",
+        "text": "手機是否仍在甲的持有範圍：未確認",
+        "source": "待確認事項",
+        "status": "UNKNOWN"
+      },
+      {
+        "id": "F-TAKING",
+        "text": "乙承認拿取手機",
+        "source": "乙陳述",
+        "status": "ASSERTED_NOT_VERIFIED"
+      },
+      {
+        "id": "F-BELIEF",
+        "text": "乙表示自己以為手機是他人遺留、不要的物品",
+        "source": "乙辯解",
+        "status": "ASSERTED_NOT_VERIFIED"
+      },
+      {
+        "id": "F-INTENT",
+        "text": "乙是否具有不法所有意圖：未確認",
+        "source": "待確認事項",
+        "status": "UNKNOWN"
+      },
+      {
+        "id": "F-RECOVERY",
+        "text": "手機目前尚未尋獲",
+        "source": "案件結果記載",
+        "status": "ASSERTED_NOT_VERIFIED"
+      }
+    ],
+    "summary": "甲表示手機為其所有。甲表示曾將手機暫放在便利商店櫃檯旁。手機是否仍在甲的持有範圍：未確認。乙承認拿取手機。乙表示自己以為手機是他人遺留、不要的物品。乙是否具有不法所有意圖：未確認。手機目前尚未尋獲。"
+  },
+  "safety": {
+    "network": "NOT_USED",
+    "llm": "NOT_RUN",
+    "database": "NOT_RUN",
+    "http": "NOT_RUN",
+    "formal_logic_modified": false
+  },
+  "projects": {
+    "CIA": {
+      "metadata": {
+        "path": "D:\\工作用\\judicial1\\criminal-investigation-assistant",
+        "head": "e5d8e95ea59292e5464114ba6b804165e9511ce8",
+        "branch": "codex/sim-case-remediation",
+        "status": "M app/domain.py\n M app/static/app.js\n M app/static/index.html\n M app/static/styles.css\n M app/storage.py\n M ../legal-case-web/README.md\n M ../legal-case-web/app/case_identity.py\n M ../legal-case-web/app/documents.py\n M ../legal-case-web/app/law_reference.py\n M ../legal-case-web/app/law_version.py\n M ../legal-case-web/app/markdown_questions.py\n M ../legal-case-web/app/questions.py\n M ../legal-case-web/app/roc_time.py\n M ../legal-case-web/app/rules.py\n M ../legal-case-web/app/section_questions.py\n M ../legal-case-web/app/server.py\n M ../legal-case-web/app/static/app.js\n M ../legal-case-web/app/static/index.html\n M ../legal-case-web/app/static/styles.css\n M ../legal-case-web/app/workflow.py\n M ../legal-case-web/data/source_manifest.json\n M ../legal-case-web/docs/AI_EXECUTION_PROTOCOL.md\n M ../legal-case-web/docs/LIFECYCLE_RECORD.md\n M ../legal-case-web/docs/OFFENSE_QUESTION_WORK_QUEUE.md\n M ../legal-case-web/docs/QUESTION_DESIGN_AND_USE.md\n M ../legal-case-web/docs/QUESTION_WORK_ITEM.md\n M ../legal-case-web/docs/REFERENCE_STANDARD_LIBRARY.md\n M ../legal-case-web/docs/evidence/hg_lr_01_provider_contract_review.json\n M ../legal-case-web/docs/evidence/hg_lr_02_privacy_security_review.json\n M ../legal-case-web/docs/evidence/legal_retrieval_human_gate_packet.json\n M ../legal-case-web/review/xlsm_review_draft.md\n M ../legal-case-web/tests/test_candidate_semantic_safety.py\n M ../legal-case-web/tests/test_case_identity_and_brief_template.py\n M ../legal-case-web/tests/test_documents.py\n M ../legal-case-web/tests/test_e2e_flow.py\n M ../legal-case-web/tests/test_frontend_api_errors.mjs\n M ../legal-case-web/tests/test_gate2_legal_route_selection.py\n M ../legal-case-web/tests/test_legal_retrieval_human_gate_packet.py\n M ../legal-case-web/tests/test_offense_linkage_poc.py\n M ../legal-case-web/tests/test_p0_confirmed_rules.py\n M ../legal-case-web/tests/test_question_logic.py\n M ../legal-case-web/tests/test_question_work_item_contract.py\n M ../legal-case-web/tests/test_real_cases.py\n M ../legal-case-web/tests/test_rules.py\n M ../legal-case-web/tests/test_virtual_case_wallet_atm.py\n M ../legal-case-web/tests/test_workflow.py\n M ../questions/index.md\n M ../questions/robbery.md\n M ../questions/theft.md\n M ../新套表.xlsm\n?? ../._verify_render_20261026_2/\n?? ../._verify_render_20261026_3/\n?? ../LEGAL_ROOT_CAUSE_AUDIT.md\n?? ../LEGAL_ROOT_CAUSE_TRACE.md\n?? ../LEGAL_TRACE_DIFF_TRACE.json\n?? ../LEGAL_TRACE_REPLAY_REPORT.md\n?? ../LEGAL_TRACE_REPLAY_TRACE.json\n?? docs/audit/IMPLEMENTATION_REPORT.md\n?? docs/audit/LEGAL_REASONING_AUDIT.md\n?? docs/audit/OPEN_ISSUES.md\n?? docs/audit/TEST_RESULTS.md\n?? tests/test_sim_case_remediation.py\n?? tools/legal_reasoning_audit.py\n?? ../legal-case-web/data/question_family_catalog.json\n?? ../legal-case-web/data/question_family_fixtures/\n?? ../legal-case-web/data/question_family_master/\n?? ../legal-case-web/docs/CURRENT_HANDOFF_2026-10-26.md\n?? ../legal-case-web/docs/QUESTION_FAMILY_ARCHITECTURE_DRAFT.md\n?? ../legal-case-web/docs/QUESTION_FAMILY_TODO.md\n?? ../legal-case-web/docs/evidence/injury_family_legal_verification_20261027.json\n?? ../legal-case-web/docs/evidence/property_family_legal_verification_20261027.json\n?? ../legal-case-web/docs/evidence/property_offense_legal_verification_20261026.json\n?? ../legal-case-web/docs/evidence/question_route_archive_manifest.json\n?? ../legal-case-web/docs/evidence/question_route_archives/\n?? ../legal-case-web/docs/family_templates/\n?? ../legal-case-web/review/property-taking-issue-matrix.md\n?? ../legal-case-web/tests/test_question_family_catalog.py\n?? ../legal-case-web/tools/question_common_compiler.py\n?? ../legal-case-web/tools/question_family_compiler.py\n?? ../legal-case-web/tools/question_family_docs.py\n?? ../tools/\n?? ../傷害家族問句樣板.md\n?? ../常用法條.txt\n?? ../新套表_補齊罪名筆錄_20261026.xlsm",
+        "files": {
+          "app/domain.py": "71d3cdc0e016c5782768e782bd2e4961a875de5b07ed1e5395c5cca8896c1dad",
+          "app/question_bank.py": "fe6ec03dc3dd12d323036be195ef3e27c871d93f7991da83a08851a52e9e84f8",
+          "data/runtime/question_bank.json": "0ac9e0cd5c3a1a7796b285ac25d1056fb00a8aff2a2d67302aa6114e9bcbfdb6"
+        }
+      },
+      "replay": {
+        "execution": "PASS",
+        "entry": "app.domain.extract_facts -> make_case -> analyze_candidates",
+        "facts": [
+          {
+            "fact_id": "F-TIME",
+            "category": "time",
+            "value": "2026-10-28T10:00:00+08:00",
+            "provenance": "INTAKE:event_time",
+            "status": "FACT",
+            "confidence": 1.0
+          },
+          {
+            "fact_id": "F-PLACE",
+            "category": "place",
+            "value": "便利商店櫃檯旁",
+            "provenance": "INTAKE:location",
+            "status": "FACT",
+            "confidence": 1.0
+          },
+          {
+            "fact_id": "F-NARRATIVE",
+            "category": "event",
+            "value": "甲表示手機為其所有。甲表示曾將手機暫放在便利商店櫃檯旁。手機是否仍在甲的持有範圍：未確認。乙承認拿取手機。乙表示自己以為手機是他人遺留、不要的物品。乙是否具有不法所有意圖：未確認。手機目前尚未尋獲。",
+            "provenance": "INTAKE:summary",
+            "status": "NARRATIVE",
+            "confidence": 1.0
+          },
+          {
+            "fact_id": "F-PERSON-1",
+            "category": "person",
+            "value": "甲",
+            "provenance": "INFERENCE:summary-token",
+            "status": "INFERENCE",
+            "confidence": 0.6
+          },
+          {
+            "fact_id": "F-PERSON-2",
+            "category": "person",
+            "value": "乙",
+            "provenance": "INFERENCE:summary-token",
+            "status": "INFERENCE",
+            "confidence": 0.6
+          },
+          {
+            "fact_id": "F-OBJECT-1",
+            "category": "object",
+            "value": "摘要記載之物品，待逐項確認",
+            "provenance": "INFERENCE:summary-keyword",
+            "status": "UNKNOWN",
+            "confidence": 0.4
+          },
+          {
+            "fact_id": "F-CONDUCT",
+            "category": "conduct",
+            "value": "待問答確認具體行為、方式及前後順序",
+            "provenance": "SYSTEM:GATE1",
+            "status": "UNKNOWN",
+            "confidence": 0.0
+          },
+          {
+            "fact_id": "F-MENTAL-STATE",
+            "category": "mental_state",
+            "value": "待問答確認行為時認知、目的及可得知事項",
+            "provenance": "SYSTEM:GATE1",
+            "status": "UNKNOWN",
+            "confidence": 0.0
+          },
+          {
+            "fact_id": "F-RESULT",
+            "category": "result",
+            "value": "待問答確認實際結果、損害或影響",
+            "provenance": "SYSTEM:GATE1",
+            "status": "UNKNOWN",
+            "confidence": 0.0
+          },
+          {
+            "fact_id": "F-RIGHTS",
+            "category": "property_or_rights",
+            "value": "待問答確認所有、持有、授權或其他權利關係",
+            "provenance": "SYSTEM:GATE1",
+            "status": "UNKNOWN",
+            "confidence": 0.0
+          },
+          {
+            "fact_id": "F-CAUSATION",
+            "category": "causation",
+            "value": "待問答確認",
+            "provenance": "SYSTEM:GATE1",
+            "status": "UNKNOWN",
+            "confidence": 0.0
+          },
+          {
+            "fact_id": "F-EVIDENCE",
+            "category": "evidence",
+            "value": "待問答確認",
+            "provenance": "SYSTEM:GATE1",
+            "status": "UNKNOWN",
+            "confidence": 0.0
+          }
+        ],
+        "candidates": [
+          {
+            "candidate_id": "embezzlement",
+            "family_id": "property_possession_taking",
+            "label": "侵占（含侵占遺失物）",
+            "status": "NEEDS_FACTS",
+            "score": 35,
+            "supporting_facts": [
+              "文字線索：遺留"
+            ],
+            "supporting_fact_ids": [],
+            "contrary_facts": [
+              "新增事實涉及善意認知或返還行為，降低不法所有意圖線索"
+            ],
+            "contrary_fact_ids": [],
+            "missing_elements": [
+              "因合法原因持有他人之物",
+              "易持有為不法所有之侵占行為",
+              "為自己或第三人不法所有之意圖",
+              "未遂或既遂",
+              "公務上或因公益持有他人之物",
+              "侵占行為",
+              "不法所有意圖",
+              "業務上持有他人之物",
+              "持有與業務之關聯",
+              "侵占行為及不法所有意圖",
+              "遺失物、漂流物或其他離本人持有之物",
+              "取得與後續處分行為",
+              "侵占章基礎行為",
+              "第323條能量準動產適用情形",
+              "第324條親屬關係、免刑或告訴情形"
+            ],
+            "child_routes": [
+              {
+                "route_id": "embezzlement_335_general",
+                "name": "普通侵占",
+                "route_kind": "offense",
+                "route_resolution_status": "SNAPSHOT_CHILD_ROUTE",
+                "law_name": "中華民國刑法",
+                "article_no": "第335條",
+                "law_pcode": "C0000001",
+                "law_last_amended": "2026-07-22",
+                "law_effective_date": "NOT_SEPARATELY_REPORTED",
+                "law_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                "law_version_checked_at": "2026-10-28T00:00:00+08:00",
+                "article_verification_status": "OFFICIAL_CURRENT_ARTICLE_EXISTS",
+                "article_verified_at": "2026-10-28T00:00:00+08:00",
+                "source_version": "5e3de59047857e1a",
+                "fact_elements": [
+                  "因合法原因持有他人之物",
+                  "易持有為不法所有之侵占行為",
+                  "為自己或第三人不法所有之意圖",
+                  "未遂或既遂"
+                ],
+                "correction_status": "UNCHANGED_SNAPSHOT",
+                "correction_reason": "",
+                "constitutional_status": "NOT_APPLICABLE",
+                "constitutional_decision": "",
+                "constitutional_source_url": "",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "status": "NEEDS_FACTS",
+                "element_gaps": [
+                  {
+                    "element": "因合法原因持有他人之物",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_335_general:802e5ec7b2ce88bc",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "易持有為不法所有之侵占行為",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_335_general:69d167fbe1dca46a",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "為自己或第三人不法所有之意圖",
+                    "element_type": "mental_state",
+                    "route_element_key": "embezzlement_335_general:c4a7d001a9013d20",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "未遂或既遂",
+                    "element_type": "result",
+                    "route_element_key": "embezzlement_335_general:0c3c1a676d09ff08",
+                    "status": "UNKNOWN"
+                  }
+                ]
+              },
+              {
+                "route_id": "embezzlement_336_1_public",
+                "name": "侵占公務或公益持有物",
+                "route_kind": "offense",
+                "route_resolution_status": "SNAPSHOT_CHILD_ROUTE",
+                "law_name": "中華民國刑法",
+                "article_no": "第336條第1項",
+                "law_pcode": "C0000001",
+                "law_last_amended": "2026-07-22",
+                "law_effective_date": "NOT_SEPARATELY_REPORTED",
+                "law_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                "law_version_checked_at": "2026-10-28T00:00:00+08:00",
+                "article_verification_status": "OFFICIAL_CURRENT_ARTICLE_EXISTS",
+                "article_verified_at": "2026-10-28T00:00:00+08:00",
+                "source_version": "5e3de59047857e1a",
+                "fact_elements": [
+                  "公務上或因公益持有他人之物",
+                  "侵占行為",
+                  "不法所有意圖",
+                  "未遂或既遂"
+                ],
+                "correction_status": "UNCHANGED_SNAPSHOT",
+                "correction_reason": "",
+                "constitutional_status": "NOT_APPLICABLE",
+                "constitutional_decision": "",
+                "constitutional_source_url": "",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "status": "NEEDS_FACTS",
+                "element_gaps": [
+                  {
+                    "element": "公務上或因公益持有他人之物",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_336_1_public:cc688ae6021263c2",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "侵占行為",
+                    "element_type": "conduct",
+                    "route_element_key": "embezzlement_336_1_public:2da3b7abe0fd61f8",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "不法所有意圖",
+                    "element_type": "mental_state",
+                    "route_element_key": "embezzlement_336_1_public:78927d8ee56d57fb",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "未遂或既遂",
+                    "element_type": "result",
+                    "route_element_key": "embezzlement_336_1_public:0c3c1a676d09ff08",
+                    "status": "UNKNOWN"
+                  }
+                ]
+              },
+              {
+                "route_id": "embezzlement_336_2_business",
+                "name": "業務侵占",
+                "route_kind": "offense",
+                "route_resolution_status": "SNAPSHOT_CHILD_ROUTE",
+                "law_name": "中華民國刑法",
+                "article_no": "第336條第2項",
+                "law_pcode": "C0000001",
+                "law_last_amended": "2026-07-22",
+                "law_effective_date": "NOT_SEPARATELY_REPORTED",
+                "law_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                "law_version_checked_at": "2026-10-28T00:00:00+08:00",
+                "article_verification_status": "OFFICIAL_CURRENT_ARTICLE_EXISTS",
+                "article_verified_at": "2026-10-28T00:00:00+08:00",
+                "source_version": "5e3de59047857e1a",
+                "fact_elements": [
+                  "業務上持有他人之物",
+                  "持有與業務之關聯",
+                  "侵占行為及不法所有意圖",
+                  "未遂或既遂"
+                ],
+                "correction_status": "UNCHANGED_SNAPSHOT",
+                "correction_reason": "",
+                "constitutional_status": "NOT_APPLICABLE",
+                "constitutional_decision": "",
+                "constitutional_source_url": "",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "status": "NEEDS_FACTS",
+                "element_gaps": [
+                  {
+                    "element": "業務上持有他人之物",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_336_2_business:b7b32dad284bfa65",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "持有與業務之關聯",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_336_2_business:19d7e5200e896bb3",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "侵占行為及不法所有意圖",
+                    "element_type": "mental_state",
+                    "route_element_key": "embezzlement_336_2_business:2ca35b2322a8575b",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "未遂或既遂",
+                    "element_type": "result",
+                    "route_element_key": "embezzlement_336_2_business:0c3c1a676d09ff08",
+                    "status": "UNKNOWN"
+                  }
+                ]
+              },
+              {
+                "route_id": "embezzlement_337_lost_property",
+                "name": "侵占遺失物等離本人持有之物",
+                "route_kind": "offense",
+                "route_resolution_status": "SNAPSHOT_CHILD_ROUTE",
+                "law_name": "中華民國刑法",
+                "article_no": "第337條",
+                "law_pcode": "C0000001",
+                "law_last_amended": "2026-07-22",
+                "law_effective_date": "NOT_SEPARATELY_REPORTED",
+                "law_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                "law_version_checked_at": "2026-10-28T00:00:00+08:00",
+                "article_verification_status": "OFFICIAL_CURRENT_ARTICLE_EXISTS",
+                "article_verified_at": "2026-10-28T00:00:00+08:00",
+                "source_version": "5e3de59047857e1a",
+                "fact_elements": [
+                  "遺失物、漂流物或其他離本人持有之物",
+                  "取得與後續處分行為",
+                  "為自己或第三人不法所有之意圖"
+                ],
+                "correction_status": "UNCHANGED_SNAPSHOT",
+                "correction_reason": "",
+                "constitutional_status": "NOT_APPLICABLE",
+                "constitutional_decision": "",
+                "constitutional_source_url": "",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "status": "NEEDS_FACTS",
+                "element_gaps": [
+                  {
+                    "element": "遺失物、漂流物或其他離本人持有之物",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_337_lost_property:93a4de557ede1d0e",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "取得與後續處分行為",
+                    "element_type": "conduct",
+                    "route_element_key": "embezzlement_337_lost_property:a0a5e9100bfe1fe1",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "為自己或第三人不法所有之意圖",
+                    "element_type": "mental_state",
+                    "route_element_key": "embezzlement_337_lost_property:c4a7d001a9013d20",
+                    "status": "UNKNOWN"
+                  }
+                ]
+              },
+              {
+                "route_id": "embezzlement_338_applicable",
+                "name": "能量準用及親屬減免告訴條件",
+                "route_kind": "procedure",
+                "route_resolution_status": "SNAPSHOT_CHILD_ROUTE",
+                "law_name": "中華民國刑法",
+                "article_no": "第338條",
+                "law_pcode": "C0000001",
+                "law_last_amended": "2026-07-22",
+                "law_effective_date": "NOT_SEPARATELY_REPORTED",
+                "law_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                "law_version_checked_at": "2026-10-28T00:00:00+08:00",
+                "article_verification_status": "OFFICIAL_CURRENT_ARTICLE_EXISTS",
+                "article_verified_at": "2026-10-28T00:00:00+08:00",
+                "source_version": "5e3de59047857e1a",
+                "fact_elements": [
+                  "侵占章基礎行為",
+                  "第323條能量準動產適用情形",
+                  "第324條親屬關係、免刑或告訴情形"
+                ],
+                "correction_status": "UNCHANGED_SNAPSHOT",
+                "correction_reason": "",
+                "constitutional_status": "NOT_APPLICABLE",
+                "constitutional_decision": "",
+                "constitutional_source_url": "",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "status": "NEEDS_FACTS",
+                "element_gaps": [
+                  {
+                    "element": "侵占章基礎行為",
+                    "element_type": "conduct",
+                    "route_element_key": "embezzlement_338_applicable:67f5b71495a69661",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "第323條能量準動產適用情形",
+                    "element_type": "object",
+                    "route_element_key": "embezzlement_338_applicable:6b0fdd79b579f200",
+                    "status": "UNKNOWN"
+                  },
+                  {
+                    "element": "第324條親屬關係、免刑或告訴情形",
+                    "element_type": "relationship",
+                    "route_element_key": "embezzlement_338_applicable:2c1ab988065e6c45",
+                    "status": "UNKNOWN"
+                  }
+                ]
+              }
+            ],
+            "source_status": "HUMAN_REVIEW_REQUIRED",
+            "candidate_role": "UNRESOLVED",
+            "legal_basis": {
+              "law_name": "中華民國刑法",
+              "article_no": "第335條",
+              "source_url": "",
+              "source_version": "5e3de59047857e1a",
+              "verification_status": "OFFICIAL_CURRENT_ARTICLE_EXISTS"
+            },
+            "core_issue_ids": [
+              "LOST_OR_OUT_OF_POSSESSION",
+              "UNLAWFUL_OWNERSHIP_INTENT",
+              "POST_TAKING_HANDLING"
+            ],
+            "element_assessments": [
+              {
+                "element_id": "embezzlement_335_general:802e5ec7b2ce88bc",
+                "element_text": "因合法原因持有他人之物",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_335_general:69d167fbe1dca46a",
+                "element_text": "易持有為不法所有之侵占行為",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_335_general:c4a7d001a9013d20",
+                "element_text": "為自己或第三人不法所有之意圖",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_335_general:0c3c1a676d09ff08",
+                "element_text": "未遂或既遂",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_1_public:cc688ae6021263c2",
+                "element_text": "公務上或因公益持有他人之物",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_1_public:2da3b7abe0fd61f8",
+                "element_text": "侵占行為",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_1_public:78927d8ee56d57fb",
+                "element_text": "不法所有意圖",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_1_public:0c3c1a676d09ff08",
+                "element_text": "未遂或既遂",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_2_business:b7b32dad284bfa65",
+                "element_text": "業務上持有他人之物",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_2_business:19d7e5200e896bb3",
+                "element_text": "持有與業務之關聯",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_2_business:2ca35b2322a8575b",
+                "element_text": "侵占行為及不法所有意圖",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_336_2_business:0c3c1a676d09ff08",
+                "element_text": "未遂或既遂",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_337_lost_property:93a4de557ede1d0e",
+                "element_text": "遺失物、漂流物或其他離本人持有之物",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_337_lost_property:a0a5e9100bfe1fe1",
+                "element_text": "取得與後續處分行為",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_337_lost_property:c4a7d001a9013d20",
+                "element_text": "為自己或第三人不法所有之意圖",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_338_applicable:67f5b71495a69661",
+                "element_text": "侵占章基礎行為",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_338_applicable:6b0fdd79b579f200",
+                "element_text": "第323條能量準動產適用情形",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              },
+              {
+                "element_id": "embezzlement_338_applicable:2c1ab988065e6c45",
+                "element_text": "第324條親屬關係、免刑或告訴情形",
+                "status": "UNKNOWN",
+                "supporting_fact_ids": [],
+                "contrary_fact_ids": [],
+                "evidence_ids": [],
+                "issue_ids": [
+                  "LOST_OR_OUT_OF_POSSESSION",
+                  "UNLAWFUL_OWNERSHIP_INTENT",
+                  "POST_TAKING_HANDLING"
+                ]
+              }
+            ],
+            "explanation": "依已確認文字線索暫列，須由後續中性問句確認或排除。",
+            "selected_by_user": false
+          }
+        ]
+      }
+    },
+    "legal-case-web": {
+      "metadata": {
+        "path": "D:\\工作用\\judicial1\\legal-case-web",
+        "head": "e5d8e95ea59292e5464114ba6b804165e9511ce8",
+        "branch": "codex/sim-case-remediation",
+        "status": "M ../criminal-investigation-assistant/app/domain.py\n M ../criminal-investigation-assistant/app/static/app.js\n M ../criminal-investigation-assistant/app/static/index.html\n M ../criminal-investigation-assistant/app/static/styles.css\n M ../criminal-investigation-assistant/app/storage.py\n M README.md\n M app/case_identity.py\n M app/documents.py\n M app/law_reference.py\n M app/law_version.py\n M app/markdown_questions.py\n M app/questions.py\n M app/roc_time.py\n M app/rules.py\n M app/section_questions.py\n M app/server.py\n M app/static/app.js\n M app/static/index.html\n M app/static/styles.css\n M app/workflow.py\n M data/source_manifest.json\n M docs/AI_EXECUTION_PROTOCOL.md\n M docs/LIFECYCLE_RECORD.md\n M docs/OFFENSE_QUESTION_WORK_QUEUE.md\n M docs/QUESTION_DESIGN_AND_USE.md\n M docs/QUESTION_WORK_ITEM.md\n M docs/REFERENCE_STANDARD_LIBRARY.md\n M docs/evidence/hg_lr_01_provider_contract_review.json\n M docs/evidence/hg_lr_02_privacy_security_review.json\n M docs/evidence/legal_retrieval_human_gate_packet.json\n M review/xlsm_review_draft.md\n M tests/test_candidate_semantic_safety.py\n M tests/test_case_identity_and_brief_template.py\n M tests/test_documents.py\n M tests/test_e2e_flow.py\n M tests/test_frontend_api_errors.mjs\n M tests/test_gate2_legal_route_selection.py\n M tests/test_legal_retrieval_human_gate_packet.py\n M tests/test_offense_linkage_poc.py\n M tests/test_p0_confirmed_rules.py\n M tests/test_question_logic.py\n M tests/test_question_work_item_contract.py\n M tests/test_real_cases.py\n M tests/test_rules.py\n M tests/test_virtual_case_wallet_atm.py\n M tests/test_workflow.py\n M ../questions/index.md\n M ../questions/robbery.md\n M ../questions/theft.md\n M ../新套表.xlsm\n?? ../._verify_render_20261026_2/\n?? ../._verify_render_20261026_3/\n?? ../LEGAL_ROOT_CAUSE_AUDIT.md\n?? ../LEGAL_ROOT_CAUSE_TRACE.md\n?? ../LEGAL_TRACE_DIFF_TRACE.json\n?? ../LEGAL_TRACE_REPLAY_REPORT.md\n?? ../LEGAL_TRACE_REPLAY_TRACE.json\n?? ../criminal-investigation-assistant/docs/audit/IMPLEMENTATION_REPORT.md\n?? ../criminal-investigation-assistant/docs/audit/LEGAL_REASONING_AUDIT.md\n?? ../criminal-investigation-assistant/docs/audit/OPEN_ISSUES.md\n?? ../criminal-investigation-assistant/docs/audit/TEST_RESULTS.md\n?? ../criminal-investigation-assistant/tests/test_sim_case_remediation.py\n?? ../criminal-investigation-assistant/tools/legal_reasoning_audit.py\n?? data/question_family_catalog.json\n?? data/question_family_fixtures/\n?? data/question_family_master/\n?? docs/CURRENT_HANDOFF_2026-10-26.md\n?? docs/QUESTION_FAMILY_ARCHITECTURE_DRAFT.md\n?? docs/QUESTION_FAMILY_TODO.md\n?? docs/evidence/injury_family_legal_verification_20261027.json\n?? docs/evidence/property_family_legal_verification_20261027.json\n?? docs/evidence/property_offense_legal_verification_20261026.json\n?? docs/evidence/question_route_archive_manifest.json\n?? docs/evidence/question_route_archives/\n?? docs/family_templates/\n?? review/property-taking-issue-matrix.md\n?? tests/test_question_family_catalog.py\n?? tools/question_common_compiler.py\n?? tools/question_family_compiler.py\n?? tools/question_family_docs.py\n?? ../tools/\n?? ../傷害家族問句樣板.md\n?? ../常用法條.txt\n?? ../新套表_補齊罪名筆錄_20261026.xlsm",
+        "files": {
+          "app/rules.py": "240bb3bc7aa468ec03bc67ed137713c1eb7278f77ea49044102bacdb44a97aa4",
+          "app/workflow.py": "be721c613c24b28efe11c790743247cc73bc6432e24bc87cf75859da05924232",
+          "data/question_bank.json": "d16c2d95dbab2fc89647c115720ebae74ca8e1c086b4cfa096de4d9246d179f4"
+        }
+      },
+      "replay": {
+        "execution": "PASS",
+        "entry": "app.rules.analyze_gate1(use_ai=False) -> candidate_offenses -> classify_candidates",
+        "gate1": {
+          "people": [],
+          "events": [
+            "甲表示手機為其所有。",
+            "甲表示曾將手機暫放在便利商店櫃檯旁。",
+            "手機是否仍在甲的持有範圍：未確認。",
+            "乙承認拿取手機。",
+            "乙表示自己以為手機是他人遺留、不要的物品。",
+            "乙是否具有不法所有意圖：未確認。",
+            "手機目前尚未尋獲。"
+          ],
+          "segmentation_source": "rules",
+          "times": [
+            "115年10月28日10時00分"
+          ],
+          "places": [
+            "便利商店櫃檯旁"
+          ],
+          "objects": [],
+          "results": [],
+          "evidence": [],
+          "evidence_leads": [],
+          "verified_evidence": [],
+          "consent_states": [],
+          "behaviors": [],
+          "causation": "UNKNOWN",
+          "causal_edges": [],
+          "legal_characterizations": [],
+          "person_attributes": [],
+          "unknowns": [
+            "行為人",
+            "行為方式",
+            "結果與行為間關係",
+            "可供查證的證據"
+          ],
+          "facts": [
+            {
+              "fact_id": "fact:70ce050f598bfc1f3511",
+              "fact_key": "",
+              "value": "甲表示手機為其所有。",
+              "source_ref": "intake.summary",
+              "source_excerpt": "甲表示手機為其所有。",
+              "source_start": 0,
+              "source_end": 10,
+              "normalized_text": "甲表示手機為其所有。",
+              "subject": "",
+              "action": "",
+              "object": "",
+              "recipient": "",
+              "time": "",
+              "place": "",
+              "possession_state": "",
+              "knowledge_or_intent": "",
+              "result": "",
+              "causal_relation": "",
+              "consent_state": "",
+              "event_id": "event:unassigned",
+              "role": "",
+              "person_code": "",
+              "alias": "",
+              "subtype": "",
+              "assertion_status": "EXPLICIT_SOURCE_ASSERTION",
+              "evidence_refs": [],
+              "fact_status": "當事人陳述",
+              "machine_status": "FACT",
+              "review_status": "HUMAN_REVIEW_REQUIRED"
+            },
+            {
+              "fact_id": "fact:8c985af057a5099f7924",
+              "fact_key": "",
+              "value": "甲表示曾將手機暫放在便利商店櫃檯旁。",
+              "source_ref": "intake.summary",
+              "source_excerpt": "甲表示曾將手機暫放在便利商店櫃檯旁。",
+              "source_start": 10,
+              "source_end": 28,
+              "normalized_text": "甲表示曾將手機暫放在便利商店櫃檯旁。",
+              "subject": "",
+              "action": "",
+              "object": "",
+              "recipient": "",
+              "time": "",
+              "place": "",
+              "possession_state": "",
+              "knowledge_or_intent": "",
+              "result": "",
+              "causal_relation": "",
+              "consent_state": "",
+              "event_id": "event:unassigned",
+              "role": "",
+              "person_code": "",
+              "alias": "",
+              "subtype": "",
+              "assertion_status": "EXPLICIT_SOURCE_ASSERTION",
+              "evidence_refs": [],
+              "fact_status": "當事人陳述",
+              "machine_status": "FACT",
+              "review_status": "HUMAN_REVIEW_REQUIRED"
+            },
+            {
+              "fact_id": "fact:28a2723936dcc97b64ca",
+              "fact_key": "",
+              "value": "手機是否仍在甲的持有範圍：未確認。",
+              "source_ref": "intake.summary",
+              "source_excerpt": "手機是否仍在甲的持有範圍：未確認。",
+              "source_start": 28,
+              "source_end": 45,
+              "normalized_text": "手機是否仍在甲的持有範圍：未確認。",
+              "subject": "",
+              "action": "",
+              "object": "",
+              "recipient": "",
+              "time": "",
+              "place": "",
+              "possession_state": "",
+              "knowledge_or_intent": "",
+              "result": "",
+              "causal_relation": "",
+              "consent_state": "",
+              "event_id": "event:unassigned",
+              "role": "",
+              "person_code": "",
+              "alias": "",
+              "subtype": "",
+              "assertion_status": "EXPLICIT_SOURCE_ASSERTION",
+              "evidence_refs": [],
+              "fact_status": "當事人陳述",
+              "machine_status": "FACT",
+              "review_status": "HUMAN_REVIEW_REQUIRED"
+            },
+            {
+              "fact_id": "fact:35db26225a68f676b1d2",
+              "fact_key": "",
+              "value": "乙承認拿取手機。",
+              "source_ref": "intake.summary",
+              "source_excerpt": "乙承認拿取手機。",
+              "source_start": 45,
+              "source_end": 53,
+              "normalized_text": "乙承認拿取手機。",
+              "subject": "",
+              "action": "",
+              "object": "",
+              "recipient": "",
+              "time": "",
+              "place": "",
+              "possession_state": "",
+              "knowledge_or_intent": "",
+              "result": "",
+              "causal_relation": "",
+              "consent_state": "",
+              "event_id": "event:unassigned",
+              "role": "",
+              "person_code": "",
+              "alias": "",
+              "subtype": "",
+              "assertion_status": "EXPLICIT_SOURCE_ASSERTION",
+              "evidence_refs": [],
+              "fact_status": "當事人陳述",
+              "machine_status": "FACT",
+              "review_status": "HUMAN_REVIEW_REQUIRED"
+            },
+            {
+              "fact_id": "fact:4c21e81e97219c0a988b",
+              "fact_key": "",
+              "value": "乙表示自己以為手機是他人遺留、不要的物品。",
+              "source_ref": "intake.summary",
+              "source_excerpt": "乙表示自己以為手機是他人遺留、不要的物品。",
+              "source_start": 53,
+              "source_end": 74,
+              "normalized_text": "乙表示自己以為手機是他人遺留、不要的物品。",
+              "subject": "",
+              "action": "",
+              "object": "",
+              "recipient": "",
+              "time": "",
+              "place": "",
+              "possession_state": "",
+              "knowledge_or_intent": "",
+              "result": "",
+              "causal_relation": "",
+              "consent_state": "",
+              "event_id": "event:unassigned",
+              "role": "",
+              "person_code": "",
+              "alias": "",
+              "subtype": "",
+              "assertion_status": "EXPLICIT_SOURCE_ASSERTION",
+              "evidence_refs": [],
+              "fact_status": "當事人陳述",
+              "machine_status": "FACT",
+              "review_status": "HUMAN_REVIEW_REQUIRED"
+            },
+            {
+              "fact_id": "fact:fb4b4eb6c3d9be84dd6e",
+              "fact_key": "",
+              "value": "乙是否具有不法所有意圖：未確認。",
+              "source_ref": "intake.summary",
+              "source_excerpt": "乙是否具有不法所有意圖：未確認。",
+              "source_start": 74,
+              "source_end": 90,
+              "normalized_text": "乙是否具有不法所有意圖：未確認。",
+              "subject": "",
+              "action": "",
+              "object": "",
+              "recipient": "",
+              "time": "",
+              "place": "",
+              "possession_state": "",
+              "knowledge_or_intent": "",
+              "result": "",
+              "causal_relation": "",
+              "consent_state": "",
+              "event_id": "event:unassigned",
+              "role": "",
+              "person_code": "",
+              "alias": "",
+              "subtype": "",
+              "assertion_status": "EXPLICIT_SOURCE_ASSERTION",
+              "evidence_refs": [],
+              "fact_status": "當事人陳述",
+              "machine_status": "FACT",
+              "review_status": "HUMAN_REVIEW_REQUIRED"
+            },
+            {
+              "fact_id": "fact:77a00cb921a752708086",
+              "fact_key": "",
+              "value": "手機目前尚未尋獲。",
+              "source_ref": "intake.summary",
+              "source_excerpt": "手機目前尚未尋獲。",
+              "source_start": 90,
+              "source_end": 99,
+              "normalized_text": "手機目前尚未尋獲。",
+              "subject": "",
+              "action": "",
+              "object": "",
+              "recipient": "",
+              "time": "",
+              "place": "",
+              "possession_state": "",
+              "knowledge_or_intent": "",
+              "result": "",
+              "causal_relation": "",
+              "consent_state": "",
+              "event_id": "event:unassigned",
+              "role": "",
+              "person_code": "",
+              "alias": "",
+              "subtype": "",
+              "assertion_status": "EXPLICIT_SOURCE_ASSERTION",
+              "evidence_refs": [],
+              "fact_status": "當事人陳述",
+              "machine_status": "FACT",
+              "review_status": "HUMAN_REVIEW_REQUIRED"
+            },
+            {
+              "fact_id": "fact:c7eccc0de4b82b58d600",
+              "fact_key": "",
+              "value": "UNKNOWN",
+              "source_ref": "intake.summary",
+              "source_excerpt": "",
+              "source_start": null,
+              "source_end": null,
+              "normalized_text": "行為人",
+              "subject": "",
+              "action": "",
+              "object": "",
+              "recipient": "",
+              "time": "",
+              "place": "",
+              "possession_state": "",
+              "knowledge_or_intent": "",
+              "result": "",
+              "causal_relation": "",
+              "consent_state": "",
+              "event_id": "event:unassigned",
+              "role": "",
+              "person_code": "",
+              "alias": "",
+              "subtype": "",
+              "assertion_status": "UNKNOWN",
+              "evidence_refs": [],
+              "fact_status": "未知",
+              "machine_status": "UNKNOWN",
+              "review_status": "HUMAN_REVIEW_REQUIRED"
+            },
+            {
+              "fact_id": "fact:c7eccc0de4b82b58d600",
+              "fact_key": "",
+              "value": "UNKNOWN",
+              "source_ref": "intake.summary",
+              "source_excerpt": "",
+              "source_start": null,
+              "source_end": null,
+              "normalized_text": "行為方式",
+              "subject": "",
+              "action": "",
+              "object": "",
+              "recipient": "",
+              "time": "",
+              "place": "",
+              "possession_state": "",
+              "knowledge_or_intent": "",
+              "result": "",
+              "causal_relation": "",
+              "consent_state": "",
+              "event_id": "event:unassigned",
+              "role": "",
+              "person_code": "",
+              "alias": "",
+              "subtype": "",
+              "assertion_status": "UNKNOWN",
+              "evidence_refs": [],
+              "fact_status": "未知",
+              "machine_status": "UNKNOWN",
+              "review_status": "HUMAN_REVIEW_REQUIRED"
+            },
+            {
+              "fact_id": "fact:c7eccc0de4b82b58d600",
+              "fact_key": "",
+              "value": "UNKNOWN",
+              "source_ref": "intake.summary",
+              "source_excerpt": "",
+              "source_start": null,
+              "source_end": null,
+              "normalized_text": "結果與行為間關係",
+              "subject": "",
+              "action": "",
+              "object": "",
+              "recipient": "",
+              "time": "",
+              "place": "",
+              "possession_state": "",
+              "knowledge_or_intent": "",
+              "result": "",
+              "causal_relation": "",
+              "consent_state": "",
+              "event_id": "event:unassigned",
+              "role": "",
+              "person_code": "",
+              "alias": "",
+              "subtype": "",
+              "assertion_status": "UNKNOWN",
+              "evidence_refs": [],
+              "fact_status": "未知",
+              "machine_status": "UNKNOWN",
+              "review_status": "HUMAN_REVIEW_REQUIRED"
+            },
+            {
+              "fact_id": "fact:c7eccc0de4b82b58d600",
+              "fact_key": "",
+              "value": "UNKNOWN",
+              "source_ref": "intake.summary",
+              "source_excerpt": "",
+              "source_start": null,
+              "source_end": null,
+              "normalized_text": "可供查證的證據",
+              "subject": "",
+              "action": "",
+              "object": "",
+              "recipient": "",
+              "time": "",
+              "place": "",
+              "possession_state": "",
+              "knowledge_or_intent": "",
+              "result": "",
+              "causal_relation": "",
+              "consent_state": "",
+              "event_id": "event:unassigned",
+              "role": "",
+              "person_code": "",
+              "alias": "",
+              "subtype": "",
+              "assertion_status": "UNKNOWN",
+              "evidence_refs": [],
+              "fact_status": "未知",
+              "machine_status": "UNKNOWN",
+              "review_status": "HUMAN_REVIEW_REQUIRED"
+            }
+          ],
+          "review_status": "HUMAN_REVIEW_REQUIRED"
+        },
+        "raw_candidates": [
+          {
+            "id": "theft",
+            "candidate_id": "candidate:theft",
+            "name": "竊盜",
+            "matched_terms": [
+              "取走他人動產情境"
+            ],
+            "status": "NEED_REVIEW",
+            "notice": "僅為規則式候選，不代表犯罪成立。",
+            "inclusion_reason": "關鍵詞提示：取走他人動產情境；摘要對「竊取他人動產」3/4 個構成要件有可回查原文；仍僅為候選分析方向。",
+            "reservation_reason": "結構化事實尚待補問：未遂或既遂",
+            "supporting_fact_refs": [
+              "fact:70ce050f598bfc1f3511",
+              "fact:8c985af057a5099f7924",
+              "fact:28a2723936dcc97b64ca",
+              "fact:35db26225a68f676b1d2",
+              "fact:4c21e81e97219c0a988b",
+              "fact:77a00cb921a752708086",
+              "fact:fb4b4eb6c3d9be84dd6e"
+            ],
+            "contradicting_fact_refs": [],
+            "unknown_elements": [
+              "未遂或既遂"
+            ],
+            "element_model_status": "SOURCE_EVIDENCE_MATRIX",
+            "route_type": "substantive",
+            "crosswalk_status": "PARTIAL_SCOPE",
+            "legal_routes": [
+              {
+                "id": "theft_320_1_movable",
+                "route_kind": "offense",
+                "law_name": "中華民國刑法",
+                "article_no": "第320條第1項",
+                "name": "竊取他人動產",
+                "fact_elements": [
+                  "他人動產及原持有狀態",
+                  "未經同意竊取並破壞原持有",
+                  "為自己或第三人不法所有之意圖",
+                  "未遂或既遂"
+                ],
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "legal_verification": {
+                  "evidence_file": "property_offense_legal_verification_20261026.json",
+                  "verification_status": "HUMAN_REVIEW_REQUIRED",
+                  "verified_on": "2026-10-26",
+                  "article_no": "第320條第1項",
+                  "verified_rule": "意圖為自己或第三人不法所有，竊取他人動產；另須區分未遂或既遂。",
+                  "question_focus": [
+                    "原持有人是否仍支配管領",
+                    "是否未經同意取走",
+                    "不法所有意圖",
+                    "取得及未遂既遂經過"
+                  ],
+                  "judicial_reference": null,
+                  "statute_source": {
+                    "law_name": "中華民國刑法",
+                    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                    "official_web_checked": true,
+                    "legal_mcp_checked": true,
+                    "mcp_dataset_version": "2026-10-16",
+                    "law_modified_date": "2026-07-22",
+                    "historical_law_warning": "以上為現行條文；行為時法仍須依官方沿革逐案查對。"
+                  }
+                }
+              },
+              {
+                "id": "theft_320_2_real_estate",
+                "route_kind": "offense",
+                "law_name": "中華民國刑法",
+                "article_no": "第320條第2項",
+                "name": "竊佔他人不動產",
+                "fact_elements": [
+                  "他人不動產及權利使用狀態",
+                  "排除權利人而建立占有支配之行為",
+                  "為自己或第三人不法利益之意圖",
+                  "未遂或既遂"
+                ],
+                "review_status": "HUMAN_REVIEW_REQUIRED"
+              },
+              {
+                "id": "theft_323_energy",
+                "route_kind": "definition",
+                "law_name": "中華民國刑法",
+                "article_no": "第323條",
+                "name": "電能熱能等能量準動產",
+                "fact_elements": [
+                  "電能、熱能或其他能量",
+                  "與竊盜章基礎行為之關聯",
+                  "計量、來源及控制方式"
+                ],
+                "review_status": "HUMAN_REVIEW_REQUIRED"
+              },
+              {
+                "id": "theft_324_relative",
+                "route_kind": "procedure",
+                "law_name": "中華民國刑法",
+                "article_no": "第324條",
+                "name": "親屬間竊盜減免與告訴條件",
+                "fact_elements": [
+                  "竊盜章基礎行為",
+                  "直系血親、配偶、同財共居或其他法定親屬關係",
+                  "免刑或告訴意思與提出情形"
+                ],
+                "review_status": "HUMAN_REVIEW_REQUIRED"
+              }
+            ],
+            "excluded_legal_routes": [
+              {
+                "id": "theft_322_deleted",
+                "article_no": "第322條",
+                "status": "DELETED",
+                "reason": "條文已刪除，不得建立現行候選。",
+                "source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001"
+              }
+            ],
+            "legal_route_selection_status": "OPTIONAL",
+            "source": {
+              "label": "中華民國刑法第320條、第323條至第324條（2026-10-13 官方網站複核；離線 dataset 2026-10-02）",
+              "status": "VERIFIED_CURRENT",
+              "law_name": "中華民國刑法",
+              "article_no": "第320條",
+              "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+              "law_modified_date": "2026-07-22",
+              "dataset_version": "2026-10-02",
+              "verified_at": "2026-10-12T01:13:23.119734+00:00",
+              "verification_note": "現行法核實；行為時法（歷史版本）仍須由承辦人依官方修正歷程確認。"
+            },
+            "distinguishing_question_ids": [
+              "T-D-01",
+              "T-D-02",
+              "T-D-03",
+              "T-D-04",
+              "T-D-05"
+            ],
+            "required_evidence_question_ids": [
+              "T-R-01",
+              "T-R-02",
+              "T-R-03",
+              "T-R-04",
+              "T-R-05"
+            ],
+            "competition_analysis": "NOT_ASSESSED",
+            "prohibited_conclusions": [
+              "犯罪成立",
+              "故意成立",
+              "因果關係成立",
+              "競合成立"
+            ],
+            "version": "VERIFIED_CURRENT",
+            "selection_origin": "keyword_hint",
+            "machine_effects": [],
+            "route_element_matrix": [
+              {
+                "route_id": "theft_320_1_movable",
+                "route_name": "竊取他人動產",
+                "route_kind": "offense",
+                "law_name": "中華民國刑法",
+                "article_no": "第320條第1項",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "supported_count": 3,
+                "not_checkable_count": 0,
+                "total_count": 4,
+                "supporting_fact_refs": [
+                  "fact:70ce050f598bfc1f3511",
+                  "fact:8c985af057a5099f7924",
+                  "fact:28a2723936dcc97b64ca",
+                  "fact:35db26225a68f676b1d2",
+                  "fact:4c21e81e97219c0a988b",
+                  "fact:77a00cb921a752708086",
+                  "fact:fb4b4eb6c3d9be84dd6e"
+                ],
+                "event_ids": [
+                  "event:unassigned"
+                ],
+                "unknown_elements": [
+                  "未遂或既遂"
+                ],
+                "elements": [
+                  {
+                    "element": "他人動產及原持有狀態",
+                    "status": "SOURCE_SUPPORTED",
+                    "supporting_fact_refs": [
+                      "fact:70ce050f598bfc1f3511",
+                      "fact:8c985af057a5099f7924",
+                      "fact:28a2723936dcc97b64ca",
+                      "fact:35db26225a68f676b1d2",
+                      "fact:4c21e81e97219c0a988b",
+                      "fact:77a00cb921a752708086",
+                      "fact:fb4b4eb6c3d9be84dd6e"
+                    ],
+                    "source_excerpts": [
+                      "甲表示手機為其所有。",
+                      "甲表示曾將手機暫放在便利商店櫃檯旁。",
+                      "手機是否仍在甲的持有範圍：未確認。"
+                    ],
+                    "matched_signals": [
+                      "手機",
+                      "物品",
+                      "所有"
+                    ]
+                  },
+                  {
+                    "element": "未經同意竊取並破壞原持有",
+                    "status": "SOURCE_SUPPORTED",
+                    "supporting_fact_refs": [
+                      "fact:35db26225a68f676b1d2"
+                    ],
+                    "source_excerpts": [
+                      "乙承認拿取手機。"
+                    ],
+                    "matched_signals": [
+                      "拿取"
+                    ]
+                  },
+                  {
+                    "element": "為自己或第三人不法所有之意圖",
+                    "status": "SOURCE_SUPPORTED",
+                    "supporting_fact_refs": [
+                      "fact:fb4b4eb6c3d9be84dd6e"
+                    ],
+                    "source_excerpts": [
+                      "乙是否具有不法所有意圖：未確認。"
+                    ],
+                    "matched_signals": [
+                      "不法所有"
+                    ]
+                  },
+                  {
+                    "element": "未遂或既遂",
+                    "status": "ABSENT",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  }
+                ]
+              },
+              {
+                "route_id": "theft_323_energy",
+                "route_name": "電能熱能等能量準動產",
+                "route_kind": "definition",
+                "law_name": "中華民國刑法",
+                "article_no": "第323條",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "supported_count": 0,
+                "not_checkable_count": 3,
+                "total_count": 3,
+                "supporting_fact_refs": [],
+                "event_ids": [],
+                "unknown_elements": [
+                  "電能、熱能或其他能量",
+                  "與竊盜章基礎行為之關聯",
+                  "計量、來源及控制方式"
+                ],
+                "elements": [
+                  {
+                    "element": "電能、熱能或其他能量",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "與竊盜章基礎行為之關聯",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "計量、來源及控制方式",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  }
+                ]
+              },
+              {
+                "route_id": "theft_324_relative",
+                "route_name": "親屬間竊盜減免與告訴條件",
+                "route_kind": "procedure",
+                "law_name": "中華民國刑法",
+                "article_no": "第324條",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "supported_count": 0,
+                "not_checkable_count": 3,
+                "total_count": 3,
+                "supporting_fact_refs": [],
+                "event_ids": [],
+                "unknown_elements": [
+                  "竊盜章基礎行為",
+                  "直系血親、配偶、同財共居或其他法定親屬關係",
+                  "免刑或告訴意思與提出情形"
+                ],
+                "elements": [
+                  {
+                    "element": "竊盜章基礎行為",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "直系血親、配偶、同財共居或其他法定親屬關係",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "免刑或告訴意思與提出情形",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  }
+                ]
+              },
+              {
+                "route_id": "theft_320_2_real_estate",
+                "route_name": "竊佔他人不動產",
+                "route_kind": "offense",
+                "law_name": "中華民國刑法",
+                "article_no": "第320條第2項",
+                "review_status": "HUMAN_REVIEW_REQUIRED",
+                "supported_count": 0,
+                "not_checkable_count": 3,
+                "total_count": 4,
+                "supporting_fact_refs": [],
+                "event_ids": [],
+                "unknown_elements": [
+                  "他人不動產及權利使用狀態",
+                  "排除權利人而建立占有支配之行為",
+                  "為自己或第三人不法利益之意圖",
+                  "未遂或既遂"
+                ],
+                "elements": [
+                  {
+                    "element": "他人不動產及權利使用狀態",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "排除權利人而建立占有支配之行為",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "為自己或第三人不法利益之意圖",
+                    "status": "NOT_CHECKABLE",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  },
+                  {
+                    "element": "未遂或既遂",
+                    "status": "ABSENT",
+                    "supporting_fact_refs": [],
+                    "source_excerpts": [],
+                    "matched_signals": []
+                  }
+                ]
+              }
+            ],
+            "suggested_legal_route_ids": [
+              "theft_320_1_movable"
+            ],
+            "missing": [
+              "未遂或既遂"
+            ],
+            "candidate_eligibility": "ELIGIBLE_CANDIDATE",
+            "legal_route_states": {
+              "theft_320_1_movable": "ELIGIBLE_CANDIDATE",
+              "theft_323_energy": "HINT_ONLY",
+              "theft_324_relative": "HINT_ONLY",
+              "theft_320_2_real_estate": "HINT_ONLY"
+            },
+            "candidate_state": "NEED_REVIEW",
+            "unknown_fact_keys": [],
+            "status_reasons": []
+          }
+        ],
+        "classified": {
+          "candidates": [
+            {
+              "id": "theft",
+              "candidate_id": "candidate:theft",
+              "name": "竊盜",
+              "matched_terms": [
+                "取走他人動產情境"
+              ],
+              "status": "NEED_REVIEW",
+              "notice": "僅為規則式候選，不代表犯罪成立。",
+              "inclusion_reason": "關鍵詞提示：取走他人動產情境；摘要對「竊取他人動產」3/4 個構成要件有可回查原文；仍僅為候選分析方向。",
+              "reservation_reason": "結構化事實尚待補問：未遂或既遂",
+              "supporting_fact_refs": [
+                "fact:70ce050f598bfc1f3511",
+                "fact:8c985af057a5099f7924",
+                "fact:28a2723936dcc97b64ca",
+                "fact:35db26225a68f676b1d2",
+                "fact:4c21e81e97219c0a988b",
+                "fact:77a00cb921a752708086",
+                "fact:fb4b4eb6c3d9be84dd6e"
+              ],
+              "contradicting_fact_refs": [],
+              "unknown_elements": [
+                "未遂或既遂"
+              ],
+              "element_model_status": "SOURCE_EVIDENCE_MATRIX",
+              "route_type": "substantive",
+              "crosswalk_status": "PARTIAL_SCOPE",
+              "legal_routes": [
+                {
+                  "id": "theft_320_1_movable",
+                  "route_kind": "offense",
+                  "law_name": "中華民國刑法",
+                  "article_no": "第320條第1項",
+                  "name": "竊取他人動產",
+                  "fact_elements": [
+                    "他人動產及原持有狀態",
+                    "未經同意竊取並破壞原持有",
+                    "為自己或第三人不法所有之意圖",
+                    "未遂或既遂"
+                  ],
+                  "review_status": "HUMAN_REVIEW_REQUIRED",
+                  "legal_verification": {
+                    "evidence_file": "property_offense_legal_verification_20261026.json",
+                    "verification_status": "HUMAN_REVIEW_REQUIRED",
+                    "verified_on": "2026-10-26",
+                    "article_no": "第320條第1項",
+                    "verified_rule": "意圖為自己或第三人不法所有，竊取他人動產；另須區分未遂或既遂。",
+                    "question_focus": [
+                      "原持有人是否仍支配管領",
+                      "是否未經同意取走",
+                      "不法所有意圖",
+                      "取得及未遂既遂經過"
+                    ],
+                    "judicial_reference": null,
+                    "statute_source": {
+                      "law_name": "中華民國刑法",
+                      "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                      "official_web_checked": true,
+                      "legal_mcp_checked": true,
+                      "mcp_dataset_version": "2026-10-16",
+                      "law_modified_date": "2026-07-22",
+                      "historical_law_warning": "以上為現行條文；行為時法仍須依官方沿革逐案查對。"
+                    }
+                  }
+                },
+                {
+                  "id": "theft_320_2_real_estate",
+                  "route_kind": "offense",
+                  "law_name": "中華民國刑法",
+                  "article_no": "第320條第2項",
+                  "name": "竊佔他人不動產",
+                  "fact_elements": [
+                    "他人不動產及權利使用狀態",
+                    "排除權利人而建立占有支配之行為",
+                    "為自己或第三人不法利益之意圖",
+                    "未遂或既遂"
+                  ],
+                  "review_status": "HUMAN_REVIEW_REQUIRED"
+                },
+                {
+                  "id": "theft_323_energy",
+                  "route_kind": "definition",
+                  "law_name": "中華民國刑法",
+                  "article_no": "第323條",
+                  "name": "電能熱能等能量準動產",
+                  "fact_elements": [
+                    "電能、熱能或其他能量",
+                    "與竊盜章基礎行為之關聯",
+                    "計量、來源及控制方式"
+                  ],
+                  "review_status": "HUMAN_REVIEW_REQUIRED"
+                },
+                {
+                  "id": "theft_324_relative",
+                  "route_kind": "procedure",
+                  "law_name": "中華民國刑法",
+                  "article_no": "第324條",
+                  "name": "親屬間竊盜減免與告訴條件",
+                  "fact_elements": [
+                    "竊盜章基礎行為",
+                    "直系血親、配偶、同財共居或其他法定親屬關係",
+                    "免刑或告訴意思與提出情形"
+                  ],
+                  "review_status": "HUMAN_REVIEW_REQUIRED"
+                }
+              ],
+              "excluded_legal_routes": [
+                {
+                  "id": "theft_322_deleted",
+                  "article_no": "第322條",
+                  "status": "DELETED",
+                  "reason": "條文已刪除，不得建立現行候選。",
+                  "source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001"
+                }
+              ],
+              "legal_route_selection_status": "OPTIONAL",
+              "source": {
+                "label": "中華民國刑法第320條、第323條至第324條（2026-10-13 官方網站複核；離線 dataset 2026-10-02）",
+                "status": "VERIFIED_CURRENT",
+                "law_name": "中華民國刑法",
+                "article_no": "第320條",
+                "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+                "law_modified_date": "2026-07-22",
+                "dataset_version": "2026-10-02",
+                "verified_at": "2026-10-12T01:13:23.119734+00:00",
+                "verification_note": "現行法核實；行為時法（歷史版本）仍須由承辦人依官方修正歷程確認。"
+              },
+              "distinguishing_question_ids": [
+                "T-D-01",
+                "T-D-02",
+                "T-D-03",
+                "T-D-04",
+                "T-D-05"
+              ],
+              "required_evidence_question_ids": [
+                "T-R-01",
+                "T-R-02",
+                "T-R-03",
+                "T-R-04",
+                "T-R-05"
+              ],
+              "competition_analysis": "NOT_ASSESSED",
+              "prohibited_conclusions": [
+                "犯罪成立",
+                "故意成立",
+                "因果關係成立",
+                "競合成立"
+              ],
+              "version": "VERIFIED_CURRENT",
+              "selection_origin": "keyword_hint",
+              "machine_effects": [],
+              "route_element_matrix": [
+                {
+                  "route_id": "theft_320_1_movable",
+                  "route_name": "竊取他人動產",
+                  "route_kind": "offense",
+                  "law_name": "中華民國刑法",
+                  "article_no": "第320條第1項",
+                  "review_status": "HUMAN_REVIEW_REQUIRED",
+                  "supported_count": 3,
+                  "not_checkable_count": 0,
+                  "total_count": 4,
+                  "supporting_fact_refs": [
+                    "fact:70ce050f598bfc1f3511",
+                    "fact:8c985af057a5099f7924",
+                    "fact:28a2723936dcc97b64ca",
+                    "fact:35db26225a68f676b1d2",
+                    "fact:4c21e81e97219c0a988b",
+                    "fact:77a00cb921a752708086",
+                    "fact:fb4b4eb6c3d9be84dd6e"
+                  ],
+                  "event_ids": [
+                    "event:unassigned"
+                  ],
+                  "unknown_elements": [
+                    "未遂或既遂"
+                  ],
+                  "elements": [
+                    {
+                      "element": "他人動產及原持有狀態",
+                      "status": "SOURCE_SUPPORTED",
+                      "supporting_fact_refs": [
+                        "fact:70ce050f598bfc1f3511",
+                        "fact:8c985af057a5099f7924",
+                        "fact:28a2723936dcc97b64ca",
+                        "fact:35db26225a68f676b1d2",
+                        "fact:4c21e81e97219c0a988b",
+                        "fact:77a00cb921a752708086",
+                        "fact:fb4b4eb6c3d9be84dd6e"
+                      ],
+                      "source_excerpts": [
+                        "甲表示手機為其所有。",
+                        "甲表示曾將手機暫放在便利商店櫃檯旁。",
+                        "手機是否仍在甲的持有範圍：未確認。"
+                      ],
+                      "matched_signals": [
+                        "手機",
+                        "物品",
+                        "所有"
+                      ]
+                    },
+                    {
+                      "element": "未經同意竊取並破壞原持有",
+                      "status": "SOURCE_SUPPORTED",
+                      "supporting_fact_refs": [
+                        "fact:35db26225a68f676b1d2"
+                      ],
+                      "source_excerpts": [
+                        "乙承認拿取手機。"
+                      ],
+                      "matched_signals": [
+                        "拿取"
+                      ]
+                    },
+                    {
+                      "element": "為自己或第三人不法所有之意圖",
+                      "status": "SOURCE_SUPPORTED",
+                      "supporting_fact_refs": [
+                        "fact:fb4b4eb6c3d9be84dd6e"
+                      ],
+                      "source_excerpts": [
+                        "乙是否具有不法所有意圖：未確認。"
+                      ],
+                      "matched_signals": [
+                        "不法所有"
+                      ]
+                    },
+                    {
+                      "element": "未遂或既遂",
+                      "status": "ABSENT",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    }
+                  ]
+                },
+                {
+                  "route_id": "theft_323_energy",
+                  "route_name": "電能熱能等能量準動產",
+                  "route_kind": "definition",
+                  "law_name": "中華民國刑法",
+                  "article_no": "第323條",
+                  "review_status": "HUMAN_REVIEW_REQUIRED",
+                  "supported_count": 0,
+                  "not_checkable_count": 3,
+                  "total_count": 3,
+                  "supporting_fact_refs": [],
+                  "event_ids": [],
+                  "unknown_elements": [
+                    "電能、熱能或其他能量",
+                    "與竊盜章基礎行為之關聯",
+                    "計量、來源及控制方式"
+                  ],
+                  "elements": [
+                    {
+                      "element": "電能、熱能或其他能量",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "與竊盜章基礎行為之關聯",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "計量、來源及控制方式",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    }
+                  ]
+                },
+                {
+                  "route_id": "theft_324_relative",
+                  "route_name": "親屬間竊盜減免與告訴條件",
+                  "route_kind": "procedure",
+                  "law_name": "中華民國刑法",
+                  "article_no": "第324條",
+                  "review_status": "HUMAN_REVIEW_REQUIRED",
+                  "supported_count": 0,
+                  "not_checkable_count": 3,
+                  "total_count": 3,
+                  "supporting_fact_refs": [],
+                  "event_ids": [],
+                  "unknown_elements": [
+                    "竊盜章基礎行為",
+                    "直系血親、配偶、同財共居或其他法定親屬關係",
+                    "免刑或告訴意思與提出情形"
+                  ],
+                  "elements": [
+                    {
+                      "element": "竊盜章基礎行為",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "直系血親、配偶、同財共居或其他法定親屬關係",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "免刑或告訴意思與提出情形",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    }
+                  ]
+                },
+                {
+                  "route_id": "theft_320_2_real_estate",
+                  "route_name": "竊佔他人不動產",
+                  "route_kind": "offense",
+                  "law_name": "中華民國刑法",
+                  "article_no": "第320條第2項",
+                  "review_status": "HUMAN_REVIEW_REQUIRED",
+                  "supported_count": 0,
+                  "not_checkable_count": 3,
+                  "total_count": 4,
+                  "supporting_fact_refs": [],
+                  "event_ids": [],
+                  "unknown_elements": [
+                    "他人不動產及權利使用狀態",
+                    "排除權利人而建立占有支配之行為",
+                    "為自己或第三人不法利益之意圖",
+                    "未遂或既遂"
+                  ],
+                  "elements": [
+                    {
+                      "element": "他人不動產及權利使用狀態",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "排除權利人而建立占有支配之行為",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "為自己或第三人不法利益之意圖",
+                      "status": "NOT_CHECKABLE",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    },
+                    {
+                      "element": "未遂或既遂",
+                      "status": "ABSENT",
+                      "supporting_fact_refs": [],
+                      "source_excerpts": [],
+                      "matched_signals": []
+                    }
+                  ]
+                }
+              ],
+              "suggested_legal_route_ids": [
+                "theft_320_1_movable"
+              ],
+              "missing": [
+                "未遂或既遂"
+              ],
+              "candidate_eligibility": "ELIGIBLE_CANDIDATE",
+              "legal_route_states": {
+                "theft_320_1_movable": "ELIGIBLE_CANDIDATE",
+                "theft_323_energy": "HINT_ONLY",
+                "theft_324_relative": "HINT_ONLY",
+                "theft_320_2_real_estate": "HINT_ONLY"
+              },
+              "candidate_state": "NEED_REVIEW",
+              "unknown_fact_keys": [],
+              "status_reasons": [],
+              "classification_missing": [
+                "未遂或既遂"
+              ]
+            }
+          ],
+          "status": {
+            "subject_identified": "true",
+            "has_victim": "true",
+            "is_solved": "false"
+          },
+          "source": "rules"
+        }
+      }
+    }
+  },
+  "mapping": {
+    "ownership": {
+      "CIA": "NOT_MAPPED",
+      "legal-case-web": "fact_key='' source statement only"
+    },
+    "placement": {
+      "CIA": "F-PLACE / FACT from intake location",
+      "legal-case-web": "fact_key='' source statement only"
+    },
+    "possession": {
+      "CIA": "UNKNOWN rights/possession gate",
+      "legal-case-web": "fact_key='' source statement only"
+    },
+    "taking": {
+      "CIA": "UNKNOWN conduct gate plus narrative",
+      "legal-case-web": "fact_key='' source statement only"
+    },
+    "belief": {
+      "CIA": "UNKNOWN mental-state gate plus narrative",
+      "legal-case-web": "fact_key='' source statement only"
+    },
+    "intent": {
+      "CIA": "UNKNOWN mental-state gate",
+      "legal-case-web": "fact_key='' source statement only"
+    },
+    "recovery": {
+      "CIA": "UNKNOWN result/evidence gate",
+      "legal-case-web": "fact_key='' source statement only"
+    }
+  }
+}

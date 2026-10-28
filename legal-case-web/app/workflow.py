@@ -16,9 +16,11 @@ from .case_identity import case_identity
 from .company_templates import copy_identity
 from .xlsm_questions import xlsm_quarantine
 from .v3_contracts import canonical_sha256
+from .analysis_contract import apply_analysis_contract, decorate_fact
 from .rules import (
     MAX_SELECTED_OFFENSES,
     analyze_gate1,
+    fact_contradiction_issues,
     alternative_legal_routes,
     build_questions,
     candidate_element_state,
@@ -42,10 +44,14 @@ SUMMARY_CONTEXT_RE = re.compile(
     r"(?P<kind>發生|破獲|查獲)(?P<field>時間|地點)\s*[：:]\s*(?P<value>[^\r\n，,；;。]+)"
 )
 SUMMARY_DATETIME_RE = re.compile(
-    r"(?P<year>\d{2,3})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日"
-    r"(?P<hour>\d{1,2})時(?:(?P<minute>\d{1,2})分)?"
+    r"(?:民國)?(?P<year>\d{2,4})年\s*(?P<month>\d{1,2})月\s*(?P<day>\d{1,2})日"
+    r"\s*(?P<hour>\d{1,2})時\s*(?:(?P<minute>\d{1,2})分)?"
 )
 SUMMARY_ADDRESS_RE = re.compile(r"(?:臺|台)北市[^，,。；;\s]{1,40}?\d+號")
+PROPERTY_BOUNDARY_IDS = {"theft", "embezzlement"}
+PROPERTY_BOUNDARY_SIGNAL_RE = re.compile(
+    r"錢包|皮夾|手機|財物|物品|遺失|拿走|取走|帶走|拾得|保管|交出|短少"
+)
 
 
 class WorkflowError(ValueError):
@@ -91,6 +97,8 @@ def _summary_context(summary: str) -> dict[str, str]:
         value = match.group("value").strip()
         if not value:
             continue
+        if field == "時間":
+            value = _normalize_summary_event_time(value)
         if field == "時間" and result["event_time"] == "UNKNOWN":
             result["event_kind"] = match.group("kind")
             result["event_time"] = value
@@ -102,12 +110,91 @@ def _summary_context(summary: str) -> dict[str, str]:
     if result["event_time"] == "UNKNOWN":
         match = SUMMARY_DATETIME_RE.search(summary)
         if match:
-            result["event_time"] = match.group(0)
+            result["event_time"] = _normalize_summary_event_time(match.group(0))
     if result["location"] == "UNKNOWN":
         match = SUMMARY_ADDRESS_RE.search(summary)
         if match:
             result["location"] = match.group(0)
     return result
+
+
+def _normalize_summary_event_time(value: str) -> str:
+    """Normalize explicit four-digit Gregorian date text for document rendering."""
+    text = str(value or "").strip()
+    match = re.fullmatch(
+        r"(?P<year>\d{4})年\s*(?P<month>\d{1,2})月\s*(?P<day>\d{1,2})日"
+        r"\s*(?P<hour>\d{1,2})時\s*(?:(?P<minute>\d{1,2})分)?",
+        text,
+    )
+    if not match:
+        return text
+    minute = int(match.group("minute") or 0)
+    try:
+        moment = datetime(
+            int(match.group("year")),
+            int(match.group("month")),
+            int(match.group("day")),
+            int(match.group("hour")),
+            minute,
+        )
+    except ValueError:
+        return text
+    return moment.isoformat(timespec="minutes")
+
+
+def _preferred_case_location(values: list[str], fallback: str = "UNKNOWN") -> str:
+    """從 Gate 1 的多個地點中優先保留完整地址，不把座位或店內位置當案件地點。"""
+    cleaned = [str(value).strip() for value in values if str(value).strip()]
+    for value in cleaned:
+        match = SUMMARY_ADDRESS_RE.search(value)
+        if match:
+            return match.group(0)
+    return cleaned[0] if cleaned else fallback
+
+
+def supervisor_brief_summary(
+    summary: str,
+    candidates: list[dict[str, Any]],
+    *,
+    event_time: str = "UNKNOWN",
+    location: str = "UNKNOWN",
+) -> str:
+    """產生給主管閱讀的條陳摘要；不把候選方向寫成已成立罪名。"""
+    normalized = re.sub(r"\s+", " ", summary).strip()
+    candidate_ids = {str(item.get("id", "")) for item in candidates}
+    if not PROPERTY_BOUNDARY_IDS <= candidate_ids or not PROPERTY_BOUNDARY_SIGNAL_RE.search(normalized):
+        return truncate_summary(normalized, MAX_SUMMARY_LENGTH)
+
+    # 結構化時地已另列於條陳二、三項，摘要內只保留一次，避免出現
+    # 「在時間於地點」這種給主管閱讀時不自然的重複句。
+    narrative = re.sub(
+        r"(?:發生|破獲|查獲)時間\s*[：:][^。；;]+[。；;]?\s*",
+        "",
+        normalized,
+        count=1,
+    )
+    narrative = re.sub(
+        r"(?:發生|破獲|查獲)地點\s*[：:][^。；;]+[。；;]?\s*",
+        "",
+        narrative,
+        count=1,
+    ).strip(" ，、；;。")
+    # 條陳第二、三項已另列主要時間與地址；自然語句中的同一組時地也要移除，
+    # 避免形成「本案於…發生。民國…在臺北市…」的重複摘要。
+    if event_time and event_time != "UNKNOWN":
+        event_time_pattern = re.escape(event_time)
+        if not event_time.startswith("民國"):
+            event_time_pattern = rf"(?:民國)?{event_time_pattern}"
+        narrative = re.sub(rf"^{event_time_pattern}\s*[，,。；;]?\s*", "", narrative, count=1)
+    if location and location != "UNKNOWN":
+        narrative = re.sub(re.escape(location), "", narrative, count=1)
+    narrative = narrative.lstrip(" ，、；;。")
+    narrative = re.sub(r"^([^，。；;]{2,20})表示，", r"據\1陳述，", narrative, count=1)
+    narrative = narrative.rstrip(" ，、；;。")
+    if narrative:
+        narrative += "。"
+    prefix = f"本案於{event_time or 'UNKNOWN'}，在{location or 'UNKNOWN'}發生。"
+    return truncate_summary(f"{prefix}{narrative}", MAX_SUMMARY_LENGTH)
 
 
 def _provided_or_derived(raw: dict[str, Any], key: str, derived: str, field: str) -> str:
@@ -218,6 +305,12 @@ def create_case(raw: dict[str, Any], bank: dict[str, Any]) -> dict[str, Any]:
     # 的明示操作觸發，避免僅因環境存在 API key 就外送案情摘要。
     gate1 = analyze_gate1(intake, use_ai=False)
     gate1["source_summary"] = summary
+    # 事實契約必須在 Gate 1 邊界就固定：下游候選／問句收到的 facts，
+    # 與案件保存的 facts 必須是同一組記錄（同一 schema、同一 provenance），
+    # 否則「傳遞成功」只存在於報告中。此處僅補齊契約欄位，不改值、不改狀態。
+    gate1["facts"] = [
+        decorate_fact(item) for item in gate1.get("facts", []) if isinstance(item, dict)
+    ]
     if not str(raw.get("event_time", "")).strip() and summary_context["event_time"] != "UNKNOWN":
         intake["event_time"] = summary_context["event_time"]
     if not str(raw.get("location", "")).strip() and summary_context["location"] != "UNKNOWN":
@@ -272,7 +365,11 @@ def create_case(raw: dict[str, Any], bank: dict[str, Any]) -> dict[str, Any]:
             "candidates": candidates,
             "selected_offenses": [],
         }),
-        "brief_summary": truncate_summary(intake["summary"], MAX_SUMMARY_LENGTH),
+        "brief_summary": supervisor_brief_summary(
+            intake["summary"], candidates,
+            event_time=intake.get("event_time", "UNKNOWN"),
+            location=intake.get("location", "UNKNOWN"),
+        ),
         "approvals": {},
         "documents": [],
         "snapshots": [],
@@ -284,6 +381,9 @@ def create_case(raw: dict[str, Any], bank: dict[str, Any]) -> dict[str, Any]:
             "legal_route_crosswalk": bank["legal_route_crosswalk_version"],
         },
     }
+    # 契約欄位為附加資訊；保留既有規則結果與舊狀態，並把未持久化案件
+    # 明確標記為 revision 0，待 store.save 分配正式 revision。
+    apply_analysis_contract(case, revision_id=int(case.get("revision", 0)))
     _audit(case, "CASE_CREATED", to_state=case["state"])
     return case
 
@@ -319,6 +419,16 @@ def _clean_fact(raw: Any) -> dict[str, Any]:
     for key, value in raw.items():
         if isinstance(value, str):
             cleaned[key] = _clean_text(value, f"facts.{key}", required=False)
+        elif key == "provenance" and isinstance(value, dict):
+            allowed = {"source_ref", "source_excerpt", "source_start", "source_end"}
+            if set(value) - allowed:
+                raise WorkflowError("facts.provenance 包含未知欄位")
+            if any(
+                item is not None and not isinstance(item, (str, int))
+                for item in value.values()
+            ):
+                raise WorkflowError("facts.provenance 格式錯誤")
+            cleaned[key] = dict(value)
         elif isinstance(value, list):
             if any(not isinstance(item, str) for item in value):
                 raise WorkflowError(f"facts.{key} 必須是文字陣列")
@@ -332,7 +442,10 @@ def _clean_fact(raw: Any) -> dict[str, Any]:
         raise WorkflowError("facts.machine_status 必須是 FACT、INFERENCE、UNKNOWN 或 DISPUTED")
     if machine_status is None:
         cleaned["machine_status"] = "UNKNOWN" if cleaned.get("fact_status") in {"未知", "UNKNOWN"} else "FACT"
-    return cleaned
+    assertion_class = cleaned.get("assertion_class")
+    if assertion_class is not None and assertion_class not in {"ASSERTED", "ADMITTED", "DENIED", "INFERRED", "UNKNOWN"}:
+        raise WorkflowError("facts.assertion_class 必須是 ASSERTED、ADMITTED、DENIED、INFERRED 或 UNKNOWN")
+    return decorate_fact(cleaned)
 
 
 def _clean_short_mapping(values: dict[str, Any], field: str) -> dict[str, str]:
@@ -459,16 +572,18 @@ def apply_action(
             gate1["results"] = list(dict.fromkeys(str(item.get("result", "")).strip() for item in gate1["facts"] if str(item.get("result", "")).strip()))
             gate1["evidence"] = list(dict.fromkeys(str(item.get("value", "")).strip() for item in gate1["facts"] if item.get("fact_key") == "evidence" and str(item.get("value", "")).strip()))
             gate1["behaviors"] = list(dict.fromkeys(str(item.get("action", "")).strip() for item in gate1["facts"] if str(item.get("action", "")).strip()))
+            gate1["contradiction_issues"] = fact_contradiction_issues(gate1["facts"])
         separator = "" if "facts" in incoming else "；"
         current_summary = separator.join(gate1.get("events", []))
         # Gate 1 更新的是條陳摘要來源，超過 500 字必須拒絕，
         # 不得靜默截斷造成事實遺失；初始輸入仍可不限字數，僅由 brief_summary 截成 500 字。
-        validated_summary = concise_summary(current_summary, MAX_SUMMARY_LENGTH) if current_summary.strip() else ""
+        if current_summary.strip():
+            concise_summary(current_summary, MAX_SUMMARY_LENGTH)
         if "events" in incoming and "facts" not in incoming and current_summary.strip():
             refreshed = analyze_gate1({
                 **case["intake"],
                 "summary": current_summary,
-                "location": gate1.get("places", [case["intake"]["location"]])[0],
+                "location": _preferred_case_location(gate1.get("places", []), case["intake"]["location"]),
             }, use_ai=False)
             gate1["facts"] = refreshed["facts"]
             gate1["unknowns"] = refreshed["unknowns"]
@@ -476,16 +591,23 @@ def apply_action(
         if "times" in incoming:
             case["intake"]["event_time"] = gate1["times"][0] if gate1["times"] else "UNKNOWN"
         if "places" in incoming:
-            case["intake"]["location"] = gate1["places"][0] if gate1["places"] else "UNKNOWN"
+            case["intake"]["location"] = _preferred_case_location(
+                gate1.get("places", []), case["intake"].get("location", "UNKNOWN")
+            )
         case["gate1"] = gate1
         case["acts"] = extract_acts(gate1)
         if current_summary.strip():
             case["intake"]["summary"] = current_summary
-            case["brief_summary"] = validated_summary
             case["candidates"] = candidate_offenses(current_summary, bank, gate1)
             case["alternative_routes"] = alternative_legal_routes(gate1)
             link_acts_to_candidates(case["acts"], case["candidates"])
             competition_relationships(case["candidates"])
+            case["brief_summary"] = supervisor_brief_summary(
+                current_summary,
+                case["candidates"],
+                event_time=case["intake"].get("event_time", "UNKNOWN"),
+                location=case["intake"].get("location", "UNKNOWN"),
+            )
         case["fact_updates"] = []
         case["fact_overlay"] = {}
         # 行為日或罪章一旦變動，先前的行為時法判定即失效；罪章選擇已由
@@ -523,6 +645,41 @@ def apply_action(
             if len(primary) >= MAX_SELECTED_OFFENSES:
                 break
         if not primary:
+            # 模糊財產案件澄清模式：若規則引擎同時辨識出竊盜／侵占等
+            # 相鄰方向，但所有 child route 仍為 HINT_ONLY，仍應先產生
+            # 區分問句讓承辦人釐清「仍在原持有人控制範圍」或「已脫離
+            # 持有／是否受託保管」等事實；不得因此把任一罪名升格成立。
+            property_hint_ids = {"theft", "aggravated_theft", "embezzlement", "robbery"}
+            property_hints = [
+                item for item in case.get("candidates", [])
+                if item.get("id") in property_hint_ids
+                and item.get("candidate_eligibility") == "HINT_ONLY"
+            ]
+            summary_signal = " ".join([
+                str(case.get("intake", {}).get("summary", "")),
+                " ".join(str(value) for value in case.get("gate1", {}).get("objects", [])),
+                " ".join(str(value) for value in case.get("gate1", {}).get("behaviors", [])),
+            ])
+            property_fact_signal = bool(re.search(
+                r"(?:錢包|皮夾|手機|財物|物品|遺失|拿走|取走|帶走|拾得|保管|交出)",
+                summary_signal,
+            ))
+            if len({item["id"] for item in property_hints}) >= 2 and property_fact_signal:
+                offense_ids = [item["id"] for item in property_hints[:MAX_SELECTED_OFFENSES]]
+                case["state"] = "GATE2_QA"
+                case = apply_action(case, "set_offenses", {
+                    "offense_ids": offense_ids,
+                    "legal_route_ids": [],
+                    "route_review_confirmed": True,
+                    "role": case.get("question_role", "victim" if case["intake"].get("has_victim") else "transfer"),
+                }, bank)
+                case["preparation_mode"] = "SYSTEM_CLARIFICATION_PREPARED_HUMAN_REVIEW_REQUIRED"
+                case["preparation_notice"] = (
+                    "系統辨識到竊盜／侵占等相鄰財產方向，但目前資料不足以選定 child route；"
+                    "已先建立必要區分問句，請依回答及證據人工確認。"
+                )
+                apply_analysis_contract(case, revision_id=int(case.get("revision", 0)))
+                return case
             summary_signal = " ".join([
                 str(case.get("intake", {}).get("summary", "")),
                 " ".join(str(value) for value in case.get("gate1", {}).get("objects", [])),
@@ -638,7 +795,7 @@ def apply_action(
             "level": "BUDGET_PRUNED",
             "pruned_count": len(pruned),
             "pruned_questions": pruned,
-            "message": "選配問句超出預算並已記錄；必要核心題不得裁除。",
+            "message": "正式案件總題數以20題為實務上限；超出的題目已記錄，精簡模式以核心與已核准路線題包優先保留。",
         }] if pruned else [])
 
         # 被移出訪談頻道的公司套表題是參考資料，不是本庫題；
@@ -823,6 +980,42 @@ def apply_action(
         case["interviews"].pop(f"{role}:default", None)
         _invalidate(case, "gate2")
 
+    elif action == "reopen_questionnaire":
+        if case["state"] not in {"CASE_NUMBERS", "OUTPUT_READY"}:
+            raise WorkflowError("只有已完成問答的案件可返回問答修改")
+        if not case.get("questions") or not case.get("question_role"):
+            raise WorkflowError("本案沒有可返回的問答內容")
+        _snapshot(case, "reopen_from_output_to_questionnaire")
+        case["approvals"].pop(f"gate2:{case['question_role']}", None)
+        case["approvals"].pop("case_numbers", None)
+        case["interviews"].pop(f"{case['question_role']}:default", None)
+        case["documents"] = []
+        case["state"] = "GATE2_QA"
+
+    elif action == "edit_question":
+        if case["state"] != "GATE2_QA" or not case.get("questions"):
+            raise WorkflowError("請先返回逐題問答")
+        question_id = payload.get("question_id")
+        if not isinstance(question_id, str) or not question_id.strip():
+            raise WorkflowError("缺少問句編號")
+        text = payload.get("text")
+        if not isinstance(text, str) or not text.strip():
+            raise WorkflowError("修改後的問句不得空白")
+        if len(text.strip()) > 2000:
+            raise WorkflowError("單一問句不得超過 2000 字")
+        question = next((item for item in case["questions"] if item["id"] == question_id), None)
+        if question is None:
+            raise WorkflowError("問句不存在或已變更")
+        meta = question.setdefault("meta", {})
+        meta.setdefault("original_text", question.get("text", ""))
+        meta["human_edited"] = True
+        meta["human_edit_source"] = "CASE_ONLY"
+        question["text"] = text.strip()
+        case["approvals"].pop(f"gate2:{case['question_role']}", None)
+        case["interviews"].pop(f"{case['question_role']}:default", None)
+        _invalidate(case, "gate2")
+        _audit(case, "QUESTION_EDITED", question_id=question_id, question_count=len(case["questions"]))
+
     elif action == "save_answers":
         if case["state"] != "GATE2_QA" or not case["questions"]:
             raise WorkflowError("請先選擇候選罪章")
@@ -949,7 +1142,8 @@ def apply_action(
         _invalidate(case, "gate1")
 
     elif action == "analyze_candidates":
-        if case["state"] != "GATE2_QA":
+        analysis_started_from_gate1 = case["state"] == "GATE1_REVIEW"
+        if case["state"] not in {"GATE1_REVIEW", "GATE2_QA"}:
             raise WorkflowError("目前不可重新分析候選罪章")
         if payload.get("external_ai_consent") is not True:
             raise WorkflowError("外部 AI 分析必須由承辦人明確同意")
@@ -1059,6 +1253,15 @@ def apply_action(
             source_snapshot_hashes=contract["source_snapshot_hashes"],
             attempt_count=contract["attempt_count"],
         )
+        # Gate 1 直接分析後，沿用同一套自動候選選取與問句建立流程；
+        # 不要求承辦人再從完整罪名清單手動組裝。若候選不足，維持
+        # MANUAL_REVIEW_REQUIRED，並把理由留在案件狀態供前端顯示。
+        if analysis_started_from_gate1:
+            try:
+                case = apply_action(case, "auto_prepare", {}, bank)
+            except WorkflowError as exc:
+                case["preparation_mode"] = "MANUAL_REVIEW_REQUIRED"
+                case["preparation_notice"] = f"AI 已完成初步分析，但尚不足以自動建立問句：{exc}"
 
     elif action == "start_interview":
         if case["state"] != "OUTPUT_READY":
@@ -1091,6 +1294,7 @@ def apply_action(
     else:
         raise WorkflowError("未知操作")
 
+    apply_analysis_contract(case, revision_id=int(case.get("revision", 0)))
     case["case_identity"] = case_identity(case)
     _audit(
         case,

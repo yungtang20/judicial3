@@ -7,8 +7,11 @@ scope: case reasoning, candidate routing, question design, answer reevaluation, 
 does_not_cover: law discovery and version update
 active_question_ruleset: UNCHANGED_RUNTIME
 candidate_question_ruleset: question-rules-v2-draft
-candidate_ruleset_status: CODEX_REVIEW_REQUIRED
-calibration_status: CALIBRATION_REQUIRED
+candidate_ruleset_status: QUESTION_DESIGN_ACCEPTED
+candidate_ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+runtime_ruleset_status: UNCHANGED_RUNTIME
+legal_acceptance: false
+calibration_status: PASS
 required_author_role: TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT
 ```
 
@@ -166,6 +169,23 @@ route_scope:
 1. `fact_target`：要確認的中性事實。
 2. `legal_targets`：受該事實影響的候選 route ID。
 
+### 5.1 全罪章六層契約
+
+所有章級題庫都使用 `question-layers-v1`：
+
+| layer | runtime 目的 | 缺少時的處理 |
+|---|---|---|
+| `core` | 確認本罪章基本構成事實 | `MISSING_REQUIRED`，不得宣稱題庫完整 |
+| `evidence_gap` | 補齊文件、來源、證據缺口 | `NOT_PROVIDED`，依案件需要人工補問 |
+| `reinforce` | 補強前述事實的可查證性 | `NOT_PROVIDED`，不自動創題 |
+| `distinguishing` | 區分相鄰罪名或替代方向 | `NOT_PROVIDED`，不得擴張候選罪名 |
+| `aggravating` | 核對加重構成要件 | `NOT_PROVIDED`，不推定加重情節 |
+| `precedent` | 依已查證判決／函示核對具體爭點 | `NOT_PROVIDED`，不得自動生成判例內容 |
+
+題目物件會保留 `question_layer`、`source_citation` 及
+`human_review_required`。題庫載入時會產生每一罪章的覆蓋表，供前端顯示缺口與人工審查；
+覆蓋表是治理資訊，不是法律正確性證明。
+
 ```json
 {
   "id": "ROUTE-V-D-01",
@@ -247,7 +267,7 @@ route_scope:
 1. 公司三份通用範本逐字題。
 2. `data/question_bank.json` common 題。
 3. `data/xlsm_questions.json` 公司罪章題。
-4. `questions/*.md` 核心、補充、補強、區分及加重題。
+4. `questions/*.md` 核心、補充、補強、區分、加重及判決／函示爭點題。
 5. JSON 要件補缺題。
 6. 受控情境題，例如財物取走七題。
 7. metadata、全文去重、排序及品質檢核。
@@ -256,7 +276,7 @@ route_scope:
 
 每個 child route 最多建立 8 個新的 `question_concept_id`。同一概念的角色化 wording 不重複計為新概念。實際個案依角色與 `UNKNOWN` 欄位選取 3–5 個核心概念，新增的 evidence follow-up 最多 2 題；單一個案新生成題合計仍不得超過 8 題。
 
-移送來源、既有筆錄、權利告知等固定程序題不屬於 offense-core concept，但必須在 transfer 流程中保留，並一併接受八頁輸出預算檢查。公司逐字題、common 題及 XLSM 題不因概念預算而刪除；若固定題加必要新題超過八頁，必須輸出 `BUDGET_EXCEEDED`，不得靜默裁切。
+移送來源、既有筆錄、權利告知等固定程序題不屬於 offense-core concept，但必須在 transfer 流程中保留，並一併接受八頁輸出預算檢查。正式案件以 20 題總題數作為實務上限，公司逐字題與 common 題先占用額度；若固定題加必要新題已超過 20 題或實際排版超過八頁，必須輸出 `BUDGET_EXCEEDED`，精簡模式的裁切必須留下 `pruned_questions` 與人工覆核提示。
 
 財物取走基準路由目前最多使用八個 question concepts，不整批展開所有延伸題；同一 concept 的角色 variants 依前述實體化契約展開，不重複計入 concept 預算。
 

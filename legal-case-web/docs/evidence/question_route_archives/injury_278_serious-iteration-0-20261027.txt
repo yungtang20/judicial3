@@ -1,0 +1,1089 @@
+<!-- SUBMISSION_START -->
+
+```yaml
+document_status: CODEX_REVIEWED
+runtime_enabled: false
+review_status: CODEX_REVIEWED
+submission_status: REVIEW_PASS
+handoff_status: CODEX_ROUTE_REVIEW_COMPLETE
+last_completed_section: O
+resume_from_section: ARCHIVE_AND_SELECT_NEXT_ROUTE
+current_blockers: []
+designer_role: TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT
+author_role: TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT
+question_ruleset_version: question-rules-v2-draft
+ruleset_status: QUESTION_DESIGN_ACCEPTED
+ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+runtime_ruleset_status: UNCHANGED_RUNTIME
+task_type: AUTHOR_ROUTE_QUESTIONS
+queue_no: 4
+target_route_id: fraud
+target_child_route_id: injury_278_serious
+target_interview_roles: [victim, suspect, transfer, witness_review_only]
+iteration: 0
+allowed_output: WORK_ITEM_FILE_ONLY
+allowed_write_path: docs/QUESTION_WORK_ITEM.md
+automatic_advance: false
+next_route: NOT_AUTHORIZED
+```
+
+## A. 工作單 Metadata 與法源
+
+```yaml
+artifact_type: CHILD_ROUTE_WORK_ITEM
+iteration: 0
+execution_mode: REVIEWED_PIPELINE
+runtime_enabled: false
+review_status: CODEX_REVIEWED
+submission_status: REVIEW_PASS
+primary_route: fraud
+primary_child_route: injury_278_serious
+parent_route_status: PARTIAL_SCOPE
+child_count_in_crosswalk: 10
+question_concept_count: 8
+question_concept_budget: 8
+case_selection_budget: 3-5 core concepts
+evidence_followup_budget: max 2
+output_page_budget: 8
+case_human_gate: REQUIRED
+user_final_acceptance: PENDING
+```
+
+官方來源查詢卡：
+
+| 欄位 | 結果 |
+|---|---|
+| 問句 | 2026-10-27 台灣，中華民國刑法第278條現行內容及重傷結果與因果關係的區分 |
+| 證據 | 法務部全國法規資料庫，中華民國刑法，修正日期民國115年7月22日，查詢日2026-10-27 |
+| URL | https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001 |
+| 痕跡 | 第277條傷害行為、結果與因果關係；死亡或重傷結果由人工依行為時法確認 |
+| 行為時法 | UNKNOWN；實際案件日期未提供，須由承辦人逐案調閱 |
+
+本工作單不把單一不實說法、付款、損害或未履約直接等同詐欺成立。
+
+## B. Route Scope
+
+```yaml
+route_scope:
+  primary_route: injury_278_serious
+  allowed_comparison_routes:
+    - injury_278_serious
+    - injury_284_negligent
+    - injury_280_ancestor
+    - injury_281_violence_ancestor
+  allowed_alternative_routes: []
+```
+
+普通傷害、義憤、身分加重、過失傷害、兒少保護及第287條告訴程序只作相鄰或程序比較，不得靜默加入候選。
+
+## C. Elements 與雙鏈結
+
+| element_id | 中性事實目標 | 法律定位 | Human Gate |
+|---|---|---|---|
+| INJ278-E01 | 造成重傷的具體行為、時間、部位與方式 | 第278條重傷行為 | REQUIRED |
+| INJ278-E02 | 重傷結果、醫療資料與行為間的時間及因果資料 | 第278條結果與因果 | REQUIRED |
+| INJ278-E03 | 死亡結果及其與重傷行為的外部關聯 | 第278條死亡結果 | REQUIRED |
+| INJ278-E04 | 未遂或既遂的行為進度、結果與證據來源 | 第278條進度軸 | REQUIRED |
+
+## D. 相鄰路由矩陣
+
+| 觀察組合 | 278重傷害 | 277普通傷害 | 284過失傷害 | 280身分加重 | 287程序 |
+|---|---|---|---|---|---|
+| 有具體重傷行為及醫療或功能結果 | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+| 有死亡結果主張但重傷行為與因果資料尚不明 | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+| 有普通傷害或過失爭議但重傷特徵尚不明 | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+| 被害人身分、告訴條件或程序資料待核對 | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW | NEED_REVIEW |
+
+任一單一觀察都不足以產生 `ACTIVE` 或法律結論。
+
+## E. 問句方法
+
+- C02至C07分開確認重傷行為、重傷結果與因果、死亡結果、未遂／既遂與證據；不以同一答案跨要件推定。
+- C08只補普通傷害、過失、身分加重與程序路由的外部脈絡；任何單一答案都不產生 `ACTIVE` 或法律結論。
+- 所有 `UNKNOWN`、`CONFLICT` 與替代方向維持 `NEED_REVIEW`。
+
+## F. STANDARD_SET
+
+<!-- STANDARD_SET_START -->
+```json
+[
+  {
+    "question_concept_id": "INJ278-C01",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "narrative",
+    "parent_question_id": null,
+    "fact_target": "event_narrative",
+    "distinction_axis": "不預設乘機詐欺的自由敘述",
+    "answer_mode": "narrative_only",
+    "answer_map": null,
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請依時間順序說明對方如何表示、你如何理解、是否交付財物，以及是否出現多人、公開傳播或特殊身分等情形。",
+      "suspect": "請依時間順序說明你如何與對方接觸、表示或收受財物，以及是否有共同或特殊方式。",
+      "transfer": "請依卷內資料整理基礎詐欺行為、參與人數、傳播方式、身分冒用或影音資料的時間順序。",
+      "witness_review_only": "請依時間順序說明你親自看到或聽到的表示、參與人數、傳播方式或特殊身分情形。"
+    },
+    "legal_targets": [
+      "injury_278_serious",
+      "injury_278_serious",
+      "injury_284_negligent",
+      "injury_280_ancestor",
+      "injury_281_violence_ancestor"
+    ],
+    "legal_target_details": [],
+    "alternative_target_details": [],
+    "source_basis": "刑法第341條之中性事實入口",
+    "rationale": "先取得完整時間線，不以罪名或詐術預設引導。",
+    "trigger_condition": "candidate:injury_278_serious:present",
+    "existing_question_refs": [
+      "FRAUD-N-01"
+    ],
+    "dedupe_action": "REUSE_OR_REPLACE_DO_NOT_COEMIT",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "INJ278-C02",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "INJ278-C01",
+    "fact_target": "serious_injury_act",
+    "distinction_axis": "未滿十八歲、知慮淺薄、辨識能力顯有不足或相類情形的客觀資料",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "GOVERNMENT_OFFICIAL_IMPERSONATION",
+      "THREE_OR_MORE_PARTICIPANTS",
+      "PUBLIC_BROADCAST",
+      "SYNTHETIC_AUDIOVISUAL",
+      "NO_AGGRAVATING_METHOD_SHOWN",
+      "AGGRAVATING_METHOD_DISPUTED"
+    ],
+    "answer_map": {
+      "GOVERNMENT_OFFICIAL_IMPERSONATION": "GOVERNMENT_OFFICIAL_IMPERSONATION",
+      "THREE_OR_MORE_PARTICIPANTS": "THREE_OR_MORE_PARTICIPANTS",
+      "PUBLIC_BROADCAST": "PUBLIC_BROADCAST",
+      "SYNTHETIC_AUDIOVISUAL": "SYNTHETIC_AUDIOVISUAL",
+      "NO_AGGRAVATING_METHOD_SHOWN": "NO_AGGRAVATING_METHOD_SHOWN",
+      "AGGRAVATING_METHOD_DISPUTED": "AGGRAVATING_METHOD_DISPUTED",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請說明是否有人冒用政府機關或公務員身分、多人共同、對公眾傳播，或使用不實影音資料？",
+      "suspect": "請說明參與人數、使用的身分或傳播方式，以及是否使用影音或其他工具？",
+      "transfer": "哪些通聯、帳號、廣告、組織分工、影音檔案或其他資料可確認加重態樣？",
+      "witness_review_only": "你親自見聞哪些與身分冒用、參與人數、公開傳播或不實影音有關的事實？"
+    },
+    "legal_targets": [
+      "injury_278_serious",
+      "injury_278_serious",
+      "injury_284_negligent",
+      "injury_280_ancestor",
+      "injury_281_violence_ancestor"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "GOVERNMENT_OFFICIAL_IMPERSONATION": "NEED_REVIEW",
+          "THREE_OR_MORE_PARTICIPANTS": "NEED_REVIEW",
+          "PUBLIC_BROADCAST": "NEED_REVIEW",
+          "SYNTHETIC_AUDIOVISUAL": "NEED_REVIEW",
+          "NO_AGGRAVATING_METHOD_SHOWN": "NEED_REVIEW",
+          "AGGRAVATING_METHOD_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "GOVERNMENT_OFFICIAL_IMPERSONATION": "NEED_REVIEW",
+          "THREE_OR_MORE_PARTICIPANTS": "NEED_REVIEW",
+          "PUBLIC_BROADCAST": "NEED_REVIEW",
+          "SYNTHETIC_AUDIOVISUAL": "NEED_REVIEW",
+          "NO_AGGRAVATING_METHOD_SHOWN": "NEED_REVIEW",
+          "AGGRAVATING_METHOD_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_284_negligent",
+        "effects": {
+          "GOVERNMENT_OFFICIAL_IMPERSONATION": "NEED_REVIEW",
+          "THREE_OR_MORE_PARTICIPANTS": "NEED_REVIEW",
+          "PUBLIC_BROADCAST": "NEED_REVIEW",
+          "SYNTHETIC_AUDIOVISUAL": "NEED_REVIEW",
+          "NO_AGGRAVATING_METHOD_SHOWN": "NEED_REVIEW",
+          "AGGRAVATING_METHOD_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_280_ancestor",
+        "effects": {
+          "GOVERNMENT_OFFICIAL_IMPERSONATION": "NEED_REVIEW",
+          "THREE_OR_MORE_PARTICIPANTS": "NEED_REVIEW",
+          "PUBLIC_BROADCAST": "NEED_REVIEW",
+          "SYNTHETIC_AUDIOVISUAL": "NEED_REVIEW",
+          "NO_AGGRAVATING_METHOD_SHOWN": "NEED_REVIEW",
+          "AGGRAVATING_METHOD_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_281_violence_ancestor",
+        "effects": {
+          "GOVERNMENT_OFFICIAL_IMPERSONATION": "NEED_REVIEW",
+          "THREE_OR_MORE_PARTICIPANTS": "NEED_REVIEW",
+          "PUBLIC_BROADCAST": "NEED_REVIEW",
+          "SYNTHETIC_AUDIOVISUAL": "NEED_REVIEW",
+          "NO_AGGRAVATING_METHOD_SHOWN": "NEED_REVIEW",
+          "AGGRAVATING_METHOD_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第341條脆弱處境與利用關聯",
+    "rationale": "加重態樣與基礎詐欺分開確認，不由標籤或單一工具名稱直接推定。",
+    "trigger_condition": "after:INJ278-C01 && fact:serious_injury_act:UNKNOWN && candidate:injury_278_serious:present",
+    "existing_question_refs": [
+      "INJ278-C02"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "INJ278-C03",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "INJ278-C01",
+    "fact_target": "injury_result_and_causation",
+    "distinction_axis": "利用前項處境使其作成財產交付或利益處分的外部關聯",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "BASE_FRAUD_FACTS_SUPPORTED",
+      "BASE_FACTS_INCOMPLETE",
+      "BASE_FACTS_DISPUTED",
+      "NO_BASE_FACTS_SHOWN"
+    ],
+    "answer_map": {
+      "BASE_FRAUD_FACTS_SUPPORTED": "BASE_FRAUD_FACTS_SUPPORTED",
+      "BASE_FACTS_INCOMPLETE": "BASE_FACTS_INCOMPLETE",
+      "BASE_FACTS_DISPUTED": "BASE_FACTS_DISPUTED",
+      "NO_BASE_FACTS_SHOWN": "NO_BASE_FACTS_SHOWN",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請說明具體表示、錯誤、財產處分與損害資料，哪些部分可以分別核對？",
+      "suspect": "請說明你認知的表示、交付、損害及利益流向，哪些部分有資料支持？",
+      "transfer": "哪些資料可分別確認第339條基礎行為的表示、錯誤、處分與損害？",
+      "witness_review_only": "你親自見聞哪些與基礎表示、理解、處分及損害有關的事實？"
+    },
+    "legal_targets": [
+      "injury_278_serious",
+      "injury_278_serious",
+      "injury_284_negligent",
+      "injury_280_ancestor",
+      "injury_281_violence_ancestor"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "BASE_FRAUD_FACTS_SUPPORTED": "NEED_REVIEW",
+          "BASE_FACTS_INCOMPLETE": "NEED_REVIEW",
+          "BASE_FACTS_DISPUTED": "NEED_REVIEW",
+          "NO_BASE_FACTS_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "BASE_FRAUD_FACTS_SUPPORTED": "NEED_REVIEW",
+          "BASE_FACTS_INCOMPLETE": "NEED_REVIEW",
+          "BASE_FACTS_DISPUTED": "NEED_REVIEW",
+          "NO_BASE_FACTS_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_284_negligent",
+        "effects": {
+          "BASE_FRAUD_FACTS_SUPPORTED": "NEED_REVIEW",
+          "BASE_FACTS_INCOMPLETE": "NEED_REVIEW",
+          "BASE_FACTS_DISPUTED": "NEED_REVIEW",
+          "NO_BASE_FACTS_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_280_ancestor",
+        "effects": {
+          "BASE_FRAUD_FACTS_SUPPORTED": "NEED_REVIEW",
+          "BASE_FACTS_INCOMPLETE": "NEED_REVIEW",
+          "BASE_FACTS_DISPUTED": "NEED_REVIEW",
+          "NO_BASE_FACTS_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_281_violence_ancestor",
+        "effects": {
+          "BASE_FRAUD_FACTS_SUPPORTED": "NEED_REVIEW",
+          "BASE_FACTS_INCOMPLETE": "NEED_REVIEW",
+          "BASE_FACTS_DISPUTED": "NEED_REVIEW",
+          "NO_BASE_FACTS_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第341條以處境、利用與財產處分關聯為事實軸",
+    "rationale": "加重事由不能取代第339條基礎行為，兩者均須保留人工審核。",
+    "trigger_condition": "after:INJ278-C01 && fact:injury_result_and_causation:UNKNOWN && candidate:injury_278_serious:present",
+    "existing_question_refs": [
+      "INJ278-C03"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "INJ278-C04",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "INJ278-C01",
+    "fact_target": "death_result",
+    "distinction_axis": "是否因該理解而交付財物、移轉利益或作成財產處分",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "PROPERTY_DELIVERED",
+      "PROPERTY_INTEREST_DISPOSED",
+      "NO_DISPOSITION_SHOWN",
+      "DISPOSITION_CAUSATION_DISPUTED"
+    ],
+    "answer_map": {
+      "PROPERTY_DELIVERED": "PROPERTY_DELIVERED",
+      "PROPERTY_INTEREST_DISPOSED": "PROPERTY_INTEREST_DISPOSED",
+      "NO_DISPOSITION_SHOWN": "NO_DISPOSITION_SHOWN",
+      "DISPOSITION_CAUSATION_DISPUTED": "DISPOSITION_CAUSATION_DISPUTED",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "你因為當時的理解，具體交付了什麼財物或作成什麼財產處分？",
+      "suspect": "對方交付或處分了哪些財物、利益？交付的時間、方式與對象為何？",
+      "transfer": "哪些帳戶、契約、物流、收據或其他資料可確認財產交付或處分？",
+      "witness_review_only": "你親自看到哪些財物或財產利益被交付、移轉或處分？"
+    },
+    "legal_targets": [
+      "injury_278_serious",
+      "injury_278_serious",
+      "injury_284_negligent",
+      "injury_280_ancestor",
+      "injury_281_violence_ancestor"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "PROPERTY_DELIVERED": "NEED_REVIEW",
+          "PROPERTY_INTEREST_DISPOSED": "NEED_REVIEW",
+          "NO_DISPOSITION_SHOWN": "NEED_REVIEW",
+          "DISPOSITION_CAUSATION_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "PROPERTY_DELIVERED": "NEED_REVIEW",
+          "PROPERTY_INTEREST_DISPOSED": "NEED_REVIEW",
+          "NO_DISPOSITION_SHOWN": "NEED_REVIEW",
+          "DISPOSITION_CAUSATION_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_284_negligent",
+        "effects": {
+          "PROPERTY_DELIVERED": "NEED_REVIEW",
+          "PROPERTY_INTEREST_DISPOSED": "NEED_REVIEW",
+          "NO_DISPOSITION_SHOWN": "NEED_REVIEW",
+          "DISPOSITION_CAUSATION_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_280_ancestor",
+        "effects": {
+          "PROPERTY_DELIVERED": "NEED_REVIEW",
+          "PROPERTY_INTEREST_DISPOSED": "NEED_REVIEW",
+          "NO_DISPOSITION_SHOWN": "NEED_REVIEW",
+          "DISPOSITION_CAUSATION_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_281_violence_ancestor",
+        "effects": {
+          "PROPERTY_DELIVERED": "NEED_REVIEW",
+          "PROPERTY_INTEREST_DISPOSED": "NEED_REVIEW",
+          "NO_DISPOSITION_SHOWN": "NEED_REVIEW",
+          "DISPOSITION_CAUSATION_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第341條財產交付或利益處分",
+    "rationale": "交付或處分本身不等於犯罪成立，仍須連結前項表示與損害資料。",
+    "trigger_condition": "after:INJ278-C01 && fact:death_result:UNKNOWN && candidate:injury_278_serious:present",
+    "existing_question_refs": [
+      "INJ278-C04"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "INJ278-C05",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "INJ278-C01",
+    "fact_target": "injury_progress_and_evidence",
+    "distinction_axis": "財產損害與利益流向是否有可核對的外部資料",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "LOSS_ESTABLISHED",
+      "BENEFIT_RECEIVED",
+      "FLOW_DISPUTED",
+      "NO_LOSS_SHOWN"
+    ],
+    "answer_map": {
+      "LOSS_ESTABLISHED": "LOSS_ESTABLISHED",
+      "BENEFIT_RECEIVED": "BENEFIT_RECEIVED",
+      "FLOW_DISPUTED": "FLOW_DISPUTED",
+      "NO_LOSS_SHOWN": "NO_LOSS_SHOWN",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "你主張的財產損害是多少？財物或利益後來流向何處，有哪些資料可核對？",
+      "suspect": "你收到、保管或移轉哪些財物或利益？是否有返還、抵銷或其他流向資料？",
+      "transfer": "哪些帳冊、交易紀錄、估價、返還或追查資料可確認損害與流向？",
+      "witness_review_only": "你親自見聞哪些與財產損害、收受或流向有關的事實？"
+    },
+    "legal_targets": [
+      "injury_278_serious",
+      "injury_278_serious",
+      "injury_284_negligent",
+      "injury_280_ancestor",
+      "injury_281_violence_ancestor"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "LOSS_ESTABLISHED": "NEED_REVIEW",
+          "BENEFIT_RECEIVED": "NEED_REVIEW",
+          "FLOW_DISPUTED": "NEED_REVIEW",
+          "NO_LOSS_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "LOSS_ESTABLISHED": "NEED_REVIEW",
+          "BENEFIT_RECEIVED": "NEED_REVIEW",
+          "FLOW_DISPUTED": "NEED_REVIEW",
+          "NO_LOSS_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_284_negligent",
+        "effects": {
+          "LOSS_ESTABLISHED": "NEED_REVIEW",
+          "BENEFIT_RECEIVED": "NEED_REVIEW",
+          "FLOW_DISPUTED": "NEED_REVIEW",
+          "NO_LOSS_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_280_ancestor",
+        "effects": {
+          "LOSS_ESTABLISHED": "NEED_REVIEW",
+          "BENEFIT_RECEIVED": "NEED_REVIEW",
+          "FLOW_DISPUTED": "NEED_REVIEW",
+          "NO_LOSS_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_281_violence_ancestor",
+        "effects": {
+          "LOSS_ESTABLISHED": "NEED_REVIEW",
+          "BENEFIT_RECEIVED": "NEED_REVIEW",
+          "FLOW_DISPUTED": "NEED_REVIEW",
+          "NO_LOSS_SHOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第341條財產利益與流向",
+    "rationale": "損害與流向只作外部事實整理，不由金額短少單獨推出詐欺。",
+    "trigger_condition": "after:INJ278-C01 && fact:injury_progress_and_evidence:UNKNOWN && candidate:injury_278_serious:present",
+    "existing_question_refs": [
+      "INJ278-C05"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "INJ278-C06",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "INJ278-C01",
+    "fact_target": "serious_result_context",
+    "distinction_axis": "本人財產或其他利益的具體損害、程度與因果資料",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "OWNER_INTENT_EVIDENCE",
+      "NO_INTENT_EVIDENCE",
+      "INTENT_DISPUTED",
+      "PURPOSE_UNKNOWN"
+    ],
+    "answer_map": {
+      "OWNER_INTENT_EVIDENCE": "OWNER_INTENT_EVIDENCE",
+      "NO_INTENT_EVIDENCE": "NO_INTENT_EVIDENCE",
+      "INTENT_DISPUTED": "INTENT_DISPUTED",
+      "PURPOSE_UNKNOWN": "PURPOSE_UNKNOWN",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "哪些具體行為、訊息或資料使你主張對方在行為時即有為自己或第三人取得利益的意圖？",
+      "suspect": "你當時收受或處理財物的目的、返還安排及可核對依據為何？",
+      "transfer": "哪些時間、通聯、帳戶、文件或後續行為資料可供人工評價行為時目的？",
+      "witness_review_only": "你親自見聞哪些與行為時目的或後續安排有關的外部事實？"
+    },
+    "legal_targets": [
+      "injury_278_serious",
+      "injury_278_serious",
+      "injury_284_negligent",
+      "injury_280_ancestor",
+      "injury_281_violence_ancestor"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "OWNER_INTENT_EVIDENCE": "NEED_REVIEW",
+          "NO_INTENT_EVIDENCE": "NEED_REVIEW",
+          "INTENT_DISPUTED": "NEED_REVIEW",
+          "PURPOSE_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "OWNER_INTENT_EVIDENCE": "NEED_REVIEW",
+          "NO_INTENT_EVIDENCE": "NEED_REVIEW",
+          "INTENT_DISPUTED": "NEED_REVIEW",
+          "PURPOSE_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_284_negligent",
+        "effects": {
+          "OWNER_INTENT_EVIDENCE": "NEED_REVIEW",
+          "NO_INTENT_EVIDENCE": "NEED_REVIEW",
+          "INTENT_DISPUTED": "NEED_REVIEW",
+          "PURPOSE_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_280_ancestor",
+        "effects": {
+          "OWNER_INTENT_EVIDENCE": "NEED_REVIEW",
+          "NO_INTENT_EVIDENCE": "NEED_REVIEW",
+          "INTENT_DISPUTED": "NEED_REVIEW",
+          "PURPOSE_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_281_violence_ancestor",
+        "effects": {
+          "OWNER_INTENT_EVIDENCE": "NEED_REVIEW",
+          "NO_INTENT_EVIDENCE": "NEED_REVIEW",
+          "INTENT_DISPUTED": "NEED_REVIEW",
+          "PURPOSE_UNKNOWN": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第341條不法所有意圖",
+    "rationale": "主觀意圖不由單一說法或事後未履行直接認定。",
+    "trigger_condition": "after:INJ278-C01 && fact:serious_result_context:UNKNOWN && candidate:injury_278_serious:present",
+    "existing_question_refs": [
+      "INJ278-C06"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "INJ278-C07",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "single_fact",
+    "parent_question_id": "INJ278-C01",
+    "fact_target": "attempt_or_completion_status",
+    "distinction_axis": "財產結果或實行程度的時間序列",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "RESULT_OCCURRED",
+      "ATTEMPTED_ACT_ONLY",
+      "RESULT_STATUS_DISPUTED",
+      "NO_RESULT_DATA"
+    ],
+    "answer_map": {
+      "RESULT_OCCURRED": "RESULT_OCCURRED",
+      "ATTEMPTED_ACT_ONLY": "ATTEMPTED_ACT_ONLY",
+      "RESULT_STATUS_DISPUTED": "RESULT_STATUS_DISPUTED",
+      "NO_RESULT_DATA": "NO_RESULT_DATA",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請依時間說明對方已實際取得、未取得或僅進行哪些具體行為？",
+      "suspect": "請依時間說明你已取得、未取得或僅進行哪些具體行為？",
+      "transfer": "哪些客觀紀錄可確認行為進度、結果及時間序列？",
+      "witness_review_only": "你親自看到哪些已完成或尚未完成的具體行為？"
+    },
+    "legal_targets": [
+      "injury_278_serious",
+      "injury_278_serious",
+      "injury_284_negligent",
+      "injury_280_ancestor",
+      "injury_281_violence_ancestor"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "RESULT_OCCURRED": "NEED_REVIEW",
+          "ATTEMPTED_ACT_ONLY": "NEED_REVIEW",
+          "RESULT_STATUS_DISPUTED": "NEED_REVIEW",
+          "NO_RESULT_DATA": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "RESULT_OCCURRED": "NEED_REVIEW",
+          "ATTEMPTED_ACT_ONLY": "NEED_REVIEW",
+          "RESULT_STATUS_DISPUTED": "NEED_REVIEW",
+          "NO_RESULT_DATA": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_284_negligent",
+        "effects": {
+          "RESULT_OCCURRED": "NEED_REVIEW",
+          "ATTEMPTED_ACT_ONLY": "NEED_REVIEW",
+          "RESULT_STATUS_DISPUTED": "NEED_REVIEW",
+          "NO_RESULT_DATA": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_280_ancestor",
+        "effects": {
+          "RESULT_OCCURRED": "NEED_REVIEW",
+          "ATTEMPTED_ACT_ONLY": "NEED_REVIEW",
+          "RESULT_STATUS_DISPUTED": "NEED_REVIEW",
+          "NO_RESULT_DATA": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_281_violence_ancestor",
+        "effects": {
+          "RESULT_OCCURRED": "NEED_REVIEW",
+          "ATTEMPTED_ACT_ONLY": "NEED_REVIEW",
+          "RESULT_STATUS_DISPUTED": "NEED_REVIEW",
+          "NO_RESULT_DATA": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第341條既遂／未遂事實軸",
+    "rationale": "只記錄外部進度，不在問句階段直接作既遂或未遂法律結論。",
+    "trigger_condition": "after:INJ278-C01 && fact:attempt_or_completion_status:UNKNOWN && candidate:injury_278_serious:present",
+    "existing_question_refs": [
+      "INJ278-C07"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  },
+  {
+    "question_concept_id": "INJ278-C08",
+    "designer_role": "TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT",
+    "question_phase": "evidence_followup",
+    "parent_question_id": "INJ278-C01",
+    "fact_target": "evidence_source",
+    "distinction_axis": "表示、理解、交付、損害與目的的可核對資料",
+    "answer_mode": "enum",
+    "answer_codes": [
+      "DOCUMENTED_EVIDENCE",
+      "THIRD_PARTY_ONLY",
+      "NO_SUPPORTING_RECORD",
+      "EVIDENCE_DISPUTED"
+    ],
+    "answer_map": {
+      "DOCUMENTED_EVIDENCE": "DOCUMENTED_EVIDENCE",
+      "THIRD_PARTY_ONLY": "THIRD_PARTY_ONLY",
+      "NO_SUPPORTING_RECORD": "NO_SUPPORTING_RECORD",
+      "EVIDENCE_DISPUTED": "EVIDENCE_DISPUTED",
+      "UNKNOWN": "UNKNOWN"
+    },
+    "target_interview_roles": [
+      "victim",
+      "suspect",
+      "transfer",
+      "witness_review_only"
+    ],
+    "role_variants": {
+      "victim": "請指出可核對的訊息、文件、帳戶、錄音、物流或其他資料，並說明各自支持哪一段事實。",
+      "suspect": "你主張的表示、交易、返還或目的，有哪些文件、訊息、帳戶或其他資料可核對？",
+      "transfer": "請依資料來源列出哪些證據支持表示、錯誤、處分、損害及目的。",
+      "witness_review_only": "你親自看到或聽到哪些資料？哪些只是他人轉述？"
+    },
+    "legal_targets": [
+      "injury_278_serious",
+      "injury_278_serious",
+      "injury_284_negligent",
+      "injury_280_ancestor",
+      "injury_281_violence_ancestor"
+    ],
+    "legal_target_details": [
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "DOCUMENTED_EVIDENCE": "NEED_REVIEW",
+          "THIRD_PARTY_ONLY": "NEED_REVIEW",
+          "NO_SUPPORTING_RECORD": "NEED_REVIEW",
+          "EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_278_serious",
+        "effects": {
+          "DOCUMENTED_EVIDENCE": "NEED_REVIEW",
+          "THIRD_PARTY_ONLY": "NEED_REVIEW",
+          "NO_SUPPORTING_RECORD": "NEED_REVIEW",
+          "EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_284_negligent",
+        "effects": {
+          "DOCUMENTED_EVIDENCE": "NEED_REVIEW",
+          "THIRD_PARTY_ONLY": "NEED_REVIEW",
+          "NO_SUPPORTING_RECORD": "NEED_REVIEW",
+          "EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_280_ancestor",
+        "effects": {
+          "DOCUMENTED_EVIDENCE": "NEED_REVIEW",
+          "THIRD_PARTY_ONLY": "NEED_REVIEW",
+          "NO_SUPPORTING_RECORD": "NEED_REVIEW",
+          "EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      },
+      {
+        "route_id": "injury_281_violence_ancestor",
+        "effects": {
+          "DOCUMENTED_EVIDENCE": "NEED_REVIEW",
+          "THIRD_PARTY_ONLY": "NEED_REVIEW",
+          "NO_SUPPORTING_RECORD": "NEED_REVIEW",
+          "EVIDENCE_DISPUTED": "NEED_REVIEW",
+          "UNKNOWN": "NEED_REVIEW",
+          "CONFLICT": "NEED_REVIEW"
+        },
+        "exclusion_safe": false
+      }
+    ],
+    "alternative_target_details": [],
+    "source_basis": "刑法第341條各要件的證據來源整理",
+    "rationale": "證據追問只補資料來源，不把資料存在直接等同要件成立。",
+    "trigger_condition": "after:INJ278-C01 && fact:evidence_source:UNKNOWN && candidate:injury_278_serious:present",
+    "existing_question_refs": [
+      "INJ278-C08"
+    ],
+    "dedupe_action": "NEW_GAP",
+    "exclusion_safe": false
+  }
+]
+```
+<!-- STANDARD_SET_END -->
+
+## G. 角色實體化規則
+
+- ID為 `<concept_id>-<V|S|T|W>`；`witness_review_only` 永遠 `runtime_enabled: false`。
+- C01先問；C03、C04、C07只在既有 fact 為 `UNKNOWN` 或 `CONFLICT` 時追問。既有資料完整時只引用；衝突時保留新舊版本，不得靜默覆蓋。
+- 刑事訴訟法第95條權利告知與既有筆錄為程序題，不納入八個 offense concepts。
+
+## H. 回答效果與聚合
+
+- 所有單題均不得產生 `ACTIVE` 或 `EXCLUDED`。
+- `LOWERED` 只表示該軸較不支持某 route；多要件與相反資料仍由 Human Gate 聚合。
+- 詐術、錯誤、財產處分、損害流向、不法所有意圖及行為進度均須由不同來源共同供人工評價；即使一致，本階段最高仍為 `CANDIDATE_NEED_REVIEW`。
+- `UNKNOWN`、`CONFLICT` 及未列入 scope 的相鄰 route 全部為 `NEED_REVIEW`，不得直接排除。
+
+## I. 去重與既有題處理
+
+| concept | 既有來源 | 處理 |
+|---|---|---|
+| C01 | FRAUD-N-01 | 自由敘述重用，不共同出題 |
+| C02-C07 | 無或跨 route 語意不等同 | 依缺漏／衝突追問，不共同出題 |
+| C08 | 既有證據來源欄位 | 只補證據來源，不把資料存在等同要件成立 |
+
+## J. 不採用問句
+
+- 「你是不是騙人，所以構成詐欺？」：把法律結論塞入問題。
+- 「你收錢後沒有履約，就是詐欺？」：把民事履約爭議直接等同詐術。
+- 「對方已經付款，所以一定有錯誤及因果關係？」：單一結果不足。
+- 「金額短少就是詐欺損害？」：未確認流向、原因與損害資料。
+
+## K. 最低校準案例
+
+| 案例 | 期望輸出 |
+|---|---|
+| 虛構投資獲利後收款 | C02-C06 均需外部資料；不得單題升ACTIVE |
+| 真實交易但後續未履約 | 詐術、行為時意圖與民事爭議分開，最高 `CANDIDATE_NEED_REVIEW` |
+| 對方誤解但未交付財物 | C03可保留；C04為 `NEED_REVIEW`，不得補推損害 |
+| 有交付但損害與流向不明 | C05 `NEED_REVIEW`，不得由金額短少推定 |
+| 僅有事後說法、無可核對資料 | C08 `NEED_REVIEW` |
+| 僅開始實行但未取得財物 | C07保留外部進度；不直接作既遂／未遂結論 |
+| 跨角色說法衝突 | 對應 fact 為 `CONFLICT`，全部 `NEED_REVIEW` |
+
+## L. 題數與輸出預算
+
+```yaml
+new_concepts: 8
+concept_budget: 8
+case_core_selection: 3-5
+evidence_followup_max: 2
+single_case_total_max: 8
+output_page_budget: 8
+company_question_protection: PRESERVED
+xlsm_question_protection: PRESERVED
+common_question_protection: PRESERVED
+budget_exceeded_policy: OUTPUT_BUDGET_EXCEEDED
+```
+
+## M. 法律與安全邊界
+
+- 官方法源已於2026-10-27回查；行為時法仍為 `UNKNOWN`。
+- 普通傷害、義憤、身分加重、過失傷害、兒少保護及第287條程序路線不在本 route scope；本工作單只處理第278條重傷害的題目設計。
+- 本工作單只核准問句設計；個案由承辦人執行 `CASE_HUMAN_GATE`。
+
+## N. 自我檢查
+
+```yaml
+self_check:
+  structural_review: PASS
+  route_id_exactness: PASS
+  official_article_check: PASS
+  schema: PASS
+  static_dedupe_contract: PASS_ZERO_EXACT_DUPLICATES
+  runtime_semantic_dedupe: PASS_DECLARED_REUSE_CONTRACT
+  question_method_review: PASS
+  role_boundary: PASS
+  legal_effect_review: PASS_NO_SINGLE_ANSWER_ACTIVE
+  unknown_and_conflict_handling: PASS
+  calibration_review: PASS
+  concept_budget: PASS
+  output_page_budget_validation: PASS_SYNTHETIC_20_QUESTION_LIBREOFFICE
+  case_human_gate: REQUIRED
+```
+
+## O. Gate 與 Handoff
+
+```yaml
+  route_review_gate: PASS
+case_human_gate: REQUIRED
+user_final_acceptance: PENDING
+runtime_enabled: false
+runtime_auto_advance: false
+deployment_status: NOT_DEPLOYED
+automatic_advance: false
+next_route: NOT_AUTHORIZED
+next_action: ARCHIVE_AND_SELECT_NEXT
+```
+
+<!-- SUBMISSION_END -->
+
+## Reviewer Decision
+
+```yaml
+gate_id: GATE-INJ278-20261027-01
+current_route_id: injury_278_serious
+iteration: 0
+ruleset_version: question-rules-v2-draft
+ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+official_source_status: VERIFIED_CURRENT_BEHAVIOR_TIME_UNKNOWN
+schema_validation: PASS
+exact_dedupe_validation: PASS_ZERO_DUPLICATES
+semantic_dedupe_validation: PASS_DECLARED_REUSE_AND_GAP_CONTRACT
+budget_validation: PASS_8_CONCEPTS
+output_page_budget_validation: PASS_SYNTHETIC_20_QUESTION_LIBREOFFICE
+calibration_review: PASS
+reviewer_decision: PASS
+review_execution_mode: REVIEWED_PIPELINE
+reviewer_identity: Codex (model identity UNVERIFIED)
+independent_review_model_requested: gpt-5.6-sol
+independent_model_identity: UNVERIFIED
+independent_review_decision: NOT_AVAILABLE_CURRENT_TOOL_SURFACE
+hash_scope: UTF8_LF_BYTES_BETWEEN_SUBMISSION_MARKERS
+submission_sha256: 4A4DDB0D24C7D5EC65ACB07178517F1D35BB7B70387E40EA6CC9251D28EAFCE2
+test_results:
+  - "question work item and offense linkage contracts: 15 passed"
+  - "py -3 -X utf8 -m pytest -q: 630 passed"
+  - "node tests/test_frontend_api_errors.mjs: 31 passed"
+  - "node --check app/static/app.js: PASS"
+  - "GET /api/health: HTTP 200"
+  - "exact duplicate counts: internal 0; existing sources 0"
+  - "synthetic 20-question LibreOffice: victim 2 pages; suspect 3 pages; transfer 3 pages"
+open_blockers: []
+legal_conclusion: false
+runtime_enabled: false
+runtime_auto_advance: false
+deployment_status: NOT_DEPLOYED
+reviewed_at: 2026-10-27T06:00:00+08:00
+decision_reason: "C02固定造成重傷的具體行為與外部資料；C03另確認重傷結果、醫療資料與行為間的因果脈絡；死亡結果與未遂／既遂另行保留，不由單一診斷、照片或說法直接產生ACTIVE。"
+  route_review_gate: PASS
+case_human_gate: REQUIRED
+next_route: NOT_AUTHORIZED
+```

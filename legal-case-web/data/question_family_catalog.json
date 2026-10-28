@@ -1,0 +1,150 @@
+{
+  "schema_version": "question-family-catalog-v1-draft",
+  "document_status": "DESIGN_DRAFT",
+  "runtime_enabled": false,
+  "review_status": "HUMAN_REVIEW_REQUIRED",
+  "source_template": "D:/工作用/judicial1/傷害家族問句樣板.md",
+  "source_template_status": "USER_DESIGN_DRAFT",
+  "source_template_original_path": "C:/Users/yungtang/Downloads/傷害家族問句樣板.md",
+  "purpose": "以問句骨架分組；家族骨架產生共通事實題，child route 只補構成要件缺口。",
+  "legal_conclusion": false,
+  "case_human_gate": "REQUIRED",
+  "common_layer": {
+    "source": "data/question_bank.json:common",
+    "policy": "REUSE_EXISTING_COMMON_QUESTIONS",
+    "required_topics": ["identity", "rights_notice", "free_account", "exculpatory", "evidence", "closing", "record_confirmation"],
+    "role_scope": ["victim", "suspect", "transfer", "witness_review_only"],
+    "note": "現有 common 題先作通用層候選；第95、96、98、100-1、100-2、100-3及證人程序適用性須另以官方法源與內部作業規定核對。"
+  },
+  "family_layer": [
+    {
+      "family_id": "human_violence",
+      "label": "人身暴力",
+      "route_parent_ids": ["injury", "homicide", "abortion", "abandonment", "domestic_violence"],
+      "shared_skeleton_fact_targets": ["event_sequence", "time_place", "relationship_cause", "method_tool", "target_body_or_person", "result_injury_health", "medical_or_scene_evidence", "witnesses"],
+      "supplementation_axes": ["intent_or_negligence", "causation", "serious_injury_or_death", "family_relation", "self_defense_or_mutual_fight"],
+      "conditional_modules": ["domestic_violence", "group_fight", "negligence", "attempted_homicide_distinction", "official_duty"],
+      "unmapped_labels": [],
+      "mapping_status": "DRAFT_ROUTE_MAPPING"
+    },
+    {
+      "family_id": "coercion_and_threat",
+      "label": "意思壓制",
+      "route_parent_ids": ["liberty", "intimidation", "stalking", "robbery"],
+      "shared_skeleton_fact_targets": ["event_sequence", "threat_or_force_method", "content_or_demand", "victim_response_and_effect", "frequency_duration", "evidence_sources"],
+      "supplementation_axes": ["freedom_deprivation", "property_transfer", "dangerous_instrument", "protection_order", "purpose_and_knowledge"],
+      "conditional_modules": ["stalking_pattern", "protection_order", "robbery_property_take"],
+      "unmapped_labels": [],
+      "mapping_status": "DRAFT_ROUTE_MAPPING"
+    },
+    {
+      "family_id": "property_acquisition_and_damage",
+      "label": "財物取得",
+      "route_parent_ids": ["theft", "aggravated_theft", "embezzlement", "damage"],
+      "shared_skeleton_fact_targets": ["object_identity_value", "ownership_possession_control", "access_or_acquisition_method", "authorization", "disposition_or_damage", "loss_and_evidence"],
+      "supplementation_axes": ["original_possession", "intent_to_deprive_or_appropriate", "aggravating_access_or_tool", "damage_extent", "stolen_property_knowledge"],
+      "conditional_modules": ["aggravated_theft", "lost_property", "business_or_public_possession"],
+      "unmapped_labels": [],
+      "mapping_status": "DRAFT_EXACT_CHILD_ROUTE_MAPPING"
+    },
+    {
+      "family_id": "document_and_seal_forgery",
+      "label": "文書偽造",
+      "route_parent_ids": ["forgery"],
+      "shared_skeleton_fact_targets": ["document_or_seal_type", "nominal_right_holder", "maker_or_user", "use_target_and_purpose", "falsehood_or alteration", "harm_and_evidence"],
+      "supplementation_axes": ["public_or_private_document", "official_false_entry", "use_of_forged_item", "seal_signature_or_stamp"],
+      "conditional_modules": [],
+      "unmapped_labels": [],
+      "mapping_status": "DRAFT_ROUTE_MAPPING"
+    },
+    {
+      "family_id": "reputation_and_speech",
+      "label": "名譽言論",
+      "route_parent_ids": ["defamation"],
+      "shared_skeleton_fact_targets": ["content", "occasion_and_audience", "publicity_or_recipients", "platform_and_record", "speaker_and_purpose", "harm"],
+      "supplementation_axes": ["insult_or_factual_allegation", "truth_or_public_interest", "deceased_person", "credit_harm"],
+      "conditional_modules": [],
+      "unmapped_labels": [],
+      "mapping_status": "DRAFT_ROUTE_MAPPING"
+    },
+    {
+      "family_id": "privacy_and_sexual_images",
+      "label": "隱私影像",
+      "route_parent_ids": ["privacy"],
+      "shared_skeleton_fact_targets": ["capture_or_acquisition_method", "device_or_carrier", "consent", "subject_and_context", "access_or_distribution_scope", "preservation_evidence"],
+      "supplementation_axes": ["nonpublic_activity", "professional_or_business_secret", "sexual_image", "distribution_or_profit"],
+      "conditional_modules": [],
+      "unmapped_labels": [],
+      "mapping_status": "DRAFT_ROUTE_MAPPING"
+    },
+    {
+      "family_id": "public_danger_traffic",
+      "label": "公共危險交通",
+      "route_parent_ids": ["public_danger"],
+      "shared_skeleton_fact_targets": ["vehicle_and_route", "time_place", "operation_state", "alcohol_or_drug_source", "test_or_observation", "collision_or_escape_result"],
+      "supplementation_axes": ["alcohol_concentration", "drug_use", "injury_or_death", "hit_and_run"],
+      "conditional_modules": ["traffic_special_form"],
+      "unmapped_labels": [],
+      "mapping_status": "DRAFT_ROUTE_MAPPING"
+    },
+    {
+      "family_id": "drugs_weapons_organized_crime",
+      "label": "毒槍組織",
+      "route_parent_ids": ["drugs", "opium"],
+      "shared_skeleton_fact_targets": ["source_and_upstream", "destination_and_downstream", "substance_or_item", "quantity_and_packaging", "money_flow", "communications_and_devices"],
+      "supplementation_axes": ["manufacture_transport_sale", "possession_or_use", "inducement_or_force", "firearm_status", "organization_structure"],
+      "conditional_modules": [],
+      "unmapped_labels": ["firearms", "organized_crime"],
+      "mapping_status": "DRAFT_ROUTE_MAPPING_WITH_UNMAPPED_LABEL"
+    },
+    {
+      "family_id": "judicial_and_public_service_obstruction",
+      "label": "妨害司法公務",
+      "route_parent_ids": ["obstruction", "judicial_integrity", "evidence", "escape", "accusation"],
+      "shared_skeleton_fact_targets": ["official_or_proceeding_identity", "event_sequence", "actor_role", "method_or_statement", "effect_on_proceeding", "witness_and_record_evidence"],
+      "supplementation_axes": ["lawful_official_duty", "perjury_or_false_accusation", "evidence_identity_and_destruction", "escape_or_concealment", "special_role_or_oath"],
+      "conditional_modules": ["official_victim", "witness_review_only"],
+      "unmapped_labels": [],
+      "mapping_status": "DRAFT_ROUTE_MAPPING"
+    },
+    {
+      "family_id": "computer_and_financial_trace",
+      "label": "電腦網路",
+      "route_parent_ids": ["computer"],
+      "shared_skeleton_fact_targets": ["account_identity", "ip_and_device", "access_path", "data_or_system_action", "authorization", "money_flow_and_logs"],
+      "supplementation_axes": ["intrusion", "data_change_or_deletion", "interference", "malware", "money_laundering"],
+      "conditional_modules": [],
+      "unmapped_labels": ["money_laundering"],
+      "mapping_status": "DRAFT_ROUTE_MAPPING_WITH_UNMAPPED_LABEL"
+    },
+    {
+      "family_id": "sexual_and_child_protection",
+      "label": "性侵害與兒少",
+      "route_parent_ids": ["sexual", "trafficking", "child_protection", "sexual_harassment"],
+      "shared_skeleton_fact_targets": ["relationship_and_power", "consent_or_resistance", "age_and_capacity", "contact_or_exploitation_method", "time_place", "special_procedure_and_safety"],
+      "supplementation_axes": ["sexual_act_type", "child_age", "exploitation_purpose", "trafficking_means", "harassment_context"],
+      "conditional_modules": ["sensitive_interview", "child_protection", "sexual_assault_special_procedure"],
+      "unmapped_labels": [],
+      "mapping_status": "DRAFT_ROUTE_MAPPING_REQUIRES_SPECIAL_PROCEDURE_REVIEW"
+    },
+    {
+      "family_id": "low_frequency_or_temporary_supplement",
+      "label": "低頻罪名／臨時補強",
+      "route_parent_ids": ["state_security", "duty", "currency", "securities", "weights_measures", "disorder", "voting", "graves_religion", "agriculture_commerce", "gambling", "marriage", "obscenity", "gender_equality", "juvenile"],
+      "shared_skeleton_fact_targets": ["event_sequence", "actor_and_role", "object_or_protected_interest", "method", "result_or_effect", "evidence_and_source"],
+      "supplementation_axes": ["route_specific_elements"],
+      "conditional_modules": ["temporary_route_specific_supplement", "special_procedure_or_protection"],
+      "unmapped_labels": [],
+      "mapping_status": "DRAFT_GENERIC_SKELETON_ONLY"
+    }
+  ],
+  "question_attributes": ["target_interview_role", "family_id", "legal_target_route_id", "fact_target", "element_type", "layer", "required_or_optional", "preconditions", "provenance", "review_status"],
+  "dedupe_policy": "family_skeleton_questions_are_reused; child routes add only missing element supplements; exact_and_semantic_duplicate_checks_required",
+  "folder_alignment": {
+    "expected_user_claim": "32 crime-family folders",
+    "observed_in_workspace": "NOT_CONFIRMED; no matching subdirectory was found at D:/工作用/judicial1/questions",
+    "status": "UNKNOWN_REQUIRES_USER_OR_REPOSITORY_MAPPING"
+  },
+  "integration_policy": "DESIGN_ONLY_UNTIL_FAMILY_REVIEW_AND_ROUTE_MAPPING_PASS",
+  "human_review": ["家族邊界", "每個 route 的補強要件", "樣板法源與行為時法", "特殊程序", "內部作業規定", "最終題目與格式 UX"]
+}

@@ -271,13 +271,13 @@ function renderWarnings(caseData) {
   if (!box) return;
   box.textContent = "";
   const items = [];
-  // 問句裁切（8 頁預算）
+  // 問句裁切（正式案件總題數 20 題；下載仍以實際 8 頁排版驗證）
   for (const w of caseData.question_budget_warnings || []) {
     if (w.level === "BUDGET_PRUNED" && w.pruned_count > 0) {
       const detail = (w.pruned_questions || [])
         .map((q) => `　· ${q.text || q.id}（${q.kind || "?"}）`)
         .join("\n");
-      items.push(`⚠ 問句超出 8 頁預算，已裁 ${w.pruned_count} 題（承辦人可視案情自行補問）：\n${detail}`);
+      items.push(`⚠ 問句超出20題實務上限，已裁 ${w.pruned_count} 題（承辦人可視案情自行補問）：\n${detail}`);
     }
   }
   // 候選矛盾（回答驅動重評估，spec §7.4）
@@ -379,6 +379,7 @@ function legalRoutesForOffenses(bank, offenseIds) {
       id: route.id,
       name: route.name,
       parent_offense_id: offense.id,
+      legal_verification: route.legal_verification || null,
     }));
   });
 }
@@ -476,6 +477,29 @@ function renderLegalRoutes() {
     const span = document.createElement("span");
     span.textContent = route.name;
     label.append(input, span);
+    const verification = route.legal_verification;
+    if (verification) {
+      const source = document.createElement("small");
+      source.className = "route-verification";
+      const sourceText = document.createElement("span");
+      sourceText.textContent = `法源查證：${verification.article_no || "條號待查"} · ${verification.verified_on || "日期未知"} · ${verification.verification_status || "HUMAN_REVIEW_REQUIRED"}`;
+      source.appendChild(sourceText);
+      if (verification.statute_source?.law_url) {
+        const lawLink = document.createElement("a");
+        lawLink.href = verification.statute_source.law_url;
+        lawLink.target = "_blank";
+        lawLink.rel = "noopener noreferrer";
+        lawLink.textContent = "查看現行法";
+        source.append(" ", lawLink);
+      }
+      const judicial = verification.judicial_reference;
+      if (judicial) {
+        const judgment = document.createElement("span");
+        judgment.textContent = `；判決參考：${judicial.citation}（${judicial.disposition}，僅作區分資料）`;
+        source.appendChild(judgment);
+      }
+      label.appendChild(source);
+    }
     return label;
   });
   if (!nodes.length) {
@@ -490,8 +514,10 @@ function renderLegalRoutes() {
 function renderOffenses(caseData) {
   const suggested = new Map(caseData.candidates.map((item) => [item.id, item]));
   const selected = new Set(caseData.selected_offenses);
-  const container = $("#offense-list");
-  const nodes = state.bank.offenses.map((item) => {
+  const candidateContainer = $("#candidate-offense-list");
+  const manualContainer = $("#offense-list");
+  const candidateItems = state.bank.offenses.filter((item) => suggested.has(item.id));
+  const makeChoice = (item, isSuggested) => {
     const candidate = suggested.get(item.id);
     return choice(
       item.id,
@@ -501,8 +527,18 @@ function renderOffenses(caseData) {
       candidate?.candidate_state,
       candidate?.candidate_eligibility || "",
     );
-  });
-  container.replaceChildren(...nodes);
+  };
+  const candidateNodes = candidateItems.map((item) => makeChoice(item, true));
+  if (!candidateNodes.length) {
+    const empty = document.createElement("p");
+    empty.className = "muted";
+    empty.textContent = "系統目前無法提出足夠候選方向；請先回到 Gate 1 補充案情，或展開人工例外區。";
+    candidateNodes.push(empty);
+  }
+  candidateContainer?.replaceChildren(...candidateNodes);
+  manualContainer?.replaceChildren(...state.bank.offenses.map((item) => makeChoice(item, suggested.has(item.id))));
+  const manualOverride = $("#manual-offense-override");
+  if (manualOverride) manualOverride.open = candidateItems.length === 0;
   const analysisBox = $("#candidate-element-analysis");
   if (analysisBox) {
     const candidateNodes = caseData.candidates
@@ -603,8 +639,11 @@ function renderOffenses(caseData) {
     analysisBox.hidden = candidateNodes.length === 0;
     analysisBox.replaceChildren(...candidateNodes);
   }
-  container.querySelectorAll('input[name="offense"]').forEach((input) => {
+  document.querySelectorAll('#candidate-offense-list input[name="offense"], #offense-list input[name="offense"]').forEach((input) => {
     input.addEventListener("change", () => {
+      document.querySelectorAll('input[name="offense"]').forEach((peer) => {
+        if (peer.value === input.value) peer.checked = input.checked;
+      });
       $("#route-review-confirmed").checked = false;
       renderLegalRoutes();
     });
@@ -688,7 +727,7 @@ function renderCurrentQuestion(caseData, { focusAnswer = false } = {}) {
   const question = questions[index];
   const answered = questions.filter((item) => (item.answer || "").trim()).length;
   const knownCount = (caseData.questions || []).filter((item) => item.meta?.known_from_summary).length;
-  progress.textContent = `追加問句第 ${index + 1} / ${count} 題 · 已作答 ${answered} 題 · 全題 ${caseData.questions.length} 題（摘要已知 ${knownCount} 題，筆錄上限 8 頁）`;
+  progress.textContent = `追加問句第 ${index + 1} / ${count} 題 · 已作答 ${answered} 題 · 全題 ${caseData.questions.length} 題（摘要已知 ${knownCount} 題，實務上限20題，筆錄上限 8 頁）`;
 
   const label = document.createElement("label");
   label.htmlFor = "current-answer";
@@ -707,6 +746,26 @@ function renderCurrentQuestion(caseData, { focusAnswer = false } = {}) {
   const method = document.createElement("div");
   method.className = "meta question-method";
   method.textContent = questionMethod(question);
+  const editDetails = document.createElement("details");
+  editDetails.className = "advanced question-edit";
+  const editSummary = document.createElement("summary");
+  editSummary.textContent = question.meta?.human_edited ? "本案問句（已人工修改）" : "修改本案問句";
+  const editText = document.createElement("textarea");
+  editText.rows = 4;
+  editText.maxLength = 2000;
+  editText.value = question.text;
+  editText.id = "case-question-edit";
+  const editButton = document.createElement("button");
+  editButton.type = "button";
+  editButton.className = "secondary";
+  editButton.textContent = "儲存本案問句";
+  editButton.addEventListener("click", async () => {
+    try {
+      await action("edit_question", { question_id: question.id, text: editText.value });
+      announce("本案問句已修改；原始問句仍保留於題目紀錄。 ");
+    } catch (error) { announce(error.message, true); }
+  });
+  editDetails.append(editSummary, editText, editButton);
   const textarea = document.createElement("textarea");
   textarea.id = "current-answer";
   textarea.rows = 4;
@@ -727,7 +786,7 @@ function renderCurrentQuestion(caseData, { focusAnswer = false } = {}) {
       announce("已到最後一題，請按「儲存全部回答」。");
     }
   });
-  const nodes = [label, meta, method];
+  const nodes = [label, meta, method, editDetails];
   if (question.meta?.answer_map) {
     const codeLabel = document.createElement("label");
     codeLabel.htmlFor = "current-answer-code";
@@ -881,8 +940,8 @@ function renderCase(caseData) {
     autoBanner.hidden = !hasAutoPreparedQuestions;
     if (hasAutoPreparedQuestions && caseData.preparation_notice) autoBanner.querySelector("span").textContent = caseData.preparation_notice;
   }
-  $("#step-tab-offense").hidden = hasAutoPreparedQuestions;
-  $("#gate2-step-offense").hidden = hasAutoPreparedQuestions || state.gate2Step !== "offense";
+    $("#step-tab-offense").hidden = false;
+    $("#gate2-step-offense").hidden = state.gate2Step !== "offense";
   $("#approve-gate1").hidden = autoPrepared;
   $("#auto-prepare").hidden = autoPrepared;
   setVisible("#gate1-panel", ["GATE1_REVIEW", "GATE2_QA"].includes(caseData.state));
@@ -1220,6 +1279,11 @@ $("#copy-brief").addEventListener("click", async () => {
 });
 $("#start-suspect").addEventListener("click", async () => {
   try { await action("start_interview", { role: "suspect" }); announce("已進入涉嫌人問答。既有被害人輸出仍保留。 "); }
+  catch (error) { announce(error.message, true); }
+});
+$("#reopen-questions").addEventListener("click", async () => {
+  if (!window.confirm("返回問答會使本次筆錄與條陳核准失效，但會保留原有題目與回答。是否繼續？")) return;
+  try { await action("reopen_questionnaire", {}); announce("已返回問答，可查看、修改本案問句與答案。 "); }
   catch (error) { announce(error.message, true); }
 });
 $("#reopen-case").addEventListener("click", async () => {

@@ -11,7 +11,10 @@ case_human_gate_required: true
 designer_role: TW_CRIMINAL_INTERVIEW_QUESTION_DESIGN_EXPERT
 active_question_ruleset: UNCHANGED_RUNTIME
 candidate_question_ruleset: question-rules-v2-draft
-candidate_ruleset_status: CODEX_REVIEW_REQUIRED
+candidate_ruleset_status: QUESTION_DESIGN_ACCEPTED
+candidate_ruleset_acceptance_scope: QUESTION_DESIGN_ONLY
+runtime_ruleset_status: UNCHANGED_RUNTIME
+route_archive_manifest: docs/evidence/question_route_archive_manifest.json
 max_ruleset_revision_per_defect: 1
 ```
 

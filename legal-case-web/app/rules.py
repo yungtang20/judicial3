@@ -20,10 +20,17 @@ from .xlsm_questions import has_company_standard_questions, xlsm_questions_for
 # 3 罪章 ≈ 97 題（滿 8 頁）；core 不得裁 → 超量由 build_questions fail closed 提示縮小
 MAX_SELECTED_OFFENSES = 3
 
-# 8 頁防線（spec §7.5）：實測 DOCX 容量約 97 題（含 company/common）。
-# victim 固定 company(7)+common(12)，故 offense 題上限為 97-19=78。
-# 超出時 fail closed 提示承辦人縮小候選路由（不得靜默裁 core）
+# 8 頁工程防線：離線題庫審查與回歸流程最多 78 題罪章題。
+# 正式案件在 Gate 1／路由已確認後，採「總題數 20 題」精簡模式；
+# 固定／通用題也會占用額度，剩餘額度才分配給罪章核心、延伸與爭點題。
 MAX_OFFENSE_QUESTIONS = 78
+MAX_COMPACT_TOTAL_QUESTIONS = 20
+LEGAL_VERIFICATION_EVIDENCE_FILE = (
+    Path(__file__).resolve().parents[1]
+    / "docs"
+    / "evidence"
+    / "property_offense_legal_verification_20261026.json"
+)
 
 # 一條法規路線至少要能在摘要中找到幾個構成要件的可回查原文，才足以被「建議」
 # 為本案方向，也才列為合格候選（ELIGIBLE_CANDIDATE）。建議與狀態兩處必須共用
@@ -54,6 +61,25 @@ def load_bank(path: Path) -> dict[str, Any]:
     if crosswalk.get("review_status") != "HUMAN_REVIEW_REQUIRED":
         raise RuleError("legal route crosswalk 必須維持人工審查狀態")
     route_meta = {item["id"]: item for item in crosswalk.get("routes", [])}
+    verification_index: dict[str, dict[str, Any]] = {}
+    if LEGAL_VERIFICATION_EVIDENCE_FILE.is_file():
+        evidence = json.loads(LEGAL_VERIFICATION_EVIDENCE_FILE.read_text(encoding="utf-8"))
+        if evidence.get("verification_status") != "HUMAN_REVIEW_REQUIRED":
+            raise RuleError("法律查證證據必須維持人工審查狀態")
+        verification_index = {
+            item["route_id"]: {
+                "evidence_file": str(LEGAL_VERIFICATION_EVIDENCE_FILE.name),
+                "verification_status": evidence["verification_status"],
+                "verified_on": evidence["verified_on"],
+                "article_no": item["article_no"],
+                "verified_rule": item["verified_rule"],
+                "question_focus": deepcopy(item.get("question_focus", [])),
+                "judicial_reference": deepcopy(item.get("judicial_reference")),
+                "statute_source": deepcopy(evidence["statute_source"]),
+            }
+            for item in evidence.get("routes", [])
+            if item.get("route_id")
+        }
     offense_ids = {item["id"] for item in merged["offenses"]}
     if set(route_meta) != offense_ids:
         missing = sorted(offense_ids - set(route_meta))
@@ -83,6 +109,10 @@ def load_bank(path: Path) -> dict[str, Any]:
         offense["crosswalk_status"] = meta["crosswalk_status"]
         offense["crosswalk_note"] = meta["note"]
         offense["legal_routes"] = child_routes
+        for child in child_routes:
+            evidence_meta = verification_index.get(child["id"])
+            if evidence_meta:
+                child["legal_verification"] = deepcopy(evidence_meta)
         offense["excluded_legal_routes"] = excluded_routes
         offense["content_review_status"] = "HUMAN_REVIEW_REQUIRED"
     merged["legal_route_crosswalk_version"] = crosswalk["schema_version"]
@@ -432,6 +462,208 @@ def _property_taking_values(summary: str) -> dict[str, str] | None:
         "intent": "UNKNOWN",
         "evidence": evidence,
     }
+
+
+def _property_lineage_fact_specs(summary: str) -> list[dict[str, Any]]:
+    """Extract narrow property-taking fact-contract fields from exact spans.
+
+    This helper records what a source says and whether a point is expressly
+    unknown.  It does not decide possession in law, credibility, intent, or an
+    offense route.  Patterns intentionally require both a property object and
+    an explicit attribution/uncertainty phrase to avoid generic keyword
+    promotion.
+    """
+    specs: list[dict[str, Any]] = []
+
+    def direct_match(pattern: str, summary: str) -> re.Match[str] | None:
+        """Return a sentence-local direct assertion, rejecting quoted/hypothetical wrappers."""
+        for candidate in re.finditer(pattern, summary):
+            clause_start = max(
+                summary.rfind(mark, 0, candidate.start("text"))
+                for mark in ("。", "；", "！", "？", "\n")
+            ) + 1
+            prefix = summary[clause_start:candidate.start("text")]
+            if re.search(r"(?:若|如果|假設|是否|稱|表示|指稱|轉述|據稱)\s*$", prefix):
+                continue
+            return candidate
+        return None
+
+    def add(
+        fact_key: str,
+        value: str,
+        match: re.Match[str] | None,
+        *,
+        assertion_class: str,
+        source_type: str = "PARTY_STATEMENT",
+        verification_status: str = "UNVERIFIED",
+    ) -> None:
+        text = match.group("text") if match is not None else ""
+        subject_match = re.search(r"[甲乙丙丁戊己庚辛壬癸]", text)
+        subject = subject_match.group(0) if subject_match else ""
+        object_value = next(
+            (token for token in ("手機", "物品", "財物") if token in text),
+            "",
+        )
+        event_id = "event:property-taking" if text else "event:unassigned"
+        specs.append({
+            "fact_key": fact_key,
+            "value": value,
+            "text": text,
+            "source_start": match.start("text") if match is not None else None,
+            "source_end": match.end("text") if match is not None else None,
+            "assertion_class": assertion_class,
+            "source_type": source_type,
+            "verification_status": verification_status,
+            "subject": subject,
+            "object": object_value,
+            "event_id": event_id,
+            "proposition_key": "|".join((fact_key, subject, object_value, event_id)),
+        })
+
+    retained = direct_match(
+        r"(?P<text>[甲乙丙丁戊己庚辛壬癸][^。；]{0,10}(?:仍在|尚在)[^。；]{0,12}[，,]"
+        r"(?:手機|物品|財物)[^。；]{0,8}(?:伸手可及|可立即支配|仍可控制)[^。；]*)",
+        summary,
+    )
+    if retained:
+        add("original_possession", "POSSESSION_RETAINED", retained, assertion_class="ASSERTED")
+
+    lost = direct_match(
+        r"(?P<text>[甲乙丙丁戊己庚辛壬癸][^。；]{0,12}(?:離開|離場)[^。；]{0,12}"
+        r"(?:發現|察覺)(?:手機|物品|財物)?(?:遺失|不見))",
+        summary,
+    )
+    if lost:
+        add("original_possession", "LOST_OR_OUT_OF_POSSESSION", lost, assertion_class="ASSERTED")
+
+    possession_unknown_patterns = (
+        r"(?P<text>(?:目前|尚|仍)?未確認(?:手機|物品|財物)[^。；]{0,8}"
+        r"是否仍在[^。；]{0,20}(?:持有|管領)範圍)",
+        r"(?P<text>(?:手機|物品|財物)[^。；]{0,8}是否仍在[^。；]{0,20}"
+        r"(?:持有|管領)範圍)(?=[^。；]{0,30}(?:待確認|尚未確認|仍未知))",
+    )
+    if not retained and not lost:
+        for pattern in possession_unknown_patterns:
+            match = direct_match(pattern, summary)
+            if match:
+                add(
+                    "original_possession", "UNKNOWN", match,
+                    assertion_class="UNKNOWN", verification_status="UNKNOWN",
+                )
+                break
+
+    intent_unknown = direct_match(
+        r"(?P<text>(?:(?:目前|尚|仍)?未確認)?[甲乙丙丁戊己庚辛壬癸]"
+        r"是否具有不法所有意圖(?:仍未知|仍待核對|仍待確認)?)",
+        summary,
+    ) or direct_match(
+        r"(?P<text>不法所有意圖(?:仍未知|仍待核對|仍待確認))",
+        summary,
+    )
+    if intent_unknown:
+        add("intent", "UNKNOWN", intent_unknown, assertion_class="UNKNOWN", verification_status="UNKNOWN")
+
+    knowledge_unknown = direct_match(
+        r"(?P<text>[甲乙丙丁戊己庚辛壬癸]對(?:手機|物品|財物)所有權的認知)"
+        r"(?=[^。；]{0,30}(?:尚未確認|未確認|仍未知|待確認))",
+        summary,
+    )
+    if knowledge_unknown:
+        add(
+            "ownership_knowledge", "UNKNOWN", knowledge_unknown,
+            assertion_class="UNKNOWN", verification_status="UNKNOWN",
+        )
+
+    admitted_taking = direct_match(
+        r"(?P<text>[甲乙丙丁戊己庚辛壬癸]承認(?:拿取|拾得|撿到)[^。；]{0,24}"
+        r"(?:離開|帶離))",
+        summary,
+    )
+    if admitted_taking:
+        add("taking", "TAKING_OR_REMOVAL_ADMITTED", admitted_taking, assertion_class="ADMITTED")
+
+    denied_taking = direct_match(
+        r"(?P<text>[甲乙丙丁戊己庚辛壬癸](?:先)?否認[^。；]{0,24}"
+        r"(?:拿取|帶離|取走|拾得)[^。；]*)",
+        summary,
+    )
+    if denied_taking and "否認曾承認" not in denied_taking.group("text"):
+        add(
+            "taking", "TAKING_OR_REMOVAL_DENIED", denied_taking,
+            assertion_class="DENIED", verification_status="UNVERIFIED",
+        )
+
+    evidence_taking = direct_match(
+        r"(?P<text>(?:監視器|錄影|影像)(?:資料)?(?:顯示|拍到|呈現)[^。；]{0,30}"
+        r"(?:拿|取|帶|離開)[^。；]*)",
+        summary,
+    )
+    if evidence_taking:
+        add(
+            "taking", "EVIDENCE_DEPICTS_TAKING_OR_REMOVAL", evidence_taking,
+            assertion_class="ASSERTED", source_type="EVIDENCE", verification_status="UNVERIFIED",
+        )
+
+    handover = direct_match(
+        r"(?P<text>[甲乙丙丁戊己庚辛壬癸][^。；]{0,10}(?:拿起|拾得|撿到)"
+        r"(?:手機|物品|財物)[^。；]{0,8}立即交給(?:店員|警方|櫃檯人員))",
+        summary,
+    )
+    if handover:
+        add(
+            "post_acquisition_conduct", "IMMEDIATE_HANDOVER_TO_STORE_STAFF", handover,
+            assertion_class="ASSERTED",
+        )
+    return specs
+
+
+def fact_contradiction_issues(facts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Link conflicting source assertions without selecting a true version."""
+    by_key: dict[tuple[str, str, str, str, str], list[dict[str, Any]]] = {}
+    for fact in facts:
+        fact_key = str(fact.get("fact_key", "")).strip()
+        if fact_key:
+            proposition_key = str(fact.get("proposition_key", "")).strip()
+            grouping = (
+                fact_key,
+                str(fact.get("subject", "")).strip(),
+                str(fact.get("object", "")).strip(),
+                str(fact.get("event_id", "")).strip(),
+                proposition_key,
+            )
+            by_key.setdefault(grouping, []).append(fact)
+    issues: list[dict[str, Any]] = []
+    for grouping, items in sorted(by_key.items()):
+        fact_key, subject, object_value, event_id, proposition_key = grouping
+        denied = [item for item in items if item.get("assertion_class") == "DENIED"]
+        opposing = [
+            item for item in items
+            if item.get("assertion_class") in {"ADMITTED", "ASSERTED"}
+            and item.get("fact_id") not in {denial.get("fact_id") for denial in denied}
+        ]
+        if not denied or not opposing:
+            continue
+        denial_refs = sorted({str(item.get("fact_id")) for item in denied if item.get("fact_id")})
+        contrary_refs = sorted({str(item.get("fact_id")) for item in opposing if item.get("fact_id")})
+        refs = sorted(set(denial_refs + contrary_refs))
+        seed = fact_key + "|" + "|".join(refs)
+        issues.append({
+            "issue_id": "contradiction:" + hashlib.sha256(seed.encode("utf-8")).hexdigest()[:20],
+            "fact_key": fact_key,
+            "status": "CONFLICT_REQUIRES_HUMAN_REVIEW",
+            "fact_refs": refs,
+            "denial_fact_ids": denial_refs,
+            "contrary_fact_ids": contrary_refs,
+            "subject": subject,
+            "object": object_value,
+            "event_id": event_id,
+            "proposition_key": proposition_key,
+            "source_types": sorted({str(item.get("source_type", "UNKNOWN")) for item in denied + opposing}),
+            "assertion_classes": sorted({str(item.get("assertion_class", "UNKNOWN")) for item in denied + opposing}),
+            "resolved_value": "UNKNOWN",
+            "review_status": "HUMAN_REVIEW_REQUIRED",
+        })
+    return issues
 
 
 # 財物罪章共用錨點（E4 輪，2026-10-20）：區辨訊號與候選閘門共用同一
@@ -1104,6 +1336,18 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
     ) -> dict[str, Any]:
         f = fields or {}
         is_legal_characterization = fact_key == "legal_characterization"
+        assertion_class = f.get(
+            "assertion_class",
+            "UNKNOWN" if fact_kind == "unknown" else "ASSERTED",
+        )
+        source_type = f.get(
+            "source_type",
+            "UNKNOWN" if fact_kind == "unknown" and not (source_excerpt or text) else "PARTY_STATEMENT",
+        )
+        verification_status = f.get(
+            "verification_status",
+            "UNKNOWN" if fact_kind == "unknown" else "UNVERIFIED",
+        )
         stable_seed = "|".join((
             "intake.summary",
             fact_key,
@@ -1132,6 +1376,7 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
             "causal_relation": f.get("causal_relation", ""),
             "consent_state": f.get("consent_state", ""),
             "event_id": f.get("event_id", "event:unassigned"),
+            "proposition_key": f.get("proposition_key", ""),
             "role": f.get("role", ""),
             "person_code": f.get("person_code", ""),
             "alias": f.get("alias", ""),
@@ -1140,8 +1385,14 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
                 "assertion_status",
                 "UNKNOWN" if fact_kind == "unknown" else "EXPLICIT_SOURCE_ASSERTION",
             ),
+            "assertion_class": assertion_class,
+            "source_type": source_type,
+            "verification_status": verification_status,
             "evidence_refs": [],
-            "fact_status": "摘要法律評價" if is_legal_characterization else _fact_status_for_kind(fact_kind),
+            "fact_status": f.get(
+                "fact_status",
+                "摘要法律評價" if is_legal_characterization else _fact_status_for_kind(fact_kind),
+            ),
             # FACT 僅表示來源文字明示記載，不表示內容已經查證為真。
             "machine_status": (
                 "UNKNOWN" if fact_kind == "unknown" else
@@ -1288,6 +1539,73 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
         for text in default_unknowns:
             facts.append(make_fact(text, "unknown", value="UNKNOWN", source_excerpt=""))
 
+    # Property lineage is additive to the general narrative segmentation.  A
+    # source-backed typed fact replaces only a synthetic UNKNOWN for the same
+    # key; independent statements/evidence (including denial vs CCTV) remain
+    # separate records.
+    for spec in _property_lineage_fact_specs(summary):
+        if spec["source_start"] is not None:
+            facts = [
+                fact for fact in facts
+                if not (
+                    fact.get("fact_key") == spec["fact_key"]
+                    and fact.get("machine_status") == "UNKNOWN"
+                    and not fact.get("source_excerpt")
+                )
+            ]
+        duplicate = any(
+            fact.get("fact_key") == spec["fact_key"]
+            and fact.get("source_start") == spec["source_start"]
+            and fact.get("source_end") == spec["source_end"]
+            and fact.get("assertion_class") == spec["assertion_class"]
+            for fact in facts
+        )
+        if duplicate:
+            continue
+        facts.append(make_fact(
+            spec["text"] or spec["fact_key"],
+            "unknown" if spec["assertion_class"] == "UNKNOWN" else "statement",
+            {
+                "assertion_class": spec["assertion_class"],
+                "source_type": spec["source_type"],
+                "verification_status": spec["verification_status"],
+                "assertion_status": (
+                    "UNKNOWN" if spec["assertion_class"] == "UNKNOWN" else
+                    "DENIED" if spec["assertion_class"] == "DENIED" else
+                    "SOURCE_LEAD_TO_VERIFY" if spec["source_type"] == "EVIDENCE" else
+                    "EXPLICIT_SOURCE_ASSERTION"
+                ),
+                "fact_status": "證據線索" if spec["source_type"] == "EVIDENCE" else (
+                    "未知" if spec["assertion_class"] == "UNKNOWN" else "當事人陳述"
+                ),
+                "subject": spec["subject"],
+                "object": spec["object"],
+                "event_id": spec["event_id"],
+                "proposition_key": spec["proposition_key"],
+            },
+            fact_key=spec["fact_key"],
+            value=spec["value"],
+            source_excerpt=spec["text"],
+            source_start=spec["source_start"],
+            source_end=spec["source_end"],
+        ))
+
+    unknown_label_by_key = {
+        "original_possession": "原持有／管領狀態",
+        "third_party_possession": "店員、店家或第三人是否接續管領",
+        "ownership_knowledge": "行為人對物品所有權的認知",
+        "intent": "行為人的不法所有意圖",
+    }
+    default_unknowns = list(dict.fromkeys([
+        *default_unknowns,
+        *(
+            unknown_label_by_key[item["fact_key"]]
+            for item in facts
+            if item.get("machine_status") == "UNKNOWN"
+            and item.get("fact_key") in unknown_label_by_key
+        ),
+    ]))
+
     def unique(values: list[str]) -> list[str]:
         return list(dict.fromkeys(value for value in values if value))
 
@@ -1404,6 +1722,7 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
         "person_attributes": person_attributes(),
         "unknowns": default_unknowns,
         "facts": facts,  # new structured fact list
+        "contradiction_issues": fact_contradiction_issues(facts),
         "review_status": "HUMAN_REVIEW_REQUIRED",
     }
     return gate1
@@ -2417,7 +2736,30 @@ def candidate_offenses(
             key for key in dependencies.get(item["id"], []) if not property_unknowns or key in property_unknowns
         ]
         item["status_reasons"] = []
-    return sorted(matches, key=lambda item: (-len(item["matched_terms"]), item["name"]))
+        supported_count = sum(
+            1
+            for route in item.get("route_element_matrix", [])
+            for element in route.get("elements", [])
+            if element.get("status") == "SOURCE_SUPPORTED"
+        )
+        item["candidate_rank_factors"] = {
+            "supported_element_count": supported_count,
+            "unknown_requirement_count": len(item.get("unknown_elements", []))
+            + len(item.get("unknown_fact_keys", [])),
+            "keyword_hit_count": len(item.get("matched_terms", [])),
+            "score_interpretation": "排序輔助，不是法律機率或成立判斷",
+        }
+    # 先依構成要件矩陣中可回查的支持數排序，再以關鍵詞數作穩定次排序。
+    # 關鍵詞仍可作檢索提示，但不得單獨決定候選順位。
+    return sorted(
+        matches,
+        key=lambda item: (
+            -item.get("candidate_rank_factors", {}).get("supported_element_count", 0),
+            len(item.get("unknown_elements", [])) + len(item.get("unknown_fact_keys", [])),
+            -len(item.get("matched_terms", [])),
+            item["name"],
+        ),
+    )
 
 
 def _candidate_hit_is_single_char_only(candidate: dict[str, Any]) -> bool:
@@ -2602,11 +2944,11 @@ ROUTE_ELEMENT_QUESTION_SIGNALS: dict[str, dict[str, tuple[str, ...]]] = {
         "足以生損害於公眾或他人": ("damage_result", "能否正常使用", "毀損程度", "價值為何"),
     },
     "defamation_310_defamation": {
-        "指摘或傳述具體事項": ("具體事件或事實", "言論之內容", "原話或內容"),
-        "足以毀損他人名譽": ("損害你的名譽", "貶損他人名譽", "故意貶低"),
-        "散布於眾意圖及文字圖畫態樣": ("散布於眾", "公開場所發表", "散布管道"),
+        "指摘或傳述具體事項": ("具體事件或事實", "言論之內容", "原話或內容", "V-defamation-M-C-09"),
+        "足以毀損他人名譽": ("損害你的名譽", "貶損他人名譽", "故意貶低", "名譽受損", "足以貶損", "聲譽的損害"),
+        "散布於眾意圖及文字圖畫態樣": ("散布於眾", "公開場所發表", "散布管道", "網路管道", "文字、圖畫、影音"),
         "真實性、公共利益與私德範圍": ("證明其為真實", "自衛、自辯", "可受公評"),
-        "相當理由確信為真實之證據資料": ("相當理由確信", "事前查證", "證據可提供", "證明其為真實"),
+        "相當理由確信為真實之證據資料": ("相當理由確信", "事前查證", "證據可提供", "證明其為真實", "可由哪些資料確認"),
     },
     "defamation_309_public_insult": {
         "故意發表公然貶損他人名譽之言論": ("insult_words", "說了哪些原話", "人格評價"),
@@ -2639,10 +2981,13 @@ def _attach_route_elements_to_questions(
     """以人工審查 sidecar 把 child route 要件連到既有問句，不改題目本文。"""
     route_parent: dict[str, str] = {}
     route_elements: dict[str, list[str]] = {}
+    route_verification: dict[str, dict[str, Any]] = {}
     for offense_id, offense in offenses.items():
         for route in offense.get("legal_routes", []):
             route_parent[route["id"]] = offense_id
             route_elements[route["id"]] = list(route.get("fact_elements", []))
+            if route.get("legal_verification"):
+                route_verification[route["id"]] = route["legal_verification"]
     for route_id in route_ids:
         signals_by_element = ROUTE_ELEMENT_QUESTION_SIGNALS.get(route_id, {})
         parent = route_parent.get(route_id)
@@ -2666,6 +3011,14 @@ def _attach_route_elements_to_questions(
                 if route_id not in legal_targets:
                     legal_targets.append(route_id)
                 meta["element_mapping_status"] = "REVIEWED_SIDECAR"
+        verification = route_verification.get(route_id)
+        if verification:
+            meta_by_question = [
+                question for question in questions
+                if question.get("offense_id") == parent
+            ]
+            for question in meta_by_question:
+                question.setdefault("meta", {})["legal_verification"] = deepcopy(verification)
 
 
 def build_questions(
@@ -2771,9 +3124,24 @@ def build_questions(
                 continue
             questions.append(question)
             add_seen(question["text"])
+
+        def add_precedent_questions() -> None:
+            """在精簡財產取走流程最後補入判決／函示爭點題。"""
+            sections = offense.get("section_questions", {}).get(role, {})
+            precedent_questions = ordered_section_questions(
+                sections, role, offense_id, offense["name"], offense["source"],
+            )
+            for question in precedent_questions:
+                if question.get("kind") != "precedent" or already_seen(question["text"]):
+                    continue
+                questions.append(question)
+                add_seen(question["text"])
+
         # 公司固定題逐字保留；若 child route 有經審查的中性核心缺口題，
         # 只插入該 route pack，不混入整套 md／JSON 題庫。
         if compact_wallet_atm:
+            if offense_id in PROPERTY_ROUTE_IDS:
+                add_precedent_questions()
             continue
         if has_company_standard_questions(role, offense_id):
             for question in route_questions_for(
@@ -2783,8 +3151,11 @@ def build_questions(
                     continue
                 questions.append(question)
                 add_seen(question["text"])
+            if offense_id in PROPERTY_ROUTE_IDS:
+                add_precedent_questions()
             continue
         if focused_questions and offense_id in PROPERTY_ROUTE_IDS:
+            add_precedent_questions()
             continue
         route_pack_questions = route_questions_for(
             role, offense_id, route_ids, offense["source"],
@@ -2834,7 +3205,7 @@ def build_questions(
             })
             add_seen(text)
     # spec §7.5：統一按優先序裁切（core/company/common 保護；區分/加重先被裁）
-    # 8 頁防線：offense 題（非 company/common）上限 MAX_OFFENSE_QUESTIONS
+    # 正式案件採總題數 20 題；固定／通用題先占額度，罪章題使用剩餘額度。
     from .questions import (
         QuestionBudgetExceeded,
         annotate_interview_layers,
@@ -2862,10 +3233,81 @@ def build_questions(
         compacted.append(question)
     all_questions = compacted
     questions = compacted
+    # 先掛上 child route 要件，再做 20 題裁切；如此精簡模式可在有限額度內
+    # 優先補回尚未被任何保留題涵蓋的路線要件。
+    _attach_route_elements_to_questions(questions, offenses, route_ids)
+    fixed_question_count = sum(
+        question.get("kind") in {"company", "common"} for question in questions
+    )
+    compact_interview = bool(
+        gate1
+        and any(item.get("fact_key") for item in gate1.get("facts", []))
+        and fixed_question_count < MAX_COMPACT_TOTAL_QUESTIONS
+    )
+    question_budget = (
+        max(0, min(MAX_COMPACT_TOTAL_QUESTIONS, MAX_OFFENSE_QUESTIONS) - fixed_question_count)
+        if compact_interview else MAX_OFFENSE_QUESTIONS
+    )
     try:
-        questions = apply_question_budget(questions, max_offense_questions=MAX_OFFENSE_QUESTIONS)
+        questions = apply_question_budget(
+            questions,
+            max_offense_questions=question_budget,
+            # 20 題正式精簡模式把舊套表罪名題視為可選延伸，讓核心、區分
+            # 與判決爭點能共同留下；離線審查／人工限制仍保護公司罪章題。
+            protect_company_offense=not compact_interview,
+            allow_core_pruning=compact_interview,
+        )
     except QuestionBudgetExceeded as exc:
         raise RuleError(str(exc)) from exc
+
+    if compact_interview and route_ids:
+        _attach_route_elements_to_questions(questions, offenses, route_ids)
+        # 題數固定後，若路線仍有缺漏要件，使用已被裁切但明確對應該要件的題目
+        # 替換低優先選配題；不擴增題數，也不改寫題目本文。
+        route_elements = {
+            route_id: {
+                element
+                for offense in offenses.values()
+                for route in offense.get("legal_routes", [])
+                if route.get("id") == route_id
+                for element in route.get("fact_elements", [])
+            }
+            for route_id in route_ids
+        }
+        kept_ids = {question.get("id") for question in questions}
+        for route_id, elements in route_elements.items():
+            covered = {
+                element
+                for question in questions
+                for element in question.get("meta", {}).get("target_elements", [])
+            }
+            for missing in sorted(elements - covered):
+                replacement = next(
+                    (
+                        question for question in all_questions
+                        if question.get("id") not in kept_ids
+                        and missing in question.get("meta", {}).get("target_elements", [])
+                    ),
+                    None,
+                )
+                if replacement is None:
+                    continue
+                removable = next(
+                    (
+                        question for question in questions
+                        if question.get("kind") not in {"company", "common"}
+                        and not question.get("meta", {}).get("pack_id")
+                    ),
+                    None,
+                )
+                if removable is None:
+                    continue
+                if replacement.get("id") not in kept_ids:
+                    all_questions.append(replacement)
+                questions.remove(removable)
+                questions.append(replacement)
+                kept_ids.discard(removable.get("id"))
+                kept_ids.add(replacement.get("id"))
     # 裁切透明化（docs/QUESTION_DESIGN_AND_USE.md §6）：被裁的題目記錄，不靜默丟棄
     kept_ids = {q["id"] for q in questions}
     pruned = [q for q in all_questions if q.get("id") not in kept_ids]
@@ -2876,10 +3318,12 @@ def build_questions(
     questions = enrich_question_metadata(questions, gate1 or {}, pseudo_candidates)
     _attach_route_elements_to_questions(questions, offenses, route_ids)
     mark_known_questions(questions, gate1 or {})
-    annotate_interview_layers(questions, core_limit=10)
+    annotate_interview_layers(questions, core_limit=6)
 
     # spec §7.2/§7.3 品質檢核（docs/QUESTION_DESIGN_AND_USE.md §8）：problems 即 fail closed
-    validation = validate_generated_questions(questions, role)
+    validation = validate_generated_questions(
+        questions, role, max_offense_questions=question_budget
+    )
     if validation["problems"]:
         raise RuleError("問句品質檢核失敗：" + "；".join(validation["problems"][:3]))
     build_questions.last_validation = validation
@@ -2896,7 +3340,8 @@ def build_questions(
     ]
     if pruned:
         build_questions.last_validation["warnings"].append(
-            f"Q8 裁切 {len(pruned)} 題（區分/加重/補充優先），已記錄於 pruned_questions 供承辦人參考"
+            f"20 題總預算裁切 {len(pruned)} 題（固定／通用題 {fixed_question_count} 題，"
+            "核心、區分、判決爭點依序保留），已記錄於 pruned_questions 供承辦人參考"
         )
     coverage_by_route: dict[str, dict[str, Any]] = {}
     for route_id in route_ids:
@@ -2911,6 +3356,15 @@ def build_questions(
                 "missing_concept_ids": [],
                 "pruned_concept_ids": [],
                 "human_review_required": True,
+                "legal_verification": next(
+                    (
+                        route.get("legal_verification")
+                        for offense in offenses.values()
+                        for route in offense.get("legal_routes", [])
+                        if route.get("id") == route_id
+                    ),
+                    None,
+                ),
             }
             continue
         pack_questions = [
@@ -2942,6 +3396,15 @@ def build_questions(
             "pruned_concept_ids": pruned_concepts,
             "human_review_required": True,
             "legal_conclusion": False,
+            "legal_verification": next(
+                (
+                    route.get("legal_verification")
+                    for offense in offenses.values()
+                    for route in offense.get("legal_routes", [])
+                    if route.get("id") == route_id
+                ),
+                None,
+            ),
         }
     build_questions.question_coverage_by_route = {
         "route_context_ids": route_ids,

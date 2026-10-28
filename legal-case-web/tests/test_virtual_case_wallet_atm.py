@@ -23,16 +23,9 @@ def test_virtual_wallet_atm_case_runs_from_facts_to_two_documents():
     assert {item["id"] for item in case["candidates"]} >= {"fraud", "theft", "embezzlement"}
 
     case = apply_action(case, "auto_prepare", {}, BANK)
-    assert case["state"] == "GATE1_REVIEW"
-    case = apply_action(case, "approve_gate1", {"confirmed": True}, BANK)
-    case = apply_action(case, "set_offenses", {
-        "offense_ids": ["theft", "embezzlement", "fraud"],
-        "legal_route_ids": ["theft_320_1_movable", "embezzlement_337_lost_property", "fraud_339_2_payment_device"],
-        "route_review_confirmed": True,
-        "role": "victim",
-    }, BANK)
+    # 現行流程由系統在 Gate 1 後自動整理候選與問句，承辦人不再逐項重選罪章。
     assert case["state"] == "GATE2_QA"
-    assert len(case["questions"]) <= 30
+    assert len(case["questions"]) <= 20
     assert len({question["text"] for question in case["questions"]}) == len(case["questions"])
 
     case = apply_action(case, "save_profile", {
@@ -54,7 +47,7 @@ def test_virtual_wallet_atm_case_runs_from_facts_to_two_documents():
     }}, BANK)
     case = apply_action(case, "save_case_numbers", {"case_numbers": {"proof": "Z123456789", "women_child": "", "case_165": "165-TEST"}, "brief_template": {}}, BANK)
     assert case["state"] == "OUTPUT_READY"
-    assert required_case_numbers(case) == ["proof", "case_165"]
+    assert required_case_numbers(case) == ["proof"]
     assert validate_brief_completeness(case, "victim") == []
     text = brief_text(case, "victim")
     assert "\u81fa\u5317\u5e02\u8a60\u68e0\u5340\u8a60\u68e0\u8def1\u865f\u8f44\u5340" in text
@@ -62,3 +55,52 @@ def test_virtual_wallet_atm_case_runs_from_facts_to_two_documents():
     assert "115\u5e749\u670821\u65e510\u664200\u5206" in text
     brief_artifact = build_document(case, "victim", "brief")
     assert validate_docx_structure(brief_artifact.data) == []
+
+
+def test_ambiguous_theft_or_embezzlement_case_keeps_single_brief_reason_and_factual_summary():
+    summary = (
+        "民國115年10月20日20時30分，林雅婷在臺北市中正區忠孝西路1號某咖啡店用餐，"
+        "將皮夾放在座位旁椅子上，離席約5分鐘前往洗手間，返回後發現皮夾不見。"
+        "店員看見一名男子拿起皮夾後離開，監視器無法確認取物時皮夾是否仍在林雅婷可立即控制範圍。"
+        "男子後來交回皮夾，稱以為是他人遺失物，但現金少新臺幣1,000元；現有監視器及店員證詞。"
+    )
+    raw = intake(summary=summary)
+    raw["station"] = "○○所"
+    case = create_case(raw, BANK)
+    case = apply_action(case, "auto_prepare", {}, BANK)
+
+    questions = case["questions"]
+    assert 0 < len(questions) <= 20
+    assert len({question["text"] for question in questions}) == len(questions)
+
+    case = apply_action(case, "save_profile", {
+        "profile": {"name": "林雅婷", "national_id": "A123456789"},
+        "session": {
+            "start_time": "2026-10-26T09:00",
+            "end_time": "2026-10-26T09:30",
+            "location": "虛擬派出所",
+        },
+    }, BANK)
+    case = apply_action(case, "save_answers", {
+        "answers": {question["id"]: "壓力測試回答" for question in questions},
+    }, BANK)
+    case = apply_action(case, "approve_gate2", {"confirmed": True}, BANK)
+    case = apply_action(case, "update_output_context", {"output_context": {
+        "jurisdiction": "臺北市中正區虛擬派出所",
+        "officer": "虛擬警員林○○",
+        "report_time": "2026-10-26T09:00",
+    }}, BANK)
+    case = apply_action(case, "save_case_numbers", {
+        "case_numbers": {"proof": "V1151020003", "women_child": "", "case_165": ""},
+        "brief_template": {},
+    }, BANK)
+
+    text = brief_text(case, "victim")
+    reason_line = next(line for line in text.splitlines() if line.startswith("一、受理案由："))
+    assert reason_line.count("遭") == 1
+    assert "、" not in reason_line.split("：", 1)[1]
+    summary_block = text.split("五、案情摘要：\n", 1)[1].split("\n六、後續處置：", 1)[0]
+    assert "仍應查明" not in summary_block
+    assert "候選" not in summary_block
+    assert "虛擬派出所報告" in text
+    assert "V1151020003" in text

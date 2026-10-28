@@ -107,8 +107,11 @@
           <div class="actions wide">
             <button class="secondary" type="submit">儲存 Gate 1</button>
             <button id="approve-gate1" class="primary" type="button">人工模式：進入 Gate 2</button>
+            <button id="ai-analyze" class="secondary" type="button" disabled>AI 分析並準備候選</button>
             <button id="auto-prepare" class="primary" type="button">重新執行系統分析</button>
           </div>
+          <label class="choice ai-consent-row"><input id="ai-consent" type="checkbox"><span>我明確同意將本案<strong>案情摘要原文（最多 4,000 字）</strong>送至外部 AI，僅取得候選方向。請先移除不必要的個資。</span></label>
+          <p id="ai-consent-status" class="muted">外部 AI 尚未啟用。僅設定 API key 不會自動外送資料。</p>
         </form>
         </div>
       </details>
@@ -156,24 +159,25 @@
         </div>
 
         <section id="gate2-step-offense" class="gate2-step" aria-labelledby="offense-step-title">
-          <h4 id="offense-step-title" class="visually-hidden">選擇候選罪章</h4>
+          <h4 id="offense-step-title" class="visually-hidden">確認系統建議的候選方向</h4>
           <form id="offense-form">
             <div class="field-stack"><label for="question-role">本次筆錄身分</label><select id="question-role" name="role"><option value="victim">被害人</option><option value="suspect">涉嫌人（有被害人）</option><option value="transfer">涉嫌人（移送／無被害人）</option></select></div>
-            <div class="actions">
-              <button id="ai-analyze" class="secondary" type="button" disabled>AI 分析候選罪章</button>
-            </div>
-            <label class="choice ai-consent-row"><input id="ai-consent" type="checkbox"><span>我明確同意將本案<strong>案情摘要原文（最多 4,000 字）</strong>送至外部 AI，僅取得候選方向。請先移除不必要的個資。外部結果不會自動選罪章，也不代表犯罪成立。</span></label>
-            <p id="ai-consent-status" class="muted">外部 AI 尚未啟用。僅設定 API key 不會自動外送資料。</p>
-            <fieldset><legend>候選罪章（建議先選 1 個主要罪章，再勾選需區辨的關聯罪章）</legend><div id="offense-list" class="choice-grid"></div></fieldset>
+            <p class="muted">系統會先自動整理候選方向；本區只供檢視及例外調整，不是一般案件的起始操作。</p>
+            <fieldset><legend>系統建議的候選方向（請檢視後一次確認）</legend><div id="candidate-offense-list" class="choice-grid"></div></fieldset>
+            <details id="manual-offense-override" class="advanced">
+              <summary>需要時才手動調整候選罪章</summary>
+              <p class="muted">一般案件不需要使用這裡。只有系統無法提出適當候選，或你要補充／排除特定方向時，才展開完整清單。</p>
+              <div id="offense-list" class="choice-grid"></div>
+            </details>
             <fieldset>
               <legend>法律路由（可複選，也可確認目前資料不足而暫不選）</legend>
               <div id="legal-route-list" class="choice-grid"></div>
-              <p class="muted">法律路由與候選罪章分開保存。目前問句仍來自上層罪章題包，不代表已完成路由專屬問句覆蓋。</p>
+              <p class="muted">法律路由與候選罪章分開保存；下方法源資訊是查證痕跡，不是自動定罪結論。問句仍依上層罪章題包與選定路線建立，行為時法及個案適用仍須人工覆核。</p>
               <label class="choice"><input id="route-review-confirmed" type="checkbox"><span>我已人工檢視上述法律路由</span></label>
             </fieldset>
             <div id="alternative-route-list" class="warning" hidden></div>
             <div class="actions">
-              <button class="primary" type="submit">建立問句 → 進入年籍</button>
+              <button class="primary" type="submit">確認系統建議並建立問句 →</button>
             </div>
           </form>
         </section>
@@ -270,7 +274,7 @@
           <span class="gate-panel-toggle-hint" aria-hidden="true"><span class="when-open">收合</span><span class="when-closed">展開</span></span>
         </summary>
         <div class="gate-panel-body">
-        <p>DOCX 由本機 LibreOffice 實際排版，超過 8 頁時禁止下載。</p>
+        <p>正式案件問句以20題為實務上限；DOCX 仍由本機 LibreOffice 實際排版，超過 8 頁時禁止下載。</p>
         <div class="field-stack"><label for="output-role">輸出身分</label><select id="output-role"><option value="victim">被害人</option><option value="suspect">涉嫌人（有被害人）</option><option value="transfer">涉嫌人（移送／無被害人）</option></select></div>
         <div class="output-grid">
           <div class="output-doc">
@@ -289,6 +293,7 @@
         <div class="actions">
           <button id="copy-brief" class="secondary" type="button">複製條陳</button>
           <button id="start-suspect" class="primary" type="button">下一步：製作涉嫌人筆錄 →</button>
+          <button id="reopen-questions" class="secondary" type="button">返回問答並修改</button>
           <button id="reopen-case" class="danger" type="button">重新開啟並修正事實</button>
         </div>
         <p class="privacy-note" id="storage-notice">案件只暫存在目前本機服務的記憶體中；建立新案件或重啟服務後即不再保留。下載的 DOCX 是未加密明文。</p>

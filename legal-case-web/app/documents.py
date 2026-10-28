@@ -25,7 +25,7 @@ from .company_templates import (
 )
 from .config import MAX_DOCX_PAGES, MAX_SUMMARY_LENGTH
 from .brief_template import brief_value, clean_brief_template
-from .case_identity import case_display_name, safe_document_stem
+from .case_identity import case_reason_name, safe_document_stem
 from .roc_time import format_roc_date, format_roc_time
 
 
@@ -119,7 +119,7 @@ def _offense_names(interview: dict[str, Any]) -> str:
         name = question.get("offense_name")
         if name and name not in names:
             names.append(name)
-    return "、".join(names) or "待確認"
+    return names[0] if len(names) == 1 else "待確認"
 
 
 def _format_tw_time(value: str) -> str:
@@ -131,6 +131,33 @@ def _format_tw_time(value: str) -> str:
     if formatted == text and text and text != "UNKNOWN" and not _TIME_PASSTHROUGH.match(text):
         return "UNKNOWN"
     return formatted
+
+
+def _summary_block(template: dict[str, str], key: str, default: str, summary: str) -> str:
+    """條陳案情摘要標題獨立成行，內容自下一行開始。"""
+    label = brief_value(template, key, default).rstrip("：")
+    return f"{label}：\n{summary}\n\n"
+
+
+def _reporting_unit_title(value: str) -> str:
+    """報告抬頭只顯示派出所／分局名稱，地址另列於案件地點與管轄。"""
+    text = str(value or "").strip()
+    if not text:
+        return "UNKNOWN"
+    match = re.search(r"(?:市|縣|區|鄉|鎮)([^市縣區鄉鎮]+(?:派出所|分局))$", text)
+    if match:
+        return match.group(1)
+    return text
+
+
+def _brief_reporting_unit(case: dict[str, Any]) -> str:
+    """條陳抬頭未另填單位時，使用 Gate 2.5 的管轄派出所。"""
+    intake = case.get("intake") or {}
+    context = case.get("output_context") or {}
+    station = str(intake.get("station") or "").strip()
+    if not station or station in {"○○所", "○○○"}:
+        station = str(context.get("jurisdiction") or "").strip()
+    return _reporting_unit_title(station)
 
 
 # 民國樣式時間：115年10月15日10時許／民國115年10月15日／115年10月10日10時30分
@@ -243,40 +270,39 @@ def brief_text(case: dict[str, Any], role: str) -> str:
     report = f"依規定陳報（{'、'.join(case_number_parts)}）"
     summary = case["brief_summary"]
     template = clean_brief_template(case.get("brief_template"))
-    case_name = case_display_name(case)
     if len(summary) > MAX_SUMMARY_LENGTH:
         raise DocumentError(f"條陳案情摘要超過 {MAX_SUMMARY_LENGTH} 字")
     if role == "victim":
         return (
-            f"{intake['station']}報告\n"
-            f"{brief_value(template, 'case_reason', f'一、受理案由：{case_name}(受理)')}\n"
+            f"{_brief_reporting_unit(case)}報告\n"
+            f"{brief_value(template, 'case_reason', f'一、受理案由：{case_reason_name(case)}(受理)')}\n"
             f"二、發生時間：{_format_tw_time(intake['event_time'])}\n"
             f"三、發生地點：{intake['location']}\n"
             f"四、報案時間：{_format_tw_time(report_time) if report_time else 'UNKNOWN'}\n"
-            f"{brief_value(template, 'summary_label', '五、案情摘要')}：{summary}\n\n"
+            f"{_summary_block(template, 'summary_label', '五、案情摘要', summary)}"
             f"{brief_value(template, 'followup_label', '六、後續處置')}：\n（一）{report}\n"
             f"（二）本案管轄：{jurisdiction}\n"
             f"（三）處理員警：警員 {officer}。"
         )
     if role == "suspect":
         return (
-            f"{intake['station']}報告\n"
-            f"{brief_value(template, 'case_reason', f'一、受理案由：{case_name}(破獲)')}\n"
+            f"{_brief_reporting_unit(case)}報告\n"
+            f"{brief_value(template, 'case_reason', f'一、受理案由：{case_reason_name(case)}(破獲)')}\n"
             f"二、發生時間：{_format_tw_time(intake['event_time'])}\n"
             f"三、發生地點：{intake['location']}\n"
             f"四、報案時間：{_format_tw_time(report_time) if report_time else 'UNKNOWN'}\n"
             f"五、破獲時間：{_format_tw_time(intake.get('arrest_time')) if intake.get('arrest_time') else 'UNKNOWN'}\n"
-            f"{brief_value(template, 'summary_label', '六、案情摘要')}：{summary}\n\n"
+            f"{_summary_block(template, 'summary_label', '六、案情摘要', summary)}"
             f"{brief_value(template, 'followup_label', '七、後續處置')}：\n（一）{report}\n"
             f"（二）後續偵辦情形：{intake.get('disposition') or 'UNKNOWN'}\n"
             f"（三）處理員警：警員 {officer}。"
         )
     return (
-        f"{intake['station']}報告\n"
-        f"{brief_value(template, 'case_reason', f'一、查獲案由：{case_name}(破獲)')}\n"
+        f"{_brief_reporting_unit(case)}報告\n"
+        f"{brief_value(template, 'case_reason', f'一、查獲案由：{case_reason_name(case)}(破獲)')}\n"
         f"二、查獲時間：{_format_tw_time(intake['event_time'])}\n"
         f"三、查獲地點：{intake['location']}\n"
-        f"{brief_value(template, 'summary_label', '四、案情摘要')}：{summary}\n\n"
+        f"{_summary_block(template, 'summary_label', '四、案情摘要', summary)}"
         f"五、處理員警：警員 {officer}。"
     )
 

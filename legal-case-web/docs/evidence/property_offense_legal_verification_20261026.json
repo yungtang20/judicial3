@@ -1,0 +1,73 @@
+{
+  "schema_version": "property-offense-legal-verification-v1",
+  "verified_on": "2026-10-26",
+  "verification_status": "HUMAN_REVIEW_REQUIRED",
+  "execution_mode": "SINGLE_EXECUTOR",
+  "scope": "竊盜、普通侵占、侵占遺失物、搶奪、強盜、準強盜及恐嚇取財的題目設計查證",
+  "runtime_policy": "本檔只保存法源與判決查證痕跡，不直接作成個案罪名結論；個案仍須依 Gate 1、Gate 2、問答內容與證據人工判斷。",
+  "statute_source": {
+    "law_name": "中華民國刑法",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_web_checked": true,
+    "legal_mcp_checked": true,
+    "mcp_dataset_version": "2026-10-16",
+    "law_modified_date": "2026-07-22",
+    "historical_law_warning": "以上為現行條文；行為時法仍須依官方沿革逐案查對。"
+  },
+  "routes": [
+    {
+      "route_id": "theft_320_1_movable",
+      "article_no": "第320條第1項",
+      "verified_rule": "意圖為自己或第三人不法所有，竊取他人動產；另須區分未遂或既遂。",
+      "question_focus": ["原持有人是否仍支配管領", "是否未經同意取走", "不法所有意圖", "取得及未遂既遂經過"]
+    },
+    {
+      "route_id": "embezzlement_335_general",
+      "article_no": "第335條",
+      "verified_rule": "行為人原先基於合法原因持有他人之物，後續將持有變易為不法所有。",
+      "question_focus": ["合法持有或受託保管原因", "何時改變意思並處分或拒不返還", "不法所有意圖"]
+    },
+    {
+      "route_id": "embezzlement_337_lost_property",
+      "article_no": "第337條",
+      "verified_rule": "物品已非出於本人意思而脫離持有，且取得時尚未落入他人事實上的監督、管領與支配；若仍在原持有人支配管領範圍，應優先檢討竊盜。",
+      "question_focus": ["最後持有位置與離開原因", "原持有人當時能否立即支配或防護", "現場是否已有店家或第三人管領", "行為人取得、保管及後續處分經過"],
+      "judicial_reference": {
+        "citation": "最高法院110年度台上字第3477號刑事判決",
+        "mcp_fulltext_retrieved": true,
+        "disposition": "撤銷原判決，發回原審",
+        "use_boundary": "可作為持有支配管領區分的判斷資料；不得作為本案已確定罪名或確定判決使用。"
+      }
+    },
+    {
+      "route_id": "robbery_325_snatching",
+      "article_no": "第325條",
+      "verified_rule": "乘人不備或不及抗拒，公然攫取仍在他人支配範圍內的動產；並須查明結果及未遂既遂。",
+      "question_focus": ["是否公然取走", "被害人當時是否仍能立即防護", "是否乘人不備或不及抗拒", "有無造成傷亡結果"]
+    },
+    {
+      "route_id": "robbery_328_robbery",
+      "article_no": "第328條",
+      "verified_rule": "以強暴、脅迫、藥劑、催眠術或其他方法，使被害人達不能抗拒程度，而取物、使人交付或取得財產上不法利益。",
+      "question_focus": ["具體強暴脅迫方法", "方法是否達不能抗拒", "取物或交付的時間順序", "不法所有意圖與結果"]
+    },
+    {
+      "route_id": "robbery_329_constructive",
+      "article_no": "第329條",
+      "verified_rule": "先有竊盜或搶奪，且為防護贓物、脫免逮捕或湮滅罪證，於當場施以強暴脅迫，始須檢討以強盜論；不是所有後續暴力都當然吸收前行為。",
+      "question_focus": ["前行為是竊盜或搶奪", "暴力發生是否當場或緊接追捕", "暴力目的是否為防護贓物、脫免逮捕或湮滅罪證", "強暴脅迫的具體內容與程度"]
+    },
+    {
+      "route_id": "intimidation_346_property",
+      "article_no": "第346條",
+      "verified_rule": "以恐嚇使本人或第三人交付物或財產上利益；須與強盜的不能抗拒程度及實際交付區分。",
+      "question_focus": ["恐嚇內容與傳達方式", "被害人是否因恐嚇而交付", "交付時間、標的與受益人", "恐嚇與交付間因果關係"]
+    }
+  ],
+  "not_yet_written_as_verified": [
+    "新套表尚未人工核定的題目",
+    "任何個案的最終罪名、告訴罪名或起訴結論",
+    "行為時法的歷史版本結論",
+    "未由全文查證的其他判決或函示"
+  ]
+}
