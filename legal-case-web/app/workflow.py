@@ -27,6 +27,7 @@ from .rules import (
     candidate_offenses,
     classify_candidates,
     concise_summary,
+    recompute_fact_projections,
     required_case_numbers,
     truncate_summary,
 )
@@ -553,10 +554,7 @@ def apply_action(
             if len(facts) > MAX_FACTS:
                 raise WorkflowError(f"facts 不得超過 {MAX_FACTS} 項")
             gate1["facts"] = [_clean_fact(item) for item in facts]
-        if "causation" in incoming:
-            gate1["causation"] = _clean_text(incoming["causation"], "因果關係")
-        elif "causation" not in gate1:
-            gate1["causation"] = "UNKNOWN"
+        facts_changed = "facts" in incoming
         if "facts" in incoming:
             source_facts = [
                 item for item in gate1.get("facts", [])
@@ -588,6 +586,16 @@ def apply_action(
             gate1["facts"] = refreshed["facts"]
             gate1["unknowns"] = refreshed["unknowns"]
             gate1["segmentation_source"] = refreshed["segmentation_source"]
+            facts_changed = True
+        if facts_changed:
+            # facts 是唯一來源的衍生狀態必須同步重算；否則移除或改寫事實後，
+            # unknowns 會殘留舊的 UNKNOWN 標籤，矛盾連結也可能指向已不存在的 fact。
+            recompute_fact_projections(gate1)
+        # 明示的因果關係是承辦人可編輯欄位，重算後仍以本次輸入為準。
+        if "causation" in incoming:
+            gate1["causation"] = _clean_text(incoming["causation"], "因果關係")
+        elif "causation" not in gate1:
+            gate1["causation"] = "UNKNOWN"
         if "times" in incoming:
             case["intake"]["event_time"] = gate1["times"][0] if gate1["times"] else "UNKNOWN"
         if "places" in incoming:
@@ -1167,10 +1175,17 @@ def apply_action(
             case_revision=int(case.get("revision", 0)),
             source_snapshot_hashes=source_snapshot_hashes,
         )
-        rule_candidates = candidate_offenses(clean_summary, bank)
+        # facts 的 source span 只對「建立該 Gate 1 事實時所用的摘要」有效；
+        # 若本次分析的摘要已被改寫，不得把 span 對不上的 facts 傳給下游。
+        gate1_for_rules = (
+            (case.get("gate1") or None)
+            if clean_summary == str(case["intake"].get("summary", "")).strip()
+            else None
+        )
+        rule_candidates = candidate_offenses(clean_summary, bank, gate1_for_rules)
         if result is None:
             # 外部 AI 不可用時仍回傳可回查的規則候選；不把失敗轉成空候選。
-            fallback = classify_candidates(clean_summary, bank)
+            fallback = classify_candidates(clean_summary, bank, gate1_for_rules)
             rule_candidates = fallback["candidates"]
             result = {
                 "candidates": [],

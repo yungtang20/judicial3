@@ -40,6 +40,20 @@ ROUTE_MIN_SUPPORTED_ELEMENTS = 2
 PROPERTY_TAKING_ACTIONS = ("拿走", "取走", "帶走", "搶走", "奪走", "偷走", "搬走")
 PROPERTY_ROUTE_IDS = {"theft", "embezzlement", "robbery"}
 
+# typed fact key → Gate 1 unknowns 的人類可讀標籤。analyze_gate1 與
+# update_gate1 重算時共用同一份對照，避免 UNKNOWN 狀態在更新後殘留或消失。
+FACT_UNKNOWN_LABELS = {
+    "original_possession": "原持有／管領狀態",
+    "third_party_possession": "店員、店家或第三人是否接續管領",
+    "ownership_knowledge": "行為人對物品所有權的認知",
+    "intent": "行為人的不法所有意圖",
+}
+
+
+def _fact_is_unknown(fact: dict[str, Any]) -> bool:
+    """事實是否仍為 UNKNOWN（不得被當成否定或已確認）。"""
+    return fact.get("machine_status") == "UNKNOWN" or fact.get("assertion_class") == "UNKNOWN"
+
 
 class RuleError(ValueError):
     pass
@@ -1590,18 +1604,13 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
             source_end=spec["source_end"],
         ))
 
-    unknown_label_by_key = {
-        "original_possession": "原持有／管領狀態",
-        "third_party_possession": "店員、店家或第三人是否接續管領",
-        "ownership_knowledge": "行為人對物品所有權的認知",
-        "intent": "行為人的不法所有意圖",
-    }
+    unknown_label_by_key = FACT_UNKNOWN_LABELS
     default_unknowns = list(dict.fromkeys([
         *default_unknowns,
         *(
             unknown_label_by_key[item["fact_key"]]
             for item in facts
-            if item.get("machine_status") == "UNKNOWN"
+            if _fact_is_unknown(item)
             and item.get("fact_key") in unknown_label_by_key
         ),
     ]))
@@ -1726,6 +1735,81 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
         "review_status": "HUMAN_REVIEW_REQUIRED",
     }
     return gate1
+
+
+def recompute_fact_projections(gate1: dict[str, Any]) -> None:
+    """以 ``gate1["facts"]`` 重算完全由 facts 衍生的 Gate 1 狀態。
+
+    只處理「唯一來源是 facts」的欄位：UNKNOWN 標籤、證據線索／已驗證證據、
+    同意狀態、因果關係與因果邊、法律評價，以及矛盾連結。``people``、
+    ``events``、``times``、``places``、``objects``、``behaviors``、``results``、
+    ``evidence`` 可由承辦人在 Gate 1 直接編輯，因此不在這裡覆寫。
+
+    目的：更新 facts 後（例如移除某筆 UNKNOWN），衍生狀態必須同步消失，
+    不得留下指向已不存在事實的 UNKNOWN 標籤或矛盾紀錄。
+    """
+    facts = [item for item in gate1.get("facts", []) if isinstance(item, dict)]
+
+    def unique(values: list[str]) -> list[str]:
+        return list(dict.fromkeys(value for value in values if value))
+
+    unknowns = gate1.get("unknowns")
+    if isinstance(unknowns, list):
+        typed_labels = set(FACT_UNKNOWN_LABELS.values())
+        kept = [item for item in unknowns if item not in typed_labels]
+        derived = [
+            FACT_UNKNOWN_LABELS[item["fact_key"]]
+            for item in facts
+            if _fact_is_unknown(item)
+            and item.get("fact_key") in FACT_UNKNOWN_LABELS
+        ]
+        gate1["unknowns"] = list(dict.fromkeys([*kept, *derived]))
+
+    gate1["evidence_leads"] = unique([
+        str(item.get("value", ""))
+        for item in facts
+        if item.get("fact_key") == "evidence"
+        and item.get("assertion_status") != "VERIFIED_EVIDENCE"
+    ])
+    gate1["verified_evidence"] = unique([
+        str(item.get("value", ""))
+        for item in facts
+        if item.get("fact_key") == "evidence"
+        and item.get("assertion_status") == "VERIFIED_EVIDENCE"
+    ])
+    gate1["consent_states"] = unique([
+        str(item.get("consent_state") or item.get("value", ""))
+        for item in facts
+        if item.get("fact_key") == "consent_state"
+        and item.get("machine_status") != "UNKNOWN"
+    ])
+    gate1["causation"] = next((
+        str(item.get("value", ""))
+        for item in facts if item.get("fact_key") == "causation"
+    ), "UNKNOWN")
+    gate1["causal_edges"] = [
+        {
+            "event_id": item.get("event_id", "event:unassigned"),
+            "value": str(item.get("value", "")),
+            "source_excerpt": str(item.get("source_excerpt", "")),
+            "source_start": item.get("source_start"),
+            "source_end": item.get("source_end"),
+            "assertion_status": item.get("assertion_status", "EXPLICIT_SOURCE_ASSERTION"),
+        }
+        for item in facts
+        if item.get("fact_key") == "causation" and item.get("machine_status") != "UNKNOWN"
+    ]
+    gate1["legal_characterizations"] = [
+        {
+            "value": str(item.get("value", "")),
+            "source_excerpt": str(item.get("source_excerpt", "")),
+            "source_start": item.get("source_start"),
+            "source_end": item.get("source_end"),
+        }
+        for item in facts
+        if item.get("fact_key") == "legal_characterization"
+    ]
+    gate1["contradiction_issues"] = fact_contradiction_issues(facts)
 
 
 # E5 輪（人工複審 2026-10-20 第四輪 ✗）：否定詞表補「從未」群——
