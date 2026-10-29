@@ -17,7 +17,9 @@ export async function getDatabase(): Promise<PGlite> {
   }
 
   initPromise = (async () => {
-    const dbPath = path.resolve(process.cwd(), 'database', 'pglite_store');
+    const dbPath = process.env.JUDICIAL3_DATABASE_PATH
+      ? path.resolve(process.env.JUDICIAL3_DATABASE_PATH)
+      : path.resolve(process.cwd(), 'database', 'pglite_store');
 
     // 不自行刪除 postmaster.pid：無法可靠判斷其他程序是否仍持有資料庫。
     // 初始化失敗必須停下來，不能切換到無法保存案件的記憶體庫。
@@ -26,6 +28,7 @@ export async function getDatabase(): Promise<PGlite> {
       await dbInstance.waitReady;
     } catch (err: any) {
       dbInstance = null;
+      initPromise = null;
       throw new Error(`[PGlite] Persistent store initialization failed; existing data was not modified: ${err?.message || err}`);
     }
 
@@ -48,6 +51,7 @@ export async function getDatabase(): Promise<PGlite> {
           '0007_integrity_indexes_triggers.sql',
           '0008_rls_policies.sql',
           '0009_validation.sql',
+          '0010_mvp_traceability.sql',
         ];
 
         for (const file of migrationFiles) {
@@ -63,6 +67,8 @@ export async function getDatabase(): Promise<PGlite> {
         }
         console.log('[PGlite] All migrations applied and test seed loaded successfully!');
       }
+      const mvpMigrationPath = path.resolve(process.cwd(), 'database', 'migrations', '0010_mvp_traceability.sql');
+      await dbInstance.exec(fs.readFileSync(mvpMigrationPath, 'utf-8'));
       isInitialized = true;
       return dbInstance;
     } catch (migrationErr) {
@@ -124,6 +130,7 @@ export async function getCaseDetails(caseId: string, ownerId: string) {
 
   const revisionRes = await db.query<any>(`SELECT * FROM case_revisions WHERE id = $1`, [revId]);
   const factsRes = await db.query<any>(`SELECT * FROM facts WHERE revision_id = $1 ORDER BY fact_seq ASC`, [revId]);
+  const evidenceRes = await db.query<any>(`SELECT * FROM evidence_items WHERE revision_id = $1 ORDER BY item_code ASC`, [revId]);
   const candidatesRes = await db.query<any>(`SELECT * FROM legal_candidates WHERE revision_id = $1`, [revId]);
   const questionsRes = await db.query<any>(`SELECT * FROM interview_questions WHERE revision_id = $1 ORDER BY question_seq ASC`, [revId]);
   const docsRes = await db.query<any>(`SELECT * FROM document_outputs WHERE revision_id = $1`, [revId]);
@@ -132,6 +139,7 @@ export async function getCaseDetails(caseId: string, ownerId: string) {
     case: caseObj,
     currentRevision: revisionRes.rows[0] || null,
     facts: factsRes.rows,
+    evidence: evidenceRes.rows,
     candidates: candidatesRes.rows,
     questions: questionsRes.rows,
     documents: docsRes.rows,
@@ -150,16 +158,41 @@ export interface SaveCasePayload {
     status: 'ASSERTED' | 'ADMITTED' | 'DENIED' | 'INFERRED' | 'UNKNOWN';
     confidenceScore?: number;
   }>;
+  evidence?: Array<{
+    itemCode?: string;
+    evidenceType: string;
+    description: string;
+    collectionStatus: 'OBTAINED' | 'REQUESTED' | 'PENDING_SEARCH' | 'UNAVAILABLE';
+    source?: string;
+    relatedFactRefs?: string[];
+  }>;
   candidates: Array<{
     chargeName: string;
     status: 'PRIMARY' | 'ALTERNATIVE' | 'LOW_CONFIDENCE' | 'UNRESOLVED' | 'REJECTED';
     rationale: string;
+    statuteRef?: string;
+    elements?: Array<{
+      name: string;
+      description: string;
+      status: 'SATISFIED' | 'UNSUPPORTED' | 'CONTESTED' | 'INSUFFICIENT_DATA' | 'PENDING_VERIFICATION';
+      factRefs?: string[];
+      evidenceRefs?: string[];
+      missingInformation?: string[];
+      reasoning?: string;
+      sourceRef?: string;
+    }>;
   }>;
   questions: Array<{
     seq: number;
     questionText: string;
     answerText?: string;
     isMandatory?: boolean;
+    candidateRef?: string;
+    elementRef?: string;
+    questionType?: string;
+    rationale?: string;
+    targetFactRefs?: string[];
+    revisionNumber?: number;
   }>;
   summary: string;
   isLocked?: boolean;
@@ -209,7 +242,25 @@ export async function saveCaseAnalysis(payload: SaveCasePayload) {
     const revisionId = revRes.rows[0].id;
 
     // Update case current_revision_id
-    await db.query(`UPDATE cases SET current_revision_id = $1::UUID, title = $2::VARCHAR WHERE id = $3::UUID`, [revisionId, payload.title, caseId]);
+    await db.query(`UPDATE cases SET current_revision_id = $1::UUID, title = $2::VARCHAR, raw_text = $3::TEXT WHERE id = $4::UUID`, [revisionId, payload.title, payload.rawText, caseId]);
+
+    for (const [index, evidence] of (payload.evidence || []).entries()) {
+      await db.query(`
+        INSERT INTO evidence_items
+          (case_id, revision_id, item_code, name, category, description, source, collection_status, related_fact_refs)
+        VALUES ($1::UUID, $2::UUID, $3::VARCHAR, $4::VARCHAR, $5::VARCHAR, $6::TEXT, $7::TEXT, $8::VARCHAR, $9::JSONB);
+      `, [
+        caseId,
+        revisionId,
+        evidence.itemCode || `evidence-${index + 1}`,
+        evidence.evidenceType,
+        evidence.evidenceType,
+        evidence.description,
+        evidence.source || '',
+        evidence.collectionStatus,
+        JSON.stringify(evidence.relatedFactRefs || []),
+      ]);
+    }
 
     // Insert Facts
     for (const f of payload.facts) {
@@ -236,18 +287,41 @@ export async function saveCaseAnalysis(payload: SaveCasePayload) {
         statuteId = newStat.rows[0].id;
       }
 
-      await db.query(`
+      const candidateRes = await db.query<any>(`
         INSERT INTO legal_candidates (case_id, revision_id, statute_id, charge_name, status, rationale)
-        VALUES ($1::UUID, $2::UUID, $3::UUID, $4::VARCHAR, $5::candidate_status_enum, $6::TEXT);
+        VALUES ($1::UUID, $2::UUID, $3::UUID, $4::VARCHAR, $5::candidate_status_enum, $6::TEXT)
+        RETURNING id;
       `, [caseId, revisionId, statuteId, c.chargeName, c.status, c.rationale]);
+      const candidateId = candidateRes.rows[0].id;
+      for (const [elementIndex, element] of (c.elements || []).entries()) {
+        await db.query(`
+          INSERT INTO constituent_elements
+            (case_id, revision_id, candidate_id, element_type, element_name, description, status, fact_refs, evidence_refs, missing_information, reasoning, source_ref)
+          VALUES ($1::UUID, $2::UUID, $3::UUID, $4::VARCHAR, $5::VARCHAR, $6::TEXT, $7::element_status_enum, $8::JSONB, $9::JSONB, $10::JSONB, $11::TEXT, $12::TEXT);
+        `, [
+          caseId,
+          revisionId,
+          candidateId,
+          `ELEMENT_${elementIndex + 1}`,
+          element.name,
+          element.description,
+          element.status === 'SATISFIED' ? 'SUPPORTED' : element.status === 'CONTESTED' ? 'CONTRADICTED' : 'UNRESOLVED',
+          JSON.stringify(element.factRefs || []),
+          JSON.stringify(element.evidenceRefs || []),
+          JSON.stringify(element.missingInformation || []),
+          element.reasoning || '',
+          element.sourceRef || c.statuteRef || '',
+        ]);
+      }
     }
 
     // Insert Questions
     for (const q of payload.questions) {
       await db.query(`
-        INSERT INTO interview_questions (case_id, revision_id, question_seq, question_text, is_mandatory)
-        VALUES ($1::UUID, $2::UUID, $3::INTEGER, $4::TEXT, $5::BOOLEAN);
-      `, [caseId, revisionId, q.seq, q.questionText, q.isMandatory ?? true]);
+        INSERT INTO interview_questions
+          (case_id, revision_id, question_seq, question_text, is_mandatory, candidate_ref, element_ref, question_type, rationale, target_fact_refs, revision_number)
+        VALUES ($1::UUID, $2::UUID, $3::INTEGER, $4::TEXT, $5::BOOLEAN, $6::TEXT, $7::TEXT, $8::VARCHAR, $9::TEXT, $10::JSONB, $11::INTEGER);
+      `, [caseId, revisionId, q.seq, q.questionText, q.isMandatory ?? true, q.candidateRef || '', q.elementRef || '', q.questionType || '9_UNRESOLVED_INQUIRY', q.rationale || '', JSON.stringify(q.targetFactRefs || []), q.revisionNumber || revisionNumber]);
     }
 
     // Insert Document Output (Draft or Approved)

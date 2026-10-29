@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
-import { requireApiUser } from './src/server/auth.js';
+import { createSessionToken, requireApiUser } from './src/server/auth.js';
 import type { AuthenticatedRequest } from './src/server/auth.js';
 
 dotenv.config();
@@ -11,6 +11,20 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json({ limit: '10mb' }));
+
+// Local-only bridge for the browser MVP. Production deployments must provide a
+// real login/session service and cannot use this endpoint.
+app.post('/api/auth/dev-session', (req, res) => {
+  if (process.env.NODE_ENV === 'production' || process.env.JUDICIAL3_ALLOW_DEV_SESSION === 'false') {
+    return res.status(404).json({ error: 'not found' });
+  }
+  try {
+    const userId = process.env.JUDICIAL3_DEV_USER_ID || '22222222-2222-2222-2222-222222222201';
+    return res.json({ accessToken: createSessionToken(userId), userId, environment: 'local-only' });
+  } catch (error: any) {
+    return res.status(503).json({ error: error?.message || 'local session unavailable' });
+  }
+});
 
 // Init Gemini client using the recommended @google/genai SDK
 const apiKey = process.env.GEMINI_API_KEY;
@@ -26,7 +40,7 @@ const ai = apiKey
   : null;
 
 // Chat endpoint supporting Taiwan Criminal Investigation context
-app.post('/api/chat', async (req, res) => {
+app.post('/api/chat', requireApiUser, async (req, res) => {
   try {
     const { messages, systemInstruction } = req.body;
     if (!messages || !Array.isArray(messages)) {

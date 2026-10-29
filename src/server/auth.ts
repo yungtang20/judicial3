@@ -5,6 +5,17 @@ export interface AuthenticatedRequest extends Request {
   userId?: string;
 }
 
+export function createSessionToken(userId: string, expiresInSeconds = 3600): string {
+  const secret = process.env.JUDICIAL3_SESSION_SECRET;
+  if (!secret) throw new Error('JUDICIAL3_SESSION_SECRET is required');
+  const payloadPart = Buffer.from(JSON.stringify({
+    sub: userId,
+    exp: Math.floor(Date.now() / 1000) + expiresInSeconds,
+  })).toString('base64url');
+  const signature = createHmac('sha256', secret).update(payloadPart).digest('base64url');
+  return `${payloadPart}.${signature}`;
+}
+
 /**
  * HMAC session token 驗證。正式部署可替換為受控身分服務，但案件 API
  * 不再相信 request body 或 x-user-id 自稱的案件擁有者。

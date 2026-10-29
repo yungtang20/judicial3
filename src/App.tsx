@@ -150,9 +150,25 @@ export default function App() {
     fetchCases();
   }, []);
 
+  const getApiHeaders = async (includeJson = false): Promise<Record<string, string>> => {
+    let token = localStorage.getItem('judicial3_session_token');
+    if (!token) {
+      const sessionResponse = await fetch('/api/auth/dev-session', { method: 'POST' });
+      if (!sessionResponse.ok) throw new Error('尚未登入，且本機 session bridge 不可用');
+      const session = await sessionResponse.json();
+      token = session.accessToken;
+      if (!token) throw new Error('登入 session 回應缺少 access token');
+      localStorage.setItem('judicial3_session_token', token);
+    }
+    return {
+      Authorization: `Bearer ${token}`,
+      ...(includeJson ? { 'Content-Type': 'application/json' } : {}),
+    };
+  };
+
   const fetchDbStatus = async () => {
     try {
-      const res = await fetch('/api/database/status');
+      const res = await fetch('/api/database/status', { headers: await getApiHeaders() });
       if (res.ok) {
         const data = await res.json();
         setDbHealth(data);
@@ -164,7 +180,7 @@ export default function App() {
 
   const fetchCases = async () => {
     try {
-      const res = await fetch('/api/cases');
+      const res = await fetch('/api/cases', { headers: await getApiHeaders() });
       if (res.ok) {
         const data = await res.json();
         setSavedCases(data.cases || []);
@@ -303,7 +319,7 @@ export default function App() {
 
       const res = await fetch('/api/cases/save', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await getApiHeaders(true),
         body: JSON.stringify(payload),
       });
 
@@ -326,7 +342,7 @@ export default function App() {
 
   const handleLoadSavedCase = async (caseId: string) => {
     try {
-      const res = await fetch(`/api/cases/${caseId}`);
+      const res = await fetch(`/api/cases/${caseId}`, { headers: await getApiHeaders() });
       if (res.ok) {
         const data = await res.json();
         if (data.case?.raw_text) {
