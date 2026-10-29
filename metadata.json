@@ -1,0 +1,6 @@
+{
+  "name": "刑事偵查輔助系統",
+  "description": "供司法警察與司法人員整理刑事案件、分析待證事實、辨識法律規範、產生筆錄問句及編製條陳的專用系統。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
