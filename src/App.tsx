@@ -253,7 +253,8 @@ export default function App() {
       inputText,
       updatedFacts,
       updatedCase.id,
-      updatedCase.current_revision + 1
+      updatedCase.current_revision + 1,
+      updatedCase.evidence_items
     );
     updatedCase.current_revision += 1;
     updatedCase.legal_candidates = candidates;

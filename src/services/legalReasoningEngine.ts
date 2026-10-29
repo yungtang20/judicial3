@@ -32,6 +32,7 @@ import {
   QuestionPriority,
   ReviewStatus,
 } from '../types';
+import { buildPropertyCandidates, buildViolenceCandidates } from './offenseRegistry';
 
 export interface InvalidationReport {
   invalidatedCandidateIds: string[];
@@ -120,6 +121,7 @@ export class LegalReasoningEngine {
       reports: [],
       reviews: [],
       audit_logs: [],
+      revision_history: [],
     };
   }
 
@@ -148,7 +150,7 @@ export class LegalReasoningEngine {
         status = 'ADMITTED';
       }
       // 2. 否認或抗辯（保留為重要爭點，絕不當作不存在）
-      else if (/否認|抗辯|辯稱|不知情|不知為|辯解|並未|沒有參與|推諉|主張不知/i.test(sentence)) {
+      else if (/否認|抗辯|辯稱|稱其|稱以為|不知情|不知為|辯解|並未|沒有參與|推諉|主張不知/i.test(sentence)) {
         status = 'DENIED';
       }
       // 3. 模型或偵查員推論
@@ -240,48 +242,56 @@ export class LegalReasoningEngine {
 
     // 獨立客觀證據抽取（附註證明力限制，嚴禁將口頭陳述當成已被客觀證實）
     if (/監視器|錄影|影像|鏡頭/i.test(rawText)) {
+      const explicitlyObtained = /已取得|已調閱|已檢附|已提供|已扣案|翻拍|清晰錄得/i.test(rawText);
       evidenceItems.push({
         id: `evi-${caseId}-cctv`,
         case_id: caseId,
         evidence_type: '監視錄影光碟',
         source_description: '案發現場周邊監視錄影畫面翻拍',
-        collection_status: 'OBTAINED',
-        related_fact_refs: facts.filter((f) => f.source_excerpt.includes('監視器')).map((f) => f.id),
-        limitations: '畫面解析度、時間戳記與拍攝角度需比對中選會校時，防杜當事人爭執偽造',
+        collection_status: explicitlyObtained ? 'OBTAINED' : 'PENDING_SEARCH',
+        related_fact_refs: facts
+          .filter((f) => /監視器|手機|物品|皮夾|包包|取走|拿起|帶離|持有|遺失|遺留/i.test(f.source_excerpt))
+          .map((f) => f.id),
+        limitations: explicitlyObtained
+          ? '畫面解析度、時間戳記與拍攝角度仍需核對，不能僅憑文字提及推定內容已證實'
+          : '案情僅提及可能存在影像，尚未證明已調取、內容或完整性',
         created_at: now,
       });
     }
     if (/匯款|明細|交易紀錄|存簿|網銀/i.test(rawText)) {
+      const explicitlyObtained = /已取得|已調閱|已檢附|已提供|已扣案|明細表/i.test(rawText);
       evidenceItems.push({
         id: `evi-${caseId}-bank`,
         case_id: caseId,
         evidence_type: '金融交易紀錄明細',
         source_description: '受款帳戶金流與跨行轉帳明細表',
-        collection_status: 'OBTAINED',
+        collection_status: explicitlyObtained ? 'OBTAINED' : 'PENDING_SEARCH',
         related_fact_refs: facts.filter((f) => /匯款|帳戶/.test(f.source_excerpt)).map((f) => f.id),
         limitations: '僅能證明資金移轉時空，受款帳戶名義人是否具主觀犯意需補強通聯調查',
         created_at: now,
       });
     }
     if (/金融卡|提款卡|信用卡/i.test(rawText)) {
+      const explicitlyObtained = /扣案|已取得|已查扣|已檢附/i.test(rawText);
       evidenceItems.push({
         id: `evi-${caseId}-card`,
         case_id: caseId,
         evidence_type: '扣案金融卡片',
         source_description: '現場查扣之他人金融卡或信用卡',
-        collection_status: 'OBTAINED',
+        collection_status: explicitlyObtained ? 'OBTAINED' : 'PENDING_SEARCH',
         related_fact_refs: facts.filter((f) => /卡片|金融卡|信用卡/.test(f.source_excerpt)).map((f) => f.id),
         limitations: '需確認查扣時之保管鏈（Chain of Custody）並檢附扣押筆錄',
         created_at: now,
       });
     }
     if (/驗傷|診斷證明|骨折|挫傷|撕裂傷/i.test(rawText)) {
+      const explicitlyObtained = /診斷證明|驗傷單|已取得|已檢附/i.test(rawText);
       evidenceItems.push({
         id: `evi-${caseId}-injury`,
         case_id: caseId,
         evidence_type: '醫院傷害診斷證明書正本',
         source_description: '公私立醫院出具之驗傷證明書',
-        collection_status: 'OBTAINED',
+        collection_status: explicitlyObtained ? 'OBTAINED' : 'PENDING_SEARCH',
         related_fact_refs: facts.filter((f) => /傷|骨折/.test(f.source_excerpt)).map((f) => f.id),
         limitations: '僅能證明受傷成因與傷勢客觀程度，加害人之主觀殺人或傷害犯意需由客觀工具綜合判定',
         created_at: now,
@@ -289,6 +299,64 @@ export class LegalReasoningEngine {
     }
 
     return { behaviors, evidenceItems };
+  }
+
+  /**
+   * 將舊有案型候選的推定結果收斂為可追溯狀態。
+   * 關鍵字只能擴大檢索範圍；沒有實際 Fact 與已取得 Evidence 時，不能保留 SATISFIED。
+   */
+  private static normalizeCandidateTraceability(
+    candidates: LegalCandidate[],
+    facts: FactItem[],
+    evidenceItems: EvidenceItem[]
+  ): LegalCandidate[] {
+    const factIds = new Set(facts.map((f) => f.id));
+    const obtainedEvidence = evidenceItems.filter((e) => e.collection_status === 'OBTAINED');
+    return candidates.map((candidate) => {
+      const elements = candidate.elements.map((element) => {
+        const supporting = (element.supporting_fact_refs || []).filter((id) => factIds.has(id));
+        const contrary = (element.contrary_fact_refs || []).filter((id) => factIds.has(id));
+        const evidenceRefs = obtainedEvidence
+          .filter((e) => (e.related_fact_refs || []).some((id) => supporting.includes(id)))
+          .map((e) => e.id);
+        const missing = [...(element.missing_information || [])];
+        let status = element.element_status;
+        if (supporting.length === 0) {
+          status = 'INSUFFICIENT_DATA';
+          missing.push('尚無可追溯的支持事實');
+        } else if (status === 'INSUFFICIENT_DATA' && evidenceRefs.length > 0 && contrary.length === 0) {
+          status = 'SATISFIED';
+          missing.splice(0, missing.length, ...missing.filter((item) => item !== '尚無已取得且可連結的客觀證據'));
+        } else if (status === 'SATISFIED' && evidenceRefs.length === 0) {
+          status = contrary.length > 0 ? 'CONTESTED' : 'INSUFFICIENT_DATA';
+          missing.push('尚無已取得且可連結的客觀證據');
+        }
+        if (contrary.length > 0 && status === 'SATISFIED') status = 'CONTESTED';
+        return {
+          ...element,
+          supporting_fact_refs: supporting,
+          contrary_fact_refs: contrary,
+          related_fact_refs: [...new Set([...(element.related_fact_refs || []), ...supporting])],
+          related_evidence_refs: evidenceRefs,
+          missing_information: [...new Set(missing)],
+          element_status: status,
+          requires_human_review: status !== 'SATISFIED',
+          reasoning: `${element.reasoning}（來源追溯：${supporting.length} 筆事實、${evidenceRefs.length} 筆已取得證據；未知事項不視為不成立。）`,
+        };
+      });
+      const hasSatisfied = elements.some((e) => e.element_status === 'SATISFIED');
+      const hasContested = elements.some((e) => e.element_status === 'CONTESTED');
+      const status = hasSatisfied && !hasContested ? candidate.candidate_status :
+        candidate.candidate_status === 'REJECTED' ? 'REJECTED' : 'UNRESOLVED';
+      return {
+        ...candidate,
+        candidate_status: status,
+        support_fact_refs: [...new Set(candidate.support_fact_refs.filter((id) => factIds.has(id)))],
+        contrary_fact_refs: [...new Set(candidate.contrary_fact_refs.filter((id) => factIds.has(id)))],
+        unknown_fact_refs: [...new Set(candidate.unknown_fact_refs.filter((id) => factIds.has(id)))],
+        elements,
+      };
+    });
   }
 
   /**
@@ -302,12 +370,22 @@ export class LegalReasoningEngine {
     rawText: string,
     facts: FactItem[],
     caseId: string,
-    revisionId: number
+    revisionId: number,
+    evidenceItems: EvidenceItem[] = []
   ): { candidates: LegalCandidate[]; coreIssues: CoreIssue[] } {
     const candidates: LegalCandidate[] = [];
     const coreIssues: CoreIssue[] = [];
     const now = new Date().toISOString();
     const text = (rawText + ' ' + facts.map((f) => f.source_excerpt).join(' ')).toLowerCase();
+
+    // 財物取得家族先走 registry：兩條法律路線並列，再由要件與證據收斂狀態。
+    const registryCandidates = buildPropertyCandidates(rawText, facts, evidenceItems, caseId, revisionId);
+    const usePropertyRegistry = registryCandidates.length > 0 && /手機/i.test(text) && !/信用卡|感應|盜刷/i.test(text);
+    if (usePropertyRegistry) candidates.push(...registryCandidates);
+
+    const violenceRegistryCandidates = buildViolenceCandidates(rawText, facts, evidenceItems, caseId, revisionId);
+    const useViolenceRegistry = violenceRegistryCandidates.length > 0;
+    if (useViolenceRegistry) candidates.push(...violenceRegistryCandidates);
 
     // 案型 1: 網路社群 / 假投資 / 虛擬貨幣詐騙
     if (
@@ -432,7 +510,11 @@ export class LegalReasoningEngine {
     }
 
     // 案型 1.5: 破壞持有之竊盜行為 (趁人不備、偷走、行竊、徒手扒竊) vs. 搶奪 / 侵占
-    if ((/偷走|行竊|竊取|竊盜|偷拿|扒竊|扒手/i.test(text) || (/偷/i.test(text) && !/偷偷/i.test(text))) && !/拾獲|撿到|遺忘/i.test(text)) {
+    if (
+      !usePropertyRegistry &&
+      /偷走|行竊|竊取|竊盜|偷拿|扒竊|扒手|拿起.{0,12}(離開|帶離)|取走.{0,12}(離開|帶離)|帶離/i.test(text) ||
+      (/偷/i.test(text) && !/偷偷/i.test(text))
+    ) {
       const candTheftDirectId = `cand-${caseId}-theft-direct`;
       candidates.push({
         id: candTheftDirectId,
@@ -534,7 +616,7 @@ export class LegalReasoningEngine {
     }
 
     // 案型 2: 拾得物 / 皮夾 / 信用卡感應盜刷 vs. 竊盜
-    if (/拾獲|撿到|遺失|遺忘|皮夾|信用卡|感應|盜刷|屈臣氏/i.test(text)) {
+    if (!usePropertyRegistry && /拾獲|撿到|遺失|遺忘|遺留|手機|皮夾|信用卡|感應|盜刷|屈臣氏/i.test(text)) {
       // 候選 1 (PRIMARY): 刑法第337條 侵占離本人持有物罪
       const candLostId = `cand-${caseId}-lost-1`;
       candidates.push({
@@ -622,6 +704,7 @@ export class LegalReasoningEngine {
       });
 
       // 候選 3 (PRIMARY - 獨立競合): 刑法第339條第1項 詐欺取財罪（無權感應盜刷）
+      if (/信用卡|感應|盜刷|屈臣氏/i.test(text)) {
       const candSwipeId = `cand-${caseId}-swipe-1`;
       candidates.push({
         id: candSwipeId,
@@ -655,6 +738,7 @@ export class LegalReasoningEngine {
         statute_version: '現行有效法規',
         created_at: now,
       });
+      }
 
       // 核心爭點
       coreIssues.push({
@@ -742,7 +826,7 @@ export class LegalReasoningEngine {
     }
 
     // 案型 4: 行車糾紛 / 球棒傷害恐嚇 / 殺人未遂
-    if (/傷害|打傷|毆打|球棒|骨折|流血|恐嚇|打死你|撕裂傷/i.test(text)) {
+    if (!useViolenceRegistry && /傷害|打傷|毆打|球棒|骨折|流血|恐嚇|打死你|撕裂傷/i.test(text)) {
       // 候選 1: 刑法第277條第1項 普通傷害罪
       const candAssaultId = `cand-${caseId}-assault-1`;
       candidates.push({
@@ -971,7 +1055,10 @@ export class LegalReasoningEngine {
       });
     }
 
-    return { candidates, coreIssues };
+    return {
+      candidates: this.normalizeCandidateTraceability(candidates, facts, evidenceItems),
+      coreIssues,
+    };
   }
 
   /**
@@ -1077,6 +1164,49 @@ export class LegalReasoningEngine {
       });
     });
 
+    if (candidates.some((candidate) => candidate.id.includes('-registry-'))) {
+      const registryQuestions: Array<{ type: QuestionType; text: string; rationale: string; elementHint: string }> = [
+        { type: '1_CORE_ELEMENT', text: '請說明你看到該物品時，物品原本放在哪裡、附近有哪些人，以及你是否看到有人正在注意或管理它？', rationale: '釐清物品在取得時是否仍在他人或場所的實際支配範圍。', elementHint: 'possession' },
+        { type: '2_ACT_PROCESS', text: '請依時間順序說明你從看到、拿起或取得該物品，到離開現場之間的每一個動作。', rationale: '還原取得行為、控制建立及是否有未經授權攜離。', elementHint: 'taking' },
+        { type: '3_SUBJECTIVE_INTENT', text: '你拿到該物品當時，認為它是誰的？你當時打算如何處理？', rationale: '詢問認知與目的，不直接要求受詢問者作法律評價。', elementHint: 'intent' },
+        { type: '7_CONTRARY_ALTERNATIVE', text: '取得後你曾否交給店員、交還他人、報警或採取其他尋找失主的行動？請說明時間、地點及可供查證的人。', rationale: '保留返還、協助尋找失主等有利於受詢問者的反向事實。', elementHint: 'intent' },
+        { type: '6_EVIDENCE_SOURCE', text: '店內影像或店員所述的哪一部分與你剛才的說明相同或不同？你是否有其他資料可以核對？', rationale: '將供述與客觀資料分開核對，不把影像存在直接等同犯罪成立。', elementHint: 'taking' },
+      ];
+      const violenceQuestions: Array<{ type: QuestionType; text: string; rationale: string; elementHint: string }> = [
+        { type: '1_CORE_ELEMENT', text: '請說明當時你與對方的距離、接觸方式、使用的工具及每一個動作。', rationale: '釐清可觀察的行為、工具、部位與時序，不先作法律評價。', elementHint: 'act_result' },
+        { type: '2_ACT_PROCESS', text: '請依時間順序說明從爭執或接觸開始，到停止動作之間的經過。', rationale: '還原行為與結果的發生順序，供後續核對。', elementHint: 'overt_act' },
+        { type: '3_SUBJECTIVE_INTENT', text: '你當時為什麼做出這些動作？你是否說過或寫過相關言語？', rationale: '詢問行為目的及原話內容，不要求受詢問者作法律判斷。', elementHint: 'intent' },
+        { type: '7_CONTRARY_ALTERNATIVE', text: '當時有沒有意外、過失、防衛、停止動作或協助對方的情形？請說明具體經過。', rationale: '保留有利及替代解釋，避免只蒐集支持犯罪的資料。', elementHint: 'intent' },
+        { type: '6_EVIDENCE_SOURCE', text: '有哪些人看到或聽到當時經過？是否有影像、錄音、診斷或其他資料可以核對？', rationale: '確認供述、客觀證據與證人來源及其可查證範圍。', elementHint: 'causation' },
+      ];
+      questions.length = 0;
+      let sequence = 0;
+      candidates.filter((candidate) => candidate.id.includes('-registry-')).forEach((candidate) => {
+        const routeQuestions = candidate.id.includes('tw-penal-277') || candidate.id.includes('tw-penal-305') || candidate.id.includes('tw-penal-271')
+          ? violenceQuestions
+          : registryQuestions;
+        routeQuestions.forEach((item) => {
+          const element = candidate.elements.find((candidateElement) => candidateElement.id.endsWith(`-${item.elementHint}`));
+          questions.push({
+            id: `q-${caseId}-r${revisionId}-registry-${sequence + 1}`,
+            case_id: caseId,
+            candidate_id: candidate.id,
+            element_id: element?.id,
+            question_type: item.type,
+            question_text: item.text,
+            rationale: item.rationale,
+            target_fact_refs: element?.related_fact_refs || facts.map((fact) => fact.id),
+            priority: item.type === '6_EVIDENCE_SOURCE' ? 'P1_IMPORTANT' : 'P0_CRITICAL',
+            review_status: 'DRAFT',
+            is_required: true,
+            revision_number: revisionId,
+            expected_clarification: `釐清 ${candidate.legal_name} 的 ${item.elementHint} 要件事實。`,
+          });
+          sequence += 1;
+        });
+      });
+    }
+
     return questions;
   }
 
@@ -1093,6 +1223,35 @@ export class LegalReasoningEngine {
     const oldRevision = currentCase.current_revision;
     const newRevision = oldRevision + 1;
     const now = new Date().toISOString();
+
+    const previousSnapshot = {
+      revision_id: oldRevision,
+      parent_revision_id: oldRevision > 1 ? oldRevision - 1 : undefined,
+      changed_fact_ids: [modifiedFactId],
+      change_reason: reason,
+      created_at: now,
+      facts: currentCase.facts.map((fact) => ({ ...fact })),
+      evidence_items: currentCase.evidence_items.map((item) => ({ ...item })),
+      behaviors: currentCase.behaviors.map((behavior) => ({ ...behavior, fact_refs: [...behavior.fact_refs], evidence_refs: [...(behavior.evidence_refs || [])] })),
+      legal_candidates: currentCase.legal_candidates.map((candidate) => ({
+        ...candidate,
+        support_fact_refs: [...candidate.support_fact_refs],
+        contrary_fact_refs: [...candidate.contrary_fact_refs],
+        unknown_fact_refs: [...candidate.unknown_fact_refs],
+        elements: candidate.elements.map((element) => ({
+          ...element,
+          supporting_fact_refs: [...(element.supporting_fact_refs || [])],
+          contrary_fact_refs: [...(element.contrary_fact_refs || [])],
+          related_fact_refs: [...element.related_fact_refs],
+          related_evidence_refs: [...(element.related_evidence_refs || [])],
+          missing_information: [...(element.missing_information || [])],
+        })),
+      })),
+      core_issues: currentCase.core_issues.map((issue) => ({ ...issue, supporting_facts: [...issue.supporting_facts], contrary_facts: [...issue.contrary_facts], unresolved_questions: [...issue.unresolved_questions] })),
+      questions: currentCase.questions.map((question) => ({ ...question, target_fact_refs: [...question.target_fact_refs] })),
+      answers: currentCase.answers.map((answer) => ({ ...answer })),
+      reports: currentCase.reports.map((report) => ({ ...report, validation_errors: [...report.validation_errors] })),
+    };
 
     // 1. 拷貝並更新事實
     const updatedFacts = currentCase.facts.map((f) => {
@@ -1112,7 +1271,8 @@ export class LegalReasoningEngine {
       currentCase.raw_intake.summary,
       updatedFacts,
       currentCase.id,
-      newRevision
+      newRevision,
+      currentCase.evidence_items
     );
 
     // 3. 重新產生偵訊問句
@@ -1155,6 +1315,7 @@ export class LegalReasoningEngine {
       core_issues: newCoreIssues,
       questions: newQuestions,
       reports: updatedReports,
+      revision_history: [...(currentCase.revision_history || []), previousSnapshot],
       audit_logs: [...currentCase.audit_logs, auditEvent],
     };
 
@@ -1269,7 +1430,7 @@ export class LegalReasoningEngine {
     caseRec.evidence_items = evidenceItems;
 
     // 3. 構成要件涵攝與多候選方向
-    const { candidates, coreIssues } = this.evaluateLegalCandidates(text, facts, id, 1);
+    const { candidates, coreIssues } = this.evaluateLegalCandidates(text, facts, id, 1, evidenceItems);
     caseRec.legal_candidates = candidates;
     caseRec.core_issues = coreIssues;
 

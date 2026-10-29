@@ -2,6 +2,8 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
+import { requireApiUser } from './src/server/auth.js';
+import type { AuthenticatedRequest } from './src/server/auth.js';
 
 dotenv.config();
 
@@ -77,7 +79,7 @@ app.post('/api/chat', async (req, res) => {
 });
 
 // Database Health & Status endpoint
-app.get('/api/database/status', async (_req, res) => {
+app.get('/api/database/status', requireApiUser, async (_req, res) => {
   try {
     const { getDatabaseHealth } = await import('./src/server/databaseService.js');
     const health = await getDatabaseHealth();
@@ -88,10 +90,10 @@ app.get('/api/database/status', async (_req, res) => {
 });
 
 // List all cases in PostgreSQL
-app.get('/api/cases', async (_req, res) => {
+app.get('/api/cases', requireApiUser, async (req: AuthenticatedRequest, res) => {
   try {
     const { listCases } = await import('./src/server/databaseService.js');
-    const cases = await listCases();
+    const cases = await listCases(req.userId!);
     res.json({ cases });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -99,10 +101,10 @@ app.get('/api/cases', async (_req, res) => {
 });
 
 // Get case details by ID
-app.get('/api/cases/:id', async (req, res) => {
+app.get('/api/cases/:id', requireApiUser, async (req: AuthenticatedRequest, res) => {
   try {
     const { getCaseDetails } = await import('./src/server/databaseService.js');
-    const details = await getCaseDetails(req.params.id);
+    const details = await getCaseDetails(req.params.id, req.userId!);
     if (!details) return res.status(404).json({ error: 'Case not found' });
     res.json(details);
   } catch (err: any) {
@@ -111,10 +113,10 @@ app.get('/api/cases/:id', async (req, res) => {
 });
 
 // Save case analysis into PostgreSQL with atomic revision snapshot
-app.post('/api/cases/save', async (req, res) => {
+app.post('/api/cases/save', requireApiUser, async (req: AuthenticatedRequest, res) => {
   try {
     const { saveCaseAnalysis } = await import('./src/server/databaseService.js');
-    const result = await saveCaseAnalysis(req.body);
+    const result = await saveCaseAnalysis({ ...req.body, ownerId: req.userId });
     res.json(result);
   } catch (err: any) {
     console.error('Error saving case analysis:', err);

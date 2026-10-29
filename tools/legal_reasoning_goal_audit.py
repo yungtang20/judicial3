@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 臺灣刑事法律推理目標與架構靜態/邏輯稽核腳本
-專案: yungtang20/judicial2
-任務編號: JUDICIAL2-LEGAL-REASONING-RESEARCH-RECONSTRUCTION-AND-REMEDIATION-001
+專案: yungtang20/judicial3
+任務編號: JUDICIAL3-INDEPENDENT-ACCEPTANCE-REMEDIATION-001
 版本: 2026-10-29
 
 驗證目標:
@@ -11,13 +11,18 @@
 2. 5 大法學 AI 平台研究報告與嚴格證據分級標籤 ([已證實的實作], [已觀察的功能], [官方文件所述], [推論或假說], [UNKNOWN])
 3. 資料合約完整性 (5元事實狀態, 4種候選狀態, 9大類偵訊問句)
 4. 禁絕行為檢查 (嚴禁單一罪名分類偏誤, 嚴禁 UNKNOWN=FALSE, 嚴禁 DENIED=不存在)
-5. 16 大情境端到端回歸測試執行與 100% PASS 驗收
+5. JUDICIAL3 情境、法律推理修正及 API 認證測試實際執行
 """
 
 import sys
 import os
 import subprocess
 import re
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -40,7 +45,7 @@ def check_assert(condition: bool, check_id: str, title: str, details: str = ""):
 
 print("======================================================================")
 print("  臺灣刑事法律推理系統 - 終局目標與架構稽核工具 (Goal Audit)")
-print("  專案: yungtang20/judicial2 | 版本: 2026-10-29")
+print("  專案: yungtang20/judicial3 | 版本: 2026-10-29")
 print("======================================================================\n")
 
 # -----------------------------------------------------------------------------
@@ -184,30 +189,92 @@ if os.path.exists(engine_path):
         db_code = f.read()
     no_destructive_rm = "fs.rmSync(dbPath" not in db_code
     check_assert(no_destructive_rm, "SEC-NO-RMSYNC", "databaseService.ts 已徹底清除破壞性遞歸刪除 (fs.rmSync)")
+
+    # 這裡必須檢查「條件結果」，不能以非空字串當成布林值。
+    # 先前 no_unknown_false 類型的寫法會因字串非空而永遠通過。
+    executable_code = re.sub(r"//[^\n]*|/\*.*?\*/", "", engine_code, flags=re.S)
+    no_unknown_false = not bool(re.search(r"(?:assertion_status|element_status|candidate_status)[^;\n]{0,80}UNKNOWN\s*={2,3}\s*FALSE", executable_code, re.I))
+    no_denied_false = not bool(re.search(r"(?:assertion_status|element_status|candidate_status)[^;\n]{0,80}DENIED\s*={2,3}\s*FALSE", executable_code, re.I))
+    check_assert(no_unknown_false, "ENG-NO-UNKNOWN-FALSE", "未知事項不得被實作成 FALSE")
+    check_assert(no_denied_false, "ENG-NO-DENIED-FALSE", "否認事項不得被實作成不存在")
+
+    # 行為證據：所有 SATISFIED 要件必須由引擎的追溯收斂器重新檢查。
+    has_trace_gate = "normalizeCandidateTraceability" in engine_code and "related_evidence_refs" in engine_code
+    check_assert(has_trace_gate, "ENG-TRACE-GATE", "SATISFIED 要件經 Fact/Evidence 追溯閘門收斂")
+
+    registry_path = os.path.join(ROOT_DIR, "src", "services", "offenseRegistry.ts")
+    with open(registry_path, "r", encoding="utf-8") as f:
+        registry_code = f.read()
+    check_assert(
+        "PROPERTY_OFFENSE_REGISTRY" in registry_code
+        and "buildPropertyCandidates" in registry_code
+        and "VIOLENCE_OFFENSE_REGISTRY" in registry_code
+        and "buildViolenceCandidates" in registry_code,
+        "ENG-OFFENSE-REGISTRY",
+        "竊盜／侵占及暴力家族候選由法律要件登錄表產生，而非單純關鍵字命中",
+    )
+
+    auth_path = os.path.join(ROOT_DIR, "src", "server", "auth.ts")
+    with open(auth_path, "r", encoding="utf-8") as f:
+        auth_code = f.read()
+    check_assert(
+        "timingSafeEqual" in auth_code
+        and "JUDICIAL3_SESSION_SECRET" in auth_code
+        and "userId = payload.sub" in auth_code
+        and "req.userId = userId" in auth_code,
+        "SEC-HMAC-AUTH",
+        "API 使用伺服器驗證的 HMAC session subject，不接受偽造 x-user-id",
+    )
 else:
     check_assert(False, "ENG-ALL", "引擎檔案不存在")
 
 # -----------------------------------------------------------------------------
-# 階段 5: JUDICIAL3 14 大情境端到端回歸測試自動執行
+# 階段 5: JUDICIAL3 行為測試自動執行
 # -----------------------------------------------------------------------------
-print("\n[Step 5/5] 執行 JUDICIAL3 14 大情境端到端回歸測試 (tests/legal_reasoning_scenarios.test.ts)...")
+print("\n[Step 5/5] 執行 JUDICIAL3 行為回歸測試...")
 
 test_script = os.path.join(ROOT_DIR, "tests", "legal_reasoning_scenarios.test.ts")
 if os.path.exists(test_script):
     try:
         run_res = subprocess.run(
-            ["npx", "tsx", "tests/legal_reasoning_scenarios.test.ts"],
+            [os.path.join(ROOT_DIR, "node_modules", ".bin", "tsx.exe"), "tests/legal_reasoning_scenarios.test.ts"],
             cwd=ROOT_DIR,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=30
         )
-        passed_14 = (run_res.returncode == 0) and ("總測試情境數: 14 | 通過: 14 | 失敗: 0" in run_res.stdout)
-        check_assert(passed_14, "TST-14-SCENARIOS", "JUDICIAL3 14 大刑事法律推理情境全數通過 (100% PASS)", f"Exit code: {run_res.returncode}")
+        passed_14 = (run_res.returncode == 0) and bool(re.search(r"總測試情境數:\s*14\s*\|\s*通過:\s*14\s*\|\s*失敗:\s*0", run_res.stdout))
+        check_assert(passed_14, "TST-14-SCENARIOS", "JUDICIAL3 14 大刑事法律推理情境全數通過 (100% PASS)", f"Exit code: {run_res.returncode}; stderr: {run_res.stderr[-300:]}")
     except Exception as ex:
         check_assert(False, "TST-14-SCENARIOS", "測試執行異常", str(ex))
 else:
     check_assert(False, "TST-14-SCENARIOS", "測試腳本不存在")
+
+behavior_tests = [
+    ("tests/legal_reasoning_corrective.test.ts", "TST-CORRECTIVE", "CORRECTIVE_PASS"),
+    ("tests/api_auth.test.ts", "TST-API-AUTH", "API_AUTH_PASS"),
+]
+for relative_script, check_id, marker in behavior_tests:
+    script_path = os.path.join(ROOT_DIR, relative_script.replace("/", os.sep))
+    if not os.path.exists(script_path):
+        check_assert(False, check_id, f"行為測試存在: {relative_script}")
+        continue
+    try:
+        run_res = subprocess.run(
+            [os.path.join(ROOT_DIR, "node_modules", ".bin", "tsx.exe"), relative_script],
+            cwd=ROOT_DIR,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=30,
+        )
+        passed = run_res.returncode == 0 and marker in run_res.stdout
+        check_assert(passed, check_id, f"{relative_script} 行為測試通過", f"Exit code: {run_res.returncode}; stderr: {run_res.stderr[-300:]}")
+    except Exception as ex:
+        check_assert(False, check_id, f"{relative_script} 測試執行異常", str(ex))
 
 # -----------------------------------------------------------------------------
 # 總結與退出碼

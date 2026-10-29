@@ -1,6 +1,7 @@
 import { PGlite } from '@electric-sql/pglite';
 import fs from 'fs';
 import path from 'path';
+import { randomUUID } from 'crypto';
 
 let dbInstance: PGlite | null = null;
 let isInitialized = false;
@@ -18,32 +19,14 @@ export async function getDatabase(): Promise<PGlite> {
   initPromise = (async () => {
     const dbPath = path.resolve(process.cwd(), 'database', 'pglite_store');
 
-    // 1. Pre-check: if directory exists, safely remove stale postmaster.pid lock file
-    if (fs.existsSync(dbPath)) {
-      const pidPath = path.join(dbPath, 'postmaster.pid');
-      if (fs.existsSync(pidPath)) {
-        try {
-          fs.unlinkSync(pidPath);
-          console.log('[PGlite] Removed stale postmaster.pid lock file safely');
-        } catch (e) {
-          console.warn('[PGlite] Warning removing stale lock file:', e);
-        }
-      }
-    }
-
-    // 2. Initialize PGlite instance safely without data loss
+    // 不自行刪除 postmaster.pid：無法可靠判斷其他程序是否仍持有資料庫。
+    // 初始化失敗必須停下來，不能切換到無法保存案件的記憶體庫。
     try {
       dbInstance = new PGlite(dbPath);
       await dbInstance.waitReady;
     } catch (err: any) {
-      console.warn('[PGlite] Persistent store initialization warning, falling back to in-memory instance without deleting existing data:', err?.message || err);
-      try {
-        dbInstance = new PGlite();
-        await dbInstance.waitReady;
-      } catch (fallbackErr: any) {
-        console.error('[PGlite] In-memory database initialization failed:', fallbackErr);
-        throw fallbackErr;
-      }
+      dbInstance = null;
+      throw new Error(`[PGlite] Persistent store initialization failed; existing data was not modified: ${err?.message || err}`);
     }
 
     // 3. Run migrations and initial seed if needed
@@ -108,7 +91,7 @@ export async function getDatabaseHealth() {
   };
 }
 
-export async function listCases() {
+export async function listCases(ownerId: string) {
   const db = await getDatabase();
   const res = await db.query<any>(`
     SELECT 
@@ -125,14 +108,15 @@ export async function listCases() {
       (SELECT COUNT(*) FROM interview_questions q WHERE q.revision_id = r.id) as question_count
     FROM cases c
     LEFT JOIN case_revisions r ON c.current_revision_id = r.id
+    WHERE c.lead_investigator_id = $1::UUID
     ORDER BY c.created_at DESC;
-  `);
+  `, [ownerId]);
   return res.rows;
 }
 
-export async function getCaseDetails(caseId: string) {
+export async function getCaseDetails(caseId: string, ownerId: string) {
   const db = await getDatabase();
-  const caseRes = await db.query<any>(`SELECT * FROM cases WHERE id = $1`, [caseId]);
+  const caseRes = await db.query<any>(`SELECT * FROM cases WHERE id = $1 AND lead_investigator_id = $2::UUID`, [caseId, ownerId]);
   if (caseRes.rows.length === 0) return null;
 
   const caseObj = caseRes.rows[0];
@@ -155,6 +139,7 @@ export async function getCaseDetails(caseId: string) {
 }
 
 export interface SaveCasePayload {
+  ownerId: string;
   caseNumber?: string;
   title: string;
   rawText: string;
@@ -186,15 +171,19 @@ export async function saveCaseAnalysis(payload: SaveCasePayload) {
   // Begin transaction
   await db.query('BEGIN;');
   try {
-    const caseNumber = payload.caseNumber || `115偵字第${Math.floor(1000 + Math.random() * 9000)}號`;
+    const caseNumber = payload.caseNumber || `draft-${randomUUID()}`;
     
     // Check if user exists, else default to investigator 1
-    const userRes = await db.query<any>(`SELECT id FROM users LIMIT 1;`);
+    const userRes = await db.query<any>(`SELECT id FROM users WHERE id = $1::UUID LIMIT 1;`, [payload.ownerId]);
     const investigatorId = userRes.rows[0]?.id;
+    if (!investigatorId) throw new Error('authenticated owner does not exist');
 
     // Insert or find case
     let caseId: string;
-    const existingCase = await db.query<any>(`SELECT id, current_revision_id FROM cases WHERE case_number = $1`, [caseNumber]);
+    const existingCase = await db.query<any>(
+      `SELECT id, current_revision_id FROM cases WHERE case_number = $1 AND lead_investigator_id = $2::UUID`,
+      [caseNumber, investigatorId]
+    );
     let revisionNumber = 1;
 
     if (existingCase.rows.length > 0) {

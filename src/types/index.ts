@@ -219,6 +219,24 @@ export interface CaseRecord {
   // 人工審核與歷史紀錄
   reviews: ReviewRecord[];
   audit_logs: AuditEvent[];
+  /** Legacy seed records may not yet have a history array; new cases always do. */
+  revision_history?: CaseRevisionSnapshot[];
+}
+
+export interface CaseRevisionSnapshot {
+  revision_id: number;
+  parent_revision_id?: number;
+  changed_fact_ids: string[];
+  change_reason: string;
+  created_at: string;
+  facts: FactItem[];
+  evidence_items: EvidenceItem[];
+  behaviors: BehaviorItem[];
+  legal_candidates: LegalCandidate[];
+  core_issues: CoreIssue[];
+  questions: InterviewQuestion[];
+  answers: InterviewAnswer[];
+  reports: OfficialReport[];
 }
 
 export interface AuditEvent {

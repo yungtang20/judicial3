@@ -6,3 +6,5 @@ coverage/
 *.log
 .env*
 !.env.example
+# PGlite runtime state is machine-local and must never be committed.
+database/pglite_store/

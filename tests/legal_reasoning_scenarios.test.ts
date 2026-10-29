@@ -59,7 +59,7 @@ try {
   assert(output.evidence.some((e) => e.evidence_type.includes('監視')), '必須獨立提取監視器客觀證物');
   const prim = output.candidates.find((c) => c.candidate_status === 'PRIMARY');
   assert(prim !== undefined && prim.legal_name.includes('320條'), '客觀破壞持有之竊取行為，主位候選應為刑法第320條普通竊盜罪');
-  assert(prim?.elements.some((e) => e.element_status === 'SATISFIED'), '監視器證物支持之客觀要件應為 SATISFIED');
+  assert(prim?.elements.some((e) => e.element_status === 'SATISFIED') === true, '監視器證物支持之客觀要件應為 SATISFIED');
 
   testResults.push({ id: 'SCN-01', name: '事實明確且證據支持之單一行為', passed: true, assertions: 4, details: '正確提取事實與監視器物證，主位竊盜罪要件滿足' });
 } catch (e: any) {

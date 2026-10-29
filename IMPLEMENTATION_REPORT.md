@@ -1,6 +1,12 @@
+# 2026-10-29 獨立修復增補
+
+本次依實際程式碼完成最小修復：第320／337條及第277／305／271條暴力家族改由 `offenseRegistry` 要件並列評估；推理結果經 Fact/Evidence traceability gate 收斂；證據文字提及不再自動成為 `OBTAINED`；案件 API 改用 HMAC session token 與 owner 條件；PGlite 失敗不刪資料、不切 memory fallback；runtime DB 改為 ignored 並從 index 移除；新增超商拾得手機、暴力家族反事實、revision 與 API 認證測試。
+
+本段不代表法律結論已由人工核准；候選仍為偵查假設。
+
 # IMPLEMENTATION REPORT (實施與重構技術報告)
 
-- **專案名稱**: yungtang20/judicial2
+- **專案名稱**: yungtang20/judicial3
 - **任務編號**: JUDICIAL3-CORE-ARCHITECTURE-REPAIR
 - **規範版本**: 1.0 (2026-10-29)
 - **工程師角色**: 臺灣刑事法律資訊系統架構師 / 法律推理工程師 / 全端工程師 / 測試稽核員
@@ -54,7 +60,7 @@
 | `src/server/databaseService.ts` | **安全性修復** | 移除遞歸破壞性刪除 `fs.rmSync(dbPath)`，修復 PGlite postmaster.pid 殘留鎖問題，落實既有資料安全保護。 |
 | `src/types/index.ts` | **維護** | 核心資料模型合約：宣告 `AssertionStatus`, `CandidateStatus`, `ElementStatus` (`INSUFFICIENT_DATA`, `CONTESTED`), `QuestionType`（9類）, `FactItem`, `LegalCandidate`, `InterviewQuestion`, `OfficialReport`。 |
 | `tests/legal_reasoning_scenarios.test.ts` | **新建/維護** | JUDICIAL3 14 大核心端到端刑事法律推理情境回歸測試套件，涵蓋要件滿足、INSUFFICIENT_DATA、DENIED、矛盾並存、竊盜侵占區分、加重詐欺、傷害恐嚇殺人未遂、共同正犯、動態更新、連動失效、異常輸入、授權隔離、資料庫保護、案件切換隔離。 |
-| `tools/legal_reasoning_goal_audit.py` | **新建/維護** | 終局目標與架構靜態/邏輯稽核腳本：修復 Python 條件判斷，嚴格檢查三值邏輯、前端整合、向後相容層委派、資料庫保護及 14 情境 100% PASS。 |
+| `tools/legal_reasoning_goal_audit.py` | **新建/維護** | 終局目標與架構靜態/邏輯稽核腳本：修復 Python 條件判斷，嚴格檢查三值邏輯、前端整合、API 認證、向後相容層委派、資料庫保護，並實際執行 14 情境、修正推理與 API 認證測試。 |
 | `LEGAL_AI_PLATFORM_RESEARCH_REPORT.md` | **維護** | 五大指定法學 AI 平台（CAIL, judicial-search-tool, TAILEXI, TWLawBot, 法源法律網）深度研究報告，遵循嚴格證據分級標籤。 |
 | `ARCHITECTURE_GAP_AUDIT.md` | **維護** | 現有架構差距稽核與根因分析（RCA）報告。 |
 | `TEST_RESULTS.md` | **維護** | 完整測試執行環境、回歸矩陣與 JUDICIAL3 14 情境 100% PASS 驗收紀錄。 |

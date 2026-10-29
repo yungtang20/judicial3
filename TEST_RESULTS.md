@@ -1,6 +1,20 @@
+# 2026-10-29 實際執行紀錄（最後重跑）
+
+> 本段為最後一次實際執行的摘要；文件下方保留的逐行舊版 transcript 僅供歷史比對，不取代本摘要。
+
+| 命令 | Exit code | 結果 |
+|---|---:|---|
+| `node_modules/.bin/tsc.exe --noEmit` | 0 | PASS |
+| `node_modules/.bin/tsx.exe tests/legal_reasoning_scenarios.test.ts` | 0 | 14/14 scenarios PASS |
+| `node_modules/.bin/tsx.exe tests/legal_reasoning_corrective.test.ts` | 0 | PASS；包含手機與暴力家族 registry 反事實測試 |
+| `node_modules/.bin/tsx.exe tests/api_auth.test.ts` | 0 | backend auth middleware PASS |
+| `python tools/legal_reasoning_goal_audit.py`（UTF-8） | 0 | 33 checks PASS、0 FAIL、0 NOT_RUN；實際執行 legacy 14 情境、corrective test、API auth test |
+
+修復前 Node 依賴未安裝，Python audit 因 Windows cp950 中止；修復後已安裝依賴並重新執行。研究來源核對並非全部可驗證：TWLawBot 與 LawBank 分別標記 `UNKNOWN`／`NOT_VERIFIED`。
+
 # TEST RESULTS & VERIFICATION MATRIX (測試結果與驗收矩陣)
 
-- **專案名稱**: yungtang20/judicial2
+- **專案名稱**: yungtang20/judicial3
 - **任務編號**: JUDICIAL3-CORE-ARCHITECTURE-REPAIR
 - **規範版本**: 1.0 (2026-10-29)
 - **測試工程師角色**: 臺灣刑事法律推理架構師 / 全端工程師 / 品質驗證工程師 / 資料庫稽核員
@@ -47,7 +61,9 @@
 
 ---
 
-## 三、終局目標與架構稽核工具執行記錄 (26 項全檢 PASS)
+## 三、終局目標與架構稽核工具執行記錄（最後結果 33 項全檢 PASS）
+
+最後一次命令結果：`python tools/legal_reasoning_goal_audit.py` → exit code `0`；`PASS=33`、`FAIL=0`、`NOT_RUN=0`。稽核工具現在會實際執行 `tests/legal_reasoning_scenarios.test.ts`、`tests/legal_reasoning_corrective.test.ts` 與 `tests/api_auth.test.ts`。
 
 - **執行指令**: `python3 tools/legal_reasoning_goal_audit.py`
 - **退出碼 (Exit Code)**: `0`
@@ -57,7 +73,7 @@
 ```text
 ======================================================================
   臺灣刑事法律推理系統 - 終局目標與架構稽核工具 (Goal Audit)
-  專案: yungtang20/judicial2 | 版本: 2026-10-29
+  專案: yungtang20/judicial3 | 版本: 2026-10-29
 ======================================================================
 
 [Step 1/5] 稽核核心規格與交付文件資產...
@@ -112,7 +128,7 @@
            佐證: Exit code: 0
 
 ======================================================================
-稽核結果統計: 通過 (PASS) = 26, 失敗 (FAIL) = 0, 未執行 = 0
+稽核結果統計（歷史 transcript）: 通過 (PASS) = 26, 失敗 (FAIL) = 0, 未執行 = 0
 ======================================================================
 [SUCCESS] 法律推理系統目標稽核全數合格 (PASS)！
 ```
@@ -132,5 +148,5 @@
 
 ## 五、驗收結論
 
-本次交付成果經靜態檔案稽核、型別合約檢驗、JUDICIAL3 14 大端到端法律推理情境實測與前端即時編譯驗證，全數達到驗收標準，本階段測試結論評定為：**PASS**。
+本機已驗證範圍：型別、編譯、14 大情境、手機案修正推理、API 認證與 33 項稽核均 PASS。整體任務結論仍為：**PARTIAL_PASS**；原因是全罪名 registry、正式登入／secret rotation、真實 PostgreSQL/RLS 整合及部分研究來源仍未完成或未驗證。
 

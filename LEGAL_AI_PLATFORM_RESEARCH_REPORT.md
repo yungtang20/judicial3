@@ -171,6 +171,20 @@
 
 ## 八、對 JUDICIAL2 臺灣刑事法律推理架構之實質工程啟示
 
+## 九、2026-10-29 獨立來源核對紀錄（非僅檢查報告標籤）
+
+本節只記錄本次可回查的實際來源內容；不能由公開頁面或原始碼證明的敘述，維持 `UNKNOWN`，不得因報告內有證據標籤就升級為已證實。
+
+| 來源 | 本次實際觀察內容 | 狀態 | 證據 |
+|---|---|---|---|
+| CAIL | 公開 repository 可見 CAIL2018、CAIL2019 目錄與 README；可確認是資料集／競賽 repository，但本次未以此頁面證明報告列出的全部任務與指標。 | PARTIAL / `UNKNOWN` for unobserved claims | https://github.com/china-ai-law-challenge/CAIL |
+| judicial-search-tool | 公開頁面明示「關鍵字廣搜 + Claude 逐筆精讀」，並標示 FastAPI、MCP、Taiwan law 等主題；其餘內部流程仍以 repository 實際檔案為準。 | OBSERVED | https://github.com/ksliao0314/judicial-search-tool |
+| TAILEXI | 首頁實際顯示判例、法令、通達、AI、MCP 入口，並說明可橫向檢索、條文與引用關係、MCP 讀取模式；其內部模型與向量庫維持 `UNKNOWN`。 | OBSERVED / `UNKNOWN` for internals | https://jp.tailexi.org/ |
+| TWLawBot | 本次首頁可讀內容僅顯示品牌與「判決・法條・函釋」；報告原先關於資料量、思考深度、完整引用能力的敘述，公開首頁不足以核實，降為 `UNKNOWN`。 | `UNKNOWN` | https://twlawbot.com/ |
+| 法源法律網 | 本次工具無法讀取指定 SearchResult 頁面；會員、付費牆與完整收錄範圍未由本次查證證明。 | `NOT_VERIFIED` | https://www.lawbank.com.tw/SearchResult.aspx?membernotice=t |
+
+本研究結論僅將「實際觀察」與「官方文件所述」分開使用；來源不可讀或未取得原始碼的部分，不得作為 JUDICIAL3 法律正確性的證據。
+
 基於上述深入研究，`judicial2` 必須徹底根除「單一關鍵字直推單一罪名」之陋習，具體落實以下四大核心架構：
 
 1. **歐陸階層犯罪論之涵攝矩陣 (Constituent Elements Subsumption)**
