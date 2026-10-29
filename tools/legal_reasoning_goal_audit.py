@@ -153,20 +153,44 @@ if os.path.exists(engine_path):
     has_q_gen = "generateInterviewQuestions" in engine_code and "1_CORE_ELEMENT" in engine_code
     check_assert(has_q_gen, "ENG-Q-GEN", "實作 9 大分類非誘導性偵訊筆錄問句動態映射")
 
-    # 檢查三值邏輯防護 (嚴禁 UNKNOWN = FALSE, 嚴禁 DENIED = 不存在)
-    no_unknown_false = "UNKNOWN !== 'FALSE'" or "assertion_status === 'UNKNOWN'" in engine_code
-    check_assert(no_unknown_false, "ENG-THREE-VALUED", "落實三值邏輯 (保留 UNKNOWN 與 DENIED 爭點)")
+    # 檢查三值邏輯防護 (嚴禁 UNKNOWN = FALSE, 嚴禁 DENIED = 不存在, 事證不足標為 INSUFFICIENT_DATA)
+    has_three_valued = (
+        ("assertion_status === 'UNKNOWN'" in engine_code)
+        and ("assertion_status === 'DENIED'" in engine_code)
+        and ("INSUFFICIENT_DATA" in engine_code)
+    )
+    check_assert(has_three_valued, "ENG-THREE-VALUED", "落實三值邏輯 (保留 UNKNOWN 與 DENIED 爭點，缺漏標為 INSUFFICIENT_DATA)")
 
     # 檢查公務條陳體裁驗證
     has_report_val = "generateAndValidateReport" in engine_code and "incident_time_roc" in engine_code
     check_assert(has_report_val, "ENG-REPORT-ROC", "落實公務條陳體裁與民國紀年檢驗約束")
+
+    # 檢查前端真實調用整合 (App.tsx 與 CaseAnalyzer.ts 均調用 LegalReasoningEngine)
+    app_path = os.path.join(ROOT_DIR, "src", "App.tsx")
+    with open(app_path, "r", encoding="utf-8") as f:
+        app_code = f.read()
+    app_uses_engine = "LegalReasoningEngine.analyzeFullCase" in app_code
+    check_assert(app_uses_engine, "FE-APP-ENGINE", "前端 App.tsx 真實調用 LegalReasoningEngine 進行全案涵攝與狀態機維護")
+
+    case_analyzer_path = os.path.join(ROOT_DIR, "src", "services", "caseAnalyzer.ts")
+    with open(case_analyzer_path, "r", encoding="utf-8") as f:
+        analyzer_code = f.read()
+    analyzer_delegates = "LegalReasoningEngine.analyzeFullCase" in analyzer_code
+    check_assert(analyzer_delegates, "FE-ANALYZER-DELEGATE", "向後相容層 CaseAnalyzer 100% 委派至 LegalReasoningEngine")
+
+    # 檢查資料庫防護（嚴禁遞歸刪除既有資料）
+    db_service_path = os.path.join(ROOT_DIR, "src", "server", "databaseService.ts")
+    with open(db_service_path, "r", encoding="utf-8") as f:
+        db_code = f.read()
+    no_destructive_rm = "fs.rmSync(dbPath" not in db_code
+    check_assert(no_destructive_rm, "SEC-NO-RMSYNC", "databaseService.ts 已徹底清除破壞性遞歸刪除 (fs.rmSync)")
 else:
     check_assert(False, "ENG-ALL", "引擎檔案不存在")
 
 # -----------------------------------------------------------------------------
-# 階段 5: 16 大情境端到端回歸測試自動執行
+# 階段 5: JUDICIAL3 14 大情境端到端回歸測試自動執行
 # -----------------------------------------------------------------------------
-print("\n[Step 5/5] 執行 16 大情境端到端回歸測試 (tests/legal_reasoning_scenarios.test.ts)...")
+print("\n[Step 5/5] 執行 JUDICIAL3 14 大情境端到端回歸測試 (tests/legal_reasoning_scenarios.test.ts)...")
 
 test_script = os.path.join(ROOT_DIR, "tests", "legal_reasoning_scenarios.test.ts")
 if os.path.exists(test_script):
@@ -178,12 +202,12 @@ if os.path.exists(test_script):
             text=True,
             timeout=30
         )
-        passed_16 = (run_res.returncode == 0) and ("總測試情境數: 16 | 通過: 16 | 失敗: 0" in run_res.stdout)
-        check_assert(passed_16, "TST-16-SCENARIOS", "16 大刑事法律推理情境全數通過 (100% PASS)", f"Exit code: {run_res.returncode}")
+        passed_14 = (run_res.returncode == 0) and ("總測試情境數: 14 | 通過: 14 | 失敗: 0" in run_res.stdout)
+        check_assert(passed_14, "TST-14-SCENARIOS", "JUDICIAL3 14 大刑事法律推理情境全數通過 (100% PASS)", f"Exit code: {run_res.returncode}")
     except Exception as ex:
-        check_assert(False, "TST-16-SCENARIOS", "測試執行異常", str(ex))
+        check_assert(False, "TST-14-SCENARIOS", "測試執行異常", str(ex))
 else:
-    check_assert(False, "TST-16-SCENARIOS", "測試腳本不存在")
+    check_assert(False, "TST-14-SCENARIOS", "測試腳本不存在")
 
 # -----------------------------------------------------------------------------
 # 總結與退出碼

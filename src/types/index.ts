@@ -8,7 +8,12 @@ export type ReviewStatus = 'DRAFT' | 'IN_REVIEW' | 'APPROVED' | 'REVISED' | 'STA
 
 export type CandidateStatus = 'PRIMARY' | 'ALTERNATIVE' | 'LOW_CONFIDENCE' | 'REJECTED' | 'UNRESOLVED';
 
-export type ElementStatus = 'SATISFIED' | 'PENDING_VERIFICATION' | 'UNSUPPORTED';
+export type ElementStatus =
+  | 'SATISFIED'           // 構成要件已獲足夠事證支持
+  | 'UNSUPPORTED'         // 經調查事證不支持或遭排除
+  | 'CONTESTED'           // 存有重大正反矛盾或爭議抗辯
+  | 'INSUFFICIENT_DATA'   // 資料不足，尚待進一步查證（不得直接視為不成立）
+  | 'PENDING_VERIFICATION';// 待筆錄或客觀證據查核
 
 export type QuestionPriority = 'P0_CRITICAL' | 'P1_IMPORTANT' | 'P2_SUPPLEMENTAL';
 
@@ -30,6 +35,8 @@ export interface FactItem {
   subject: string;
   predicate: string;
   object: string;
+  time?: string;
+  location?: string;
   event_time: string;
   event_location: string;
   source_type: SourceType;
@@ -48,6 +55,8 @@ export interface EvidenceItem {
   evidence_type: string;
   source_description: string;
   collection_status: 'OBTAINED' | 'REQUESTED' | 'PENDING_SEARCH' | 'UNAVAILABLE';
+  related_fact_refs?: string[];
+  limitations?: string; // 證據證明力界限（不得把當事人陳述當作客觀證據證實）
   created_at: string;
 }
 
@@ -59,19 +68,30 @@ export interface BehaviorItem {
   action_description: string;
   object_ref: string;
   time_ref: string;
+  sequence_order?: number;
+  means?: string;
+  result?: string;
   fact_refs: string[];
+  evidence_refs?: string[];
   uncertainty_status: string;
 }
 
 export interface LegalElement {
   id: string;
   candidate_id: string;
+  legal_norm?: string;
+  norm_version?: string;
   element_name: string;
   element_description: string;
+  supporting_fact_refs?: string[];
+  contrary_fact_refs?: string[];
+  related_evidence_refs?: string[];
+  missing_information?: string[];
   related_fact_refs: string[];
   element_status: ElementStatus;
   reasoning: string;
   source_ref: string;
+  requires_human_review?: boolean;
 }
 
 export interface LegalCandidate {

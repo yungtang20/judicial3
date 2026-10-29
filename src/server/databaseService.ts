@@ -18,40 +18,31 @@ export async function getDatabase(): Promise<PGlite> {
   initPromise = (async () => {
     const dbPath = path.resolve(process.cwd(), 'database', 'pglite_store');
 
-    // 1. Pre-check: if directory exists, remove stale postmaster.pid or repair broken cluster
+    // 1. Pre-check: if directory exists, safely remove stale postmaster.pid lock file
     if (fs.existsSync(dbPath)) {
       const pidPath = path.join(dbPath, 'postmaster.pid');
-      const confPath = path.join(dbPath, 'postgresql.conf');
       if (fs.existsSync(pidPath)) {
         try {
           fs.unlinkSync(pidPath);
-          console.log('[PGlite] Removed stale postmaster.pid lock file');
-        } catch {}
-      }
-      if (!fs.existsSync(confPath)) {
-        console.warn('[PGlite] Store directory is missing postgresql.conf, repairing data directory...');
-        try {
-          fs.rmSync(dbPath, { recursive: true, force: true });
-        } catch {}
+          console.log('[PGlite] Removed stale postmaster.pid lock file safely');
+        } catch (e) {
+          console.warn('[PGlite] Warning removing stale lock file:', e);
+        }
       }
     }
 
-    // 2. Initialize PGlite instance with fallback
+    // 2. Initialize PGlite instance safely without data loss
     try {
       dbInstance = new PGlite(dbPath);
       await dbInstance.waitReady;
     } catch (err: any) {
-      console.warn('[PGlite] Persistent store initialization error, attempting clean reset:', err?.message || err);
+      console.warn('[PGlite] Persistent store initialization warning, falling back to in-memory instance without deleting existing data:', err?.message || err);
       try {
-        fs.rmSync(dbPath, { recursive: true, force: true });
-      } catch {}
-      try {
-        dbInstance = new PGlite(dbPath);
-        await dbInstance.waitReady;
-      } catch (fallbackErr: any) {
-        console.warn('[PGlite] Persistent store failed, falling back to in-memory instance:', fallbackErr?.message || fallbackErr);
         dbInstance = new PGlite();
         await dbInstance.waitReady;
+      } catch (fallbackErr: any) {
+        console.error('[PGlite] In-memory database initialization failed:', fallbackErr);
+        throw fallbackErr;
       }
     }
 
