@@ -89,6 +89,31 @@ node --check app\static\app.js
 - `legal-case-web/OPEN_ISSUES.md` — 未決問題
 - `legal-case-web/TEST_RESULTS.md` — 測試結果
 
+## 推理模組（Phase 5-6）
+
+| 模組 | 來源 | 用途 |
+|------|------|------|
+| `app/evidence_argument_chain.py` | Legal-Skills-Chinese | 主張→要件→證據→證明力評估 |
+| `app/quality_gate.py` | Legal-Skills-Chinese | 推理前品質閘門 |
+| `app/dispute_issue_identifier.py` | Legal-Skills-Chinese | 爭議焦點識別 |
+| `app/counterfactual_reasoning.py` | Legal-Skills-Chinese | 反事實因果推理 |
+| `app/abductive_reasoning.py` | Legal-Skills-Chinese | 溯因推理（米尔五法） |
+| `app/fact_states.py` | 專家策略 | 事實狀態機 |
+| `app/forbidden_conclusions.py` | 專家策略 | 禁止結論掃描 |
+| `app/candidate_completeness.py` | 專家策略 | 候選完整性檢查 |
+| `app/question_traceability.py` | 專家策略 | 問句追溯性檢查 |
+| `app/evaluation_metrics.py` | 專家策略 | 評估指標計算器 |
+<|end|> `app/document_format_validator.py` | 專家策略 | 文件格式驗證 |
+| `app/audit_integrity.py` | 專家策略 | 稽核日誌 hash chain |
+| `app/confession_checklist.py` | 專家策略 | 自白補強 checklist |
+| `app/version_invalidation.py` | 專家策略 | STALE 標記 + 版本鏈 |
+| `app/integration_checks.py` | 專家策略 | 統一安全檢查入口 |
+| `app/search_variants.py` | judicial-search-tool | 法條搜尋變體生成 |
+| `app/synonym_tiers.py` | judicial-search-tool | 4-tier 同義詞管理 |
+| `app/anomaly_log.py` | judicial-search-tool | JSONL 診斷記錄 |
+| `app/two_stage_scoring.py` | judicial-search-tool | 兩階段 LLM 評分 |
+| `app/citation_contract.py` 增強 | judicial-search-tool | Citation tuple match |
+
 ## 版本
 
 - 最後更新：2026-10-31
