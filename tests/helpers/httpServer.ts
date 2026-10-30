@@ -23,7 +23,11 @@ function killTree(child: ChildProcess) {
     spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], { stdio: 'ignore' });
     return;
   }
-  child.kill('SIGKILL');
+  try {
+    process.kill(-child.pid, 'SIGKILL');
+  } catch {
+    child.kill('SIGKILL');
+  }
 }
 
 export interface TestServer {
@@ -59,6 +63,7 @@ export async function startTestServer(extraEnv: Record<string, string> = {}): Pr
         ...extraEnv,
       },
       stdio: ['ignore', 'pipe', 'pipe'],
+      detached: process.platform !== 'win32',
     },
   );
   child.stdout?.on('data', (chunk) => { stdout += String(chunk); });
