@@ -10,9 +10,14 @@
     "build": "vite build",
     "preview": "vite preview",
     "db:migrate": "tsx tools/migrate.ts",
+    "runner:migration-idle": "tsx tools/migration_runner_idle.ts",
     "user:provision": "tsx tools/provision_user.ts",
+    "test:postgres-embedded": "cross-env JUDICIAL3_USE_EMBEDDED_POSTGRES=true tsx tools/postgres_acceptance.ts",
+    "test:staging-browser": "tsx tools/staging_browser_acceptance.ts",
     "audit:phase3": "python tools/judicial3_phase3_audit.py",
     "audit:phase3-2": "python tools/judicial3_phase3_2_audit.py --ci",
+    "audit:phase3-3": "python tools/judicial3_phase3_3_audit.py --ci",
+    "audit:dr": "python tools/judicial3_disaster_recovery_audit.py",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"
   },
@@ -47,6 +52,7 @@
     "esbuild": "^0.25.0",
     "playwright": "^1.64.1",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "cross-env": "^10.1.0"
   }
 }

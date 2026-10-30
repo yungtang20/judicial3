@@ -220,6 +220,33 @@ function redact(message: string): string {
   return output.replace(/postgres(?:ql)?:\/\/[^\s"']+/gi, '[redacted-database-url]');
 }
 
+export async function assertApplicationRole(db: SqlClient) {
+  const identity = await db.query<{ session_user: string; current_user: string }>(
+    'SELECT session_user::text AS session_user, current_user::text AS current_user',
+  );
+  if (identity.rows[0]?.session_user !== 'judicial3_app' || identity.rows[0]?.current_user !== 'judicial3_app') {
+    throw new Error('application database role rejected');
+  }
+}
+
+export async function assertMigrationRole(db: SqlClient) {
+  const expectedRole = process.env.JUDICIAL3_EXPECTED_DATABASE_ROLE;
+  if (!expectedRole) throw new Error('JUDICIAL3_EXPECTED_DATABASE_ROLE is required for production migration');
+  const identity = await db.query<{
+    session_user: string; current_user: string; rolsuper: boolean; rolcreatedb: boolean;
+    rolcreaterole: boolean; rolreplication: boolean; rolbypassrls: boolean;
+  }>(`SELECT session_user::text AS session_user, current_user::text AS current_user,
+      role.rolsuper, role.rolcreatedb, role.rolcreaterole, role.rolreplication, role.rolbypassrls
+    FROM pg_roles role WHERE role.rolname = current_user`);
+  const role = identity.rows[0];
+  if (!role || role.session_user !== expectedRole || role.current_user !== expectedRole) {
+    throw new Error('migration database role rejected');
+  }
+  if (role.rolsuper || role.rolcreatedb || role.rolcreaterole || role.rolreplication || role.rolbypassrls) {
+    throw new Error('migration database role has forbidden cluster privileges');
+  }
+}
+
 async function createRuntime(): Promise<Runtime> {
   const production = process.env.NODE_ENV === 'production';
   const engine = engineFromEnv(production);
@@ -245,8 +272,12 @@ async function createRuntime(): Promise<Runtime> {
     try {
       await db.query('SELECT 1');
       if (process.env.JUDICIAL3_MIGRATION_MODE === 'true') {
+        if (production) await assertMigrationRole(db);
         const client = await pool.connect();
         try { await runMigrations(new PgClientAdapter(client), true); } finally { client.release(); }
+      }
+      if (production && !provisioningMode && process.env.JUDICIAL3_MIGRATION_MODE !== 'true') {
+        await assertApplicationRole(db);
       }
       // The dedicated provisioner has no migration-ledger or DDL privileges.
       // Its CLI validates current_user before any provisioning query instead.
