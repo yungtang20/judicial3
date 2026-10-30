@@ -48,10 +48,16 @@ def validate_page_count(page_count: int | None, max_pages: int = 8) -> FormatChe
 
 
 def validate_required_fields(case: dict[str, Any], required: list[str]) -> list[FormatCheck]:
-    """Check that all required fields are present and non-empty."""
+    """Check that all required fields are present and non-empty.
+
+    Looks in both top-level case dict and nested output_context.
+    """
+    output_context = case.get("output_context", {}) if isinstance(case.get("output_context"), dict) else {}
     checks: list[FormatCheck] = []
     for field in required:
         value = case.get(field)
+        if value is None or (isinstance(value, str) and not value.strip()):
+            value = output_context.get(field)
         if value is None or (isinstance(value, str) and not value.strip()):
             checks.append(FormatCheck(
                 f"required_field:{field}", False,
@@ -87,12 +93,14 @@ def validate_document(
     page_count: int | None = None,
     doc_version: str = "",
     case_version: str = "",
+    required_fields: list[str] | None = None,
 ) -> list[FormatCheck]:
     """Run all format checks and return results."""
     checks: list[FormatCheck] = []
     checks.append(validate_brief_length(brief_text))
     checks.append(validate_page_count(page_count))
-    checks.extend(validate_required_fields(case, ["jurisdiction", "officer"]))
+    if required_fields:
+        checks.extend(validate_required_fields(case, required_fields))
     if doc_version or case_version:
         checks.append(validate_version_binding(doc_version, case_version, ""))
     return checks

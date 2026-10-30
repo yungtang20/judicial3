@@ -400,6 +400,16 @@ def checked_interview_docx(case: dict[str, Any], role: str) -> tuple[bytes, int]
 
 def build_document(case: dict[str, Any], role: str, kind: str) -> DocumentArtifact:
     """Single document-production boundary used by HTTP and future templates."""
+    # Unified pre-document safety checks (fail-closed)
+    try:
+        from .integration_checks import run_pre_document_checks, has_blocking_issues
+        issues = run_pre_document_checks(case, kind=kind)
+        blocking = [i for i in issues if i.get("severity") == "BLOCK"]
+        if blocking:
+            desc = "; ".join(i.get("description", i.get("source", "")) for i in blocking)
+            raise DocumentError(f"文件生成被阻擋：{desc}")
+    except ImportError:
+        pass
     if kind == "brief":
         return DocumentArtifact(
             data=brief_docx(case, role),

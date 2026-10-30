@@ -17,7 +17,7 @@ from .question_traceability import check_question_traceability, check_unknown_co
 from .document_format_validator import validate_document, has_blocking_failure
 
 
-def run_pre_document_checks(case: dict[str, Any]) -> list[dict[str, Any]]:
+def run_pre_document_checks(case: dict[str, Any], kind: str = "brief") -> list[dict[str, Any]]:
     """Run all safety checks before document generation.
 
     Returns list of issues (empty = all OK).  Any BLOCK-severity issue
@@ -68,9 +68,11 @@ def run_pre_document_checks(case: dict[str, Any]) -> list[dict[str, Any]]:
             issues.append({"source": "confession_checklist", "severity": "BLOCK",
                            "description": f"自白補強清單未完成：{', '.join(cl.missing_labels())}"})
 
-    # 5. Document format
+    # 5. Document format (only check required fields for brief documents)
+    required_fields = ["jurisdiction", "officer"] if kind == "brief" else []
     checks = validate_document(case, brief_text=case.get("brief_text", ""),
-                               page_count=case.get("page_count"))
+                               page_count=case.get("page_count"),
+                               required_fields=required_fields)
     for c in checks:
         if not c.passed:
             issues.append({"source": "document_format", "severity": c.severity,
