@@ -243,3 +243,39 @@ def test_virtual_case_12_spousal_sexual_assault():
     # Should detect sexual, privacy, intimidation, domestic_violence
     assert len(candidate_ids) >= 2
     assert len(case["questions"]) >= 5
+
+
+def test_virtual_case_13_forgery():
+    """Forgery: fake document."""
+    summary = (
+        "115年02月01日，被告在臺北市中正區，"
+        "未經被害人同意，偽造被害人簽名，"
+        "製作一張50萬元的本票，並向第三人行使。"
+    )
+    case = _run_case(summary)
+    # System may or may not detect forgery; verify case runs
+    assert case["state"] == "OUTPUT_READY"
+
+
+def test_virtual_case_14_property_damage():
+    """Property damage: destroying another's property."""
+    summary = (
+        "115年01月10日15時，臺北市大安區大安路100號，"
+        "被告因與被害人發生糾紛，持石頭砸毀被害人停放在路邊的汽車擋風玻璃及車身，"
+        "造成修復費用約8萬元。"
+    )
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
+
+
+def test_virtual_case_15_stalking():
+    """Stalking: repeated following and harassment."""
+    summary = (
+        "114年10月01日至114年12月15日，被告多次跟隨被害人上下班，"
+        "在被害人住家附近徘徊，並多次傳送威脅訊息給被害人，"
+        "造成被害人心理恐懼，需改變上下班路線。"
+    )
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
