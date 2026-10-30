@@ -279,3 +279,39 @@ def test_virtual_case_15_stalking():
     case = _run_case(summary)
     candidate_ids = {item["id"] for item in case["candidates"]}
     assert len(candidate_ids) >= 1
+
+
+def test_virtual_case_16_trespass():
+    """Trespass: unlawful entry into dwelling."""
+    summary = (
+        "115年02月20日03時，被告未經被害人同意，"
+        "攀爬窗戶侵入住宅，進入被害人臺北市大安區大安路100號住處，"
+        "在客廳翻找財物，被被害人發現後逃逸。"
+    )
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
+
+
+def test_virtual_case_17_gambling():
+    """Gambling: operating illegal gambling."""
+    summary = (
+        "115年01月05日至115年03月10日，被告在臺北市萬華區萬華路200號，"
+        "經營地下六合彩賭博，接受多人下注，"
+        "警方查獲時發現下注單及現金。"
+    )
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
+
+
+def test_virtual_case_18_threat():
+    """Threat: threatening another person."""
+    summary = (
+        "115年03月01日，被告因債務糾紛，"
+        "傳送恐嚇訊息給被害人稱『再不還錢就讓你見不到明天的太陽』，"
+        "被害人因此感到恐懼，報警處理。"
+    )
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
