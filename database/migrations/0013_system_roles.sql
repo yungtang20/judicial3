@@ -21,6 +21,10 @@ REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON user_roles FROM PUBLIC;
 -- fresh local database migratable while documenting the production boundary.
 DO $$ BEGIN
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'judicial3_app') THEN
+    GRANT USAGE ON SCHEMA public TO judicial3_app;
+    GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO judicial3_app;
+    GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO judicial3_app;
+    REVOKE INSERT, UPDATE, DELETE, TRUNCATE ON schema_migrations FROM judicial3_app;
     GRANT SELECT ON user_roles TO judicial3_app;
   END IF;
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'judicial3_provisioner') THEN

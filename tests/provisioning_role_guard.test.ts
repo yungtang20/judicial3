@@ -11,10 +11,10 @@ const goodDb = {
   async close() { return undefined; },
 };
 await assertProvisioningRole(goodDb);
-assert.match(queries[0], /current_user/);
+assert.match(queries[0], /session_user/);
 
 await assert.rejects(
-  () => assertProvisioningRole({ ...goodDb, query: async <T>() => ({ rows: [{ session_user: 'judicial3_app', current_user: 'judicial3_app' }] as T[] }) }),
+  () => assertProvisioningRole({ ...goodDb, query: async <T>() => ({ rows: [{ session_user: 'judicial3_provisioner_login', current_user: 'judicial3_app' }] as T[] }) }),
   /provisioning connection role rejected/,
 );
 console.log('PROVISIONING_ROLE_GUARD_PASS: current_user is checked fail-closed');

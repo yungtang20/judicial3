@@ -12,6 +12,7 @@
     "db:migrate": "tsx tools/migrate.ts",
     "user:provision": "tsx tools/provision_user.ts",
     "audit:phase3": "python tools/judicial3_phase3_audit.py",
+    "audit:phase3-2": "python tools/judicial3_phase3_2_audit.py --ci",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"
   },

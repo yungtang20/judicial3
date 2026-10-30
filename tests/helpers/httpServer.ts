@@ -23,7 +23,11 @@ function killTree(child: ChildProcess) {
     spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], { stdio: 'ignore' });
     return;
   }
-  child.kill('SIGKILL');
+  try {
+    process.kill(-child.pid, 'SIGKILL');
+  } catch {
+    child.kill('SIGKILL');
+  }
 }
 
 export interface TestServer {
@@ -59,6 +63,7 @@ export async function startTestServer(extraEnv: Record<string, string> = {}): Pr
         ...extraEnv,
       },
       stdio: ['ignore', 'pipe', 'pipe'],
+      detached: process.platform !== 'win32',
     },
   );
   child.stdout?.on('data', (chunk) => { stdout += String(chunk); });
@@ -74,8 +79,14 @@ export async function startTestServer(extraEnv: Record<string, string> = {}): Pr
           base, port, child,
           output: () => `${stdout}\n${stderr}`.slice(-3000),
           close: async () => {
+            const exited = child.exitCode === null
+              ? new Promise<void>((resolve) => child.once('exit', () => resolve()))
+              : Promise.resolve();
             killTree(child);
-            if (child.exitCode === null) await new Promise<void>((resolve) => child.once('exit', () => resolve()));
+            await Promise.race([
+              exited,
+              new Promise<void>((resolve) => setTimeout(resolve, 5_000)),
+            ]);
             fs.rmSync(tempDb, { recursive: true, force: true });
           },
         };

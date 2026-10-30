@@ -144,7 +144,7 @@ export function stripOuterTransaction(sql: string) {
   return sql.slice(0, firstWord.start) + sql.slice(firstSemicolon.end, lastWord.start) + sql.slice(lastSemicolon.end);
 }
 
-async function runMigrations(db: SqlClient, useAdvisoryLock = false) {
+export async function runMigrations(db: SqlClient, useAdvisoryLock = false) {
   if (useAdvisoryLock) await db.query("SELECT pg_advisory_lock(hashtext('judicial3_schema_migrations'))");
   try {
     await db.query(`CREATE TABLE IF NOT EXISTS schema_migrations (
@@ -296,7 +296,7 @@ export async function withTransaction<T>(userId: string | null, work: (db: SqlCl
   const runtime = await getRuntime();
   if (runtime.engine === 'postgres') {
     const client = await runtime.pool!.connect();
-    const db = new PgClientAdapter(client);
+    const db = new PgClientAdapter(client, runtime.postgresRole);
     try {
       if (runtime.postgresRole) await db.query(`SET ROLE ${runtime.postgresRole}`);
       await db.query('BEGIN');

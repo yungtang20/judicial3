@@ -13,6 +13,10 @@ BEGIN
     RAISE NOTICE '0014 role grants require real PostgreSQL; skipped in PGlite';
     RETURN;
   END IF;
+  IF to_regrole('judicial3_provisioner') IS NULL
+     OR to_regrole('judicial3_provisioner_login') IS NULL THEN
+    RAISE EXCEPTION 'required provisioning roles are missing; pre-create judicial3_provisioner and judicial3_provisioner_login before migration';
+  END IF;
 
   FOR role_record IN
     SELECT expected_name
