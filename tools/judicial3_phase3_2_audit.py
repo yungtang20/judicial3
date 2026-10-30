@@ -62,7 +62,7 @@ def static_checks() -> None:
     role_migration = (ROOT / "database/migrations/0013_system_roles.sql").read_text(encoding="utf-8")
     runtime = (ROOT / "src/server/databaseRuntime.ts").read_text(encoding="utf-8")
     provisioning = (ROOT / "src/server/provisioning.ts").read_text(encoding="utf-8")
-    for marker in ("judicial3_app", "judicial3_provisioner", "judicial3_provisioner_login", "GRANT INSERT", "REVOKE UPDATE, DELETE"):
+    for marker in ("judicial3_app", "judicial3_provisioner", "judicial3_provisioner_login", "GRANT INSERT", "REVOKE ALL ON ALL TABLES"):
         record("PASS" if marker in migration or marker in role_migration or marker in provisioning else "FAIL", f"role safety marker {marker}")
     migrate_tool = (ROOT / "tools/migrate.ts").read_text(encoding="utf-8")
     for marker in ("SET ROLE", "RESET ROLE", "JUDICIAL3_PROVISIONING_MODE", "MIGRATION_DATABASE_URL"):
@@ -76,6 +76,7 @@ def main() -> int:
     parser.add_argument("--ci", action="store_true", help="run repository-local checks for CI")
     args = parser.parse_args()
     branch = subprocess.run(["git", "branch", "--show-current"], cwd=ROOT, text=True, capture_output=True).stdout.strip()
+    branch = branch or os.environ.get("GITHUB_HEAD_REF", "") or os.environ.get("GITHUB_REF_NAME", "")
     head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, capture_output=True).stdout.strip()
     record("PASS" if branch else "FAIL", "git branch", branch or "missing")
     record("PASS" if len(head) == 40 else "FAIL", "git HEAD", head)
