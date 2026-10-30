@@ -1,0 +1,22 @@
+services:
+  - type: pserv
+    name: judicial3-staging-migrator
+    runtime: node
+    plan: 0.5c-512mb
+    region: oregon
+    branch: main
+    autoDeployTrigger: "off"
+    buildCommand: npm ci --legacy-peer-deps
+    startCommand: npm run runner:migration-idle
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JUDICIAL3_DATABASE_ENGINE
+        value: postgres
+      - key: JUDICIAL3_EXPECTED_DATABASE_ROLE
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+
+previews:
+  generation: "off"

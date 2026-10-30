@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: judicial3-staging-web
+    runtime: node
+    plan: free
+    region: oregon
+    branch: main
+    autoDeployTrigger: "off"
+    buildCommand: npm ci --legacy-peer-deps && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health/ready
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JUDICIAL3_DATABASE_ENGINE
+        value: postgres
+      - key: DATABASE_URL
+        sync: false
+      - key: JUDICIAL3_PUBLIC_ORIGIN
+        sync: false
+      - key: JUDICIAL3_ALLOW_DEV_SESSION
+        value: "false"
+      - key: JUDICIAL3_LOAD_TEST_SEED
+        value: "false"
+      - key: JUDICIAL3_ALLOW_EXTERNAL_AI
+        value: "false"
+
+databases:
+  - name: judicial3-staging-db
+    plan: free
+    region: oregon
+    postgresMajorVersion: "16"
+    ipAllowList: []
+
+previews:
+  generation: "off"

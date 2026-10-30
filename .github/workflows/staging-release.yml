@@ -1,0 +1,124 @@
+name: staging-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: Full commit SHA already merged into main
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: judicial3-staging-release
+  cancel-in-progress: false
+
+jobs:
+  quality-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.commit_sha }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - name: Require reviewed main commit
+        shell: bash
+        run: |
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "${{ inputs.commit_sha }}"
+          git merge-base --is-ancestor "${{ inputs.commit_sha }}" origin/main
+      - run: npm ci --legacy-peer-deps
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  migrate:
+    needs: quality-gate
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.commit_sha }}
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Update migration runner to exact commit
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_DEPLOY_SERVICE_ID: ${{ vars.RENDER_MIGRATOR_SERVICE_ID }}
+          JUDICIAL3_RELEASE_COMMIT_SHA: ${{ inputs.commit_sha }}
+        run: python tools/render_deploy_and_wait.py
+      - name: Run isolated migration job
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_MIGRATOR_SERVICE_ID: ${{ vars.RENDER_MIGRATOR_SERVICE_ID }}
+        run: python tools/render_one_off_job.py
+
+  deploy:
+    needs: migrate
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.commit_sha }}
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Deploy exact commit and wait
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_STAGING_SERVICE_ID: ${{ vars.RENDER_STAGING_SERVICE_ID }}
+          JUDICIAL3_RELEASE_COMMIT_SHA: ${{ inputs.commit_sha }}
+        run: python tools/render_deploy_and_wait.py
+
+  acceptance:
+    needs: deploy
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.commit_sha }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: npx playwright install --with-deps chromium
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Update private acceptance runner to exact commit
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_DEPLOY_SERVICE_ID: ${{ vars.RENDER_ACCEPTANCE_SERVICE_ID }}
+          JUDICIAL3_RELEASE_COMMIT_SHA: ${{ inputs.commit_sha }}
+        run: python tools/render_deploy_and_wait.py
+      - name: Real disposable PostgreSQL acceptance
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_JOB_SERVICE_ID: ${{ vars.RENDER_ACCEPTANCE_SERVICE_ID }}
+          JUDICIAL3_RENDER_JOB_COMMAND: npx tsx tools/postgres_acceptance.ts
+        run: python tools/render_one_off_job.py
+      - name: Real staging browser acceptance
+        env:
+          JUDICIAL3_STAGING_URL: ${{ vars.JUDICIAL3_STAGING_URL }}
+          JUDICIAL3_STAGING_TEST_USERNAME: ${{ secrets.JUDICIAL3_STAGING_TEST_USERNAME }}
+          JUDICIAL3_STAGING_TEST_PASSWORD: ${{ secrets.JUDICIAL3_STAGING_TEST_PASSWORD }}
+          JUDICIAL3_RELEASE_COMMIT_SHA: ${{ inputs.commit_sha }}
+        run: npm run test:staging-browser
+      - name: Preserve sanitized browser evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: staging-browser-evidence-${{ inputs.commit_sha }}
+          path: artifacts/staging-browser/
+          if-no-files-found: error
+          retention-days: 14
