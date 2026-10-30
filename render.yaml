@@ -18,6 +18,8 @@ services:
         fromDatabase:
           name: judicial3-db
           property: connectionString
+      - key: JUDICIAL3_PROVISIONING_DATABASE_URL
+        sync: false
       - key: JUDICIAL3_PUBLIC_ORIGIN
         sync: false
       - key: JUDICIAL3_ALLOW_DEV_SESSION

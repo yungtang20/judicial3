@@ -4,18 +4,18 @@
 
 PARTIAL_PASS。
 
-本機修復與回歸已通過，包含正式角色 seed、provisioning、owner-scoped health、migration parser、14 個 Phase 2/3 test files、browser、lint 與 build。真實 PostgreSQL、Render 與正式 HTTPS 尚未執行，依規則不得標示 PASS。
+本機修復與回歸已通過，包含正式角色 seed、provisioning、owner-scoped health、migration parser、Phase 2/3 test files、browser、lint 與 build。Phase 3.1 新增專用 provisioner 連線、current_user fail-closed、0014 欄位級最小權限 migration、clean-seed 測試與 disposable PostgreSQL acceptance harness。真實 PostgreSQL、Render 與正式 HTTPS 尚未執行，依規則不得標示 PASS。
 
 ## 證據
 
 - 基準：cfe9caaf7bcfe8243daabd0da0f727cde68b4a0e
-- 新增 migration：0013_system_roles.sql
-- npm test：14/14 PASS
+- 新增 migration：0013_system_roles.sql、0014_provisioner_least_privilege.sql
+- npm test：16/16 PASS
 - npm run lint：PASS
 - npm run build：PASS
 - PGlite migration ledger：13 migrations PASS
-- Python audit：本機 PASS；存在 PostgreSQL／Render BLOCKED 時應 exit 2
+- Python audit：PASS=17、FAIL=0、NOT_RUN=0、BLOCKED=2、exit 2
 
 ## 未驗證
 
-真實 PostgreSQL migration atomicity、role grants、RLS、connection pool context、Render staging、正式 HTTPS cookie 及部署前 migration 均為 BLOCKED。可進入正式部署驗收準備，不代表已部署或正式資料庫已驗證。
+真實 PostgreSQL migration atomicity、role grants、RLS、connection pool context、provisioner/app denial、Render staging、正式 HTTPS cookie 及部署前 migration 均為 BLOCKED。可進入正式部署驗收準備，不代表已部署或正式資料庫已驗證。

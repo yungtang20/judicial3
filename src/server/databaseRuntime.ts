@@ -230,7 +230,9 @@ async function createRuntime(): Promise<Runtime> {
         const client = await pool.connect();
         try { await runMigrations(new PgClientAdapter(client), true); } finally { client.release(); }
       }
-      await verifyMigrations(db);
+      // The dedicated provisioner has no migration-ledger or DDL privileges.
+      // Its CLI validates current_user before any provisioning query instead.
+      if (process.env.JUDICIAL3_PROVISIONING_MODE !== 'true') await verifyMigrations(db);
     } catch (error) {
       await pool.end().catch(() => undefined);
       throw new Error(`database initialization failed: ${redact(error instanceof Error ? error.message : 'unknown error')}`);
