@@ -1,7 +1,7 @@
-# Phase 3 RLS 設計
+# Phase 3 RLS 設計與修復
 
-案件與關聯表維持 FORCE ROW LEVEL SECURITY，政策透過 current_app_user_id() 限制 owner。api_idempotency_keys 亦以 user id 隔離；未查證法條只允許明確 [UNVERIFIED_SOURCE]、非 current、1900-01-01 的窄門 insert。
+案件及關聯表維持 FORCE ROW LEVEL SECURITY，使用 transaction-local app.current_user_id 隔離 owner；runtime role 不得為 superuser 或 BYPASSRLS。user_roles 是系統字典，0013 只增加 SELECT policy，不關閉 RLS，也不授予一般寫入。
 
-認證表在 migration 0011 保持 server-side 控制；正式環境必須以 NOSUPERUSER NOBYPASSRLS runtime role、欄位授權及 migration owner 分離補足此邊界。
+角色 provisioning 不依賴任意使用者 ID 假冒身分；CLI 必須使用受控 provisioner／migration connection，HTTP 沒有 provisioning endpoint。正式 PostgreSQL 必須在 staging 實測 role grants、RLS、connection pool context 與 provisioning。
 
-PGlite role-based RLS 測試已 PASS；真實 PostgreSQL app role／connection pool／跨使用者隔離尚未執行，為 BLOCKED。
+目前 PGlite role-based RLS 與 owner health 測試 PASS；真實 PostgreSQL role 權限及跨使用者隔離為 BLOCKED。

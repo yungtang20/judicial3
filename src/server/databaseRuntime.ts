@@ -51,8 +51,84 @@ function migrationFiles() {
   }));
 }
 
-function migrationBody(sql: string) {
-  return sql.replace(/^\s*BEGIN\s*;\s*/i, '').replace(/\s*COMMIT\s*;\s*$/i, '');
+type SqlToken = { kind: 'word' | 'semicolon'; value?: string; start: number; end: number };
+
+function scanTransactionTokens(sql: string): SqlToken[] {
+  const tokens: SqlToken[] = [];
+  let i = 0;
+  let dollarTag = '';
+  while (i < sql.length) {
+    if (dollarTag) {
+      const end = sql.indexOf(dollarTag, i);
+      if (end < 0) throw new Error('unsupported migration: unterminated dollar-quoted string');
+      i = end + dollarTag.length;
+      dollarTag = '';
+      continue;
+    }
+    if (sql.startsWith('--', i)) {
+      const end = sql.indexOf('\n', i + 2);
+      i = end < 0 ? sql.length : end + 1;
+      continue;
+    }
+    if (sql.startsWith('/*', i)) {
+      const end = sql.indexOf('*/', i + 2);
+      if (end < 0) throw new Error('unsupported migration: unterminated block comment');
+      i = end + 2;
+      continue;
+    }
+    const char = sql[i];
+    if (char === "'") {
+      const start = i;
+      i += 1;
+      while (i < sql.length) {
+        if (sql[i] === "'" && sql[i + 1] === "'") { i += 2; continue; }
+        if (sql[i] === "'") { i += 1; break; }
+        i += 1;
+      }
+      if (i >= sql.length && sql[i - 1] !== "'") throw new Error(`unsupported migration: unterminated string at ${start}`);
+      continue;
+    }
+    if (char === '"') {
+      i += 1;
+      while (i < sql.length) {
+        if (sql[i] === '"' && sql[i + 1] === '"') { i += 2; continue; }
+        if (sql[i] === '"') { i += 1; break; }
+        i += 1;
+      }
+      continue;
+    }
+    if (char === '$') {
+      const match = sql.slice(i).match(/^\$[A-Za-z_][A-Za-z0-9_]*\$|^\$\$/);
+      if (match) { dollarTag = match[0]; i += dollarTag.length; continue; }
+    }
+    if (char === ';') {
+      tokens.push({ kind: 'semicolon', start: i, end: i + 1 });
+      i += 1;
+      continue;
+    }
+    if (/[A-Za-z_]/.test(char)) {
+      const start = i;
+      i += 1;
+      while (i < sql.length && /[A-Za-z0-9_$]/.test(sql[i])) i += 1;
+      tokens.push({ kind: 'word', value: sql.slice(start, i).toUpperCase(), start, end: i });
+      continue;
+    }
+    i += 1;
+  }
+  return tokens;
+}
+
+export function stripOuterTransaction(sql: string) {
+  const tokens = scanTransactionTokens(sql);
+  const firstWord = tokens.find((token) => token.kind === 'word');
+  const firstSemicolon = tokens.find((token) => token.kind === 'semicolon' && firstWord && token.start >= firstWord.end);
+  const lastWordIndex = tokens.map((token) => token.kind === 'word').lastIndexOf(true);
+  const lastWord = lastWordIndex >= 0 ? tokens[lastWordIndex] : undefined;
+  const lastSemicolon = [...tokens].reverse().find((token) => token.kind === 'semicolon');
+  if (!firstWord || firstWord.value !== 'BEGIN' || !firstSemicolon || !lastWord || lastWord.value !== 'COMMIT' || !lastSemicolon || lastWord.start >= lastSemicolon.start || firstSemicolon.end >= lastWord.start) {
+    throw new Error('unsupported migration transaction wrapper: expected outer BEGIN and COMMIT');
+  }
+  return sql.slice(0, firstWord.start) + sql.slice(firstSemicolon.end, lastWord.start) + sql.slice(lastSemicolon.end);
 }
 
 async function runMigrations(db: SqlClient, useAdvisoryLock = false) {
@@ -80,7 +156,7 @@ async function runMigrations(db: SqlClient, useAdvisoryLock = false) {
       // leave an applied-but-unrecorded schema.
       await db.query('BEGIN');
       try {
-        await db.exec(migrationBody(migration.sql));
+        await db.exec(stripOuterTransaction(migration.sql));
         await db.query('INSERT INTO schema_migrations(version, checksum) VALUES ($1, $2)', [migration.name, checksum]);
         await db.query('COMMIT');
       } catch (error) {

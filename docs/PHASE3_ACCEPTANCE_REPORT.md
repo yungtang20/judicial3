@@ -1,18 +1,21 @@
-# JUDICIAL3 Phase 3 驗收報告
+# JUDICIAL3 Phase 3 Critical Fixes 驗收報告
 
-## 最終裁決
+## 裁決
 
 PARTIAL_PASS。
 
-乾淨基準為 fb42764a3c706742302d694117b42eb0b7390ebd；Phase 3 認證、PostgreSQL runtime abstraction、migration ledger、RLS policy、Render blueprint、owner isolation 與本機回歸已整合並驗證。真實 PostgreSQL、Render、正式 HTTPS 與外部服務仍未執行，依規則不得計為 PASS。
+本機修復與回歸已通過，包含正式角色 seed、provisioning、owner-scoped health、migration parser、14 個 Phase 2/3 test files、browser、lint 與 build。真實 PostgreSQL、Render 與正式 HTTPS 尚未執行，依規則不得標示 PASS。
 
-## 實際證據
+## 證據
 
-- npm run lint：PASS。
-- npm test：PASS，12/12 test files；包含 14 情境、auth lifecycle、API route、owner isolation、database runtime、RLS、production config/start、browser acceptance。
-- npm run build：PASS。
-- python tools/judicial3_phase3_audit.py：PASS，exit 0；腳本明確列出真實 PostgreSQL 與 Render 未執行。
+- 基準：cfe9caaf7bcfe8243daabd0da0f727cde68b4a0e
+- 新增 migration：0013_system_roles.sql
+- npm test：14/14 PASS
+- npm run lint：PASS
+- npm run build：PASS
+- PGlite migration ledger：13 migrations PASS
+- Python audit：本機 PASS；存在 PostgreSQL／Render BLOCKED 時應 exit 2
 
 ## 未驗證
 
-真實 PostgreSQL／RLS app role、Render pre-deploy／health、production HTTPS cookie、live external AI、外部法律檢索均為 BLOCKED 或 NOT_RUN。因此本分支具備部署審查條件，但未獲得正式部署授權，也未執行部署或正式資料庫寫入。
+真實 PostgreSQL migration atomicity、role grants、RLS、connection pool context、Render staging、正式 HTTPS cookie 及部署前 migration 均為 BLOCKED。可進入正式部署驗收準備，不代表已部署或正式資料庫已驗證。

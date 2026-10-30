@@ -5,27 +5,23 @@ import { AppError, isUniqueViolation } from './errors.js';
 export const getDatabase = getSqlClient;
 
 export async function getDatabaseHealth(ownerId?: string) {
-  const db = await getDatabase();
+  if (!ownerId) throw new AppError(401, 'OWNER_CONTEXT_REQUIRED', 'authenticated owner context is required');
   const readiness = await databaseReadiness();
-  const integrity = await db.query<any>('SELECT * FROM verify_schema_integrity();');
-  const tables = await db.query<any>(`SELECT COUNT(*)::text AS count FROM information_schema.tables
-    WHERE table_schema='public' AND table_type='BASE TABLE'`);
-  const cases = ownerId
-    ? await db.query<any>('SELECT COUNT(*)::text AS count FROM cases WHERE lead_investigator_id=$1::UUID', [ownerId])
-    : await db.query<any>('SELECT COUNT(*)::text AS count FROM cases');
-  const revisions = ownerId
-    ? await db.query<any>(`SELECT COUNT(*)::text AS count FROM case_revisions r
-        JOIN cases c ON c.id=r.case_id WHERE c.lead_investigator_id=$1::UUID`, [ownerId])
-    : await db.query<any>('SELECT COUNT(*)::text AS count FROM case_revisions');
-  return {
-    status: 'healthy',
-    engine: readiness.engine,
-    appliedMigrations: readiness.appliedMigrations,
-    tablesCount: Number(tables.rows[0]?.count || 0),
-    caseCount: Number(cases.rows[0]?.count || 0),
-    revisionCount: Number(revisions.rows[0]?.count || 0),
-    integrity: integrity.rows,
-  };
+  return withTransaction(ownerId, async (db) => {
+    const tables = await db.query<any>(`SELECT COUNT(*)::text AS count FROM information_schema.tables
+      WHERE table_schema='public' AND table_type='BASE TABLE'`);
+    const cases = await db.query<any>('SELECT COUNT(*)::text AS count FROM cases WHERE lead_investigator_id=$1::UUID', [ownerId]);
+    const revisions = await db.query<any>(`SELECT COUNT(*)::text AS count FROM case_revisions r
+      JOIN cases c ON c.id=r.case_id WHERE c.lead_investigator_id=$1::UUID`, [ownerId]);
+    return {
+      status: 'healthy',
+      engine: readiness.engine,
+      appliedMigrations: readiness.appliedMigrations,
+      tablesCount: Number(tables.rows[0]?.count || 0),
+      caseCount: Number(cases.rows[0]?.count || 0),
+      revisionCount: Number(revisions.rows[0]?.count || 0),
+    };
+  });
 }
 
 export async function listCases(ownerId: string) {

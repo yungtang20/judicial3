@@ -1,4 +1,11 @@
 import fs from 'node:fs';
+
+const provisioningUrl = process.env.JUDICIAL3_PROVISIONING_DATABASE_URL || process.env.MIGRATION_DATABASE_URL;
+if (provisioningUrl) {
+  process.env.DATABASE_URL = provisioningUrl;
+  process.env.JUDICIAL3_DATABASE_ENGINE = 'postgres';
+}
+
 import { provisionUser } from '../src/server/auth.js';
 
 const [username, email, fullName, roleCode = 'LEAD_INVESTIGATOR'] = process.argv.slice(2);

@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { createHash, createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import bcrypt from 'bcryptjs';
-import { getSqlClient } from './databaseRuntime.js';
+import { getSqlClient, withTransaction } from './databaseRuntime.js';
 import { isUniqueViolation } from './errors.js';
 
 export interface AuthenticatedRequest extends Request {
@@ -181,19 +181,20 @@ function validateNewUser(input: ProvisionUserInput) {
 
 export async function provisionUser(input: ProvisionUserInput) {
   validateNewUser(input);
-  const db = await getSqlClient();
   const roleCode = (input.roleCode || 'LEAD_INVESTIGATOR').toUpperCase();
-  const role = await db.query<{ id: string }>('SELECT id FROM user_roles WHERE role_code=$1 LIMIT 1', [roleCode]);
-  if (!role.rows[0]) throw new Error('requested role does not exist');
   const passwordHash = await bcrypt.hash(input.password, BCRYPT_ROUNDS);
-  try {
-    const created = await db.query<{ id: string }>(`INSERT INTO users(username,email,password_hash,full_name,role_id)
-      VALUES($1,$2,$3,$4,$5::UUID) RETURNING id`, [input.username, input.email, passwordHash, input.fullName.trim(), role.rows[0].id]);
-    return created.rows[0].id;
-  } catch (error) {
-    if (isUniqueViolation(error)) throw new Error('username, email or badge number already exists');
-    throw error;
-  }
+  return withTransaction(null, async (db) => {
+    const role = await db.query<{ id: string }>('SELECT id FROM user_roles WHERE role_code=$1 LIMIT 1', [roleCode]);
+    if (!role.rows[0]) throw new Error('requested role does not exist');
+    try {
+      const created = await db.query<{ id: string }>(`INSERT INTO users(username,email,password_hash,full_name,role_id)
+        VALUES($1,$2,$3,$4,$5::UUID) RETURNING id`, [input.username, input.email, passwordHash, input.fullName.trim(), role.rows[0].id]);
+      return created.rows[0].id;
+    } catch (error) {
+      if (isUniqueViolation(error)) throw new Error('username, email or badge number already exists');
+      throw error;
+    }
+  });
 }
 
 export async function suspendUser(userId: string) {

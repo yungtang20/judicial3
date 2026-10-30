@@ -1,16 +1,15 @@
-# Phase 3 安全測試結果
+# Phase 3 安全測試更新
 
-| 驗證 | 結果 |
+| 項目 | 結果 |
 |---|---|
-| npm run lint | PASS |
-| npm test（序列化，12 files） | PASS，12/12 |
-| 14 法律情境與 corrective regression | PASS |
-| auth／CSRF／session lifecycle／logout revoke | PASS |
-| owner isolation／idempotency／optimistic lock | PASS |
-| 12 migration ledger／checksum／restart／rollback | PASS（PGlite） |
-| role-based RLS 補充測試 | PASS（PGlite） |
-| Playwright + axe browser acceptance | PASS，22/22 |
-| npm run build | PASS |
-| Python Phase 3 audit | PASS，exit 0 |
+| role seed／provisioning | PASS（PGlite） |
+| owner-scoped health A/B isolation | PASS（PGlite） |
+| missing owner health rejection | PASS |
+| migration parser edge cases | PASS |
+| migration ledger／checksum／rollback | PASS（PGlite） |
+| RLS owner isolation | PASS（PGlite role test） |
+| complete regression | PASS，14/14 |
+| browser／axe | PASS，22/22 |
+| lint／build | PASS |
 
-真實 PostgreSQL、Render、production HTTPS、live external AI 與法律 retrieval 未執行，不能以本機替代結果宣稱 PASS。
+真實 PostgreSQL migration atomicity、RLS role grants、pool context、Render、HTTPS 與外部服務：BLOCKED 或 NOT_RUN。這些狀態沒有被計入 PASS。
