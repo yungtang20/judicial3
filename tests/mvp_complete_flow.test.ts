@@ -4,6 +4,7 @@ import path from 'node:path';
 
 const tempDb = fs.mkdtempSync(path.join(os.tmpdir(), 'judicial3-mvp-'));
 process.env.JUDICIAL3_DATABASE_PATH = tempDb;
+process.env.JUDICIAL3_LOAD_TEST_SEED = 'true';
 
 const { getDatabase, getCaseDetails, listCases, saveCaseAnalysis } = await import('../src/server/databaseService');
 
@@ -108,6 +109,37 @@ try {
     throw new Error('修訂後目前版本未正確更新');
   }
   const forbidden = await getCaseDetails(saved.caseId, '33333333-3333-3333-3333-333333333301');
+
+  // 問句答案、編輯與刪除以新快照表達，舊修訂不得被破壞。
+  const answered = await saveCaseAnalysis({
+    ownerId,
+    caseNumber: saved.caseNumber,
+    title: 'MVP 完整流程測試案（補答）',
+    rawText,
+    facts: [{ seq: 1, description: '已補記回答', status: 'ASSERTED' }],
+    candidates: [],
+    questions: [{ seq: 1, questionText: '請說明交付經過。', answerText: '受詢人表示於虛構日期交付。' }],
+    summary: '補答摘要',
+  });
+  if (answered.revisionNumber !== 3) throw new Error(`補答應建立 revision 3，實際為 ${answered.revisionNumber}`);
+  const answeredDetails = await getCaseDetails(saved.caseId, ownerId);
+  if (answeredDetails?.questions[0]?.answer_text !== '受詢人表示於虛構日期交付。') throw new Error('問句回答未持久化');
+
+  const deleted = await saveCaseAnalysis({
+    ownerId,
+    caseNumber: saved.caseNumber,
+    title: 'MVP 完整流程測試案（刪除問句）',
+    rawText,
+    facts: [{ seq: 1, description: '問句已刪除', status: 'UNKNOWN' }],
+    candidates: [],
+    questions: [],
+    summary: '刪除問句摘要',
+  });
+  if (deleted.revisionNumber !== 4) throw new Error(`刪除問句應建立 revision 4，實際為 ${deleted.revisionNumber}`);
+  const deletedDetails = await getCaseDetails(saved.caseId, ownerId);
+  if (deletedDetails?.questions.length !== 0) throw new Error('刪除問句後的新修訂仍含問句');
+  if (deletedDetails?.revisionHistory.length !== 4) throw new Error('刪除問句不得破壞歷史修訂');
+  if (!deletedDetails?.revisionHistory.some((revision: any) => revision.revision_number === 3)) throw new Error('歷史修訂 3 遺失');
   if (forbidden !== null) throw new Error('其他使用者仍可讀取案件');
 
   const secondOwner = '22222222-2222-2222-2222-222222222202';

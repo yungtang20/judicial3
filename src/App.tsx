@@ -135,6 +135,10 @@ export default function App() {
   const [isSavingToDb, setIsSavingToDb] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
   const [caseNumber, setCaseNumber] = useState<string | null>(null);
+  const [authReady, setAuthReady] = useState<boolean | null>(null);
+  const [loginName, setLoginName] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   // Interactive Question & Answer items (Editable)
   const [qaList, setQaList] = useState<InterviewQuestion[]>(analysisOutput.questions);
@@ -144,6 +148,7 @@ export default function App() {
 
   // Textarea auto-resize ref
   const landingInputRef = useRef<HTMLTextAreaElement>(null);
+  const saveInFlight = useRef(false);
 
   // Load Database Status & Cases on Mount
   useEffect(() => {
@@ -152,19 +157,55 @@ export default function App() {
   }, []);
 
   const getApiHeaders = async (includeJson = false): Promise<Record<string, string>> => {
-    let token = localStorage.getItem('judicial3_session_token');
-    if (!token) {
-      const sessionResponse = await fetch('/api/auth/dev-session', { method: 'POST' });
-      if (!sessionResponse.ok) throw new Error('尚未登入，且本機 session bridge 不可用');
+    // Session cookies are the production credential. A legacy bearer token is
+    // only obtained from the loopback-only developer bridge and is kept in
+    // memory (never localStorage).
+    const me = await fetch('/api/auth/me', { credentials: 'same-origin' });
+    let token = '';
+    if (!me.ok) {
+      const sessionResponse = await fetch('/api/auth/dev-session', { method: 'POST', credentials: 'same-origin' });
+      if (!sessionResponse.ok) { setAuthReady(false); throw new Error('尚未登入'); }
       const session = await sessionResponse.json();
-      token = session.accessToken;
+      token = session.accessToken || '';
       if (!token) throw new Error('登入 session 回應缺少 access token');
-      localStorage.setItem('judicial3_session_token', token);
     }
+    setAuthReady(true);
+    const csrf = sessionStorage.getItem('judicial3_csrf_token');
     return {
-      Authorization: `Bearer ${token}`,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(csrf ? { 'X-CSRF-Token': csrf } : {}),
       ...(includeJson ? { 'Content-Type': 'application/json' } : {}),
     };
+  };
+
+  const handleLogout = async () => {
+    const csrf = sessionStorage.getItem('judicial3_csrf_token');
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST', credentials: 'same-origin',
+        headers: csrf ? { 'X-CSRF-Token': csrf } : {},
+      });
+    } finally {
+      sessionStorage.removeItem('judicial3_csrf_token');
+      setAuthReady(false);
+      setSavedCases([]);
+      setLoginPassword('');
+    }
+  };
+
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setLoginError(null);
+    const response = await fetch('/api/auth/login', {
+      method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: loginName, password: loginPassword }),
+    });
+    if (!response.ok) { setLoginError('登入失敗，請確認帳號或密碼。'); return; }
+    const data = await response.json();
+    sessionStorage.setItem('judicial3_csrf_token', data.csrfToken);
+    setLoginPassword('');
+    setAuthReady(true);
+    await Promise.all([fetchDbStatus(), fetchCases()]);
   };
 
   const fetchDbStatus = async () => {
@@ -292,6 +333,8 @@ export default function App() {
 
   // Save case analysis to PostgreSQL
   const handleSaveToPostgres = async () => {
+    if (saveInFlight.current) return;
+    saveInFlight.current = true;
     setIsSavingToDb(true);
     try {
       const payload = {
@@ -347,7 +390,8 @@ export default function App() {
 
       const res = await fetch('/api/cases/save', {
         method: 'POST',
-        headers: await getApiHeaders(true),
+        credentials: 'same-origin',
+        headers: { ...(await getApiHeaders(true)), 'Idempotency-Key': crypto.randomUUID() },
         body: JSON.stringify(payload),
       });
 
@@ -365,6 +409,7 @@ export default function App() {
     } catch (e: any) {
       alert(`連線資料庫異常: ${e.message}`);
     } finally {
+      saveInFlight.current = false;
       setIsSavingToDb(false);
     }
   };
@@ -560,6 +605,23 @@ p { margin: 8px 0; text-align: justify; }
   /* =========================================================================
    * VIEW 1: GOOGLE-STYLE LANDING PAGE
    * ========================================================================= */
+  if (authReady === false) {
+    return (
+      <main className="min-h-screen bg-slate-50 flex items-center justify-center p-6">
+        <form onSubmit={handleLogin} className="w-full max-w-sm bg-white border border-slate-200 rounded-2xl p-6 shadow-sm" aria-labelledby="login-title">
+          <h1 id="login-title" className="text-xl font-bold text-slate-900 mb-1">案件分析系統登入</h1>
+          <p className="text-sm text-slate-500 mb-5">本系統不提供公開註冊，帳號由管理者建立。</p>
+          <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="login-name">帳號</label>
+          <input id="login-name" autoComplete="username" required value={loginName} onChange={(e) => setLoginName(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+          <label className="block text-sm font-medium text-slate-700 mb-1" htmlFor="login-password">密碼</label>
+          <input id="login-password" type="password" autoComplete="current-password" required value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2 mb-4" />
+          {loginError && <p role="alert" className="text-sm text-rose-700 mb-3">{loginError}</p>}
+          <button type="submit" className="w-full bg-blue-700 hover:bg-blue-800 text-white rounded-lg px-4 py-2 font-medium">登入</button>
+        </form>
+      </main>
+    );
+  }
+
   if (viewMode === 'landing') {
     return (
       <div className="min-h-screen bg-white flex flex-col justify-between text-slate-800 font-sans antialiased selection:bg-blue-100 selection:text-blue-900">
@@ -567,7 +629,7 @@ p { margin: 8px 0; text-align: justify; }
         <header className="w-full px-6 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2 text-xs text-slate-500 font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>PostgreSQL 16 已就緒 (PGlite WASM 24表支援)</span>
+            <span>{dbHealth ? `${dbHealth.engine} 已就緒` : '資料庫狀態檢查中'}</span>
           </div>
 
           <div className="flex items-center space-x-3">
@@ -577,6 +639,12 @@ p { margin: 8px 0; text-align: justify; }
             >
               <Database className="w-3.5 h-3.5 text-emerald-600" />
               <span>案件庫 ({savedCases.length})</span>
+            </button>
+            <button
+              onClick={handleLogout}
+              className="text-xs text-slate-600 hover:text-rose-700 hover:bg-rose-50 px-3 py-1.5 rounded-lg font-medium transition cursor-pointer"
+            >
+              登出
             </button>
             <div className="w-8 h-8 rounded-full bg-blue-700 text-white flex items-center justify-center font-bold text-xs shadow-xs">
               司
@@ -604,7 +672,7 @@ p { margin: 8px 0; text-align: justify; }
           <div className="w-full relative group">
             <div className="relative flex flex-col w-full bg-white rounded-3xl border border-slate-200 shadow-md hover:shadow-lg focus-within:shadow-xl focus-within:border-blue-500 transition-all duration-200 overflow-hidden">
               <div className="flex items-start px-5 pt-4 pb-2">
-                <Search className="w-5 h-5 text-slate-400 mt-1 shrink-0 mr-3" />
+                <Search className="w-5 h-5 text-slate-600 mt-1 shrink-0 mr-3" />
                 <textarea
                   aria-label="案情摘要"
                   ref={landingInputRef}
@@ -622,9 +690,9 @@ p { margin: 8px 0; text-align: justify; }
                 />
               </div>
 
-              <div className="flex items-center justify-between px-5 pb-3 pt-1 border-t border-slate-100 text-xs text-slate-400">
+              <div className="flex items-center justify-between px-5 pb-3 pt-1 border-t border-slate-100 text-xs text-slate-600">
                 <div className="flex items-center space-x-2">
-                  <span className="text-[11px] text-slate-400 hidden sm:inline">
+                  <span className="text-[11px] text-slate-600 hidden sm:inline">
                     按 Enter 立即分析 • Shift+Enter 換行
                   </span>
                 </div>
@@ -632,7 +700,7 @@ p { margin: 8px 0; text-align: justify; }
                   {inputText && (
                     <button
                       onClick={() => setInputText('')}
-                      className="p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer"
+                      className="p-1 rounded-full text-slate-600 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer"
                       title="清除內容"
                     >
                       <X className="w-4 h-4" />
@@ -663,7 +731,7 @@ p { margin: 8px 0; text-align: justify; }
 
           {/* Quick Preset Chips */}
           <div className="mt-8 w-full flex flex-col items-center">
-            <span className="text-xs text-slate-400 mb-2.5 font-medium">
+            <span className="text-xs text-slate-600 mb-2.5 font-medium">
               常見示範案情（點擊載入並執行要件涵攝）：
             </span>
             <div className="flex flex-wrap items-center justify-center gap-2 max-w-xl">
@@ -686,7 +754,7 @@ p { margin: 8px 0; text-align: justify; }
             <span>中華民國刑事偵查法律推理規範</span>
             <span>三階層犯罪論 • 構成要件涵攝 • 刑訴法第2條注意有利不利原則</span>
           </div>
-          <div className="flex items-center space-x-3 text-slate-400">
+          <div className="flex items-center space-x-3 text-slate-600">
             <span>JUDICIAL3 Core Engine</span>
             <span>•</span>
             <span>僅供司法警察機關辦案輔助參考</span>
@@ -723,7 +791,7 @@ p { margin: 8px 0; text-align: justify; }
 
           <div className="flex-1 max-w-2xl relative">
             <div className="flex items-center bg-slate-50 hover:bg-white focus-within:bg-white rounded-full border border-slate-300 focus-within:border-blue-600 focus-within:shadow-md transition px-4 py-1.5">
-              <Search className="w-4 h-4 text-slate-400 mr-2 shrink-0" />
+              <Search className="w-4 h-4 text-slate-600 mr-2 shrink-0" />
               <input
                 aria-label="重新分析案情"
                 type="text"
@@ -830,6 +898,13 @@ p { margin: 8px 0; text-align: justify; }
       {/* Main Content Area */}
       <main className="max-w-5xl mx-auto px-4 pt-5 space-y-6">
         {/* Status Alerts */}
+        {saveSuccessMsg && (
+          <div role="status" aria-live="polite" className="bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs px-4 py-3 rounded-xl flex items-center space-x-2 shadow-xs">
+            <CheckCircle className="w-4 h-4 text-emerald-700 shrink-0" />
+            <span className="font-medium">{saveSuccessMsg}</span>
+          </div>
+        )}
+
         {isStale && (
           <div className="bg-amber-50 border border-amber-300 text-amber-900 text-xs px-4 py-3 rounded-xl flex items-center justify-between shadow-xs">
             <div className="flex items-center space-x-2">
@@ -860,7 +935,7 @@ p { margin: 8px 0; text-align: justify; }
           <div className="p-5 sm:p-6 bg-slate-50/50">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center space-x-1.5">
-                <FileText className="w-3.5 h-3.5 text-slate-400" />
+                <FileText className="w-3.5 h-3.5 text-slate-600" />
                 <span>原始案情輸入 (快照版本: Rev #{analysisOutput.caseRecord.current_revision})</span>
               </span>
               <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
@@ -885,7 +960,7 @@ p { margin: 8px 0; text-align: justify; }
                     區分陳述 (ASSERTED)、自白 (ADMITTED)、否認 (DENIED)、推論 (INFERRED)、未知 (UNKNOWN)
                   </p>
                 </div>
-                <span className="text-xs text-slate-400">點擊狀態標籤可手動調整事實認定</span>
+                <span className="text-xs text-slate-600">點擊狀態標籤可手動調整事實認定</span>
               </div>
 
               <div className="grid grid-cols-1 gap-2.5">
@@ -898,9 +973,9 @@ p { margin: 8px 0; text-align: justify; }
                       <div className="flex items-center space-x-2">
                         <span className="font-bold text-slate-500 font-mono">#{idx + 1}</span>
                         <span className="font-semibold text-slate-900">{fact.subject}</span>
-                        <span className="text-slate-400">|</span>
+                        <span className="text-slate-600">|</span>
                         <span className="text-slate-500">{fact.event_time}</span>
-                        <span className="text-slate-400">|</span>
+                        <span className="text-slate-600">|</span>
                         <span className="text-slate-500">{fact.event_location}</span>
                       </div>
                       <p className="text-slate-800 font-serif leading-relaxed text-justify">
@@ -916,13 +991,13 @@ p { margin: 8px 0; text-align: justify; }
                           className={`px-2 py-0.5 rounded text-[10px] font-bold cursor-pointer transition ${
                             fact.assertion_status === st
                               ? st === 'ADMITTED'
-                                ? 'bg-emerald-600 text-white shadow-2xs'
+                                ? 'bg-emerald-700 text-white shadow-2xs'
                                 : st === 'DENIED'
-                                ? 'bg-red-600 text-white shadow-2xs'
+                                ? 'bg-red-700 text-white shadow-2xs'
                                 : st === 'UNKNOWN'
-                                ? 'bg-amber-600 text-white shadow-2xs'
-                                : 'bg-blue-600 text-white shadow-2xs'
-                              : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                ? 'bg-amber-700 text-white shadow-2xs'
+                                : 'bg-blue-700 text-white shadow-2xs'
+                              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                           }`}
                         >
                           {st}
@@ -977,7 +1052,7 @@ p { margin: 8px 0; text-align: justify; }
                   <span className="text-xs font-bold text-slate-700 border-l-3 border-blue-600 pl-2">
                     平行候選法律方向 ({analysisOutput.candidates.length} 項 • 主位/備位/競爭)
                   </span>
-                  <span className="text-[11px] text-slate-400">杜絕單一罪名分類偏誤</span>
+                  <span className="text-[11px] text-slate-600">杜絕單一罪名分類偏誤</span>
                 </div>
 
                 <div className="grid grid-cols-1 gap-3.5">
@@ -1086,7 +1161,7 @@ p { margin: 8px 0; text-align: justify; }
                         <div key={i} className="p-3 rounded-lg border border-slate-200 bg-white">
                           <strong className="text-slate-900">{l.title} ({l.subTitle})</strong>
                           <p className="text-slate-600 mt-1">{l.items.map((it) => it.text).join(' ')}</p>
-                          <span className="text-[10px] text-slate-400 mt-1 block">提示: {l.hint} | 主管: {l.authority}</span>
+                          <span className="text-[10px] text-slate-600 mt-1 block">提示: {l.hint} | 主管: {l.authority}</span>
                         </div>
                       ))}
                     </div>
@@ -1098,7 +1173,7 @@ p { margin: 8px 0; text-align: justify; }
                         <div key={i} className="p-3 rounded-lg border border-slate-200 bg-white">
                           <div className="flex justify-between font-bold text-slate-900">
                             <span>{r.court} {r.caseNo}</span>
-                            <span className="text-slate-400 text-[10px]">{r.yearDate}</span>
+                            <span className="text-slate-600 text-[10px]">{r.yearDate}</span>
                           </div>
                           <p className="text-slate-700 mt-1">{r.holding}</p>
                           <span className="text-[10px] text-emerald-700 mt-1 block font-medium">適用要旨: {r.takeaway}</span>
@@ -1112,7 +1187,7 @@ p { margin: 8px 0; text-align: justify; }
                       {analysisOutput.treatises.map((t, i) => (
                         <div key={i} className="p-3 rounded-lg border border-slate-200 bg-white">
                           <strong className="text-slate-900">{t.title}</strong>
-                          <span className="text-slate-400 text-[10px] ml-2">({t.author} • {t.source})</span>
+                          <span className="text-slate-600 text-[10px] ml-2">({t.author} • {t.source})</span>
                           <p className="text-slate-700 mt-1">{t.coreArgument}</p>
                           <span className="text-[10px] text-blue-700 mt-1 block font-medium">辦案指引: {t.takeaway}</span>
                         </div>
@@ -1174,7 +1249,7 @@ p { margin: 8px 0; text-align: justify; }
                           {q.question_type}
                         </span>
                       </div>
-                      <span className="text-[10px] text-slate-400">待證目的: {q.rationale}</span>
+                      <span className="text-[10px] text-slate-600">待證目的: {q.rationale}</span>
                     </div>
 
                       <div>
@@ -1257,7 +1332,7 @@ p { margin: 8px 0; text-align: justify; }
                   {!isApproved ? (
                     <button
                       onClick={handleApproveReport}
-                      className="px-3 py-1.5 text-xs rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium flex items-center space-x-1 shadow-xs transition cursor-pointer"
+                      className="px-3 py-1.5 text-xs rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-medium flex items-center space-x-1 shadow-xs transition cursor-pointer"
                     >
                       <Check className="w-3.5 h-3.5" />
                       <span>承辦員警審核確認</span>
@@ -1400,7 +1475,7 @@ p { margin: 8px 0; text-align: justify; }
             </div>
             <button
               onClick={() => setShowCasesModal(false)}
-              className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-200 transition cursor-pointer"
+              className="text-slate-600 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-200 transition cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -1408,7 +1483,7 @@ p { margin: 8px 0; text-align: justify; }
 
           <div className="p-5 overflow-y-auto space-y-3 flex-1">
             {savedCases.length === 0 ? (
-              <div className="text-center py-8 text-slate-400 text-sm">
+              <div className="text-center py-8 text-slate-600 text-sm">
                 資料庫內目前尚無儲存之案件，請點擊「保存快照」即可寫入 PostgreSQL！
               </div>
             ) : (

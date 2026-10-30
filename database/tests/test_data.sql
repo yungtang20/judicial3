@@ -12,12 +12,13 @@ VALUES
     ('11111111-1111-1111-1111-111111111103', 'ANALYST', '犯罪分析員', '["case:read", "legal:research"]'::jsonb, '法規研究與智慧研析輔助人員')
 ON CONFLICT (role_code) DO NOTHING;
 
--- 2. 測試使用者 (均使用純虛構非真實帳密雜湊)
+-- 2. 測試使用者 (純虛構測試帳號；密碼僅供本機 seed，不得用於任何環境)
+-- 本機測試密碼：Judicial3!TestPass2026（bcrypt cost 12）
 INSERT INTO users (id, username, email, password_hash, full_name, badge_number, organization, role_id)
 VALUES 
-    ('22222222-2222-2222-2222-222222222201', 'lead_investigator_01', 'investigator01@simulated-police.gov.tw', '$argon2id$v=19$m=65536,t=3,p=4$simulated_hash_not_real_key$1234567890abcdef', '陳○○偵查員', 'TP-99001', '刑事警察專案偵查第七大隊', '11111111-1111-1111-1111-111111111101'),
-    ('22222222-2222-2222-2222-222222222202', 'reviewer_captain_01', 'reviewer01@simulated-police.gov.tw', '$argon2id$v=19$m=65536,t=3,p=4$simulated_hash_not_real_key$abcdef1234567890', '李○○隊長', 'TP-99002', '刑事警察專案偵查第七大隊', '11111111-1111-1111-1111-111111111102'),
-    ('22222222-2222-2222-2222-222222222203', 'analyst_unauthorized_02', 'analyst02@simulated-police.gov.tw', '$argon2id$v=19$m=65536,t=3,p=4$simulated_hash_not_real_key$fedcba0987654321', '張○○分析員', 'TP-99003', '其他單位', '11111111-1111-1111-1111-111111111103')
+    ('22222222-2222-2222-2222-222222222201', 'lead_investigator_01', 'investigator01@simulated-police.gov.tw', '$2b$12$sYeEiM/8BErWHhrV8Q2rP.Xp.Qx/z/sSVaC.T/sUFgKV2hi4FJqsO', '陳○○偵查員', 'TP-99001', '刑事警察專案偵查第七大隊', '11111111-1111-1111-1111-111111111101'),
+    ('22222222-2222-2222-2222-222222222202', 'reviewer_captain_01', 'reviewer01@simulated-police.gov.tw', '$2b$12$sYeEiM/8BErWHhrV8Q2rP.Xp.Qx/z/sSVaC.T/sUFgKV2hi4FJqsO', '李○○隊長', 'TP-99002', '刑事警察專案偵查第七大隊', '11111111-1111-1111-1111-111111111102'),
+    ('22222222-2222-2222-2222-222222222203', 'analyst_unauthorized_02', 'analyst02@simulated-police.gov.tw', '$2b$12$sYeEiM/8BErWHhrV8Q2rP.Xp.Qx/z/sSVaC.T/sUFgKV2hi4FJqsO', '張○○分析員', 'TP-99003', '其他單位', '11111111-1111-1111-1111-111111111103')
 ON CONFLICT (username) DO NOTHING;
 
 -- 3. 法規條文基準

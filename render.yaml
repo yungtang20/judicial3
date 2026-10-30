@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: judicial3-web
+    runtime: node
+    autoDeployTrigger: off
+    buildCommand: npm ci --legacy-peer-deps && npm run build
+    preDeployCommand: npm run db:migrate
+    startCommand: npm start
+    healthCheckPath: /api/health/ready
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JUDICIAL3_DATABASE_ENGINE
+        value: postgres
+      - key: DATABASE_URL
+        sync: false
+      - key: MIGRATION_DATABASE_URL
+        fromDatabase:
+          name: judicial3-db
+          property: connectionString
+      - key: JUDICIAL3_PUBLIC_ORIGIN
+        sync: false
+      - key: JUDICIAL3_ALLOW_DEV_SESSION
+        value: "false"
+      - key: JUDICIAL3_LOAD_TEST_SEED
+        value: "false"
+      - key: JUDICIAL3_ALLOW_EXTERNAL_AI
+        value: "false"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        sync: false
+
+databases:
+  - name: judicial3-db
+    ipAllowList: []
+
+previews:
+  generation: off
+
+
