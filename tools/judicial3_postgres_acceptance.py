@@ -26,9 +26,28 @@ def main() -> int:
         "JUDICIAL3_TEST_APP_DATABASE_URL": app_url,
     }.items() if not value]
     if missing:
-        print(f"BLOCKED PostgreSQL acceptance missing variables: {', '.join(missing)}")
-        print("PASS=0 FAIL=0 NOT_RUN=0 BLOCKED=1 EXIT_CODE=2 FINAL_STATUS=BLOCKED")
-        return 2
+        executable = "npx.cmd" if os.name == "nt" else "npx"
+        try:
+            result = subprocess.run(
+                [executable, "tsx", "tools/postgres_acceptance_embedded.ts"],
+                cwd=os.path.dirname(os.path.dirname(__file__)),
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                capture_output=True,
+                timeout=360,
+            )
+        except (FileNotFoundError, subprocess.TimeoutExpired) as error:
+            print(f"BLOCKED embedded PostgreSQL acceptance could not execute: {type(error).__name__}")
+            print("PASS=0 FAIL=0 NOT_RUN=0 BLOCKED=1 EXIT_CODE=2 FINAL_STATUS=BLOCKED")
+            return 2
+        if result.stdout:
+            print(result.stdout, end="")
+        if result.stderr:
+            print(result.stderr[-4000:], file=sys.stderr)
+        if "NOT_RUN=0" not in result.stdout or "BLOCKED=0" not in result.stdout:
+            return 2
+        return result.returncode
     if url == os.getenv("DATABASE_URL") or not safe_url_is_test_only(url):
         print("BLOCKED PostgreSQL acceptance requires an isolated test/staging database URL")
         print("PASS=0 FAIL=0 NOT_RUN=0 BLOCKED=1 EXIT_CODE=2 FINAL_STATUS=BLOCKED")

@@ -11,12 +11,24 @@ export interface SqlClient {
 }
 
 class PgClientAdapter implements SqlClient {
-  constructor(private readonly client: Pool | PoolClient) {}
-  async query<T = any>(sql: string, params: unknown[] = []) {
-    const result = await this.client.query(sql, params);
-    return { rows: result.rows as T[], rowCount: result.rowCount };
+  constructor(private readonly client: Pool | PoolClient, private readonly role?: string) {}
+  private async run<T>(operation: () => Promise<T>): Promise<T> {
+    if (!this.role) return operation();
+    await this.client.query(`SET ROLE ${this.role}`);
+    try {
+      return await operation();
+    } finally {
+      await this.client.query('RESET ROLE').catch(() => undefined);
+    }
   }
-  async exec(sql: string) { await this.client.query(sql); }
+  async query<T = any>(sql: string, params: unknown[] = []) {
+    const run = async () => {
+      const result = await this.client.query(sql, params);
+      return { rows: result.rows as T[], rowCount: result.rowCount };
+    };
+    return this.run(run);
+  }
+  async exec(sql: string) { await this.run(() => this.client.query(sql)); }
   async close() { if (this.client instanceof Pool) await this.client.end(); }
 }
 
@@ -27,7 +39,7 @@ class PgliteAdapter implements SqlClient {
   async close() { await this.client.close(); }
 }
 
-type Runtime = { engine: 'postgres' | 'pglite'; client: SqlClient; pool?: Pool };
+type Runtime = { engine: 'postgres' | 'pglite'; client: SqlClient; pool?: Pool; postgresRole?: string };
 let runtimePromise: Promise<Runtime> | null = null;
 let pgliteTransaction: Promise<unknown> = Promise.resolve();
 
@@ -131,7 +143,7 @@ export function stripOuterTransaction(sql: string) {
   return sql.slice(0, firstWord.start) + sql.slice(firstSemicolon.end, lastWord.start) + sql.slice(lastSemicolon.end);
 }
 
-async function runMigrations(db: SqlClient, useAdvisoryLock = false) {
+export async function runMigrations(db: SqlClient, useAdvisoryLock = false) {
   if (useAdvisoryLock) await db.query("SELECT pg_advisory_lock(hashtext('judicial3_schema_migrations'))");
   try {
     await db.query(`CREATE TABLE IF NOT EXISTS schema_migrations (
@@ -223,7 +235,8 @@ async function createRuntime(): Promise<Runtime> {
       ...(process.env.JUDICIAL3_DB_SSL === 'true' ? { ssl: { rejectUnauthorized: true } } : {}),
     });
     pool.on('error', () => { /* idle client errors must not crash the process; readiness reports them */ });
-    const db = new PgClientAdapter(pool);
+    const postgresRole = process.env.JUDICIAL3_PROVISIONING_MODE === 'true' ? 'judicial3_provisioner' : undefined;
+    const db = new PgClientAdapter(pool, postgresRole);
     try {
       await db.query('SELECT 1');
       if (process.env.JUDICIAL3_MIGRATION_MODE === 'true') {
@@ -237,7 +250,7 @@ async function createRuntime(): Promise<Runtime> {
       await pool.end().catch(() => undefined);
       throw new Error(`database initialization failed: ${redact(error instanceof Error ? error.message : 'unknown error')}`);
     }
-    return { engine: 'postgres', client: db, pool };
+    return { engine: 'postgres', client: db, pool, postgresRole };
   }
 
   const dbPath = process.env.JUDICIAL3_DATABASE_PATH
@@ -278,7 +291,7 @@ export async function withTransaction<T>(userId: string | null, work: (db: SqlCl
   const runtime = await getRuntime();
   if (runtime.engine === 'postgres') {
     const client = await runtime.pool!.connect();
-    const db = new PgClientAdapter(client);
+    const db = new PgClientAdapter(client, runtime.postgresRole);
     try {
       await db.query('BEGIN');
       if (userId) await db.query("SELECT set_config('app.current_user_id', $1, true)", [userId]);

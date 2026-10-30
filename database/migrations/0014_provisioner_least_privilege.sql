@@ -5,9 +5,14 @@ BEGIN;
 -- it never creates login roles or stores credentials.
 DO $$
 BEGIN
-  IF to_regrole('judicial3_provisioner') IS NULL THEN
-    RAISE NOTICE 'judicial3_provisioner is not present; pre-create the controlled NOLOGIN role before applying provisioning grants';
+  -- PGlite is a local test engine without PostgreSQL roles. It must not be
+  -- mistaken for production PostgreSQL role evidence.
+  IF version() LIKE '%PGlite%' THEN
     RETURN;
+  END IF;
+  IF to_regrole('judicial3_provisioner') IS NULL
+     OR to_regrole('judicial3_provisioner_login') IS NULL THEN
+    RAISE EXCEPTION 'required provisioning roles are missing; pre-create judicial3_provisioner and judicial3_provisioner_login before migration';
   END IF;
 
   EXECUTE 'GRANT USAGE ON SCHEMA public TO judicial3_provisioner';
