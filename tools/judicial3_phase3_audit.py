@@ -91,6 +91,7 @@ def static_audit() -> None:
         "tools/judicial3_postgres_acceptance.py",
         "tools/postgres_acceptance.ts",
         "docs/PHASE3_CRITICAL_FIXES_REPORT.md",
+        "docs/PHASE3_1_ROLE_BOOTSTRAP.md",
     ]
     for rel in required:
         if (ROOT / rel).is_file():
@@ -121,6 +122,11 @@ def static_audit() -> None:
         record("PASS", "provisioning CLI is dedicated and fail-closed")
     else:
         record("FAIL", "provisioning CLI is dedicated and fail-closed")
+    privilege_migration = (ROOT / "database/migrations/0014_provisioner_least_privilege.sql").read_text(encoding="utf-8")
+    if all(token in privilege_migration for token in ("RAISE EXCEPTION", "judicial3_provisioner_login", "pg_auth_members", "GRANT INSERT (username, email, password_hash, full_name, role_id)")):
+        record("PASS", "0014 fails closed and separates login/group roles")
+    else:
+        record("FAIL", "0014 fails closed and separates login/group roles")
 
 
 def main() -> int:
