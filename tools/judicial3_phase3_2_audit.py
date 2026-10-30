@@ -56,7 +56,7 @@ def static_checks() -> None:
     scripts = package.get("scripts", {})
     record("PASS" if all(scripts.get(name) for name in ("lint", "test", "build")) else "FAIL", "package verification scripts")
     workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
-    for marker in ("pull_request:", "branches: [main]", "npm ci", "npm run lint", "npm test", "npm run build", "phase3_2_audit.py"):
+    for marker in ("pull_request:", "branches: [main]", "npm ci", "npm run lint", "npm test", "npm run build", "phase3_3_audit.py"):
         record("PASS" if marker in workflow else "FAIL", f"CI marker {marker}")
     migration = (ROOT / "database/migrations/0014_provisioner_least_privilege.sql").read_text(encoding="utf-8")
     role_migration = (ROOT / "database/migrations/0013_system_roles.sql").read_text(encoding="utf-8")
@@ -65,10 +65,14 @@ def static_checks() -> None:
     for marker in ("judicial3_app", "judicial3_provisioner", "judicial3_provisioner_login", "GRANT INSERT", "REVOKE ALL ON ALL TABLES"):
         record("PASS" if marker in migration or marker in role_migration or marker in provisioning else "FAIL", f"role safety marker {marker}")
     migrate_tool = (ROOT / "tools/migrate.ts").read_text(encoding="utf-8")
-    for marker in ("SET ROLE", "RESET ROLE", "JUDICIAL3_PROVISIONING_MODE", "MIGRATION_DATABASE_URL"):
+    for marker in ("SET ROLE", "RESET ROLE", "JUDICIAL3_PROVISIONING_MODE", "JUDICIAL3_EXPECTED_DATABASE_ROLE"):
         record("PASS" if marker in runtime or marker in provisioning or marker in migrate_tool else "FAIL", f"runtime isolation marker {marker}")
     render = (ROOT / "render.yaml").read_text(encoding="utf-8")
-    record("PASS" if "healthCheckPath: /api/health/ready" in render and "preDeployCommand: npm run db:migrate" in render else "FAIL", "Render build/start/migration/health configuration")
+    web = render.split("databases:", 1)[0]
+    runner = (ROOT / "render.migration-runner.yaml").read_text(encoding="utf-8")
+    isolated = "healthCheckPath: /api/health/ready" in web and all(marker not in web for marker in ("preDeployCommand", "MIGRATION_DATABASE_URL", "JUDICIAL3_PROVISIONING_DATABASE_URL"))
+    isolated = isolated and "judicial3-staging-migrator" in runner and "DATABASE_URL" in runner
+    record("PASS" if isolated else "FAIL", "Render web and migration-runner credential isolation")
 
 
 def main() -> int:

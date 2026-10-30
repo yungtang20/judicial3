@@ -1,0 +1,22 @@
+services:
+  - type: pserv
+    name: judicial3-staging-acceptance
+    runtime: node
+    plan: 0.5c-512mb
+    region: oregon
+    branch: main
+    autoDeployTrigger: "off"
+    buildCommand: npm ci --legacy-peer-deps
+    startCommand: npm run runner:migration-idle
+    envVars:
+      - key: NODE_ENV
+        value: test
+      - key: JUDICIAL3_TEST_DATABASE_URL
+        sync: false
+      - key: JUDICIAL3_TEST_PROVISIONING_DATABASE_URL
+        sync: false
+      - key: JUDICIAL3_TEST_APP_DATABASE_URL
+        sync: false
+
+previews:
+  generation: "off"

@@ -26,7 +26,6 @@ async function runMigration(url: string, expectFailure: boolean) {
   process.env.JUDICIAL3_DATABASE_ENGINE = 'postgres';
   process.env.NODE_ENV = 'test';
   process.env.JUDICIAL3_MIGRATION_MODE = 'true';
-  process.env.MIGRATION_DATABASE_URL = url;
   try {
     const runtime = await getRuntime();
     await closeDatabaseRuntime();

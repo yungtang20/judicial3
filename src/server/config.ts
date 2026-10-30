@@ -51,6 +51,9 @@ export function inspectProductionConfig(env: NodeJS.ProcessEnv = process.env): P
   }
   if (env.JUDICIAL3_ALLOW_DEV_SESSION === 'true') forbidden.push('JUDICIAL3_ALLOW_DEV_SESSION=true');
   if (env.JUDICIAL3_LOAD_TEST_SEED === 'true') forbidden.push('JUDICIAL3_LOAD_TEST_SEED=true');
+  for (const name of ['MIGRATION_DATABASE_URL', 'JUDICIAL3_PROVISIONING_DATABASE_URL', 'JUDICIAL3_MIGRATION_MODE', 'JUDICIAL3_PROVISIONING_MODE']) {
+    if (env[name]) forbidden.push(name);
+  }
   if (env.JUDICIAL3_ALLOW_EXTERNAL_AI === 'true' && (!env.GEMINI_API_KEY || !env.GEMINI_MODEL)) {
     invalid.push('JUDICIAL3_ALLOW_EXTERNAL_AI=true requires GEMINI_API_KEY and GEMINI_MODEL');
   }

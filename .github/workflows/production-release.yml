@@ -1,0 +1,28 @@
+name: production-release-approval-gate
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: Full commit SHA already accepted in staging
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  approval-record:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.commit_sha }}
+      - name: Verify approved main commit
+        shell: bash
+        run: |
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "${{ inputs.commit_sha }}"
+          git merge-base --is-ancestor "${{ inputs.commit_sha }}" origin/main
+          echo 'Human production approval recorded. Migration and deployment remain intentionally manual and are not executed by this workflow.'

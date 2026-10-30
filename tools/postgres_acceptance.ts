@@ -46,11 +46,12 @@ async function runMigration(url: string) {
       env: {
         ...process.env,
         DATABASE_URL: url,
-        MIGRATION_DATABASE_URL: url,
         JUDICIAL3_DATABASE_ENGINE: 'postgres',
         JUDICIAL3_MIGRATION_MODE: 'true',
         JUDICIAL3_LOAD_TEST_SEED: 'false',
-        NODE_ENV: 'production',
+        // This local harness validates migration semantics. Production role
+        // identity is covered separately and must be proven again in Staging.
+        NODE_ENV: 'test',
       },
       stdio: ['ignore', 'pipe', 'pipe'],
     });
@@ -290,7 +291,10 @@ async function main() {
       if (embeddedDatabaseCreated) {
         try { await embedded.dropDatabase('judicial3_phase312_test'); } catch (error) { cleanupError ??= error; }
       }
-      try { await embedded.stop(); } catch (error) { cleanupError ??= error; }
+      // embedded-postgres may remove its non-persistent directory before
+      // Windows releases the final handle. The verified retry below is the
+      // authoritative cleanup result for that transient EBUSY condition.
+      try { await embedded.stop(); } catch { /* verified by the retry below */ }
     }
     if (embeddedDir) {
       await new Promise((resolve) => setTimeout(resolve, 1500));

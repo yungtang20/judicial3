@@ -42,6 +42,16 @@ const seed = inspectProductionConfig({
 } as NodeJS.ProcessEnv);
 assert(!seed.ok && seed.forbidden.some((item) => item.includes('JUDICIAL3_LOAD_TEST_SEED')), 'test seed must be forbidden in production');
 
+for (const privilegedName of ['MIGRATION_DATABASE_URL', 'JUDICIAL3_PROVISIONING_DATABASE_URL', 'JUDICIAL3_MIGRATION_MODE', 'JUDICIAL3_PROVISIONING_MODE']) {
+  const privileged = inspectProductionConfig({
+    NODE_ENV: 'production',
+    DATABASE_URL: 'postgresql://app_user:placeholder@db.internal:5432/judicial3',
+    JUDICIAL3_PUBLIC_ORIGIN: 'https://judicial3.example.gov.tw',
+    [privilegedName]: 'present',
+  } as NodeJS.ProcessEnv);
+  assert(!privileged.ok && privileged.forbidden.includes(privilegedName), `${privilegedName} must be forbidden in web production`);
+}
+
 const externalAi = inspectProductionConfig({
   NODE_ENV: 'production',
   DATABASE_URL: 'postgresql://app_user:placeholder@db.internal:5432/judicial3',
