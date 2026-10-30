@@ -134,6 +134,7 @@ export default function App() {
   const [showCasesModal, setShowCasesModal] = useState(false);
   const [isSavingToDb, setIsSavingToDb] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
+  const [caseNumber, setCaseNumber] = useState<string | null>(null);
 
   // Interactive Question & Answer items (Editable)
   const [qaList, setQaList] = useState<InterviewQuestion[]>(analysisOutput.questions);
@@ -204,6 +205,7 @@ export default function App() {
     setIsApproved(false);
     setIsStale(false);
     setStaleReason(null);
+    setCaseNumber(null);
     setViewMode('results');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -293,6 +295,7 @@ export default function App() {
     setIsSavingToDb(true);
     try {
       const payload = {
+        ...(caseNumber ? { caseNumber } : {}),
         title: `${analysisOutput.categoryName} - ${analysisOutput.report.title_reason.slice(0, 30)}`,
         rawText: inputText,
         facts: analysisOutput.facts.map((f, idx) => ({
@@ -302,16 +305,41 @@ export default function App() {
           factType: f.source_type,
           confidenceScore: f.confidence,
         })),
+        evidence: analysisOutput.evidence.map((e, idx) => ({
+          itemCode: e.id || `evidence-${idx + 1}`,
+          evidenceType: e.evidence_type,
+          description: e.source_description,
+          collectionStatus: e.collection_status,
+          source: e.source_description,
+          relatedFactRefs: e.related_fact_refs || [],
+        })),
         candidates: analysisOutput.candidates.map((c) => ({
           chargeName: c.legal_name,
           status: c.candidate_status,
           rationale: c.alternative_explanations.join('；') || '法定構成要件比對',
+          statuteRef: c.statute_ref,
+          elements: c.elements.map((element) => ({
+            name: element.element_name,
+            description: element.element_description,
+            status: element.element_status,
+            factRefs: element.supporting_fact_refs || [],
+            evidenceRefs: element.related_evidence_refs || [],
+            missingInformation: element.missing_information || [],
+            reasoning: element.reasoning,
+            sourceRef: element.source_ref,
+          })),
         })),
         questions: qaList.map((q, idx) => ({
           seq: idx + 1,
           questionText: q.question_text,
-          answerText: q.expected_clarification || '待填答',
+          answerText: q.expected_clarification || '',
           isMandatory: q.is_required,
+          candidateRef: q.candidate_id,
+          elementRef: q.element_id,
+          questionType: q.question_type,
+          rationale: q.rationale,
+          targetFactRefs: q.target_fact_refs,
+          revisionNumber: q.revision_number,
         })),
         summary: reportSummary,
         isLocked: isApproved,
@@ -325,6 +353,7 @@ export default function App() {
 
       if (res.ok) {
         const data = await res.json();
+        setCaseNumber(data.caseNumber);
         setSaveSuccessMsg(`成功保存至 PostgreSQL 資料庫！案號: ${data.caseNumber}，版本: Rev #${data.revisionNumber}`);
         fetchDbStatus();
         fetchCases();
@@ -347,10 +376,91 @@ export default function App() {
         const data = await res.json();
         if (data.case?.raw_text) {
           setInputText(data.case.raw_text);
-          const output = LegalReasoningEngine.analyzeFullCase(data.case.raw_text);
+          const output = LegalReasoningEngine.analyzeFullCase(data.case.raw_text, data.case.id);
+          const generatedFacts = output.facts;
+          const persistedFacts = (data.facts || []).map((fact: any, index: number) => ({
+            ...(generatedFacts[index] || {}),
+            id: fact.id,
+            case_id: fact.case_id,
+            revision_id: fact.revision_id,
+            predicate: fact.description,
+            source_excerpt: fact.description,
+            source_type: fact.fact_type,
+            assertion_status: fact.status,
+            confidence: Number(fact.confidence_score ?? 1),
+          }));
+          const persistedCandidates = (data.candidates || []).map((candidate: any) => ({
+            id: candidate.id,
+            case_id: candidate.case_id,
+            revision_id: candidate.revision_id,
+            legal_name: candidate.charge_name,
+            statute_ref: candidate.article_number
+              ? `${candidate.law_name || ''} §${candidate.article_number}${Number(candidate.paragraph) > 1 ? ` ${candidate.paragraph}` : ''}`
+              : '',
+            candidate_status: candidate.status,
+            support_fact_refs: [],
+            contrary_fact_refs: [],
+            unknown_fact_refs: [],
+            alternative_explanations: candidate.rationale ? [candidate.rationale] : [],
+            statute_version: candidate.is_current ? (candidate.effective_date || '現行版本日期未載明') : 'UNKNOWN（官方版本尚未核對）',
+            created_at: candidate.created_at,
+            elements: (data.elements || [])
+              .filter((element: any) => element.candidate_id === candidate.id)
+              .map((element: any) => ({
+                id: element.id,
+                candidate_id: element.candidate_id,
+                element_name: element.element_name,
+                element_description: element.description,
+                supporting_fact_refs: element.fact_refs || [],
+                contrary_fact_refs: [],
+                related_evidence_refs: element.evidence_refs || [],
+                missing_information: element.missing_information || [],
+                related_fact_refs: element.fact_refs || [],
+                element_status: element.status === 'SUPPORTED' ? 'SATISFIED' : element.status === 'CONTRADICTED' ? 'CONTESTED' : 'INSUFFICIENT_DATA',
+                reasoning: element.reasoning || '',
+                source_ref: element.source_ref || '',
+                requires_human_review: element.status !== 'SUPPORTED',
+              })),
+          }));
+          const persistedQuestions = (data.questions || []).map((question: any, index: number) => ({
+            id: question.id,
+            case_id: question.case_id,
+            candidate_id: question.candidate_ref || '',
+            element_id: question.element_ref || undefined,
+            question_type: question.question_type,
+            question_text: question.question_text,
+            rationale: question.rationale || '',
+            target_fact_refs: question.target_fact_refs || [],
+            priority: 'P1_IMPORTANT',
+            review_status: 'DRAFT',
+            is_required: question.is_mandatory,
+            revision_number: question.revision_number || data.currentRevision?.revision_number || index + 1,
+            expected_clarification: question.answer_text || '',
+          }));
+          output.facts = persistedFacts;
+          output.evidence = (data.evidence || []).map((item: any) => ({
+            id: item.id,
+            case_id: item.case_id,
+            evidence_type: item.category || item.name,
+            source_description: item.description || item.source || '',
+            collection_status: item.collection_status,
+            related_fact_refs: item.related_fact_refs || [],
+            limitations: '持續依證據內容及來源核對，不能僅以紀錄存在推定要件成立。',
+            created_at: item.created_at,
+          }));
+          output.candidates = persistedCandidates;
+          output.questions = persistedQuestions;
+          output.caseRecord.current_revision = data.currentRevision?.revision_number || output.caseRecord.current_revision;
+          output.caseRecord.revision_history = data.revisionHistory || [];
+          output.caseRecord.facts = persistedFacts;
+          output.caseRecord.evidence_items = output.evidence;
+          output.caseRecord.legal_candidates = persistedCandidates;
+          output.caseRecord.questions = persistedQuestions;
+          output.report.summary_text = data.documents?.[0]?.content_markdown || output.report.summary_text;
           setAnalysisOutput(output);
-          setQaList(output.questions);
+          setQaList(persistedQuestions);
           setReportSummary(output.report.summary_text);
+          setCaseNumber(data.case.case_number);
         }
         setShowCasesModal(false);
         setViewMode('results');
@@ -366,6 +476,30 @@ export default function App() {
     navigator.clipboard.writeText(text);
     setCopiedSection(id);
     setTimeout(() => setCopiedSection(null), 2000);
+  };
+
+  const handleAddQuestion = () => {
+    setQaList((prev) => [...prev, {
+      id: `q-manual-${Date.now()}`,
+      case_id: analysisOutput.caseRecord.id,
+      candidate_id: '',
+      question_type: '9_UNRESOLVED_INQUIRY',
+      question_text: '',
+      rationale: '人工新增，請補充調查目的。',
+      target_fact_refs: [],
+      priority: 'P2_SUPPLEMENTAL',
+      review_status: 'DRAFT',
+      is_required: false,
+      revision_number: analysisOutput.caseRecord.current_revision,
+      expected_clarification: '',
+    }]);
+  };
+
+  const handleDeleteQuestion = (questionId: string) => {
+    setQaList((prev) => prev.filter((item) => item.id !== questionId));
+    setIsApproved(false);
+    setIsStale(true);
+    setStaleReason('問句已人工刪除，請保存新版本並重新確認下游文件。');
   };
 
   // Download official statement as Word (.doc) without hardcoded assumptions
@@ -472,6 +606,7 @@ p { margin: 8px 0; text-align: justify; }
               <div className="flex items-start px-5 pt-4 pb-2">
                 <Search className="w-5 h-5 text-slate-400 mt-1 shrink-0 mr-3" />
                 <textarea
+                  aria-label="案情摘要"
                   ref={landingInputRef}
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
@@ -590,6 +725,7 @@ p { margin: 8px 0; text-align: justify; }
             <div className="flex items-center bg-slate-50 hover:bg-white focus-within:bg-white rounded-full border border-slate-300 focus-within:border-blue-600 focus-within:shadow-md transition px-4 py-1.5">
               <Search className="w-4 h-4 text-slate-400 mr-2 shrink-0" />
               <input
+                aria-label="重新分析案情"
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
@@ -1017,6 +1153,13 @@ p { margin: 8px 0; text-align: justify; }
                     <Download className="w-3.5 h-3.5" />
                     <span>匯出筆錄 (TXT)</span>
                   </button>
+                  <button
+                    onClick={handleAddQuestion}
+                    className="px-2.5 py-1.5 text-xs rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 flex items-center space-x-1 transition cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>新增問句</span>
+                  </button>
                 </div>
               </div>
 
@@ -1034,16 +1177,37 @@ p { margin: 8px 0; text-align: justify; }
                       <span className="text-[10px] text-slate-400">待證目的: {q.rationale}</span>
                     </div>
 
-                    <div>
-                      <label className="font-semibold text-slate-700 block mb-1">訊問內容：</label>
-                      <p className="font-serif text-slate-900 bg-slate-50 p-2 rounded border border-slate-100">
-                        {q.question_text}
-                      </p>
+                      <div>
+                        <label className="font-semibold text-slate-700 block mb-1">訊問內容：</label>
+                      <textarea
+                        aria-label={`第 ${idx + 1} 題訊問內容`}
+                        value={q.question_text}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setQaList((prev) => prev.map((item) => item.id === q.id ? { ...item, question_text: val } : item));
+                          setIsApproved(false);
+                          setIsStale(true);
+                        }}
+                        rows={2}
+                        className="w-full font-serif text-slate-900 bg-slate-50 p-2 rounded border border-slate-100 focus:bg-white focus:border-blue-600 focus:outline-hidden"
+                        placeholder="請輸入一問一事的中性問句..."
+                      />
+                    </div>
+
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() => handleDeleteQuestion(q.id)}
+                        className="text-xs text-rose-600 hover:text-rose-800 flex items-center space-x-1"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>刪除問句</span>
+                      </button>
                     </div>
 
                     <div>
                       <label className="font-semibold text-slate-700 block mb-1">受詢人答詢紀錄（可線上編輯）：</label>
                       <textarea
+                        aria-label={`第 ${idx + 1} 題受詢人回答`}
                         value={q.expected_clarification || ''}
                         onChange={(e) => {
                           const val = e.target.value;
@@ -1144,6 +1308,7 @@ p { margin: 8px 0; text-align: justify; }
                     </span>
                   </div>
                   <textarea
+                    aria-label="條陳案情摘要"
                     value={reportSummary}
                     onChange={(e) => {
                       setReportSummary(e.target.value);

@@ -8,14 +8,15 @@ import type { AuthenticatedRequest } from './src/server/auth.js';
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT || 3000);
 
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '1mb' }));
 
 // Local-only bridge for the browser MVP. Production deployments must provide a
 // real login/session service and cannot use this endpoint.
 app.post('/api/auth/dev-session', (req, res) => {
-  if (process.env.NODE_ENV === 'production' || process.env.JUDICIAL3_ALLOW_DEV_SESSION === 'false') {
+  const isLoopback = req.ip === '127.0.0.1' || req.ip === '::1' || req.ip === '::ffff:127.0.0.1';
+  if (process.env.NODE_ENV === 'production' || process.env.JUDICIAL3_ALLOW_DEV_SESSION !== 'true' || !isLoopback) {
     return res.status(404).json({ error: 'not found' });
   }
   try {
@@ -28,7 +29,9 @@ app.post('/api/auth/dev-session', (req, res) => {
 
 // Init Gemini client using the recommended @google/genai SDK
 const apiKey = process.env.GEMINI_API_KEY;
-const ai = apiKey
+const modelName = process.env.GEMINI_MODEL?.trim();
+const externalAiEnabled = process.env.JUDICIAL3_ALLOW_EXTERNAL_AI === 'true';
+const ai = externalAiEnabled && apiKey && modelName
   ? new GoogleGenAI({
       apiKey,
       httpOptions: {
@@ -42,13 +45,27 @@ const ai = apiKey
 // Chat endpoint supporting Taiwan Criminal Investigation context
 app.post('/api/chat', requireApiUser, async (req, res) => {
   try {
-    const { messages, systemInstruction } = req.body;
-    if (!messages || !Array.isArray(messages)) {
-      return res.status(400).json({ error: 'messages array required' });
+    const { messages } = req.body;
+    if (
+      !Array.isArray(messages) ||
+      messages.length === 0 ||
+      messages.length > 50 ||
+      messages.some((message: unknown) => {
+        if (!message || typeof message !== 'object') return true;
+        const item = message as { role?: unknown; content?: unknown };
+        return !['user', 'assistant'].includes(String(item.role)) ||
+          typeof item.content !== 'string' ||
+          !item.content.trim() ||
+          item.content.length > 20_000;
+      })
+    ) {
+      return res.status(400).json({ error: 'messages must contain 1-50 user/assistant text items, each at most 20000 characters' });
     }
 
     if (!ai) {
-      return res.json({
+      return res.status(503).json({
+        error: 'external AI is disabled or not configured',
+        code: 'LLM_NOT_CONFIGURED',
         hasGemini: false,
         reply: null,
       });
@@ -69,10 +86,10 @@ app.post('/api/chat', requireApiUser, async (req, res) => {
 6. 回應風格嚴謹、客觀、邏輯清晰、使用標準台灣繁體中文，善用清晰的 Markdown 標題、條列與排版。`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: modelName!,
       contents,
       config: {
-        systemInstruction: systemInstruction || defaultSystemInstruction,
+        systemInstruction: defaultSystemInstruction,
       },
     });
 
@@ -82,11 +99,11 @@ app.post('/api/chat', requireApiUser, async (req, res) => {
       reply,
     });
   } catch (error: any) {
-    // Graceful fallback to local rule-based investigation assistant when API key is unavailable or restricted
-    return res.json({
+    return res.status(503).json({
+      error: 'external AI service unavailable',
+      code: 'LLM_UNAVAILABLE',
       hasGemini: false,
       reply: null,
-      fallback: true,
       reason: error?.status === 403 || error?.message?.includes('403') ? 'KEY_RESTRICTED' : 'UNAVAILABLE'
     });
   }
@@ -129,8 +146,34 @@ app.get('/api/cases/:id', requireApiUser, async (req: AuthenticatedRequest, res)
 // Save case analysis into PostgreSQL with atomic revision snapshot
 app.post('/api/cases/save', requireApiUser, async (req: AuthenticatedRequest, res) => {
   try {
+    const body = req.body || {};
+    const factStatuses = new Set(['ASSERTED', 'ADMITTED', 'DENIED', 'INFERRED', 'UNKNOWN']);
+    const candidateStatuses = new Set(['PRIMARY', 'ALTERNATIVE', 'LOW_CONFIDENCE', 'UNRESOLVED', 'REJECTED']);
+    if (
+      typeof body.title !== 'string' || !body.title.trim() ||
+      body.title.length > 500 ||
+      typeof body.rawText !== 'string' || !body.rawText.trim() ||
+      body.rawText.length > 200_000 ||
+      typeof body.summary !== 'string' || body.summary.length > 500 ||
+      !Array.isArray(body.facts) || !body.facts.every((fact: any) =>
+        Number.isInteger(fact?.seq) && fact.seq > 0 && typeof fact.description === 'string' &&
+        fact.description.trim().length > 0 && fact.description.length <= 20_000 && factStatuses.has(fact.status)
+      ) ||
+      !Array.isArray(body.candidates) || !body.candidates.every((candidate: any) =>
+        typeof candidate?.chargeName === 'string' && candidate.chargeName.trim().length > 0 &&
+        typeof candidate.rationale === 'string' && candidateStatuses.has(candidate.status) &&
+        (candidate.statuteRef === undefined || typeof candidate.statuteRef === 'string')
+      ) ||
+      !Array.isArray(body.questions) || !body.questions.every((question: any) =>
+        Number.isInteger(question?.seq) && question.seq > 0 && typeof question.questionText === 'string' &&
+        question.questionText.trim().length > 0 && question.questionText.length <= 5_000 &&
+        (question.answerText === undefined || (typeof question.answerText === 'string' && question.answerText.length <= 50_000))
+      )
+    ) {
+      return res.status(400).json({ error: 'invalid case analysis payload' });
+    }
     const { saveCaseAnalysis } = await import('./src/server/databaseService.js');
-    const result = await saveCaseAnalysis({ ...req.body, ownerId: req.userId });
+    const result = await saveCaseAnalysis({ ...body, ownerId: req.userId });
     res.json(result);
   } catch (err: any) {
     console.error('Error saving case analysis:', err);
@@ -143,7 +186,8 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     hasGemini: !!ai,
-    model: 'gemini-3.8-flash',
+    externalAiEnabled,
+    model: ai ? modelName : null,
   });
 });
 

@@ -133,6 +133,7 @@ export class LegalReasoningEngine {
     const now = new Date().toISOString();
     const sentences = rawText
       .split(/[。！？；\n]/)
+      .flatMap((sentence) => sentence.split(/(?:，|,)\s*(?=(?:但|惟|然而|可是|目前|尚未|仍待|手機是否|物品是否))/))
       .map((s) => s.trim())
       .filter((s) => s.length >= 4);
 
@@ -153,13 +154,13 @@ export class LegalReasoningEngine {
       else if (/否認|抗辯|辯稱|稱其|稱以為|不知情|不知為|辯解|並未|沒有參與|推諉|主張不知/i.test(sentence)) {
         status = 'DENIED';
       }
-      // 3. 模型或偵查員推論
+      // 3. 未知或待查項目（絕不視為 FALSE）
+      else if (/未知|不詳|尚待查明|待查|待確認|未明|無法確認|不清楚|待補強|未到案|尚未取得/i.test(sentence)) {
+        status = 'UNKNOWN';
+      }
+      // 4. 模型或偵查員推論
       else if (/研判|推論|疑似|可能|初步研判|依經驗|推測/i.test(sentence)) {
         status = 'INFERRED';
-      }
-      // 4. 未知或待查項目（絕不視為 FALSE）
-      else if (/未知|不詳|尚待查明|待查|未明|無法確認|不清楚|待補強|未到案/i.test(sentence)) {
-        status = 'UNKNOWN';
       }
 
       // 提取時間
@@ -1160,7 +1161,7 @@ export class LegalReasoningEngine {
         review_status: 'DRAFT',
         is_required: true,
         revision_number: revisionId,
-        expected_clarification: `釐清 ${item.label} 之待證事項。`,
+        expected_clarification: '',
       });
     });
 
@@ -1200,7 +1201,7 @@ export class LegalReasoningEngine {
             review_status: 'DRAFT',
             is_required: true,
             revision_number: revisionId,
-            expected_clarification: `釐清 ${candidate.legal_name} 的 ${item.elementHint} 要件事實。`,
+            expected_clarification: '',
           });
           sequence += 1;
         });
@@ -1397,6 +1398,9 @@ export class LegalReasoningEngine {
     }
     if (!report.summary_text.trim() || report.summary_text.length < 15) {
       errors.push('案情摘要不得少於15字，且須完整包含人、事、時、地、物要件');
+    }
+    if (report.summary_text.length > 500) {
+      errors.push('案情摘要不得超過500個Unicode字元，請重新整理後再輸出');
     }
     if (!report.jurisdiction.trim() || report.jurisdiction.includes('待填報')) {
       errors.push('管轄檢察署需填報');

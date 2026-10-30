@@ -93,8 +93,22 @@ def run_audit() -> int:
         results.append(("CHK-06", "專案設定解析", "FAIL", "缺少 package.json"))
 
     # 7. 是否存在已知的危險設定（如外部 AI 預設開啟）
-    # 規格要求：外部 AI 必須預設停用
-    results.append(("CHK-07", "危險設定與外部 AI 開關", "PASS", "ALLOW_EXTERNAL_AI 預設維持停用，無私自傳送風險"))
+    # 規格要求：後端必須明確檢查開關，且未設定時 fail closed。
+    server_path = ROOT / "server.ts"
+    server_text = server_path.read_text(encoding="utf-8") if server_path.is_file() else ""
+    external_ai_fail_closed = (
+        "JUDICIAL3_ALLOW_EXTERNAL_AI === 'true'" in server_text
+        and "externalAiEnabled && apiKey" in server_text
+        and "LLM_NOT_CONFIGURED" in server_text
+        and "status(503)" in server_text
+    )
+    results.append((
+        "CHK-07",
+        "危險設定與外部 AI 開關",
+        "PASS" if external_ai_fail_closed else "FAIL",
+        "server.ts 實際檢查顯式開關、API key，未設定時回傳 503" if external_ai_fail_closed
+        else "未證明外部 AI 後端閘門預設拒絕請求",
+    ))
 
     # 8. 文件及模板是否存在
     docs_exist = check_file("docs/PROJECT_SPEC.md") and check_file("docs/SECURITY.md")

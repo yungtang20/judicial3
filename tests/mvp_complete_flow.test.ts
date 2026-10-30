@@ -49,6 +49,12 @@ try {
           },
         ],
       },
+      {
+        chargeName: '中華民國刑法第337條 侵占離本人持有物罪',
+        status: 'UNRESOLVED',
+        rationale: '物品是否已離本人持有仍待查證',
+        statuteRef: '中華民國刑法 §337',
+      },
     ],
     questions: [
       {
@@ -75,8 +81,14 @@ try {
   if (!details?.case || details.case.raw_text !== rawText) throw new Error('重新讀取未保留原始案情');
   if (details.facts.length !== 3 || details.evidence.length !== 1) throw new Error('Fact/Evidence 未完整保存');
   if (details.evidence[0].collection_status !== 'PENDING_SEARCH') throw new Error('Evidence 狀態被錯誤提升');
-  if (details.candidates.length !== 1) throw new Error('候選法律方向未保存');
+  if (details.candidates.length !== 2 || details.elements.length !== 1) throw new Error('候選法律方向或構成要件未保存');
+  const savedArticles = details.candidates.map((candidate: any) => candidate.article_number).sort();
+  if (savedArticles.join(',') !== '320,337') throw new Error(`候選罪名法條映射錯誤：${savedArticles.join(',')}`);
+  if (details.elements[0].fact_refs?.length !== 1 || details.elements[0].status !== 'UNRESOLVED') {
+    throw new Error('構成要件追溯或不確定狀態未保存');
+  }
   if (details.questions.length !== 1 || details.questions[0].candidate_ref !== 'local-candidate-1') throw new Error('問句追溯欄位未保存');
+  if (details.questions[0].target_fact_refs?.length !== 1 || details.questions[0].answer_text !== '') throw new Error('問句目標事實或回答欄位未保存');
 
   const revised = await saveCaseAnalysis({
     ownerId,
@@ -85,18 +97,32 @@ try {
     rawText: `${rawText} 已取得店內監視器影像。`,
     facts: [{ seq: 1, description: '影像顯示乙拿起手機離開', status: 'ADMITTED', confidenceScore: 0.9 }],
     evidence: [{ itemCode: 'EV-002', evidenceType: '監視器影像', description: '已取得清晰影像', collectionStatus: 'OBTAINED', source: '便利商店店內系統', relatedFactRefs: ['local-fact-1'] }],
-    candidates: [{ chargeName: '中華民國刑法第320條第1項 普通竊盜罪', status: 'UNRESOLVED', rationale: '仍待完整要件核對' }],
+    candidates: [{ chargeName: '中華民國刑法第320條第1項 普通竊盜罪', status: 'UNRESOLVED', rationale: '仍待完整要件核對', statuteRef: '中華民國刑法 §320 I' }],
     questions: [{ seq: 1, questionText: '請說明影像中每個動作。' }],
     summary: 'MVP 修訂摘要',
   });
   if (revised.revisionNumber !== 2) throw new Error(`修訂未建立 revision 2，實際為 ${revised.revisionNumber}`);
   const revisedDetails = await getCaseDetails(saved.caseId, ownerId);
   const revisedRawText = `${rawText} 已取得店內監視器影像。`;
-  if (revisedDetails?.currentRevision?.revision_number !== 2 || revisedDetails.case.raw_text !== revisedRawText) {
+  if (revisedDetails?.currentRevision?.revision_number !== 2 || revisedDetails.case.raw_text !== revisedRawText || revisedDetails.revisionHistory.length !== 2) {
     throw new Error('修訂後目前版本未正確更新');
   }
   const forbidden = await getCaseDetails(saved.caseId, '33333333-3333-3333-3333-333333333301');
   if (forbidden !== null) throw new Error('其他使用者仍可讀取案件');
+
+  const secondOwner = '22222222-2222-2222-2222-222222222202';
+  const secondSaved = await saveCaseAnalysis({
+    ownerId: secondOwner,
+    caseNumber: `mvp-owner-b-${Date.now()}`,
+    title: 'MVP owner B 隔離測試案',
+    rawText: '乙方案件的獨立虛構摘要。',
+    facts: [{ seq: 1, description: '乙方陳述', status: 'ASSERTED' }],
+    candidates: [],
+    questions: [],
+    summary: '乙方案件摘要',
+  });
+  if (!(await getCaseDetails(secondSaved.caseId, secondOwner))) throw new Error('owner B 無法讀取自己的案件');
+  if (await getCaseDetails(secondSaved.caseId, ownerId)) throw new Error('owner A 可讀取 owner B 案件');
 
   console.log('MVP_FLOW_PASS: create/save/read/revise/traceability/owner-isolation');
 } finally {

@@ -129,18 +129,28 @@ export async function getCaseDetails(caseId: string, ownerId: string) {
   const revId = caseObj.current_revision_id;
 
   const revisionRes = await db.query<any>(`SELECT * FROM case_revisions WHERE id = $1`, [revId]);
+  const revisionHistoryRes = await db.query<any>(`SELECT * FROM case_revisions WHERE case_id = $1 ORDER BY revision_number ASC`, [caseId]);
   const factsRes = await db.query<any>(`SELECT * FROM facts WHERE revision_id = $1 ORDER BY fact_seq ASC`, [revId]);
   const evidenceRes = await db.query<any>(`SELECT * FROM evidence_items WHERE revision_id = $1 ORDER BY item_code ASC`, [revId]);
-  const candidatesRes = await db.query<any>(`SELECT * FROM legal_candidates WHERE revision_id = $1`, [revId]);
+  const candidatesRes = await db.query<any>(`
+    SELECT c.*, s.law_name, s.article_number, s.paragraph, s.subparagraph, s.content AS statute_content, s.effective_date, s.is_current
+    FROM legal_candidates c
+    LEFT JOIN statute_references s ON s.id = c.statute_id
+    WHERE c.revision_id = $1
+    ORDER BY c.id
+  `, [revId]);
+  const elementsRes = await db.query<any>(`SELECT * FROM constituent_elements WHERE revision_id = $1 ORDER BY candidate_id, id`, [revId]);
   const questionsRes = await db.query<any>(`SELECT * FROM interview_questions WHERE revision_id = $1 ORDER BY question_seq ASC`, [revId]);
   const docsRes = await db.query<any>(`SELECT * FROM document_outputs WHERE revision_id = $1`, [revId]);
 
   return {
     case: caseObj,
     currentRevision: revisionRes.rows[0] || null,
+    revisionHistory: revisionHistoryRes.rows,
     facts: factsRes.rows,
     evidence: evidenceRes.rows,
     candidates: candidatesRes.rows,
+    elements: elementsRes.rows,
     questions: questionsRes.rows,
     documents: docsRes.rows,
   };
@@ -196,6 +206,19 @@ export interface SaveCasePayload {
   }>;
   summary: string;
   isLocked?: boolean;
+}
+
+function parseStatuteReference(reference: string | undefined) {
+  const normalized = (reference || '').trim();
+  const match = normalized.match(/^(.+?)\s+§([0-9-]+)(?:\s+([IVX]+))?/i);
+  if (!match) return null;
+  const romanParagraphs: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4, V: 5 };
+  return {
+    lawName: match[1].trim(),
+    articleNumber: match[2],
+    paragraph: romanParagraphs[(match[3] || 'I').toUpperCase()] || 1,
+    original: normalized,
+  };
 }
 
 export async function saveCaseAnalysis(payload: SaveCasePayload) {
@@ -273,17 +296,29 @@ export async function saveCaseAnalysis(payload: SaveCasePayload) {
     // Insert Candidates
     for (const c of payload.candidates) {
       let statuteId: string;
+      const parsedStatute = parseStatuteReference(c.statuteRef);
+      if (!parsedStatute) {
+        throw new Error(`candidate statuteRef is missing or invalid: ${c.chargeName}`);
+      }
       const statRes = await db.query<any>(`
-        SELECT id FROM statute_references LIMIT 1;
-      `);
+        SELECT id FROM statute_references
+        WHERE law_name = $1 AND article_number = $2 AND paragraph = $3
+        ORDER BY is_current DESC, effective_date DESC
+        LIMIT 1;
+      `, [parsedStatute.lawName, parsedStatute.articleNumber, parsedStatute.paragraph]);
       if (statRes.rows.length > 0) {
         statuteId = statRes.rows[0].id;
       } else {
         const newStat = await db.query<any>(`
-          INSERT INTO statute_references (law_name, article_number, content, effective_date)
-          VALUES ('中華民國刑法', '339-4', '加重詐欺罪', '2014-06-18')
+          INSERT INTO statute_references (law_name, article_number, paragraph, content, effective_date, is_current)
+          VALUES ($1, $2, $3, $4, '1900-01-01', FALSE)
           RETURNING id;
-        `);
+        `, [
+          parsedStatute.lawName,
+          parsedStatute.articleNumber,
+          parsedStatute.paragraph,
+          `[UNVERIFIED_SOURCE] ${parsedStatute.original}`,
+        ]);
         statuteId = newStat.rows[0].id;
       }
 
@@ -319,9 +354,9 @@ export async function saveCaseAnalysis(payload: SaveCasePayload) {
     for (const q of payload.questions) {
       await db.query(`
         INSERT INTO interview_questions
-          (case_id, revision_id, question_seq, question_text, is_mandatory, candidate_ref, element_ref, question_type, rationale, target_fact_refs, revision_number)
-        VALUES ($1::UUID, $2::UUID, $3::INTEGER, $4::TEXT, $5::BOOLEAN, $6::TEXT, $7::TEXT, $8::VARCHAR, $9::TEXT, $10::JSONB, $11::INTEGER);
-      `, [caseId, revisionId, q.seq, q.questionText, q.isMandatory ?? true, q.candidateRef || '', q.elementRef || '', q.questionType || '9_UNRESOLVED_INQUIRY', q.rationale || '', JSON.stringify(q.targetFactRefs || []), q.revisionNumber || revisionNumber]);
+          (case_id, revision_id, question_seq, question_text, answer_text, is_mandatory, candidate_ref, element_ref, question_type, rationale, target_fact_refs, revision_number)
+        VALUES ($1::UUID, $2::UUID, $3::INTEGER, $4::TEXT, $5::TEXT, $6::BOOLEAN, $7::TEXT, $8::TEXT, $9::VARCHAR, $10::TEXT, $11::JSONB, $12::INTEGER);
+      `, [caseId, revisionId, q.seq, q.questionText, q.answerText || '', q.isMandatory ?? true, q.candidateRef || '', q.elementRef || '', q.questionType || '9_UNRESOLVED_INQUIRY', q.rationale || '', JSON.stringify(q.targetFactRefs || []), q.revisionNumber || revisionNumber]);
     }
 
     // Insert Document Output (Draft or Approved)

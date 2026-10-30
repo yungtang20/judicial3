@@ -19,6 +19,16 @@ assert(output.questions.some((question) => question.question_text.includes('物�
 assert(!output.questions.some((question) => question.question_text.includes('是否具有不法所有意圖')),
   'registry 路線不得直接要求受詢問者回答法律評價');
 assert(output.facts.some((fact) => fact.assertion_status === 'DENIED'), '乙的辯解須保留為 DENIED');
+assert(output.questions.every((question) => question.expected_clarification === ''),
+  '新生成問句不得把預期釐清文字預填成受詢人答案');
+
+const mixedStatement = Engine.analyzeFullCase(
+  '乙承認拿起手機離開，但辯稱不知道手機所有人。店員表示監視器可能拍到，目前尚未取得影像，手機是否仍在甲持有範圍均待確認。',
+  'CORRECTIVE-MIXED-STATEMENT'
+);
+assert(mixedStatement.facts.some((fact) => fact.assertion_status === 'ADMITTED'), '混合陳述中的承認內容須獨立保留');
+assert(mixedStatement.facts.some((fact) => fact.assertion_status === 'DENIED'), '混合陳述中的否認內容須獨立保留');
+assert(mixedStatement.facts.some((fact) => fact.assertion_status === 'UNKNOWN'), '混合陳述中的待確認內容須獨立保留');
 
 const withObtainedVideo = Engine.analyzeFullCase(
   `${base} 已取得店內監視器影像，畫面清晰錄得乙拿起手機離開。`,

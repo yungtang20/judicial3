@@ -472,6 +472,9 @@ export class AnalyzerService {
     if (!report.summary_text.trim() || report.summary_text.length < 20) {
       errors.push('案情摘要不得少於20字，且須完整包含人、事、時、地、物要件。');
     }
+    if (report.summary_text.length > 500) {
+      errors.push('案情摘要不得超過500個Unicode字元，請重新整理後再輸出。');
+    }
     if (!report.jurisdiction.trim()) {
       errors.push('本案管轄檢察署或法院不得為空白。');
     }
@@ -483,32 +486,32 @@ export class AnalyzerService {
   }
 
   /**
-   * 沙盒便利工具：一鍵標準化公務條陳（自動校正民國年、補齊機關全銜與案號）
+   * 只補上可辨識的格式標記；不捏造日期、機關、人員或案號。
    */
   static autoFixReport(report: OfficialReport): OfficialReport {
     let incidentTime = report.incident_time_roc.trim();
     if (!incidentTime.startsWith('民國')) {
-      incidentTime = `民國113年8月10日10時00分許`;
+      incidentTime = '[發生時間待查證填報]';
     }
 
     let station = report.station.trim();
     if (!station) {
-      station = '臺北市政府警察局中正第一分局忠孝西路派出所';
+      station = '[報告單位待填報]';
     }
 
     let jurisdiction = report.jurisdiction.trim();
     if (!jurisdiction) {
-      jurisdiction = '臺灣臺北地方檢察署';
+      jurisdiction = '[管轄地方檢察署待填報]';
     }
 
     let officer = report.handling_officer.trim();
     if (!officer) {
-      officer = '警員 林○○';
+      officer = '[承辦員警待填報]';
     }
 
     let certNo = report.certificate_number.trim();
     if (!certNo || certNo.includes('待填報')) {
-      certNo = `北市警中正一分刑受字第113081001號`;
+      certNo = '[受處理案件證明單案號待填報]';
     }
 
     return {
