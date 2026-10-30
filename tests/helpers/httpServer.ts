@@ -74,8 +74,14 @@ export async function startTestServer(extraEnv: Record<string, string> = {}): Pr
           base, port, child,
           output: () => `${stdout}\n${stderr}`.slice(-3000),
           close: async () => {
+            const exited = child.exitCode === null
+              ? new Promise<void>((resolve) => child.once('exit', () => resolve()))
+              : Promise.resolve();
             killTree(child);
-            if (child.exitCode === null) await new Promise<void>((resolve) => child.once('exit', () => resolve()));
+            await Promise.race([
+              exited,
+              new Promise<void>((resolve) => setTimeout(resolve, 5_000)),
+            ]);
             fs.rmSync(tempDb, { recursive: true, force: true });
           },
         };
