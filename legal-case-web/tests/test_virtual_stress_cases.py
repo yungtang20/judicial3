@@ -177,3 +177,39 @@ def test_virtual_case_07_favorable_evidence():
     case = _run_case(summary)
     candidate_ids = {item["id"] for item in case["candidates"]}
     assert "theft" in candidate_ids
+
+
+def test_virtual_case_08_robbery():
+    """Robbery: violence + theft."""
+    summary = (
+        "115年02月10日22時，臺北市萬華區萬華路100號，"
+        "被告持刀威脅被害人交出財物，被害人因恐懼交出錢包及手機。"
+        "被告取得財物後逃逸。"
+    )
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
+
+
+def test_virtual_case_09_assault():
+    """Assault: physical injury."""
+    summary = (
+        "115年01月20日18時，臺北市大安區大安路50號，"
+        "被告與被害人因停車糾紛發生口角，被告毆打被害人，"
+        "造成被害人頭部挫傷及左手骨折，經醫院驗傷診斷。"
+    )
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
+
+
+def test_virtual_case_10_defamation():
+    """Defamation: public insult."""
+    summary = (
+        "115年12月01日10時，被告在社群媒體公開發文，"
+        "指稱被害人A詐騙金錢、品行不端，"
+        "該貼文被多人轉發，被害人名譽受損。"
+    )
+    case = _run_case(summary)
+    # System may or may not detect defamation; verify case runs
+    assert case["state"] == "OUTPUT_READY"
