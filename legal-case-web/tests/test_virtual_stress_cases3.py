@@ -233,3 +233,35 @@ def test_vc3_20_obscenity():
     case = _run_case(summary)
     candidate_ids = {item["id"] for item in case["candidates"]}
     assert len(candidate_ids) >= 1
+
+
+def test_vc3_21_unlawful_detention():
+    """Unlawful detention: locking someone in a room."""
+    summary = "115年01月10日，被告將被害人鎖在房間內，限制其行動自由，長達3小時。"
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
+
+
+def test_vc3_22_social_order():
+    """Social order maintenance: public disturbance."""
+    summary = "115年02月01日，被告在公共場所聚眾妨害秩序，大聲喧嘩，經警方勸阻仍不聽。"
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
+
+
+def test_vc3_23_liberty_intrusion():
+    """Liberty: unlawful entry + restriction."""
+    summary = "115年03月01日，被告未經同意進入被害人住處，限制被害人行動自由。"
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
+
+
+def test_vc3_24_multi_victim_robbery():
+    """Multi-victim robbery: convenience store."""
+    summary = "115年04月01日23時，被告持刀進入便利商店，威脅店員及顧客，搶走收銀機內現金5000元及顧客手機一部。"
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
