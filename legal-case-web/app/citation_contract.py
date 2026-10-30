@@ -288,3 +288,148 @@ def citation_contract_is_valid(value: dict[str, Any]) -> bool:
     return required <= value.keys() and value.get("parse_status") in {
         PARSE_SUCCESS, PARSE_PARTIAL, PARSE_UNPARSED,
     }
+
+
+# ---------------------------------------------------------------------------
+# Citation tuple match (borrowed from judicial-search-tool citation_normalizer)
+# ---------------------------------------------------------------------------
+# Coarse-to-fine coverage comparison: a lawyer's query citation (often coarse,
+# e.g. "刑法第320條") should match a judgment's extracted citation that is more
+# specific (e.g. "刑法第320條第1項"), but NOT vice versa.  This prevents
+# negation sentences like "本件與刑法第320條無關" from being counted as hits
+# when only a string-contains check is used.
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class Citation:
+    """Structured citation tuple for coarse-to-fine coverage comparison.
+
+    Mirrors ``CitationMention`` but is a lightweight value object that can be
+    constructed from a lawyer's search keyword (which may be coarse) and from
+    a parsed ``CitationMention`` (which may be fine-grained).
+    """
+
+    law_name: str | None
+    article_number: int | None
+    article_subnumber: int | None = None
+    paragraph_number: int | None = None
+    item_number: int | None = None
+    subitem_number: int | None = None
+
+    def as_tuple(self) -> tuple:
+        return (
+            self.law_name,
+            self.article_number,
+            self.article_subnumber,
+            self.paragraph_number,
+            self.item_number,
+            self.subitem_number,
+        )
+
+    def covers(self, other: "Citation") -> bool:
+        """Return True if ``self`` (query) should match ``other`` (reference).
+
+        Law name: if self.law_name is None, law name is unconstrained (lawyer
+        did not specify a law).  Otherwise other.law_name must equal self.law_name.
+        Article: must be equal (required on both sides).
+        Sub/paragraph/item/subitem: if self has a value, other must equal it;
+        if self is None, unconstrained (coarse query matches fine reference).
+        """
+        if self.law_name is not None and other.law_name != self.law_name:
+            return False
+        if self.article_number is None or other.article_number is None:
+            return False
+        if self.article_number != other.article_number:
+            return False
+        for s, o in (
+            (self.article_subnumber, other.article_subnumber),
+            (self.paragraph_number, other.paragraph_number),
+            (self.item_number, other.item_number),
+            (self.subitem_number, other.subitem_number),
+        ):
+            if s is not None and s != o:
+                return False
+        return True
+
+
+def mention_to_citation(mention: CitationMention) -> Citation:
+    """Convert a parsed ``CitationMention`` into a lightweight ``Citation``."""
+    return Citation(
+        law_name=mention.law_name,
+        article_number=mention.article_number,
+        article_subnumber=mention.article_subnumber,
+        paragraph_number=mention.paragraph_number,
+        item_number=mention.item_number,
+        subitem_number=mention.subitem_number,
+    )
+
+
+def citation_covers(query: Citation, reference: Citation) -> bool:
+    """Convenience wrapper around ``Citation.covers``."""
+    return query.covers(reference)
+
+
+def parse_legal_keyword(keyword: str) -> Citation | None:
+    """Parse a lawyer's keyword like ``刑法第320條`` into a ``Citation``.
+
+    Returns None if the keyword does not look like a legal-article reference
+    (e.g. a free-text concept like ``比例原則``).  Callers should fall back to
+    a plain keyword path in that case.
+    """
+    if not isinstance(keyword, str) or not keyword.strip():
+        return None
+    text = keyword.strip()
+
+    # Reuse the same numeral regex as the mention parser.
+    _num = r"(?:\d+|[〇零○０一二兩三四五六七八九十百千萬]+)"
+
+    # Law name: optional, 1-24 CJK chars ending in 法/條例/規則/辦法/細則 or 同法
+    law_match = re.search(r"([\u4e00-\u9fff]{1,24}(?:法|條例|規則|辦法|細則)|同法)", text)
+    law_raw = law_match.group(1) if law_match else None
+    law_name = None
+    if law_raw and law_raw != "同法":
+        law_name, _status = normalize_law_name(law_raw)
+        if law_name is None:
+            # Unknown law: keep raw name as-is (do not guess canonical)
+            law_name = law_raw
+    elif law_raw == "同法":
+        law_name = None  # context-dependent; caller must resolve
+
+    # Article number: 第N條 or N條 or N (bare)
+    article_match = re.search(rf"第?\s*({_num})\s*條?", text)
+    if not article_match:
+        return None
+    article_raw = article_match.group(1)
+    article_num = chinese_number(article_raw)
+    if article_num is None or article_num > 9999:
+        return None
+
+    # 之 N / -N sub-number
+    sub = None
+    sub_match = re.search(rf"(?:之|-)\s*({_num})", text)
+    if sub_match:
+        sub = chinese_number(sub_match.group(1))
+
+    # 項 / 款 / 目
+    paragraph = None
+    item = None
+    subitem = None
+    para_match = re.search(rf"第?\s*({_num})\s*項", text)
+    if para_match:
+        paragraph = chinese_number(para_match.group(1))
+    item_match = re.search(rf"第?\s*({_num})\s*款", text)
+    if item_match:
+        item = chinese_number(item_match.group(1))
+    subitem_match = re.search(rf"第?\s*({_num})\s*目", text)
+    if subitem_match:
+        subitem = chinese_number(subitem_match.group(1))
+
+    return Citation(
+        law_name=law_name,
+        article_number=article_num,
+        article_subnumber=sub,
+        paragraph_number=paragraph,
+        item_number=item,
+        subitem_number=subitem,
+    )

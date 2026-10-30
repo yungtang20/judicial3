@@ -28,7 +28,23 @@
 - `同法` 只在同一輸入且前文可解析到已核准法規名稱時解析；跨段落或跨文件 context 仍回報不完整，不能猜測。
 - parser 不處理否定／肯定立場；`stance_status=NOT_ANALYZED`，需由獨立語句分析流程處理。
 - `LEGAL_TRACE_FIXTURE.json` 是人工定義的 fixture，不是實際案件、LLM、DB 或 API trace。
-- 尚未建立正式整合 adapter；若日後整合，需先完成 citation contract 的法律人工審核、法源版本綁定與 read-only trace export。
+- 尚未建立正式整合 adapter；若日後整合，需先完成 citation contract 的法律人工審核、法源版本綁定與 read-only trace export.
+
+## 外部資源整合進度（2026-10-31）
+
+已從 judicial-search-tool 借鏡並新增以下模組（均為離線、未接入 runtime）：
+
+1. **`app/citation_contract.py`**：新增 `Citation` dataclass 與 `covers()` 方法（coarse-to-fine tuple match），以及 `parse_legal_keyword()` 與 `mention_to_citation()`。可避免「本件與第 X 條無關」被字串誤判為命中。對應 `LEGAL_TRACE_FIXTURE` 的 citation 精度提升。
+2. **`app/anomaly_log.py`**：新增 JSONL 附屬異常記錄模組（append-only、side-effect-safe），供 parser/retrieval 邊界異常累積診斷。
+3. **`app/synonym_tiers.py`**：新增 4-tier 同義詞管理（confirmed/candidate/likely_typo/rejected），discovery-driven、律師手動確認。搜尋展開僅使用 confirmed tier。
+
+尚未整合（待 Human Gate）：
+- MCP fork 維護方式（mcp-taiwan-legal-db editable install）
+- SSE streaming + abort/resume/finalize 狀態機
+- 兩階段評分 (3K 粗篩 → 12K 精讀) 與 smart truncate
+- CAIL 評估方法論 (F1 / 刑期距離評分)
+- lawbank 起訴書 / 行政函釋資料來源擴充
+- TaiLexi 條文↔判例雙向連結設計
 
 ## Trace-first 評估器未決事項
 
