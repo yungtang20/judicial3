@@ -213,3 +213,33 @@ def test_virtual_case_10_defamation():
     case = _run_case(summary)
     # System may or may not detect defamation; verify case runs
     assert case["state"] == "OUTPUT_READY"
+
+
+def test_virtual_case_11_wallet_card_fraud():
+    """Wallet lost + unauthorized card withdrawal (user scenario 1)."""
+    summary = (
+        "115年09月10日21時，我最後看到我的錢包是在臺北市佩容區佩容路1號的夜店裡，"
+        "我返家後才發現我的錢包不見了，然後在115年09月21日10時在臺北市詠棠區詠棠路1號，"
+        "接到銀行的簡訊說，我在115年09月20日12時有人使用我的卡片提領一筆2萬元的費用，"
+        "但我不是我本人提領的。"
+    )
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    # Should detect theft, embezzlement, and/or fraud
+    assert len(candidate_ids) >= 1
+    assert len(case["questions"]) >= 5
+
+
+def test_virtual_case_12_spousal_sexual_assault():
+    """Spousal sexual assault + video blackmail (user scenario 2)."""
+    summary = (
+        "事發於民國112年11月15日晚上約11點，在台北市信義區租屋處。"
+        "我與老婆佩容因小孩發生爭執，佩容以想讓小孩多一個弟妹想與我性交，"
+        "但我不同意，所以佩容稱我睡著時，偷偷的與我性交並內射。"
+        "幾天後佩容拿那天偷拍我們性交的影片，又來威脅我與他性交"
+    )
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    # Should detect sexual, privacy, intimidation, domestic_violence
+    assert len(candidate_ids) >= 2
+    assert len(case["questions"]) >= 5
