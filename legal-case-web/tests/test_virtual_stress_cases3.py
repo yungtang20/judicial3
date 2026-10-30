@@ -235,6 +235,54 @@ def test_vc3_20_obscenity():
     assert len(candidate_ids) >= 1
 
 
+def test_vc3_25_state_security():
+    """State security: espionage."""
+    summary = "115年01月01日，被告將國家國防秘密洩漏給外國。"
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
+
+
+def test_vc3_26_duty():
+    """Duty: bribery of public official."""
+    summary = "115年02月01日，被告向公務員行賄，圖利特定廠商。"
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
+
+
+def test_vc3_27_multi_offense_complex():
+    """Complex multi-offense: theft + fraud + money laundering."""
+    summary = "115年03月01日，被告竊取被害人財物後，將贓款透過多個帳戶洗錢，並偽造文書掩飾。"
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 2
+
+
+def test_vc3_28_no_victim_multi():
+    """No-victim multi-offense: drugs + gambling."""
+    summary = "115年04月01日，被告在住處持有毒品並經營賭場。"
+    case = _run_case(summary, has_victim=False)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
+
+
+def test_vc3_29_denial_with_favorable():
+    """Denial with favorable evidence: alibi + denial."""
+    summary = "115年05月01日，被告被控竊盜，但有證人證明其當時在其他地點，被告否認犯罪。"
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
+
+
+def test_vc3_30_confession_with_corroboration():
+    """Confession with corroborating evidence."""
+    summary = "115年06月01日，被告自白偷取財物，且監視器畫面確認其行為。"
+    case = _run_case(summary)
+    candidate_ids = {item["id"] for item in case["candidates"]}
+    assert len(candidate_ids) >= 1
+
+
 def test_vc3_21_unlawful_detention():
     """Unlawful detention: locking someone in a room."""
     summary = "115年01月10日，被告將被害人鎖在房間內，限制其行動自由，長達3小時。"
