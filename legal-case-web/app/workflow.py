@@ -16,7 +16,7 @@ from .case_identity import case_identity
 from .company_templates import copy_identity
 from .xlsm_questions import xlsm_quarantine
 from .v3_contracts import canonical_sha256
-from .analysis_contract import apply_analysis_contract, decorate_fact
+from .analysis_contract import apply_analysis_contract, decorate_fact, decorate_facts
 from .rules import (
     MAX_SELECTED_OFFENSES,
     analyze_gate1,
@@ -309,9 +309,7 @@ def create_case(raw: dict[str, Any], bank: dict[str, Any]) -> dict[str, Any]:
     # 事實契約必須在 Gate 1 邊界就固定：下游候選／問句收到的 facts，
     # 與案件保存的 facts 必須是同一組記錄（同一 schema、同一 provenance），
     # 否則「傳遞成功」只存在於報告中。此處僅補齊契約欄位，不改值、不改狀態。
-    gate1["facts"] = [
-        decorate_fact(item) for item in gate1.get("facts", []) if isinstance(item, dict)
-    ]
+    gate1["facts"] = decorate_facts(gate1.get("facts", []))
     if not str(raw.get("event_time", "")).strip() and summary_context["event_time"] != "UNKNOWN":
         intake["event_time"] = summary_context["event_time"]
     if not str(raw.get("location", "")).strip() and summary_context["location"] != "UNKNOWN":
@@ -583,7 +581,7 @@ def apply_action(
                 "summary": current_summary,
                 "location": _preferred_case_location(gate1.get("places", []), case["intake"]["location"]),
             }, use_ai=False)
-            gate1["facts"] = refreshed["facts"]
+            gate1["facts"] = decorate_facts(refreshed["facts"])
             gate1["unknowns"] = refreshed["unknowns"]
             gate1["segmentation_source"] = refreshed["segmentation_source"]
             facts_changed = True

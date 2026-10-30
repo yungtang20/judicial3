@@ -40,6 +40,29 @@ ROUTE_MIN_SUPPORTED_ELEMENTS = 2
 PROPERTY_TAKING_ACTIONS = ("拿走", "取走", "帶走", "搶走", "奪走", "偷走", "搬走")
 PROPERTY_ROUTE_IDS = {"theft", "embezzlement", "robbery"}
 
+# 財產取走／拾得／交付情境下必須逐一表態的 typed fact keys。缺資料時
+# 一律建立明確的 UNKNOWN，不得因摘要沒寫到就省略（欄位是否適用見
+# ``_property_typed_scenario``）。
+PROPERTY_TYPED_FACT_KEYS = (
+    "original_possession",
+    "third_party_possession",
+    "intent",
+    "ownership_knowledge",
+    "taking",
+    "post_acquisition_conduct",
+)
+# 只用於判斷「這段文字在講某個具體財物」，不做法律評價。
+PROPERTY_OBJECT_TOKENS = (
+    "手機", "行動電話", "物品", "財物", "錢包", "皮包", "包包", "現金",
+    "電腦", "鑰匙", "證件", "商品", "貨物", "行李", "安全帽", "腳踏車",
+    "機車", "汽車",
+)
+# 可能由店員、店家或其他第三人接續管領的現場訊號。
+THIRD_PARTY_CUSTODY_SIGNALS = (
+    "店", "櫃檯", "服務台", "員工", "保管", "寄放", "暫放",
+    "遺失", "遺留", "拾得", "撿到", "拾獲", "管理",
+)
+
 # typed fact key → Gate 1 unknowns 的人類可讀標籤。analyze_gate1 與
 # update_gate1 重算時共用同一份對照，避免 UNKNOWN 狀態在更新後殘留或消失。
 FACT_UNKNOWN_LABELS = {
@@ -47,6 +70,8 @@ FACT_UNKNOWN_LABELS = {
     "third_party_possession": "店員、店家或第三人是否接續管領",
     "ownership_knowledge": "行為人對物品所有權的認知",
     "intent": "行為人的不法所有意圖",
+    "taking": "是否取走／帶離物品",
+    "post_acquisition_conduct": "取得後如何處理物品",
 }
 
 
@@ -505,13 +530,19 @@ def _property_lineage_fact_specs(summary: str) -> list[dict[str, Any]]:
     def add(
         fact_key: str,
         value: str,
-        match: re.Match[str] | None,
+        match: re.Match[str] | tuple[str, int, int] | None,
         *,
         assertion_class: str,
         source_type: str = "PARTY_STATEMENT",
         verification_status: str = "UNVERIFIED",
+        extra_fields: dict[str, Any] | None = None,
     ) -> None:
-        text = match.group("text") if match is not None else ""
+        if isinstance(match, tuple):
+            text, start, end = match
+        else:
+            text = match.group("text") if match is not None else ""
+            start = match.start("text") if match is not None else None
+            end = match.end("text") if match is not None else None
         subject_match = re.search(r"[甲乙丙丁戊己庚辛壬癸]", text)
         subject = subject_match.group(0) if subject_match else ""
         object_value = next(
@@ -523,8 +554,8 @@ def _property_lineage_fact_specs(summary: str) -> list[dict[str, Any]]:
             "fact_key": fact_key,
             "value": value,
             "text": text,
-            "source_start": match.start("text") if match is not None else None,
-            "source_end": match.end("text") if match is not None else None,
+            "source_start": start,
+            "source_end": end,
             "assertion_class": assertion_class,
             "source_type": source_type,
             "verification_status": verification_status,
@@ -532,6 +563,7 @@ def _property_lineage_fact_specs(summary: str) -> list[dict[str, Any]]:
             "object": object_value,
             "event_id": event_id,
             "proposition_key": "|".join((fact_key, subject, object_value, event_id)),
+            "extra_fields": dict(extra_fields or {}),
         })
 
     retained = direct_match(
@@ -542,13 +574,32 @@ def _property_lineage_fact_specs(summary: str) -> list[dict[str, Any]]:
     if retained:
         add("original_possession", "POSSESSION_RETAINED", retained, assertion_class="ASSERTED")
 
+    # 「離開後才發現遺失」只證明所有人回報找不到物品，不足以證明物品何時
+    # 脫離她的管領、或當時是否已由店員／店家接管。因此保留原始描述為
+    # ASSERTED 的來源陳述，並把持有狀態另存為 INFERRED 推論（來源相同、
+    # 未驗證、待人工複核），不直接寫成已確定的持有狀態。
     lost = direct_match(
         r"(?P<text>[甲乙丙丁戊己庚辛壬癸][^。；]{0,12}(?:離開|離場)[^。；]{0,12}"
         r"(?:發現|察覺)(?:手機|物品|財物)?(?:遺失|不見))",
         summary,
     )
     if lost:
-        add("original_possession", "LOST_OR_OUT_OF_POSSESSION", lost, assertion_class="ASSERTED")
+        add(
+            "possession_event", "OWNER_REPORTED_LOSS_AFTER_LEAVING", lost,
+            assertion_class="ASSERTED",
+        )
+        add(
+            "possession_inference", "LOST_OR_OUT_OF_POSSESSION", lost,
+            assertion_class="INFERRED",
+            source_type="SYSTEM_INFERENCE",
+            extra_fields={
+                "machine_status": "INFERENCE",
+                "fact_status": "系統推論",
+                "derived_from_fact_key": "possession_event",
+                "inference_basis": "所有人離開後回報物品遺失",
+                "inference_review": "HUMAN_REVIEW_REQUIRED",
+            },
+        )
 
     possession_unknown_patterns = (
         r"(?P<text>(?:目前|尚|仍)?未確認(?:手機|物品|財物)[^。；]{0,8}"
@@ -556,7 +607,7 @@ def _property_lineage_fact_specs(summary: str) -> list[dict[str, Any]]:
         r"(?P<text>(?:手機|物品|財物)[^。；]{0,8}是否仍在[^。；]{0,20}"
         r"(?:持有|管領)範圍)(?=[^。；]{0,30}(?:待確認|尚未確認|仍未知))",
     )
-    if not retained and not lost:
+    if not retained:
         for pattern in possession_unknown_patterns:
             match = direct_match(pattern, summary)
             if match:
@@ -618,6 +669,13 @@ def _property_lineage_fact_specs(summary: str) -> list[dict[str, Any]]:
             assertion_class="ASSERTED", source_type="EVIDENCE", verification_status="UNVERIFIED",
         )
 
+    # 敘事型「甲拿走／取走／帶走某財物」是摘要自己的指控或描述，既非行為人
+    # 承認也不是證據；保留為可回查的來源陳述，供後續人工判斷真偽。
+    if not admitted_taking and not denied_taking and not evidence_taking:
+        narrated = _narrated_taking_span(summary)
+        if narrated:
+            add("taking", "TAKING_OR_REMOVAL_REPORTED", narrated, assertion_class="ASSERTED")
+
     handover = direct_match(
         r"(?P<text>[甲乙丙丁戊己庚辛壬癸][^。；]{0,10}(?:拿起|拾得|撿到)"
         r"(?:手機|物品|財物)[^。；]{0,8}立即交給(?:店員|警方|櫃檯人員))",
@@ -628,7 +686,65 @@ def _property_lineage_fact_specs(summary: str) -> list[dict[str, Any]]:
             "post_acquisition_conduct", "IMMEDIATE_HANDOVER_TO_STORE_STAFF", handover,
             assertion_class="ASSERTED",
         )
+        # 交付店員是摘要明示的第三人經手事實，但仍未確認店家後續如何管領。
+        add(
+            "third_party_possession", "HANDOVER_TO_STORE_STAFF_RECORDED", handover,
+            assertion_class="ASSERTED",
+        )
     return specs
+
+
+def _narrated_taking_span(summary: str) -> tuple[str, int, int] | None:
+    """回傳敘事型取走語句的逐字片段；引述、假設、否定與疑問一律排除。"""
+    for text, start, end in _source_segments(summary):
+        positions = [
+            (text.find(action), action)
+            for action in PROPERTY_TAKING_ACTIONS
+            if action in text
+        ]
+        if not positions:
+            continue
+        index, _action = min(positions)
+        if not any(token in text for token in PROPERTY_OBJECT_TOKENS):
+            continue
+        prefix = text[:index]
+        if re.search(
+            r"(?:否認|沒有|不曾|並未|不是|未經)[^，。；]{0,6}$"
+            r"|(?:若|如果|假設|是否|據稱|轉述|稱|表示)[^，。；]{0,6}$",
+            prefix,
+        ):
+            continue
+        return text, start, end
+    return None
+
+
+def _has_property_object(summary: str) -> bool:
+    return any(token in summary for token in PROPERTY_OBJECT_TOKENS)
+
+
+def _third_party_custody_context(summary: str) -> bool:
+    return any(token in summary for token in THIRD_PARTY_CUSTODY_SIGNALS)
+
+
+def _property_typed_scenario(summary: str, facts: list[dict[str, Any]]) -> bool:
+    """是否為應逐一表態 typed property facts 的財產取走／拾得／交付情境。
+
+    ``narrative`` 已拆出完整八類事實的詳細竊盜敘述不在此列：那條路徑的
+    主觀意圖與持有狀態常由摘要明示，補 UNKNOWN 反而會捏造未知。
+    """
+    if _property_taking_values(summary) is not None:
+        return True
+    if any(
+        str(item.get("fact_key") or "") in PROPERTY_TYPED_FACT_KEYS
+        for item in facts
+    ):
+        return True
+    if re.search(r"拾得|撿到|拾獲", summary) and _has_property_object(summary):
+        return True
+    if re.search(r"(?:交給|交付|交由)(?:店員|櫃檯|店家|警方)", summary) and _has_property_object(summary):
+        return True
+    return False
+
 
 
 def fact_contradiction_issues(facts: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -1369,7 +1485,7 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
             str(source_end),
             value or text,
         ))
-        return {
+        fact = {
             "fact_id": "fact:" + hashlib.sha256(stable_seed.encode("utf-8")).hexdigest()[:20],
             "fact_key": fact_key,
             "value": value or text,
@@ -1408,13 +1524,18 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
                 "摘要法律評價" if is_legal_characterization else _fact_status_for_kind(fact_kind),
             ),
             # FACT 僅表示來源文字明示記載，不表示內容已經查證為真。
-            "machine_status": (
+            "machine_status": f.get("machine_status") or (
                 "UNKNOWN" if fact_kind == "unknown" else
                 "ASSERTED_NOT_VERIFIED" if is_legal_characterization else
                 "FACT"
             ),
             "review_status": "HUMAN_REVIEW_REQUIRED",
         }
+        # 額外的契約／推論欄位（derived_from_fact_key、inference_basis 等）
+        # 只補不覆寫既有欄位，避免任何來源路徑改寫既有語意。
+        for key, extra in f.items():
+            fact.setdefault(key, extra)
+        return fact
 
     facts: list[dict[str, Any]] = []
     segmentation_source = "rules"
@@ -1528,7 +1649,16 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
         }
         for key, value in property_values.items():
             is_unknown = value == "UNKNOWN"
-            fields: dict[str, str] = {}
+            fields: dict[str, str] = {
+                # 讓每筆 typed fact 都帶可追溯的命題鍵，契約才不會因來源路徑
+                # 不同而缺欄位（UNKNOWN 也一樣）。
+                "proposition_key": "|".join((
+                    key,
+                    property_values.get("actor", ""),
+                    property_values.get("object", ""),
+                    "event:property-taking",
+                )),
+            }
             if key == "actor" and not is_unknown:
                 fields["subject"] = value
             elif key == "action" and not is_unknown:
@@ -1586,16 +1716,20 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
                 "assertion_status": (
                     "UNKNOWN" if spec["assertion_class"] == "UNKNOWN" else
                     "DENIED" if spec["assertion_class"] == "DENIED" else
+                    "INFERRED_FROM_SOURCE" if spec["assertion_class"] == "INFERRED" else
                     "SOURCE_LEAD_TO_VERIFY" if spec["source_type"] == "EVIDENCE" else
                     "EXPLICIT_SOURCE_ASSERTION"
                 ),
                 "fact_status": "證據線索" if spec["source_type"] == "EVIDENCE" else (
-                    "未知" if spec["assertion_class"] == "UNKNOWN" else "當事人陳述"
+                    "未知" if spec["assertion_class"] == "UNKNOWN" else
+                    "系統推論" if spec["assertion_class"] == "INFERRED" else
+                    "當事人陳述"
                 ),
                 "subject": spec["subject"],
                 "object": spec["object"],
                 "event_id": spec["event_id"],
                 "proposition_key": spec["proposition_key"],
+                **spec.get("extra_fields", {}),
             },
             fact_key=spec["fact_key"],
             value=spec["value"],
@@ -1603,6 +1737,35 @@ def analyze_gate1(intake: dict[str, Any], *, use_ai: bool = True) -> dict[str, A
             source_start=spec["source_start"],
             source_end=spec["source_end"],
         ))
+
+    # 財產取走／拾得／交付情境的必要事實欄位不得因摘要沒寫到就省略；缺資料
+    # 一律留下明確 UNKNOWN，交由人工補問，不推定為否定或已證實。
+    if _property_typed_scenario(summary, facts):
+        applicable = [
+            key for key in PROPERTY_TYPED_FACT_KEYS
+            if key != "third_party_possession" or _third_party_custody_context(summary)
+        ]
+        present = {
+            str(item.get("fact_key") or "")
+            for item in facts if isinstance(item, dict)
+        }
+        for key in applicable:
+            if key in present:
+                continue
+            facts.append(make_fact(
+                key,
+                "unknown",
+                {
+                    "assertion_status": "UNKNOWN",
+                    "fact_status": "未知",
+                    "source_type": "UNKNOWN",
+                    "machine_status": "UNKNOWN",
+                    "proposition_key": "|".join((key, "", "", "event:unassigned")),
+                },
+                fact_key=key,
+                value="UNKNOWN",
+                source_excerpt="",
+            ))
 
     unknown_label_by_key = FACT_UNKNOWN_LABELS
     default_unknowns = list(dict.fromkeys([

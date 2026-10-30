@@ -1,4 +1,4 @@
-"""Read-only Gate 1 fact-contract audit (five property scenarios).
+"""Read-only Gate 1 fact-contract audit (five property scenarios + plain cases).
 
 Usage (from ``legal-case-web``)::
 
@@ -9,8 +9,10 @@ What it proves, per scenario:
 
 1. ``analyze_gate1`` produces typed facts with the full contract
    (``fact_key``/``value``/``assertion_class``/``source_type``/
-   ``verification_status``) and exact source spans.
-2. UNKNOWN stays UNKNOWN and is visible in ``gate1["unknowns"]``.
+   ``verification_status``/``fact_key_status``/``provenance``) and exact
+   source spans.
+2. UNKNOWN stays UNKNOWN and is visible in ``gate1["unknowns"]``; all six
+   required typed keys exist even when the summary never says "未知".
 3. ``create_case`` hands the *same* fact records to ``candidate_offenses``.
 4. ``update_gate1`` keeps facts-derived state in sync (no stale UNKNOWN label,
    contradiction links recomputed, unchanged facts -> unchanged projections).
@@ -22,6 +24,13 @@ What it proves, per scenario:
 7. Scenario D only: a party denial and a CCTV record stay as two separate
    facts, linked by one contradiction issue whose value stays UNKNOWN, and the
    link disappears when one side is removed.
+8. GATE-009: scenario B keeps the owner's loss report as an ASSERTED source
+   statement and stores the derived possession state separately as
+   INFERRED/UNVERIFIED with human review required.
+9. GATE-009: an events-only ``update_gate1`` produces the same facts,
+   UNKNOWN labels and contradiction records as ``create_case``.
+10. GATE-009: plain natural-language cases without any "未知"-style prompt
+    words still get the six required typed keys, including ``intent=UNKNOWN``.
 
 It never writes to the case store, HTTP server, or LLM. ``analyze_candidates_v3``
 is forced to ``None`` so only the deterministic rules path runs; no network call
@@ -48,12 +57,13 @@ from app.analysis_contract import (  # noqa: E402
     ASSERTION_CLASSES,
     SOURCE_TYPES,
     VERIFICATION_STATUSES,
+    decorate_facts,
 )
 from app.config import QUESTION_BANK_PATH  # noqa: E402
 from app.rules import FACT_UNKNOWN_LABELS, analyze_gate1, load_bank  # noqa: E402
 
-AUDIT_ID = "LEGAL-GATE1-FACT-CONTRACT-008"
-AUDIT_VERSION = "gate1-fact-contract-audit-v1"
+AUDIT_ID = "LEGAL-GATE1-FACT-CONTRACT-009"
+AUDIT_VERSION = "gate1-fact-contract-audit-v2"
 
 # Five scenarios fixed by the task; the legal labels stay PENDING_HUMAN_REVIEW.
 CASES: dict[str, str] = {
@@ -86,12 +96,35 @@ CASES: dict[str, str] = {
 
 # Facts that must stay explicitly UNKNOWN in each scenario (no silent negation).
 EXPECTED_UNKNOWN: dict[str, tuple[str, ...]] = {
-    "BASE": ("original_possession", "intent"),
-    "A_RETAINED": ("intent",),
-    "B_LOST": ("intent",),
-    "C_HANDOVER": ("intent",),
-    "D_CONFLICT": ("original_possession", "intent"),
+    "BASE": (
+        "original_possession", "third_party_possession", "intent",
+        "ownership_knowledge", "post_acquisition_conduct",
+    ),
+    "A_RETAINED": (
+        "third_party_possession", "intent", "ownership_knowledge",
+        "post_acquisition_conduct",
+    ),
+    "B_LOST": (
+        "original_possession", "third_party_possession", "intent",
+        "ownership_knowledge", "post_acquisition_conduct",
+    ),
+    "C_HANDOVER": (
+        "original_possession", "intent", "ownership_knowledge", "taking",
+    ),
+    "D_CONFLICT": (
+        "original_possession", "third_party_possession", "intent",
+        "ownership_knowledge", "post_acquisition_conduct",
+    ),
 }
+
+# GATE-009：一般自然語言案例，刻意不含「未知／未確認／待確認」等提示詞。
+PLAIN_CASES: dict[str, str] = {
+    "PLAIN_TAKING": "甲把行動電話放在便利商店櫃檯旁，乙拿走該行動電話後離開。",
+    "PLAIN_PICKUP": "乙在店內拾得手機後將手機帶離，甲表示手機為其所有。",
+}
+
+PROMPT_WORDS = ("未知", "未確認", "待確認", "仍待", "尚待")
+
 
 TYPED_KEYS = (
     "original_possession",
@@ -130,6 +163,13 @@ def _contract_fields_ok(fact: dict[str, Any], summary: str) -> list[str]:
         problems.append(f"source_type={fact.get('source_type')!r}")
     if fact.get("verification_status") not in VERIFICATION_STATUSES:
         problems.append(f"verification_status={fact.get('verification_status')!r}")
+    if fact.get("fact_key_status") != "CLASSIFIED":
+        problems.append(f"fact_key_status={fact.get('fact_key_status')!r}")
+    provenance = fact.get("provenance")
+    if not isinstance(provenance, dict):
+        problems.append("provenance 缺失")
+    elif not str(provenance.get("source_ref") or ""):
+        problems.append("provenance.source_ref 空白")
     for field in ("fact_id", "proposition_key", "event_id"):
         if not str(fact.get(field) or ""):
             problems.append(f"{field} 空白")
@@ -144,10 +184,13 @@ def _contract_fields_ok(fact: dict[str, Any], summary: str) -> list[str]:
 
 
 def _gate1(summary: str) -> dict[str, Any]:
-    return analyze_gate1(
+    gate1 = analyze_gate1(
         {"summary": summary, "event_time": "UNKNOWN", "location": "UNKNOWN"},
         use_ai=False,
     )
+    # 與 Gate 1 邊界（create_case）套用同一份契約欄位裝飾。
+    gate1["facts"] = decorate_facts(gate1["facts"])
+    return gate1
 
 
 def _recorder(real: Any, store: list[dict[str, Any]], **fields: Any) -> Any:
@@ -252,6 +295,110 @@ def _audit_case(name: str, summary: str, bank: dict[str, Any]) -> dict[str, Any]
         if missing_unknown else
         _check("PASS", f"UNKNOWN 保留：{', '.join(EXPECTED_UNKNOWN[name])}")
     )
+
+    # 2b. GATE-009：適用欄位一律存在，缺資料時為明確 UNKNOWN。
+    absent = [key for key in TYPED_KEYS if not _typed(facts, key)]
+    malformed_unknown: list[str] = []
+    for key in TYPED_KEYS:
+        for row in _typed(facts, key):
+            if row.get("value") == "UNKNOWN" and not (
+                row.get("assertion_class") == "UNKNOWN"
+                and row.get("verification_status") == "UNKNOWN"
+                and row.get("machine_status") == "UNKNOWN"
+            ):
+                malformed_unknown.append(f"{key}: UNKNOWN 狀態不一致")
+    checks["required_typed_keys_present"] = (
+        _check(
+            "FAIL",
+            "必要 typed facts 缺漏或 UNKNOWN 狀態不一致",
+            missing_keys=absent,
+            malformed_unknown=malformed_unknown,
+        )
+        if absent or malformed_unknown else
+        _check("PASS", f"六項必要 typed facts 均存在（{len(TYPED_KEYS)} keys）")
+    )
+
+    # 2c. GATE-009：離開後發現遺失 → 來源陳述與持有推論分離。
+    if name == "B_LOST":
+        events = [item for item in facts if item.get("fact_key") == "possession_event"]
+        inferences = [item for item in facts if item.get("fact_key") == "possession_inference"]
+        separation: list[str] = []
+        if len(events) != 1 or events[0].get("assertion_class") != "ASSERTED":
+            separation.append("possession_event 未以 ASSERTED 保存原始描述")
+        if len(inferences) != 1:
+            separation.append("possession_inference 未單獨保存推論")
+        else:
+            inference = inferences[0]
+            if inference.get("assertion_class") != "INFERRED":
+                separation.append("推論未標示 assertion_class=INFERRED")
+            if inference.get("source_type") != "SYSTEM_INFERENCE":
+                separation.append("推論未標示 source_type=SYSTEM_INFERENCE")
+            if inference.get("verification_status") != "UNVERIFIED":
+                separation.append("推論未標示 verification_status=UNVERIFIED")
+            if inference.get("machine_status") != "INFERENCE":
+                separation.append("推論未標示 machine_status=INFERENCE")
+            if inference.get("inference_review") != "HUMAN_REVIEW_REQUIRED":
+                separation.append("推論未要求人工複核")
+            if inference.get("derived_from_fact_key") != "possession_event":
+                separation.append("推論未連結來源事實")
+        if any(row.get("value") == "LOST_OR_OUT_OF_POSSESSION" for row in _typed(facts, "original_possession")):
+            separation.append("original_possession 仍被寫成已確定的 LOST_OR_OUT_OF_POSSESSION")
+        checks["possession_inference_separated"] = (
+            _check("FAIL", "；".join(separation))
+            if separation else
+            _check(
+                "PASS",
+                "原始遺失描述保留為 ASSERTED；持有狀態另存 INFERRED/UNVERIFIED 並要求人工複核",
+                possession_event=events[0]["fact_id"] if events else None,
+                possession_inference=inferences[0]["fact_id"] if inferences else None,
+            )
+        )
+    else:
+        not_applicable["possession_inference_separated"] = "此情境沒有『離開後才發現遺失』描述"
+
+    # 2d. GATE-009：events-only 更新與建案必須得到同一份事實契約。
+    try:
+        seeded = workflow.create_case({"summary": summary, "has_victim": True}, bank)
+        seeded = workflow.apply_action(seeded, "approve_gate1", {"confirmed": True}, bank)
+        events_only = workflow.apply_action(
+            seeded, "update_gate1", {"gate1": {"events": [summary]}}, bank
+        )["gate1"]
+        direct = workflow.create_case({"summary": summary, "has_victim": True}, bank)["gate1"]
+
+        def signature(gate1_obj: dict[str, Any]) -> list[tuple]:
+            return [
+                (
+                    item.get("fact_key"),
+                    item.get("value"),
+                    item.get("assertion_class"),
+                    item.get("source_type"),
+                    item.get("verification_status"),
+                    item.get("fact_key_status"),
+                    bool(item.get("provenance")),
+                )
+                for item in gate1_obj.get("facts", [])
+            ]
+
+        drift: list[str] = []
+        if signature(events_only) != signature(direct):
+            drift.append("facts 契約不同")
+        if events_only.get("unknowns") != direct.get("unknowns"):
+            drift.append("unknowns 不同")
+        if events_only.get("contradiction_issues") != direct.get("contradiction_issues"):
+            drift.append("contradiction_issues 不同")
+        if any(not item.get("provenance") for item in events_only.get("facts", [])):
+            drift.append("部分 facts 缺 provenance")
+        checks["events_only_update_contract"] = (
+            _check("FAIL", "events-only 更新後契約漂移", drift=drift)
+            if drift else
+            _check(
+                "PASS",
+                "只送 events 的更新與建案產生相同 facts／unknowns／矛盾紀錄",
+                fact_count=len(events_only.get("facts", [])),
+            )
+        )
+    except Exception as exc:  # noqa: BLE001
+        checks["events_only_update_contract"] = _check("FAIL", f"{type(exc).__name__}: {exc}")
 
     # 3. create_case delivery
     create_calls: list[dict[str, Any]] = []
@@ -518,6 +665,91 @@ def _audit_case(name: str, summary: str, bank: dict[str, Any]) -> dict[str, Any]
     }
 
 
+def _audit_plain(name: str, summary: str) -> dict[str, Any]:
+    """GATE-009：不含提示詞的一般自然語言案例。"""
+    checks: dict[str, Any] = {}
+    observations: dict[str, Any] = {
+        "summary": summary,
+        "contains_prompt_words": [word for word in PROMPT_WORDS if word in summary],
+        "legal_labels": "PENDING_HUMAN_REVIEW",
+    }
+    if observations["contains_prompt_words"]:
+        checks["prompt_free_input"] = _check(
+            "FAIL",
+            "案例含提示詞，無法證明 UNKNOWN 由情境產生",
+            words=observations["contains_prompt_words"],
+        )
+    else:
+        checks["prompt_free_input"] = _check("PASS", "案例不含任何『未知』類提示詞")
+
+    try:
+        gate1 = _gate1(summary)
+    except Exception as exc:  # noqa: BLE001
+        checks["analyze_gate1_runs"] = _check("FAIL", f"{type(exc).__name__}: {exc}")
+        return {"case": name, "status": "FAIL", "failed_checks": list(checks),
+                "checks": checks, "not_applicable": {}, "observations": observations}
+
+    facts = [item for item in gate1.get("facts", []) if isinstance(item, dict)]
+    observations["typed_facts"] = [
+        {
+            "fact_key": item.get("fact_key"),
+            "value": item.get("value"),
+            "assertion_class": item.get("assertion_class"),
+            "machine_status": item.get("machine_status"),
+        }
+        for item in _typed(facts)
+    ]
+
+    problems = [
+        key for key in TYPED_KEYS if not _typed(facts, key)
+    ]
+    checks["required_typed_keys_present"] = (
+        _check("FAIL", "必要 typed facts 缺漏", missing_keys=problems)
+        if problems else
+        _check("PASS", f"{len(TYPED_KEYS)} 項必要 typed facts 均由情境建立")
+    )
+
+    intent = [item for item in _typed(facts, "intent") if item.get("value") == "UNKNOWN"]
+    intent_ok = bool(intent) and all(
+        item.get("assertion_class") == "UNKNOWN"
+        and item.get("verification_status") == "UNKNOWN"
+        for item in intent
+    )
+    checks["intent_unknown_from_context"] = (
+        _check("PASS", "未提及意圖時建立 intent=UNKNOWN，且標籤同步")
+        if intent_ok and FACT_UNKNOWN_LABELS["intent"] in gate1.get("unknowns", []) else
+        _check("FAIL", "未由情境建立 intent=UNKNOWN", unknowns=gate1.get("unknowns"))
+    )
+
+    third_party = _typed(facts, "third_party_possession")
+    checks["third_party_possession_not_omitted"] = (
+        _check("PASS", f"third_party_possession 存在（values={[i.get('value') for i in third_party]}）")
+        if third_party else
+        _check("FAIL", "third_party_possession 被省略")
+    )
+
+    broken = {
+        item.get("fact_key"): _contract_fields_ok(item, summary)
+        for item in _typed(facts)
+    }
+    broken = {key: value for key, value in broken.items() if value}
+    checks["typed_fact_contract"] = (
+        _check("FAIL", "契約欄位不完整", problems=broken)
+        if broken else
+        _check("PASS", "typed facts 均有完整契約欄位與 provenance")
+    )
+
+    failed = [key for key, value in checks.items() if value["status"] == "FAIL"]
+    return {
+        "case": name,
+        "status": "FAIL" if failed else "PASS",
+        "failed_checks": failed,
+        "checks": checks,
+        "not_applicable": {},
+        "observations": observations,
+    }
+
+
 def run() -> dict[str, Any]:
     bank = load_bank(QUESTION_BANK_PATH)
     report: dict[str, Any] = {
@@ -531,10 +763,14 @@ def run() -> dict[str, Any]:
             "未變更候選排序、Prompt、DB schema 或 HTTP 介面",
         ],
         "cases": {},
+        "plain_language_cases": {},
     }
     for name, summary in CASES.items():
         report["cases"][name] = _audit_case(name, summary, bank)
+    for name, summary in PLAIN_CASES.items():
+        report["plain_language_cases"][name] = _audit_plain(name, summary)
     statuses = [item["status"] for item in report["cases"].values()]
+    statuses += [item["status"] for item in report["plain_language_cases"].values()]
     report["overall"] = (
         "FAIL" if "FAIL" in statuses else
         "PARTIAL_PASS" if "NOT_VERIFIED" in statuses else
@@ -548,6 +784,13 @@ def run() -> dict[str, Any]:
             "question_count": item["observations"].get("question_count"),
         }
         for name, item in report["cases"].items()
+    }
+    report["summary"]["plain_language"] = {
+        name: {
+            "status": item["status"],
+            "failed_checks": item["failed_checks"],
+        }
+        for name, item in report["plain_language_cases"].items()
     }
     return report
 

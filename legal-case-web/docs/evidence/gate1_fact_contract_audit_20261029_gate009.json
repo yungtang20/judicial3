@@ -1,0 +1,991 @@
+{
+  "audit_id": "LEGAL-GATE1-FACT-CONTRACT-009",
+  "audit_version": "gate1-fact-contract-audit-v2",
+  "mode": "read-only / deterministic rules only (analyze_candidates_v3 forced to None)",
+  "legal_label_status": "PENDING_HUMAN_REVIEW",
+  "claims_not_made": [
+    "不宣稱五案候選罪名正確",
+    "不宣稱法律要件已成立",
+    "未變更候選排序、Prompt、DB schema 或 HTTP 介面"
+  ],
+  "cases": {
+    "BASE": {
+      "case": "BASE",
+      "status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "typed_fact_contract": {
+          "status": "PASS",
+          "detail": "6 筆 typed facts 均有完整契約欄位與可回查 span"
+        },
+        "unknown_preserved": {
+          "status": "PASS",
+          "detail": "UNKNOWN 保留：original_possession, third_party_possession, intent, ownership_knowledge, post_acquisition_conduct"
+        },
+        "required_typed_keys_present": {
+          "status": "PASS",
+          "detail": "六項必要 typed facts 均存在（6 keys）"
+        },
+        "events_only_update_contract": {
+          "status": "PASS",
+          "detail": "只送 events 的更新與建案產生相同 facts／unknowns／矛盾紀錄",
+          "fact_count": 19
+        },
+        "create_case_delivery": {
+          "status": "PASS",
+          "detail": "19 筆 facts 與案件保存一致；其中 UNKNOWN typed keys=['intent', 'original_possession', 'ownership_knowledge', 'post_acquisition_conduct', 'third_party_possession']"
+        },
+        "update_gate1_unknown_sync": {
+          "status": "PASS",
+          "detail": "intent 事實移除後 unknowns 同步（剩下的 typed UNKNOWN 標籤：['原持有／管領狀態', '店員、店家或第三人是否接續管領', '行為人對物品所有權的認知', '取得後如何處理物品']）",
+          "unknowns_before_count": 13,
+          "unknowns_after": [
+            "行為人／受害人",
+            "事件經過",
+            "發生時間",
+            "客體",
+            "行為方式",
+            "結果／傷勢",
+            "結果與行為間關係",
+            "可供查證的證據",
+            "原持有／管領狀態",
+            "店員、店家或第三人是否接續管領",
+            "行為人對物品所有權的認知",
+            "取得後如何處理物品"
+          ]
+        },
+        "update_gate1_projection_stability": {
+          "status": "PASS",
+          "detail": "8 項 facts 衍生狀態在 facts 未變更時保持不變"
+        },
+        "analyze_candidates_delivery": {
+          "status": "PASS",
+          "detail": "analysis 路徑收到 19 筆 facts；UNKNOWN keys=['action', 'causation', 'event', 'evidence', 'intent', 'object', 'original_possession', 'ownership_knowledge', 'person', 'post_acquisition_conduct', 'result', 'third_party_possession', 'time']",
+          "candidate_ids": [
+            "theft"
+          ]
+        },
+        "stale_summary_guard": {
+          "status": "PASS",
+          "detail": "摘要被改寫時未把 span 對不上的 facts 傳給候選產生器"
+        },
+        "build_questions_delivery": {
+          "status": "PASS",
+          "detail": "正式流程把 facts 傳入 build_questions 與 mark_known_questions；產生 20 題",
+          "question_count": 20
+        }
+      },
+      "not_applicable": {
+        "possession_inference_separated": "此情境沒有『離開後才發現遺失』描述",
+        "denial_evidence_separated": "此情境沒有當事人否認與外部證據衝突",
+        "contradiction_traceable": "此情境沒有當事人否認與外部證據衝突",
+        "contradiction_cleared_on_fact_removal": "此情境沒有當事人否認與外部證據衝突"
+      },
+      "observations": {
+        "legal_labels": "PENDING_HUMAN_REVIEW",
+        "typed_fact_count": 6,
+        "typed_facts": [
+          {
+            "fact_key": "original_possession",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "intent",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "taking",
+            "value": "TAKING_OR_REMOVAL_ADMITTED",
+            "assertion_class": "ADMITTED",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNVERIFIED",
+            "machine_status": "FACT",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "third_party_possession",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          },
+          {
+            "fact_key": "ownership_knowledge",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          },
+          {
+            "fact_key": "post_acquisition_conduct",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          }
+        ],
+        "unknowns_after_intent_removal": [
+          "行為人／受害人",
+          "事件經過",
+          "發生時間",
+          "客體",
+          "行為方式",
+          "結果／傷勢",
+          "結果與行為間關係",
+          "可供查證的證據",
+          "原持有／管領狀態",
+          "店員、店家或第三人是否接續管領",
+          "行為人對物品所有權的認知",
+          "取得後如何處理物品"
+        ],
+        "candidate_ids": [
+          "theft"
+        ],
+        "unknown_fact_keys": {
+          "theft": [
+            "original_possession",
+            "intent"
+          ]
+        },
+        "question_count": 20
+      }
+    },
+    "A_RETAINED": {
+      "case": "A_RETAINED",
+      "status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "typed_fact_contract": {
+          "status": "PASS",
+          "detail": "6 筆 typed facts 均有完整契約欄位與可回查 span"
+        },
+        "unknown_preserved": {
+          "status": "PASS",
+          "detail": "UNKNOWN 保留：third_party_possession, intent, ownership_knowledge, post_acquisition_conduct"
+        },
+        "required_typed_keys_present": {
+          "status": "PASS",
+          "detail": "六項必要 typed facts 均存在（6 keys）"
+        },
+        "events_only_update_contract": {
+          "status": "PASS",
+          "detail": "只送 events 的更新與建案產生相同 facts／unknowns／矛盾紀錄",
+          "fact_count": 20
+        },
+        "create_case_delivery": {
+          "status": "PASS",
+          "detail": "20 筆 facts 與案件保存一致；其中 UNKNOWN typed keys=['intent', 'ownership_knowledge', 'post_acquisition_conduct', 'third_party_possession']"
+        },
+        "update_gate1_unknown_sync": {
+          "status": "PASS",
+          "detail": "intent 事實移除後 unknowns 同步（剩下的 typed UNKNOWN 標籤：['店員、店家或第三人是否接續管領', '行為人對物品所有權的認知', '取得後如何處理物品']）",
+          "unknowns_before_count": 12,
+          "unknowns_after": [
+            "事件經過",
+            "發生時間",
+            "發生地點",
+            "客體",
+            "行為方式",
+            "結果／傷勢",
+            "結果與行為間關係",
+            "可供查證的證據",
+            "店員、店家或第三人是否接續管領",
+            "行為人對物品所有權的認知",
+            "取得後如何處理物品"
+          ]
+        },
+        "update_gate1_projection_stability": {
+          "status": "PASS",
+          "detail": "8 項 facts 衍生狀態在 facts 未變更時保持不變"
+        },
+        "analyze_candidates_delivery": {
+          "status": "PASS",
+          "detail": "analysis 路徑收到 20 筆 facts；UNKNOWN keys=['action', 'causation', 'event', 'evidence', 'intent', 'object', 'ownership_knowledge', 'place', 'post_acquisition_conduct', 'result', 'third_party_possession', 'time']",
+          "candidate_ids": [
+            "theft"
+          ]
+        },
+        "stale_summary_guard": {
+          "status": "PASS",
+          "detail": "摘要被改寫時未把 span 對不上的 facts 傳給候選產生器"
+        },
+        "build_questions_delivery": {
+          "status": "PASS",
+          "detail": "正式流程把 facts 傳入 build_questions 與 mark_known_questions；產生 20 題",
+          "question_count": 20
+        }
+      },
+      "not_applicable": {
+        "possession_inference_separated": "此情境沒有『離開後才發現遺失』描述",
+        "denial_evidence_separated": "此情境沒有當事人否認與外部證據衝突",
+        "contradiction_traceable": "此情境沒有當事人否認與外部證據衝突",
+        "contradiction_cleared_on_fact_removal": "此情境沒有當事人否認與外部證據衝突"
+      },
+      "observations": {
+        "legal_labels": "PENDING_HUMAN_REVIEW",
+        "typed_fact_count": 6,
+        "typed_facts": [
+          {
+            "fact_key": "original_possession",
+            "value": "POSSESSION_RETAINED",
+            "assertion_class": "ASSERTED",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNVERIFIED",
+            "machine_status": "FACT",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "intent",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "taking",
+            "value": "TAKING_OR_REMOVAL_ADMITTED",
+            "assertion_class": "ADMITTED",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNVERIFIED",
+            "machine_status": "FACT",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "third_party_possession",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          },
+          {
+            "fact_key": "ownership_knowledge",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          },
+          {
+            "fact_key": "post_acquisition_conduct",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          }
+        ],
+        "unknowns_after_intent_removal": [
+          "事件經過",
+          "發生時間",
+          "發生地點",
+          "客體",
+          "行為方式",
+          "結果／傷勢",
+          "結果與行為間關係",
+          "可供查證的證據",
+          "店員、店家或第三人是否接續管領",
+          "行為人對物品所有權的認知",
+          "取得後如何處理物品"
+        ],
+        "candidate_ids": [
+          "theft"
+        ],
+        "unknown_fact_keys": {
+          "theft": [
+            "intent"
+          ]
+        },
+        "question_count": 20
+      }
+    },
+    "B_LOST": {
+      "case": "B_LOST",
+      "status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "typed_fact_contract": {
+          "status": "PASS",
+          "detail": "6 筆 typed facts 均有完整契約欄位與可回查 span"
+        },
+        "unknown_preserved": {
+          "status": "PASS",
+          "detail": "UNKNOWN 保留：original_possession, third_party_possession, intent, ownership_knowledge, post_acquisition_conduct"
+        },
+        "required_typed_keys_present": {
+          "status": "PASS",
+          "detail": "六項必要 typed facts 均存在（6 keys）"
+        },
+        "possession_inference_separated": {
+          "status": "PASS",
+          "detail": "原始遺失描述保留為 ASSERTED；持有狀態另存 INFERRED/UNVERIFIED 並要求人工複核",
+          "possession_event": "fact:eb351e794e147c4f846e",
+          "possession_inference": "fact:ce0b769c7028d83ae3ff"
+        },
+        "events_only_update_contract": {
+          "status": "PASS",
+          "detail": "只送 events 的更新與建案產生相同 facts／unknowns／矛盾紀錄",
+          "fact_count": 16
+        },
+        "create_case_delivery": {
+          "status": "PASS",
+          "detail": "16 筆 facts 與案件保存一致；其中 UNKNOWN typed keys=['intent', 'original_possession', 'ownership_knowledge', 'post_acquisition_conduct', 'third_party_possession']"
+        },
+        "update_gate1_unknown_sync": {
+          "status": "PASS",
+          "detail": "intent 事實移除後 unknowns 同步（剩下的 typed UNKNOWN 標籤：['原持有／管領狀態', '店員、店家或第三人是否接續管領', '行為人對物品所有權的認知', '取得後如何處理物品']）",
+          "unknowns_before_count": 9,
+          "unknowns_after": [
+            "行為人",
+            "行為方式",
+            "結果與行為間關係",
+            "可供查證的證據",
+            "原持有／管領狀態",
+            "店員、店家或第三人是否接續管領",
+            "行為人對物品所有權的認知",
+            "取得後如何處理物品"
+          ]
+        },
+        "update_gate1_projection_stability": {
+          "status": "PASS",
+          "detail": "8 項 facts 衍生狀態在 facts 未變更時保持不變"
+        },
+        "analyze_candidates_delivery": {
+          "status": "PASS",
+          "detail": "analysis 路徑收到 16 筆 facts；UNKNOWN keys=['', 'intent', 'original_possession', 'ownership_knowledge', 'post_acquisition_conduct', 'third_party_possession']",
+          "candidate_ids": []
+        },
+        "stale_summary_guard": {
+          "status": "PASS",
+          "detail": "摘要被改寫時未把 span 對不上的 facts 傳給候選產生器"
+        },
+        "build_questions_delivery": {
+          "status": "PASS",
+          "detail": "正式流程把 facts 傳入 build_questions 與 mark_known_questions；產生 20 題",
+          "question_count": 20
+        }
+      },
+      "not_applicable": {
+        "denial_evidence_separated": "此情境沒有當事人否認與外部證據衝突",
+        "contradiction_traceable": "此情境沒有當事人否認與外部證據衝突",
+        "contradiction_cleared_on_fact_removal": "此情境沒有當事人否認與外部證據衝突"
+      },
+      "observations": {
+        "legal_labels": "PENDING_HUMAN_REVIEW",
+        "typed_fact_count": 6,
+        "typed_facts": [
+          {
+            "fact_key": "intent",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "taking",
+            "value": "TAKING_OR_REMOVAL_ADMITTED",
+            "assertion_class": "ADMITTED",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNVERIFIED",
+            "machine_status": "FACT",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "original_possession",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          },
+          {
+            "fact_key": "third_party_possession",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          },
+          {
+            "fact_key": "ownership_knowledge",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          },
+          {
+            "fact_key": "post_acquisition_conduct",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          }
+        ],
+        "unknowns_after_intent_removal": [
+          "行為人",
+          "行為方式",
+          "結果與行為間關係",
+          "可供查證的證據",
+          "原持有／管領狀態",
+          "店員、店家或第三人是否接續管領",
+          "行為人對物品所有權的認知",
+          "取得後如何處理物品"
+        ],
+        "candidate_ids": [],
+        "unknown_fact_keys": {},
+        "question_count": 20
+      }
+    },
+    "C_HANDOVER": {
+      "case": "C_HANDOVER",
+      "status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "typed_fact_contract": {
+          "status": "PASS",
+          "detail": "6 筆 typed facts 均有完整契約欄位與可回查 span"
+        },
+        "unknown_preserved": {
+          "status": "PASS",
+          "detail": "UNKNOWN 保留：original_possession, intent, ownership_knowledge, taking"
+        },
+        "required_typed_keys_present": {
+          "status": "PASS",
+          "detail": "六項必要 typed facts 均存在（6 keys）"
+        },
+        "events_only_update_contract": {
+          "status": "PASS",
+          "detail": "只送 events 的更新與建案產生相同 facts／unknowns／矛盾紀錄",
+          "fact_count": 13
+        },
+        "create_case_delivery": {
+          "status": "PASS",
+          "detail": "13 筆 facts 與案件保存一致；其中 UNKNOWN typed keys=['intent', 'original_possession', 'ownership_knowledge', 'taking']"
+        },
+        "update_gate1_unknown_sync": {
+          "status": "PASS",
+          "detail": "intent 事實移除後 unknowns 同步（剩下的 typed UNKNOWN 標籤：['原持有／管領狀態', '行為人對物品所有權的認知', '是否取走／帶離物品']）",
+          "unknowns_before_count": 8,
+          "unknowns_after": [
+            "行為人",
+            "行為方式",
+            "結果與行為間關係",
+            "可供查證的證據",
+            "原持有／管領狀態",
+            "行為人對物品所有權的認知",
+            "是否取走／帶離物品"
+          ]
+        },
+        "update_gate1_projection_stability": {
+          "status": "PASS",
+          "detail": "8 項 facts 衍生狀態在 facts 未變更時保持不變"
+        },
+        "analyze_candidates_delivery": {
+          "status": "PASS",
+          "detail": "analysis 路徑收到 13 筆 facts；UNKNOWN keys=['', 'intent', 'original_possession', 'ownership_knowledge', 'taking']",
+          "candidate_ids": []
+        },
+        "stale_summary_guard": {
+          "status": "PASS",
+          "detail": "摘要被改寫時未把 span 對不上的 facts 傳給候選產生器"
+        },
+        "build_questions_delivery": {
+          "status": "PASS",
+          "detail": "正式流程把 facts 傳入 build_questions 與 mark_known_questions；產生 20 題",
+          "question_count": 20
+        }
+      },
+      "not_applicable": {
+        "possession_inference_separated": "此情境沒有『離開後才發現遺失』描述",
+        "denial_evidence_separated": "此情境沒有當事人否認與外部證據衝突",
+        "contradiction_traceable": "此情境沒有當事人否認與外部證據衝突",
+        "contradiction_cleared_on_fact_removal": "此情境沒有當事人否認與外部證據衝突"
+      },
+      "observations": {
+        "legal_labels": "PENDING_HUMAN_REVIEW",
+        "typed_fact_count": 6,
+        "typed_facts": [
+          {
+            "fact_key": "intent",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "post_acquisition_conduct",
+            "value": "IMMEDIATE_HANDOVER_TO_STORE_STAFF",
+            "assertion_class": "ASSERTED",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNVERIFIED",
+            "machine_status": "FACT",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "third_party_possession",
+            "value": "HANDOVER_TO_STORE_STAFF_RECORDED",
+            "assertion_class": "ASSERTED",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNVERIFIED",
+            "machine_status": "FACT",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "original_possession",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          },
+          {
+            "fact_key": "ownership_knowledge",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          },
+          {
+            "fact_key": "taking",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          }
+        ],
+        "unknowns_after_intent_removal": [
+          "行為人",
+          "行為方式",
+          "結果與行為間關係",
+          "可供查證的證據",
+          "原持有／管領狀態",
+          "行為人對物品所有權的認知",
+          "是否取走／帶離物品"
+        ],
+        "candidate_ids": [],
+        "unknown_fact_keys": {},
+        "question_count": 20
+      }
+    },
+    "D_CONFLICT": {
+      "case": "D_CONFLICT",
+      "status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "typed_fact_contract": {
+          "status": "PASS",
+          "detail": "7 筆 typed facts 均有完整契約欄位與可回查 span"
+        },
+        "unknown_preserved": {
+          "status": "PASS",
+          "detail": "UNKNOWN 保留：original_possession, third_party_possession, intent, ownership_knowledge, post_acquisition_conduct"
+        },
+        "required_typed_keys_present": {
+          "status": "PASS",
+          "detail": "六項必要 typed facts 均存在（6 keys）"
+        },
+        "events_only_update_contract": {
+          "status": "PASS",
+          "detail": "只送 events 的更新與建案產生相同 facts／unknowns／矛盾紀錄",
+          "fact_count": 20
+        },
+        "create_case_delivery": {
+          "status": "PASS",
+          "detail": "20 筆 facts 與案件保存一致；其中 UNKNOWN typed keys=['intent', 'original_possession', 'ownership_knowledge', 'post_acquisition_conduct', 'third_party_possession']"
+        },
+        "update_gate1_unknown_sync": {
+          "status": "PASS",
+          "detail": "intent 事實移除後 unknowns 同步（剩下的 typed UNKNOWN 標籤：['原持有／管領狀態', '店員、店家或第三人是否接續管領', '行為人對物品所有權的認知', '取得後如何處理物品']）",
+          "unknowns_before_count": 12,
+          "unknowns_after": [
+            "行為人／受害人",
+            "事件經過",
+            "發生時間",
+            "客體",
+            "行為方式",
+            "結果／傷勢",
+            "結果與行為間關係",
+            "原持有／管領狀態",
+            "店員、店家或第三人是否接續管領",
+            "行為人對物品所有權的認知",
+            "取得後如何處理物品"
+          ]
+        },
+        "update_gate1_projection_stability": {
+          "status": "PASS",
+          "detail": "8 項 facts 衍生狀態在 facts 未變更時保持不變"
+        },
+        "analyze_candidates_delivery": {
+          "status": "PASS",
+          "detail": "analysis 路徑收到 20 筆 facts；UNKNOWN keys=['action', 'causation', 'event', 'intent', 'object', 'original_possession', 'ownership_knowledge', 'person', 'post_acquisition_conduct', 'result', 'third_party_possession', 'time']",
+          "candidate_ids": []
+        },
+        "stale_summary_guard": {
+          "status": "PASS",
+          "detail": "摘要被改寫時未把 span 對不上的 facts 傳給候選產生器"
+        },
+        "build_questions_delivery": {
+          "status": "PASS",
+          "detail": "正式流程把 facts 傳入 build_questions 與 mark_known_questions；產生 20 題",
+          "question_count": 20
+        },
+        "denial_evidence_separated": {
+          "status": "PASS",
+          "detail": "否認與監視器各自保存（fact:c67075549ff3801ff054 / fact:851ba9e5177b72b3bcc4）"
+        },
+        "contradiction_traceable": {
+          "status": "PASS",
+          "detail": "1 筆矛盾同時連結否認與證據，resolved_value=UNKNOWN（待人工複核）",
+          "issue": {
+            "issue_id": "contradiction:cf131ff3c866be96d320",
+            "fact_key": "taking",
+            "status": "CONFLICT_REQUIRES_HUMAN_REVIEW",
+            "fact_refs": [
+              "fact:851ba9e5177b72b3bcc4",
+              "fact:c67075549ff3801ff054"
+            ],
+            "denial_fact_ids": [
+              "fact:c67075549ff3801ff054"
+            ],
+            "contrary_fact_ids": [
+              "fact:851ba9e5177b72b3bcc4"
+            ],
+            "subject": "乙",
+            "object": "手機",
+            "event_id": "event:property-taking",
+            "proposition_key": "taking|乙|手機|event:property-taking",
+            "source_types": [
+              "EVIDENCE",
+              "PARTY_STATEMENT"
+            ],
+            "assertion_classes": [
+              "ASSERTED",
+              "DENIED"
+            ],
+            "resolved_value": "UNKNOWN",
+            "review_status": "HUMAN_REVIEW_REQUIRED"
+          }
+        },
+        "contradiction_cleared_on_fact_removal": {
+          "status": "PASS",
+          "detail": "移除否認事實後矛盾連結同步清除"
+        }
+      },
+      "not_applicable": {
+        "possession_inference_separated": "此情境沒有『離開後才發現遺失』描述"
+      },
+      "observations": {
+        "legal_labels": "PENDING_HUMAN_REVIEW",
+        "typed_fact_count": 7,
+        "typed_facts": [
+          {
+            "fact_key": "original_possession",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "intent",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "taking",
+            "value": "TAKING_OR_REMOVAL_DENIED",
+            "assertion_class": "DENIED",
+            "source_type": "PARTY_STATEMENT",
+            "verification_status": "UNVERIFIED",
+            "machine_status": "FACT",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "taking",
+            "value": "EVIDENCE_DEPICTS_TAKING_OR_REMOVAL",
+            "assertion_class": "ASSERTED",
+            "source_type": "EVIDENCE",
+            "verification_status": "UNVERIFIED",
+            "machine_status": "FACT",
+            "has_source_span": true
+          },
+          {
+            "fact_key": "third_party_possession",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          },
+          {
+            "fact_key": "ownership_knowledge",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          },
+          {
+            "fact_key": "post_acquisition_conduct",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "source_type": "UNKNOWN",
+            "verification_status": "UNKNOWN",
+            "machine_status": "UNKNOWN",
+            "has_source_span": false
+          }
+        ],
+        "unknowns_after_intent_removal": [
+          "行為人／受害人",
+          "事件經過",
+          "發生時間",
+          "客體",
+          "行為方式",
+          "結果／傷勢",
+          "結果與行為間關係",
+          "原持有／管領狀態",
+          "店員、店家或第三人是否接續管領",
+          "行為人對物品所有權的認知",
+          "取得後如何處理物品"
+        ],
+        "candidate_ids": [],
+        "unknown_fact_keys": {},
+        "question_count": 20
+      }
+    }
+  },
+  "plain_language_cases": {
+    "PLAIN_TAKING": {
+      "case": "PLAIN_TAKING",
+      "status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "prompt_free_input": {
+          "status": "PASS",
+          "detail": "案例不含任何『未知』類提示詞"
+        },
+        "required_typed_keys_present": {
+          "status": "PASS",
+          "detail": "6 項必要 typed facts 均由情境建立"
+        },
+        "intent_unknown_from_context": {
+          "status": "PASS",
+          "detail": "未提及意圖時建立 intent=UNKNOWN，且標籤同步"
+        },
+        "third_party_possession_not_omitted": {
+          "status": "PASS",
+          "detail": "third_party_possession 存在（values=['UNKNOWN']）"
+        },
+        "typed_fact_contract": {
+          "status": "PASS",
+          "detail": "typed facts 均有完整契約欄位與 provenance"
+        }
+      },
+      "not_applicable": {},
+      "observations": {
+        "summary": "甲把行動電話放在便利商店櫃檯旁，乙拿走該行動電話後離開。",
+        "contains_prompt_words": [],
+        "legal_labels": "PENDING_HUMAN_REVIEW",
+        "typed_facts": [
+          {
+            "fact_key": "original_possession",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "machine_status": "UNKNOWN"
+          },
+          {
+            "fact_key": "intent",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "machine_status": "UNKNOWN"
+          },
+          {
+            "fact_key": "taking",
+            "value": "TAKING_OR_REMOVAL_REPORTED",
+            "assertion_class": "ASSERTED",
+            "machine_status": "FACT"
+          },
+          {
+            "fact_key": "third_party_possession",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "machine_status": "UNKNOWN"
+          },
+          {
+            "fact_key": "ownership_knowledge",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "machine_status": "UNKNOWN"
+          },
+          {
+            "fact_key": "post_acquisition_conduct",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "machine_status": "UNKNOWN"
+          }
+        ]
+      }
+    },
+    "PLAIN_PICKUP": {
+      "case": "PLAIN_PICKUP",
+      "status": "PASS",
+      "failed_checks": [],
+      "checks": {
+        "prompt_free_input": {
+          "status": "PASS",
+          "detail": "案例不含任何『未知』類提示詞"
+        },
+        "required_typed_keys_present": {
+          "status": "PASS",
+          "detail": "6 項必要 typed facts 均由情境建立"
+        },
+        "intent_unknown_from_context": {
+          "status": "PASS",
+          "detail": "未提及意圖時建立 intent=UNKNOWN，且標籤同步"
+        },
+        "third_party_possession_not_omitted": {
+          "status": "PASS",
+          "detail": "third_party_possession 存在（values=['UNKNOWN']）"
+        },
+        "typed_fact_contract": {
+          "status": "PASS",
+          "detail": "typed facts 均有完整契約欄位與 provenance"
+        }
+      },
+      "not_applicable": {},
+      "observations": {
+        "summary": "乙在店內拾得手機後將手機帶離，甲表示手機為其所有。",
+        "contains_prompt_words": [],
+        "legal_labels": "PENDING_HUMAN_REVIEW",
+        "typed_facts": [
+          {
+            "fact_key": "original_possession",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "machine_status": "UNKNOWN"
+          },
+          {
+            "fact_key": "third_party_possession",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "machine_status": "UNKNOWN"
+          },
+          {
+            "fact_key": "intent",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "machine_status": "UNKNOWN"
+          },
+          {
+            "fact_key": "ownership_knowledge",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "machine_status": "UNKNOWN"
+          },
+          {
+            "fact_key": "taking",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "machine_status": "UNKNOWN"
+          },
+          {
+            "fact_key": "post_acquisition_conduct",
+            "value": "UNKNOWN",
+            "assertion_class": "UNKNOWN",
+            "machine_status": "UNKNOWN"
+          }
+        ]
+      }
+    }
+  },
+  "overall": "PASS",
+  "summary": {
+    "BASE": {
+      "status": "PASS",
+      "failed_checks": [],
+      "candidate_ids": [
+        "theft"
+      ],
+      "question_count": 20
+    },
+    "A_RETAINED": {
+      "status": "PASS",
+      "failed_checks": [],
+      "candidate_ids": [
+        "theft"
+      ],
+      "question_count": 20
+    },
+    "B_LOST": {
+      "status": "PASS",
+      "failed_checks": [],
+      "candidate_ids": [],
+      "question_count": 20
+    },
+    "C_HANDOVER": {
+      "status": "PASS",
+      "failed_checks": [],
+      "candidate_ids": [],
+      "question_count": 20
+    },
+    "D_CONFLICT": {
+      "status": "PASS",
+      "failed_checks": [],
+      "candidate_ids": [],
+      "question_count": 20
+    },
+    "plain_language": {
+      "PLAIN_TAKING": {
+        "status": "PASS",
+        "failed_checks": []
+      },
+      "PLAIN_PICKUP": {
+        "status": "PASS",
+        "failed_checks": []
+      }
+    }
+  }
+}

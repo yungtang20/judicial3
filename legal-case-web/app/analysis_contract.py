@@ -75,6 +75,21 @@ def decorate_fact(
     return fact
 
 
+def decorate_facts(
+    raw: list[dict[str, Any]], *, case_id: str = "", revision_id: int | None = None
+) -> list[dict[str, Any]]:
+    """以 ``decorate_fact`` 統一裝飾事實清單（單一契約入口）。
+
+    建案與每個會重建 facts 的更新路徑都必須走這裡，否則同一份摘要會因
+    入口不同而缺少 ``fact_key_status``／``provenance`` 等契約欄位。
+    """
+    return [
+        decorate_fact(item, case_id=case_id, revision_id=revision_id)
+        for item in raw
+        if isinstance(item, dict)
+    ]
+
+
 def _candidate_status(candidate: dict[str, Any]) -> str:
     if candidate.get("candidate_eligibility") == "HINT_ONLY":
         return "LOW_CONFIDENCE"

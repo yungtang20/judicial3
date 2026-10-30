@@ -74,13 +74,41 @@ def test_a_retained_possession_is_an_unverified_statement_not_objective_truth() 
     _assert_exact_source(A_RETAINED, fact)
 
 
-def test_b_lost_state_does_not_invent_store_or_third_party_control_fact() -> None:
+def test_b_lost_state_keeps_source_statement_and_marks_possession_inference_unverified() -> None:
+    """GATE-009：離開後發現遺失不得直接寫成已確定的持有狀態。"""
     gate1 = _gate1(B_LOST)
+
+    # 原始描述保留為可追溯的來源陳述，不改寫成法律／持有結論。
+    event = _facts(gate1, "possession_event")[0]
+    assert event["value"] == "OWNER_REPORTED_LOSS_AFTER_LEAVING"
+    assert event["assertion_class"] == "ASSERTED"
+    assert event["source_type"] == "PARTY_STATEMENT"
+    assert event["verification_status"] == "UNVERIFIED"
+    _assert_exact_source(B_LOST, event)
+
+    # 由摘要推導的持有狀態必須明示為推論、保留來源、待人工複核。
+    inference = _facts(gate1, "possession_inference")[0]
+    assert inference["value"] == "LOST_OR_OUT_OF_POSSESSION"
+    assert inference["assertion_class"] == "INFERRED"
+    assert inference["source_type"] == "SYSTEM_INFERENCE"
+    assert inference["verification_status"] == "UNVERIFIED"
+    assert inference["machine_status"] == "INFERENCE"
+    assert inference["derived_from_fact_key"] == "possession_event"
+    assert inference["inference_review"] == "HUMAN_REVIEW_REQUIRED"
+    assert inference["fact_id"] != event["fact_id"]
+    _assert_exact_source(B_LOST, inference)
+
+    # 原持有狀態與第三人管領都仍是 UNKNOWN，不得由單一線索推定。
     possession = _facts(gate1, "original_possession")[0]
-    assert possession["value"] == "LOST_OR_OUT_OF_POSSESSION"
-    assert possession["assertion_class"] == "ASSERTED"
-    assert possession["verification_status"] == "UNVERIFIED"
-    assert _facts(gate1, "third_party_possession") == []
+    assert possession["value"] == "UNKNOWN"
+    assert possession["assertion_class"] == "UNKNOWN"
+    assert possession["verification_status"] == "UNKNOWN"
+    assert all(
+        item["value"] != "LOST_OR_OUT_OF_POSSESSION"
+        for item in _facts(gate1, "original_possession")
+    )
+    third_party = _facts(gate1, "third_party_possession")
+    assert [item["value"] for item in third_party] == ["UNKNOWN"]
 
 
 def test_c_handover_is_separate_from_unknown_intent() -> None:

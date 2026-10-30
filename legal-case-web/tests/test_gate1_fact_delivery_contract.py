@@ -244,7 +244,17 @@ def test_formal_flow_passes_facts_into_build_questions_and_unknowns_stay_unknown
         item["fact_key"] for item in _typed(case["gate1"]["facts"])
         if item["value"] == "UNKNOWN"
     }
-    assert unknown_targets == {"original_possession", "intent"}
+    # GATE-009：完整契約要求適用欄位一律留下明確 UNKNOWN，因此改為子集檢查，
+    # 但 possession 與 intent 仍必須是 UNKNOWN。
+    assert {"original_possession", "intent"} <= unknown_targets
+    assert unknown_targets <= {
+        "original_possession",
+        "third_party_possession",
+        "intent",
+        "ownership_knowledge",
+        "taking",
+        "post_acquisition_conduct",
+    }
     for question in case["questions"]:
         target = question.get("meta", {}).get("fact_target")
         if target in unknown_targets:
