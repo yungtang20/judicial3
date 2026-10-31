@@ -7,32 +7,6 @@
     "required_references": 137,
     "retrieved_at": "2026-10-22T09:42:41Z"
   },
-  "中華民國刑法:225": {
-    "abolished": false,
-    "article_content": "對於男女利用其精神、身體障礙、心智缺陷或其他相類之情形，不能或不知抗拒而為性交者，處三年以上十年以下有期徒刑。\n對於男女利用其精神、身體障礙、心智缺陷或其他相類之情形，不能或不知抗拒而為猥褻之行為者，處六月以上五年以下有期徒刑。\n第一項之未遂犯罰之。",
-    "article_no": "第225條",
-    "dataset_version": "2026-10-16",
-    "law_modified_date": "2026-07-22",
-    "law_name": "中華民國刑法",
-    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
-    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
-    "official_verification_status": "PENDING",
-    "retrieval_provider": "mcp__tw_legal_rag__get_law_article",
-    "verified_at": "2026-10-25T00:00:00+08:00"
-  },
-  "中華民國刑法:319-1": {
-    "abolished": false,
-    "article_content": "未經他人同意，無故以照相、錄影、電磁紀錄或其他科技方法攝錄其性影像者，處三年以下有期徒刑。\n意圖營利供給場所、工具或設備，便利他人為前項之行為者，處五年以下有期徒刑，得併科五十萬元以下罰金。\n意圖營利、散布、播送、公然陳列或以他法供人觀覽，而犯第一項之罪者，依前項規定處斷。\n前三項之未遂犯罰之。",
-    "article_no": "第319條之1",
-    "dataset_version": "2026-10-16",
-    "law_modified_date": "2026-07-22",
-    "law_name": "中華民國刑法",
-    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
-    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
-    "official_verification_status": "PENDING",
-    "retrieval_provider": "mcp__tw_legal_rag__get_law_article",
-    "verified_at": "2026-10-25T00:00:00+08:00"
-  },
   "中華民國刑法:101": {
     "abolished": false,
     "article_content": "以暴動犯前條第一項之罪者，處無期徒刑或七年以上有期徒刑。首謀者，處死刑或無期徒刑。\n預備或陰謀犯前項之罪者，處一年以上七年以下有期徒刑。",
@@ -999,6 +973,19 @@
     "retrieval_provider": "tlr.dr-legal.com.tw/v1/law_article",
     "verified_at": "2026-10-22T09:42:19.959185+00:00"
   },
+  "中華民國刑法:225": {
+    "abolished": false,
+    "article_content": "對於男女利用其精神、身體障礙、心智缺陷或其他相類之情形，不能或不知抗拒而為性交者，處三年以上十年以下有期徒刑。\n對於男女利用其精神、身體障礙、心智缺陷或其他相類之情形，不能或不知抗拒而為猥褻之行為者，處六月以上五年以下有期徒刑。\n第一項之未遂犯罰之。",
+    "article_no": "第225條",
+    "dataset_version": "2026-10-16",
+    "law_modified_date": "2026-07-22",
+    "law_name": "中華民國刑法",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__get_law_article",
+    "verified_at": "2026-10-25T00:00:00+08:00"
+  },
   "中華民國刑法:247": {
     "abolished": false,
     "article_content": "損壞、遺棄、污辱或盜取屍體者，處六月以上五年以下有期徒刑。\n損壞、遺棄或盜取遺骨、遺髮、殮物或火葬之遺灰者，處五年以下有期徒刑。\n前二項之未遂犯罰之。",
@@ -1181,6 +1168,58 @@
     "retrieval_provider": "tlr.dr-legal.com.tw/v1/law_article",
     "verified_at": "2026-10-22T09:42:41.145691+00:00"
   },
+  "中華民國刑法:310": {
+    "abolished": false,
+    "article_content": "意圖散布於眾，而指摘或傳述足以毀損他人名譽之事者，為誹謗罪，處一年以下有期徒刑、拘役或一萬五千元以下罰金。散布文字、圖畫犯前項之罪者，處二年以下有期徒刑、拘役或三萬元以下罰金。對於所誹謗之事，能證明其為真實者，不罰。但涉於私德而與公共利益無關者，不在此限。",
+    "article_no": "第310條",
+    "dataset_version": "2026-10-31",
+    "law_modified_date": "2026-07-22",
+    "law_name": "中華民國刑法",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__query_regulation",
+    "verified_at": "2026-10-31T00:00:00+08:00"
+  },
+  "中華民國刑法:319-1": {
+    "abolished": false,
+    "article_content": "未經他人同意，無故以照相、錄影、電磁紀錄或其他科技方法攝錄其性影像者，處三年以下有期徒刑。\n意圖營利供給場所、工具或設備，便利他人為前項之行為者，處五年以下有期徒刑，得併科五十萬元以下罰金。\n意圖營利、散布、播送、公然陳列或以他法供人觀覽，而犯第一項之罪者，依前項規定處斷。\n前三項之未遂犯罰之。",
+    "article_no": "第319條之1",
+    "dataset_version": "2026-10-16",
+    "law_modified_date": "2026-07-22",
+    "law_name": "中華民國刑法",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__get_law_article",
+    "verified_at": "2026-10-25T00:00:00+08:00"
+  },
+  "中華民國刑法:328": {
+    "abolished": false,
+    "article_content": "意圖為自己或第三人不法之所有，以強暴、脅迫、藥劑、催眠術或他法，至使不能抗拒，而取他人之物或使其交付者，為強盜罪，處五年以上有期徒刑。以前項方法得財產上不法之利益或使第三人得之者，亦同。犯強盜罪因而致人於死者，處死刑、無期徒刑或十年以上有期徒刑；致重傷者，處無期徒刑或七年以上有期徒刑。第一項及第二項之未遂犯罰之。預備犯強盜罪者，處一年以下有期徒刑、拘役或九千元以下罰金。",
+    "article_no": "第328條",
+    "dataset_version": "2026-10-31",
+    "law_modified_date": "2026-07-22",
+    "law_name": "中華民國刑法",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__query_regulation",
+    "verified_at": "2026-10-31T00:00:00+08:00"
+  },
+  "中華民國刑法:333": {
+    "abolished": false,
+    "article_content": "未受交戰國之允准或不屬於各國之海軍，而駕駛船艦，意圖施強暴、脅迫於他船或他船之人或物者，為海盜罪，處死刑、無期徒刑或七年以上有期徒刑。船員或乘客意圖掠奪財物，施強暴、脅迫於其他船員或乘客，而駕駛或指揮船艦者，以海盜論。因而致人於死者，處死刑、無期徒刑或十二年以上有期徒刑；致重傷者，處死刑、無期徒刑或十年以上有期徒刑。",
+    "article_no": "第333條",
+    "dataset_version": "2026-10-31",
+    "law_modified_date": "2026-07-22",
+    "law_name": "中華民國刑法",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__query_regulation",
+    "verified_at": "2026-10-31T00:00:00+08:00"
+  },
   "中華民國刑法:337": {
     "abolished": false,
     "article_content": "意圖為自己或第三人不法之所有，而侵占遺失物、漂流物或其他離本人所持有之物者，處一萬五千元以下罰金。",
@@ -1190,6 +1229,19 @@
     "law_name": "中華民國刑法",
     "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
     "verified_at": "2026-10-12T11:02:49.698287+00:00"
+  },
+  "中華民國刑法:358": {
+    "abolished": false,
+    "article_content": "無故輸入他人帳號密碼、破解使用電腦之保護措施或利用電腦系統之漏洞，而入侵他人之電腦或其相關設備者，處三年以下有期徒刑、拘役或科或併科三十萬元以下罰金。",
+    "article_no": "第358條",
+    "dataset_version": "2026-10-31",
+    "law_modified_date": "2026-07-22",
+    "law_name": "中華民國刑法",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__query_regulation",
+    "verified_at": "2026-10-31T00:00:00+08:00"
   },
   "中華民國刑法:第100條": {
     "abolished": false,
@@ -1491,6 +1543,19 @@
     "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
     "verified_at": "2026-10-12T02:25:27.724800+00:00"
   },
+  "中華民國刑法:第310條": {
+    "abolished": false,
+    "article_content": "意圖散布於眾，而指摘或傳述足以毀損他人名譽之事者，為誹謗罪，處一年以下有期徒刑、拘役或一萬五千元以下罰金。散布文字、圖畫犯前項之罪者，處二年以下有期徒刑、拘役或三萬元以下罰金。對於所誹謗之事，能證明其為真實者，不罰。但涉於私德而與公共利益無關者，不在此限。",
+    "article_no": "第310條",
+    "dataset_version": "2026-10-31",
+    "law_modified_date": "2026-07-22",
+    "law_name": "中華民國刑法",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__query_regulation",
+    "verified_at": "2026-10-31T00:00:00+08:00"
+  },
   "中華民國刑法:第315條之1": {
     "abolished": false,
     "article_content": "有下列行為之一者，處三年以下有期徒刑、拘役或三十萬元以下罰金：\n一、無故利用工具或設備窺視、竊聽他人非公開之活動、言論、談話或身體隱私部位者。\n二、無故以錄音、照相、錄影或電磁紀錄竊錄他人非公開之活動、言論、談話或身體隱私部位者。",
@@ -1531,6 +1596,32 @@
     "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
     "verified_at": "2026-10-12T02:25:45.744863+00:00"
   },
+  "中華民國刑法:第328條": {
+    "abolished": false,
+    "article_content": "意圖為自己或第三人不法之所有，以強暴、脅迫、藥劑、催眠術或他法，至使不能抗拒，而取他人之物或使其交付者，為強盜罪，處五年以上有期徒刑。以前項方法得財產上不法之利益或使第三人得之者，亦同。犯強盜罪因而致人於死者，處死刑、無期徒刑或十年以上有期徒刑；致重傷者，處無期徒刑或七年以上有期徒刑。第一項及第二項之未遂犯罰之。預備犯強盜罪者，處一年以下有期徒刑、拘役或九千元以下罰金。",
+    "article_no": "第328條",
+    "dataset_version": "2026-10-31",
+    "law_modified_date": "2026-07-22",
+    "law_name": "中華民國刑法",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__query_regulation",
+    "verified_at": "2026-10-31T00:00:00+08:00"
+  },
+  "中華民國刑法:第333條": {
+    "abolished": false,
+    "article_content": "未受交戰國之允准或不屬於各國之海軍，而駕駛船艦，意圖施強暴、脅迫於他船或他船之人或物者，為海盜罪，處死刑、無期徒刑或七年以上有期徒刑。船員或乘客意圖掠奪財物，施強暴、脅迫於其他船員或乘客，而駕駛或指揮船艦者，以海盜論。因而致人於死者，處死刑、無期徒刑或十二年以上有期徒刑；致重傷者，處死刑、無期徒刑或十年以上有期徒刑。",
+    "article_no": "第333條",
+    "dataset_version": "2026-10-31",
+    "law_modified_date": "2026-07-22",
+    "law_name": "中華民國刑法",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__query_regulation",
+    "verified_at": "2026-10-31T00:00:00+08:00"
+  },
   "中華民國刑法:第335條": {
     "abolished": false,
     "article_content": "意圖為自己或第三人不法之所有，而侵占自己持有他人之物者，處五年以下有期徒刑、拘役或科或併科三萬元以下罰金。\n前項之未遂犯罰之。",
@@ -1570,6 +1661,19 @@
     "law_name": "中華民國刑法",
     "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
     "verified_at": "2026-10-12T02:25:26.580484+00:00"
+  },
+  "中華民國刑法:第358條": {
+    "abolished": false,
+    "article_content": "無故輸入他人帳號密碼、破解使用電腦之保護措施或利用電腦系統之漏洞，而入侵他人之電腦或其相關設備者，處三年以下有期徒刑、拘役或科或併科三十萬元以下罰金。",
+    "article_no": "第358條",
+    "dataset_version": "2026-10-31",
+    "law_modified_date": "2026-07-22",
+    "law_name": "中華民國刑法",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__query_regulation",
+    "verified_at": "2026-10-31T00:00:00+08:00"
   },
   "中華民國刑法:第359條": {
     "abolished": false,
@@ -2167,6 +2271,32 @@
     "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000008",
     "verified_at": "2026-10-12T01:13:30.439620+00:00"
   },
+  "毒品危害防制條例:11": {
+    "abolished": false,
+    "article_content": "持有第一級毒品者，處三年以下有期徒刑、拘役或新臺幣三十萬元以下罰金。持有第二級毒品者，處二年以下有期徒刑、拘役或新臺幣二十萬元以下罰金。持有第一級毒品純質淨重十公克以上者，處一年以上七年以下有期徒刑，得併科新臺幣一百萬元以下罰金。持有第二級毒品純質淨重二十公克以上者，處六月以上五年以下有期徒刑，得併科新臺幣七十萬元以下罰金。持有第三級毒品純質淨重五公克以上者，處二年以下有期徒刑，得併科新臺幣二十萬元以下罰金。持有第四級毒品純質淨重五公克以上者，處一年以下有期徒刑，得併科新臺幣十萬元以下罰金。持有專供製造或施用第一級、第二級毒品之器具者，處一年以下有期徒刑、拘役或新臺幣十萬元以下罰金。",
+    "article_no": "第11條",
+    "dataset_version": "2026-10-31",
+    "law_modified_date": "2026-07-22",
+    "law_name": "毒品危害防制條例",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000008",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000008",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__query_regulation",
+    "verified_at": "2026-10-31T00:00:00+08:00"
+  },
+  "毒品危害防制條例:4": {
+    "abolished": false,
+    "article_content": "製造、運輸、販賣第一級毒品者，處死刑或無期徒刑；處無期徒刑者，得併科新臺幣三千萬元以下罰金。製造、運輸、販賣第二級毒品者，處無期徒刑或十年以上有期徒刑，得併科新臺幣一千五百萬元以下罰金。製造、運輸、販賣第三級毒品者，處七年以上有期徒刑，得併科新臺幣一千萬元以下罰金。製造、運輸、販賣第四級毒品者，處五年以上十二年以下有期徒刑，得併科新臺幣五百萬元以下罰金。製造、運輸、販賣專供製造或施用毒品之器具者，處一年以上七年以下有期徒刑，得併科新臺幣一百五十萬元以下罰金。前五項之未遂犯罰之。",
+    "article_no": "第4條",
+    "dataset_version": "2026-10-31",
+    "law_modified_date": "2026-07-22",
+    "law_name": "毒品危害防制條例",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000008",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000008",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__query_regulation",
+    "verified_at": "2026-10-31T00:00:00+08:00"
+  },
   "毒品危害防制條例:第10條": {
     "abolished": false,
     "article_content": "施用第一級毒品者，處六月以上五年以下有期徒刑。\n施用第二級毒品者，處三年以下有期徒刑。",
@@ -2176,6 +2306,32 @@
     "law_name": "毒品危害防制條例",
     "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000008",
     "verified_at": "2026-10-12T02:25:41.334957+00:00"
+  },
+  "毒品危害防制條例:第11條": {
+    "abolished": false,
+    "article_content": "持有第一級毒品者，處三年以下有期徒刑、拘役或新臺幣三十萬元以下罰金。持有第二級毒品者，處二年以下有期徒刑、拘役或新臺幣二十萬元以下罰金。持有第一級毒品純質淨重十公克以上者，處一年以上七年以下有期徒刑，得併科新臺幣一百萬元以下罰金。持有第二級毒品純質淨重二十公克以上者，處六月以上五年以下有期徒刑，得併科新臺幣七十萬元以下罰金。持有第三級毒品純質淨重五公克以上者，處二年以下有期徒刑，得併科新臺幣二十萬元以下罰金。持有第四級毒品純質淨重五公克以上者，處一年以下有期徒刑，得併科新臺幣十萬元以下罰金。持有專供製造或施用第一級、第二級毒品之器具者，處一年以下有期徒刑、拘役或新臺幣十萬元以下罰金。",
+    "article_no": "第11條",
+    "dataset_version": "2026-10-31",
+    "law_modified_date": "2026-07-22",
+    "law_name": "毒品危害防制條例",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000008",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000008",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__query_regulation",
+    "verified_at": "2026-10-31T00:00:00+08:00"
+  },
+  "毒品危害防制條例:第4條": {
+    "abolished": false,
+    "article_content": "製造、運輸、販賣第一級毒品者，處死刑或無期徒刑；處無期徒刑者，得併科新臺幣三千萬元以下罰金。製造、運輸、販賣第二級毒品者，處無期徒刑或十年以上有期徒刑，得併科新臺幣一千五百萬元以下罰金。製造、運輸、販賣第三級毒品者，處七年以上有期徒刑，得併科新臺幣一千萬元以下罰金。製造、運輸、販賣第四級毒品者，處五年以上十二年以下有期徒刑，得併科新臺幣五百萬元以下罰金。製造、運輸、販賣專供製造或施用毒品之器具者，處一年以上七年以下有期徒刑，得併科新臺幣一百五十萬元以下罰金。前五項之未遂犯罰之。",
+    "article_no": "第4條",
+    "dataset_version": "2026-10-31",
+    "law_modified_date": "2026-07-22",
+    "law_name": "毒品危害防制條例",
+    "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000008",
+    "official_source_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000008",
+    "official_verification_status": "PENDING",
+    "retrieval_provider": "mcp__tw_legal_rag__query_regulation",
+    "verified_at": "2026-10-31T00:00:00+08:00"
   },
   "跟蹤騷擾防制法:1": {
     "abolished": false,

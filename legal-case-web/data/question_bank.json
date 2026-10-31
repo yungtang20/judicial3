@@ -726,7 +726,15 @@
         "law_modified_date": "2026-07-22",
         "dataset_version": "2026-10-02",
         "verified_at": "2026-10-12T01:13:27.314183+00:00",
-        "verification_note": "現行法核實；行為時法（歷史版本）仍須由承辦人依官方修正歷程確認。"
+        "verification_note": "現行法核實；行為時法（歷史版本）仍須由承辦人依官方修正歷程確認。",
+        "related_articles": [
+          {
+            "law_name": "中華民國刑法",
+            "article_no": "第310條",
+            "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+            "role": "誹謗罪（意圖散布於眾而指摘或傳述足以毀損他人名譽之事）"
+          }
+        ]
       },
       "elements": [
         {
@@ -823,7 +831,15 @@
         "law_modified_date": "2026-07-22",
         "dataset_version": "2026-10-02",
         "verified_at": "2026-10-12T01:13:28.494223+00:00",
-        "verification_note": "現行法核實；行為時法（歷史版本）仍須由承辦人依官方修正歷程確認。"
+        "verification_note": "現行法核實；行為時法（歷史版本）仍須由承辦人依官方修正歷程確認。",
+        "related_articles": [
+          {
+            "law_name": "中華民國刑法",
+            "article_no": "第358條",
+            "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+            "role": "無故輸入他人帳號密碼、破解保護措施或利用漏洞而入侵電腦罪"
+          }
+        ]
       },
       "elements": [
         {
@@ -1007,7 +1023,21 @@
         "law_modified_date": "2022-05-04",
         "dataset_version": "2026-10-02",
         "verified_at": "2026-10-12T01:13:30.439620+00:00",
-        "verification_note": "現行法核實；行為時法（歷史版本）仍須由承辦人依官方修正歷程確認。"
+        "verification_note": "現行法核實；行為時法（歷史版本）仍須由承辦人依官方修正歷程確認。",
+        "related_articles": [
+          {
+            "law_name": "毒品危害防制條例",
+            "article_no": "第4條",
+            "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000008",
+            "role": "製造、運輸、販賣毒品罪"
+          },
+          {
+            "law_name": "毒品危害防制條例",
+            "article_no": "第11條",
+            "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000008",
+            "role": "持有毒品罪"
+          }
+        ]
       },
       "elements": [
         {
@@ -1648,7 +1678,21 @@
         "dataset_version": "2026-10-02",
         "verified_at": "2026-10-12T01:23:31.318799+00:00",
         "verification_note": "現行法核實；行為時法（歷史版本）仍須由承辦人依官方修正歷程確認。",
-        "question_file": "robbery.md"
+        "question_file": "robbery.md",
+        "related_articles": [
+          {
+            "law_name": "中華民國刑法",
+            "article_no": "第328條",
+            "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+            "role": "強盜罪（以強暴、脅迫、藥劑、催眠術或他法至使不能抗拒而取物）"
+          },
+          {
+            "law_name": "中華民國刑法",
+            "article_no": "第333條",
+            "law_url": "https://law.moj.gov.tw/LawClass/LawAll.aspx?pcode=C0000001",
+            "role": "海盜罪"
+          }
+        ]
       },
       "elements": []
     },
