@@ -13,11 +13,28 @@ judicial3/
 │   ├── questions/           # Markdown 題庫
 │   ├── docs/                # 架構、設計、審查、證據封包
 │   └── tools/               # 輔助工具
+├── skills/                  # 本地 AI Agent Skills（台灣法域 + MCP 強制驗證）
+│   ├── AGENTS.md            # 硬規則、法域、MCP 清單
+│   ├── taiwan-law-mode/     # 總控路由（類 pstack /poteto-mode）
+│   ├── atomic/              # 原子技能（法條／裁判檢索、證據鏈、quality gate）
+│   └── playbooks/           # Gate 對應流程
 ├── criminal-investigation-assistant/  # 刑事筆錄輔助系統（獨立 Python 專案）
 ├── reasoning-flow/          # JS 推理流程原型
 ├── archive/                 # 已淘汰原型封存
 └── docs/                    # 專案層級文件
 ```
+
+## 本地 AI Skills（taiwan-law-mode）
+
+設計靈感來自 **poteto/pstack**（信任階梯、verification 為地基）與 **Legal-Skills-Chinese**（原子／複合、主張→要件→證據）。
+
+- 目錄：[`skills/`](./skills/)
+- 總控：對 agent 說「使用 taiwan-law-mode」或載入 `skills/taiwan-law-mode`
+- **硬規則**：不得編造法條／裁判；需要法源時必須呼叫已連接的 **taiwan-law-mcp**；輸出一律為輔助草稿
+- 原子技能：`search-taiwan-laws`、`search-taiwan-judgments`、`evidence-argument-chain`、`quality-gate`
+- 與 `legal-case-web/app/` 中 `evidence_argument_chain`、`quality_gate`、`forbidden_conclusions`、`citation_contract` 等模組對齊
+
+詳細說明見 [`skills/README.md`](./skills/README.md) 與 [`skills/AGENTS.md`](./skills/AGENTS.md)。
 
 ## 快速啟動
 
@@ -88,6 +105,7 @@ node --check app\static\app.js
 - `legal-case-web/docs/SYSTEM_ARCHITECTURE.md` — 系統架構與信任邊界
 - `legal-case-web/OPEN_ISSUES.md` — 未決問題
 - `legal-case-web/TEST_RESULTS.md` — 測試結果
+- `skills/README.md` — 本地 AI Skills 使用說明
 
 ## 推理模組（Phase 5-6）
 
@@ -103,7 +121,7 @@ node --check app\static\app.js
 | `app/candidate_completeness.py` | 專家策略 | 候選完整性檢查 |
 | `app/question_traceability.py` | 專家策略 | 問句追溯性檢查 |
 | `app/evaluation_metrics.py` | 專家策略 | 評估指標計算器 |
-<|end|> `app/document_format_validator.py` | 專家策略 | 文件格式驗證 |
+| `app/document_format_validator.py` | 專家策略 | 文件格式驗證 |
 | `app/audit_integrity.py` | 專家策略 | 稽核日誌 hash chain |
 | `app/confession_checklist.py` | 專家策略 | 自白補強 checklist |
 | `app/version_invalidation.py` | 專家策略 | STALE 標記 + 版本鏈 |
@@ -118,3 +136,4 @@ node --check app\static\app.js
 
 - 最後更新：2026-10-31
 - 維護原則：文件先行、邊界明確、證據可追溯、測試為工程證據而非法律核准
+- `feat/taiwan-law-skills`：新增 skills/ 供本地 AI 呼叫 taiwan-law-mcp 與對接 Gate 推理
