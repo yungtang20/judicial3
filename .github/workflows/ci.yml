@@ -38,6 +38,11 @@ jobs:
         run: npm audit --omit=dev --audit-level=high
       - name: Secret leakage scan
         run: python tools/secret_scan.py
+      - name: Skill discovery + agent loop subset
+        run: |
+          python tools/check_skill_discovery.py
+          pip install pytest
+          cd legal-case-web && python -m pytest tests/test_stage2_modules.py tests/test_agent_loop.py -q
       - name: Disaster recovery unit tests
         run: python -m unittest discover -s tools/tests
       - name: Embedded PostgreSQL acceptance
