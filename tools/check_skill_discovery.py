@@ -18,6 +18,7 @@ REQUIRED = [
     "evidence-argument-chain",
     "quality-gate",
     "judicial-resource-discovery",
+    "verify-and-sediment",
 ]
 
 
@@ -47,7 +48,6 @@ def main() -> int:
         if fm and fm != name:
             errors.append(f"name mismatch in {path}: {fm!r} != {name!r}")
 
-    # playbooks remain under skills/
     playbooks = CANONICAL / "playbooks"
     if not playbooks.is_dir():
         errors.append("missing skills/playbooks/")

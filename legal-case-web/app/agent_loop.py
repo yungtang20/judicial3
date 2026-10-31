@@ -121,7 +121,7 @@ class AgentLoopRun:
             return LoopDecision.NEEDS_HUMAN
 
         self.decision = LoopDecision.PASS.value
-        self.decision_reason = "觀察通過工程檢查；法律結論仍須人工"
+        self.decision_reason = "觀察通過工程檢查；法律結論仍須人工審閱"
         self.phase = LoopPhase.DECIDE.value
         self.finished_at = datetime.now(UTC).isoformat()
         return LoopDecision.PASS
@@ -143,5 +143,5 @@ class AgentLoopRun:
             "error_patterns": [e.to_dict() for e in self.error_patterns],
             "started_at": self.started_at,
             "finished_at": self.finished_at,
-            "disclaimer": "PASS 僅表示工程驗證步驟完成，不表示法律結論成立。",
+            "disclaimer": "PASS 僅表示工程驗證步驟完成，不表示法律結論成立；須人工審閱。",
         }

@@ -1,0 +1,28 @@
+{
+  "gold_id": "gold-custody-theft-001",
+  "title": "交付保管財物後拒還（合成）",
+  "contains_case_data": false,
+  "facts_neutral": [
+    "甲將筆電交乙保管",
+    "約定一個月後返還",
+    "期限後乙表示已變賣"
+  ],
+  "fact_statuses": {
+    "lawful_custody": "ASSERTED",
+    "conversion_act": "ASSERTED",
+    "prior_holder_at_taking": "UNKNOWN",
+    "deception_before_delivery": "UNKNOWN"
+  },
+  "expected_hypothesis_ids": [
+    "hyp-embezzlement",
+    "hyp-theft",
+    "hyp-fraud",
+    "hyp-civil"
+  ],
+  "must_not_auto_convict": true,
+  "required_unknown_coverage": [
+    "prior_holder_at_taking",
+    "deception_before_delivery"
+  ],
+  "notes": "人工標註：應並列多假設，不得只鎖侵占；DENIED 不得當 FALSE。"
+}
