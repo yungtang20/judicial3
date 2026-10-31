@@ -51,6 +51,8 @@ from .security import validate_persistent_encryption_key
 from .storage import CaseNotFound, CaseStore, EphemeralCaseStore, RevisionConflict, SupabaseCaseStore
 from .supabase_gateway import MfaStart, SupabaseError, SupabaseGateway
 from .workflow import WorkflowError, apply_action, create_case, public_case, validate_case_id
+from .legal_source_verification import verify_candidate_sources
+from .mcp_adapter import TaiwanLawMcpAdapter
 
 
 def _runtime_source_mtime() -> int:
@@ -177,6 +179,22 @@ def _local_analysis_payload(summary: str) -> dict[str, Any]:
                 "title": source.get("label") or f"{law_name}{article_no}",
                 "content": [content],
                 "tags": ["VERIFIED_CACHE"],
+            })
+        # 嘗試以 MCP 來源核驗法條（可用時會呼叫本地 / 遠端 MCP，無配置則
+        # 明確回報 MCP_UNAVAILABLE，絕不以模型記憶補法條）。
+        try:
+            mcp_result = verify_candidate_sources(
+                [{"source": source}], adapter=TaiwanLawMcpAdapter(),
+            )
+            mcp_ver = (mcp_result[0].to_dict() if mcp_result else None)
+        except Exception:
+            mcp_ver = None
+        if mcp_ver and mcp_ver.get("verification"):
+            laws.append({
+                "title": source.get("label") or f"{law_name}{article_no}",
+                "content": [],
+                "tags": ["MCP_SOURCE", mcp_ver["verification"]["status"]],
+                "mcp_verification": mcp_ver["verification"],
             })
         elements = [
             {

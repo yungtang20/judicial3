@@ -31,19 +31,41 @@
 
 ---
 
-## 可用 MCP 工具（taiwan-law-mcp）
+## 可用 MCP 工具（本地 mcp-taiwan-legal-db + 遠端 legaltech.org.tw）
+
+本系統同時連兩個 MCP 來源，請依可用性與用途擇一呼叫，呼叫後必須依據回傳內容引用並保留 `source_url` / JID；不可用時回報 `MCP_UNAVAILABLE` / `NOT_FOUND`，**fail closed**，不得以模型記憶補法條。
+
+### 本地 mcp-taiwan-legal-db（stdio JSON-RPC，離線快照，可設 `JUDICIAL3_MCP_LOCAL`）
 
 | 工具名 | 用途 |
 |--------|------|
-| `taiwan_law_mcp___search_taiwan_laws` | 查全國法規資料庫（法條） |
-| `taiwan_law_mcp___search_taiwan_judgments` | 搜司法院公開裁判 |
-| `taiwan_law_mcp___get_taiwan_judgment` | 依 JID 取裁判全文 |
-| `taiwan_law_mcp___search_taiwan_interpretations` | 搜大法官解釋／憲判字 |
-| `taiwan_law_mcp___search_moj_interpretations` | 搜法務部行政函釋 |
-| `taiwan_law_mcp___search_taiwan_regulations` | 法規名稱搜尋 |
-| `taiwan_law_mcp___get_taiwan_law_versions` | 法律歷次版本／三讀 |
-| `taiwan_law_mcp___analyze_legal_intent` | 分析研究意圖（不做結論） |
-| `taiwan_law_mcp___search_taiwan_bills` | 立法院議案 |
+| `search_judgments` | 搜司法院公開裁判（關鍵字） |
+| `get_judgment` | 依 JID 取裁判全文 |
+| `query_regulation` | 查單一法條內容（law_name、article_no） |
+| `get_pcode` | 法規名稱轉 pcode |
+| `search_regulations` | 法規名稱關鍵字搜尋 |
+| `get_interpretation` | 大法官解釋／憲判字內容 |
+| `search_interpretations` | 搜釋字／憲判字 |
+| `get_citations` | 釋字相互引用 |
+
+### 遠端 legaltech.org.tw/mcp（HTTP JSON-RPC，預設 `JUDICIAL3_MCP_REMOTE=https://legaltech.org.tw/mcp`）
+
+| 工具名 | 用途 |
+|--------|------|
+| `search_taiwan_laws` | 查全國法規資料庫（法條，含沿革） |
+| `search_taiwan_judgments` | 搜司法院公開裁判 |
+| `get_taiwan_judgment` | 依 JID 取裁判全文 |
+| `search_taiwan_interpretations` | 搜大法官解釋／憲判字 |
+| `get_taiwan_interpretation` | 依案號取釋字內容 |
+| `search_moj_interpretations` | 搜法務部行政函釋 |
+| `search_taiwan_regulations` | 法規名稱搜尋 |
+| `get_taiwan_pcode` | 法規名稱轉 pcode |
+| `get_taiwan_law_versions` | 法律歷次版本／三讀 |
+| `analyze_legal_intent` | 分析研究意圖（不做結論） |
+| `search_taiwan_bills` | 立法院議案 |
+| `get_taiwan_interpretation_citations` | 釋字相互引用 |
+| `get_taiwan_law_progress` | 法律立法歷程 |
+| `get_moj_draft_announcements` | 法務部法規草案預告 |
 
 呼叫後必須依據回傳內容引用，並保留 source_url / JID。
 

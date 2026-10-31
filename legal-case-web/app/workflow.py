@@ -17,6 +17,7 @@ from .company_templates import copy_identity
 from .xlsm_questions import xlsm_quarantine
 from .v3_contracts import canonical_sha256
 from .analysis_contract import apply_analysis_contract, decorate_fact, decorate_facts
+from .integration_checks import run_pre_analysis_checks
 from .rules import (
     MAX_SELECTED_OFFENSES,
     analyze_gate1,
@@ -326,6 +327,7 @@ def create_case(raw: dict[str, Any], bank: dict[str, Any]) -> dict[str, Any]:
     acts = extract_acts(gate1)
     link_acts_to_candidates(acts, candidates)
     competition_relationships(candidates)
+    case_reasoning = run_pre_analysis_checks(candidates, facts=gate1.get("facts"))
     case = {
         "case_id": str(uuid4()),
         "state": "GATE1_REVIEW",
@@ -347,6 +349,7 @@ def create_case(raw: dict[str, Any], bank: dict[str, Any]) -> dict[str, Any]:
         "route_fact_overlay": {},
         "selected_legal_route_states": {},
         "question_role": "victim" if has_victim else "transfer",
+        "reasoning_checks": case_reasoning,
         "questions": [],
         "interviews": {},
         "profiles": {},
