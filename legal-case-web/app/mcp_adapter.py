@@ -34,14 +34,6 @@ class McpLookupResult:
 class TaiwanLawMcpAdapter:
     """Optional inject of real tool callables; default is unavailable."""
 
-    def __init(
-        self,
-        search_laws: Callable[..., Any] | None = None,
-        search_judgments: Callable[..., Any] | None = None,
-    ) -> None:
-        self._search_laws = search_laws
-        self._search_judgments = search_judgments
-
     def __init__(
         self,
         search_laws: Callable[..., Any] | None = None,
@@ -89,7 +81,7 @@ class TaiwanLawMcpAdapter:
                 hit_count=len(hits),
             )
             return McpLookupResult(records=hits, verification=ver, available=True)
-        except Exception as exc:  # noqa: BLE001 — boundary must not raise past fail-closed
+        except Exception as exc:  # noqa: BLE001
             ver = build_record(
                 tool="search_taiwan_laws",
                 status=VerificationStatus.MCP_UNAVAILABLE,
